@@ -52,24 +52,36 @@
           </button>
         </div>
 
-        <!-- Quick 1-Click Login Shortcuts -->
+        <!-- Quick 1-Click Login Shortcuts (4 Peran RBAC Lengkap) -->
         <div class="space-y-2 p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200/80 text-[11px]">
           <div class="text-[10px] font-extrabold text-[#006948] uppercase tracking-wider flex items-center justify-between">
-            <span>Akses Cepat Pengujian:</span>
-            <span class="text-[9px] bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded font-bold">1-Klik Masuk</span>
+            <span>Akses Cepat Pengujian RBAC:</span>
+            <span class="text-[9px] bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded font-bold">4 Role Sesuai RULES.md</span>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-0.5">
-            <button type="button" onclick="fillQuickLogin('admin_pusat')" class="p-2.5 rounded-lg bg-white hover:bg-emerald-100/70 border border-emerald-300 text-left transition shadow-sm">
-              <div class="font-bold text-[#006948] leading-tight">1. Admin Data Pusat</div>
-              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">Monitoring Nasional 38 Prov</div>
+          <div class="grid grid-cols-2 gap-2 pt-0.5">
+            <button type="button" onclick="fillQuickLogin('super_admin')" class="p-2.5 rounded-xl bg-white hover:bg-purple-50 border border-purple-200 hover:border-purple-300 text-left transition shadow-2xs">
+              <div class="font-bold text-purple-900 leading-tight flex items-center gap-1">
+                <span>👑 1. Super Admin</span>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">Energi Cipta (Full Akses Master)</div>
             </button>
-            <button type="button" onclick="fillQuickLogin('cabang_jabar')" class="p-2.5 rounded-lg bg-white hover:bg-sky-100/70 border border-sky-300 text-left transition shadow-sm">
-              <div class="font-bold text-sky-800 leading-tight">2. Admin POGI Jabar</div>
-              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">Follow-Up Wilayah Cabang</div>
+            <button type="button" onclick="fillQuickLogin('admin_pusat')" class="p-2.5 rounded-xl bg-white hover:bg-emerald-50 border border-emerald-300 text-left transition shadow-2xs">
+              <div class="font-bold text-[#006948] leading-tight flex items-center gap-1">
+                <span>⚡ 2. Admin Pusat</span>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">Siti Rahma (Verifikator SKP)</div>
             </button>
-            <button type="button" onclick="fillQuickLogin('rs_cipto')" class="p-2.5 rounded-lg bg-white hover:bg-amber-100/70 border border-amber-300 text-left transition shadow-sm">
-              <div class="font-bold text-amber-800 leading-tight">3. PIC RS Jejaring</div>
-              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">RSUPN Cipto Mangunkusumo</div>
+            <button type="button" onclick="fillQuickLogin('cabang_jabar')" class="p-2.5 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-left transition shadow-2xs">
+              <div class="font-bold text-sky-800 leading-tight flex items-center gap-1">
+                <span>🏢 3. Admin Jabar</span>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">dr. Firman (Terisolasi Cabang)</div>
+            </button>
+            <button type="button" onclick="fillQuickLogin('viewer_pogi')" class="p-2.5 rounded-xl bg-white hover:bg-amber-50 border border-amber-300 text-left transition shadow-2xs">
+              <div class="font-bold text-amber-800 leading-tight flex items-center gap-1">
+                <span>👁️ 4. Viewer POGI</span>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">Pengurus Pusat (Read-Only)</div>
             </button>
           </div>
         </div>
@@ -197,8 +209,11 @@
     </div>
   </div>
 
+  <script src="js/pogi_state.js"></script>
   <script src="js/navigation.js"></script>
   <script>
+    let currentSelectedRoleKey = 'ADMIN_OPERASIONAL';
+
     function switchLoginRole(role) {
       const tabAdmin = document.getElementById('tab-admin');
       const tabBranch = document.getElementById('tab-branch');
@@ -208,30 +223,40 @@
         tabAdmin.className = 'py-2.5 px-2 rounded-lg bg-white text-slate-900 shadow-xs transition';
         tabBranch.className = 'py-2.5 px-2 rounded-lg text-slate-500 hover:text-slate-900 transition';
         inputEmail.value = 'sekretariat.pusat@pogi.or.id';
+        currentSelectedRoleKey = 'ADMIN_OPERASIONAL';
       } else {
         tabBranch.className = 'py-2.5 px-2 rounded-lg bg-white text-slate-900 shadow-xs transition';
         tabAdmin.className = 'py-2.5 px-2 rounded-lg text-slate-500 hover:text-slate-900 transition';
         inputEmail.value = 'sekretariat.jabar@pogi.or.id';
+        currentSelectedRoleKey = 'ADMIN_CABANG';
       }
     }
 
     function fillQuickLogin(type) {
       const email = document.getElementById('inputEmail');
       const pass = document.getElementById('inputPassword');
-      if (type === 'admin_pusat') {
+      if (type === 'super_admin') {
+        switchLoginRole('admin');
+        email.value = 'super@example.com';
+        pass.value = 'Super2026!Master';
+        currentSelectedRoleKey = 'SUPER_ADMIN';
+      } else if (type === 'admin_pusat') {
         switchLoginRole('admin');
         email.value = 'sekretariat.pusat@pogi.or.id';
         pass.value = 'POGI2026!Nasional';
+        currentSelectedRoleKey = 'ADMIN_OPERASIONAL';
       } else if (type === 'cabang_jabar') {
         switchLoginRole('branch');
         email.value = 'sekretariat.jabar@pogi.or.id';
         pass.value = 'POGIJabar2026!';
-      } else if (type === 'rs_cipto') {
-        switchLoginRole('branch');
-        email.value = 'diklit.rscm@pogi.or.id';
-        pass.value = 'RSCM2026!POGI';
+        currentSelectedRoleKey = 'ADMIN_CABANG';
+      } else if (type === 'viewer_pogi') {
+        switchLoginRole('admin');
+        email.value = 'pengurus.pusat@pogi.or.id';
+        pass.value = 'ViewerPOGI2026!';
+        currentSelectedRoleKey = 'VIEWER_POGI';
       }
-      showToast('Kredensial akun ' + type.replace('_', ' ').toUpperCase() + ' terisi.', 'info');
+      showToast('Kredensial peran ' + type.replace('_', ' ').toUpperCase() + ' terisi.', 'info');
     }
 
     function togglePassVisibility() {
@@ -240,7 +265,28 @@
     }
 
     function handleLogin() {
-      showToast('Berhasil masuk ke Konsol POGI SKP Tracker...', 'success');
+      const email = (document.getElementById('inputEmail')?.value || '').toLowerCase().trim();
+      let targetRole = 'ADMIN_OPERASIONAL';
+
+      if (email.includes('super') || currentSelectedRoleKey === 'SUPER_ADMIN') {
+        targetRole = 'SUPER_ADMIN';
+      } else if (email.includes('jabar') || currentSelectedRoleKey === 'ADMIN_CABANG') {
+        targetRole = 'ADMIN_CABANG';
+      } else if (email.includes('viewer') || email.includes('pengurus.pusat') || currentSelectedRoleKey === 'VIEWER_POGI') {
+        targetRole = 'VIEWER_POGI';
+      } else {
+        targetRole = 'ADMIN_OPERASIONAL';
+      }
+
+      if (typeof PogiStore !== 'undefined') {
+        const roles = PogiStore.getAllRoles();
+        const userObj = roles.find(r => r.role === targetRole) || roles[0];
+        PogiStore.setCurrentUser(userObj);
+        showToast('Berhasil masuk sebagai ' + userObj.roleLabel + '...', 'success');
+      } else {
+        showToast('Berhasil masuk ke Konsol POGI SKP Tracker...', 'success');
+      }
+
       setTimeout(() => {
         window.location.href = 'dashboard.html';
       }, 500);

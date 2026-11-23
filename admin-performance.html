@@ -185,7 +185,7 @@
 
           <!-- Quick Action Buttons -->
           <div class="flex items-center gap-2 shrink-0">
-            <button type="button" onclick="openWorkloadRebalanceModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+            <button type="button" onclick="openWorkloadRebalanceModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs rbac-operational">
               <span class="material-symbols-outlined text-sm text-emerald-400">balance</span>
               <span>Redistribusi Beban Dokter</span>
             </button>
@@ -314,7 +314,7 @@
               </div>
             </div>
 
-            <button type="button" onclick="openWorkloadRebalanceModal()" class="w-full mt-4 py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#006948] text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-200">
+            <button type="button" onclick="openWorkloadRebalanceModal()" class="w-full mt-4 py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#006948] text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-200 rbac-operational">
               <span class="material-symbols-outlined text-sm">tune</span>
               <span>Buka Tool Seimbangkan Beban (Rebalancer)</span>
             </button>
@@ -614,7 +614,7 @@
                   <span class="material-symbols-outlined text-xs">visibility</span>
                   <span>Rincian</span>
                 </button>
-                <button type="button" onclick="openWorkloadRebalanceModal('${a.name}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#006948] font-bold text-[11px] transition flex items-center gap-1 border border-emerald-200">
+                <button type="button" onclick="openWorkloadRebalanceModal('${a.name}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#006948] font-bold text-[11px] transition flex items-center gap-1 border border-emerald-200 rbac-operational">
                   <span class="material-symbols-outlined text-xs">tune</span>
                   <span>Alihkan</span>
                 </button>

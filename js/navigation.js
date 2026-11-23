@@ -452,96 +452,378 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // -------------------------------------------------------------
-// BAB 6.1 & 6.2 — RBAC ENFORCEMENT & ROLE SIMULATION
+// BAB 6.1 & 6.2 — RBAC ENFORCEMENT & ROLE SIMULATION (UPGRADED)
 // -------------------------------------------------------------
 function switchUserRole(roleKey) {
   if (typeof PogiStore === 'undefined') return;
   const roles = PogiStore.getAllRoles();
   const target = roles.find(r => r.role === roleKey) || roles[0];
   PogiStore.setCurrentUser(target);
-  showToast(`Peran RBAC beralih ke: ${target.roleLabel}`, 'info');
+  showToast(`Peran beralih ke: ${target.roleLabel}`, 'info');
 
-  applyRbacEnforcement();
+  const currentPath = window.location.pathname.toLowerCase();
+  if (currentPath.includes('admin-performance') && target.role === 'ADMIN_CABANG') {
+    window.location.href = 'dashboard.html';
+    return;
+  }
+  if (currentPath.includes('manage.html') && (target.role === 'ADMIN_CABANG' || target.role === 'VIEWER_POGI')) {
+    window.location.href = 'dashboard.html';
+    return;
+  }
 
-  // If on doctors.html, reload data to match branch isolation
+  if (currentPath.includes('doctor-detail.html') || currentPath.includes('dashboard.html') || currentPath.includes('reports.html')) {
+    setTimeout(() => window.location.reload(), 250);
+    return;
+  }
+
   if (typeof applyDoctorFilters === 'function') {
-    if (target.role === 'ADMIN_CABANG' && target.branch) {
-      const provSelect = document.getElementById('filterProvince') || document.getElementById('provinceFilter');
-      if (provSelect) provSelect.value = target.branch;
+    const provSelect = document.getElementById('provinceFilter') || document.getElementById('filterProvince');
+    if (provSelect) {
+      if (target.role === 'ADMIN_CABANG' && target.branch) {
+        provSelect.value = target.branch;
+        provSelect.setAttribute('disabled', 'true');
+      } else {
+        provSelect.removeAttribute('disabled');
+      }
     }
     applyDoctorFilters();
   }
+
+  applyRbacEnforcement();
 }
 
 function applyRbacEnforcement() {
   if (typeof PogiStore === 'undefined') return;
   const user = PogiStore.getCurrentUser();
+  if (!user) return;
 
-  const userRoleBadge = document.getElementById('navUserRoleBadge');
-  if (userRoleBadge) {
-    userRoleBadge.innerText = user.roleLabel || user.role;
-  }
-  const roleSelect = document.getElementById('headerRoleSwitcher');
-  if (roleSelect) {
-    roleSelect.value = user.role;
+  // 1. Sync dropdowns / switchers
+  const topSelect = document.getElementById('topHeaderRoleSelect');
+  if (topSelect) topSelect.value = user.role;
+  const switcherSelect = document.getElementById('headerRoleSwitcher');
+  if (switcherSelect) switcherSelect.value = user.role;
+
+  // 2. Update Sidebar bottom profile card (Standard bulletproof selectors)
+  const aside = document.querySelector('aside');
+  if (aside) {
+    const logoutBtn = aside.querySelector('button[onclick*="performLogout"]') ||
+                     aside.querySelector('button[title*="Keluar"]') ||
+                     aside.querySelector('button[title*="Sesi"]') ||
+                     aside.querySelector('button .material-symbols-outlined');
+    const profileCard = logoutBtn ? logoutBtn.closest('.rounded-xl') : null;
+    if (profileCard) {
+      const avatarEl = profileCard.querySelector('.rounded-full') || profileCard.querySelector('div');
+      if (avatarEl) {
+        avatarEl.innerText = user.avatar || 'SR';
+        avatarEl.className = `w-9 h-9 rounded-full ${user.avatarBg || 'bg-[#006948] text-white'} font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs`;
+      }
+      const textContainer = profileCard.querySelector('.min-w-0');
+      if (textContainer && textContainer.children.length >= 2) {
+        textContainer.children[0].innerText = user.name;
+        textContainer.children[1].innerText = user.shortRole || user.roleLabel || 'POGI MEMBER';
+        textContainer.children[1].className = `text-[9px] font-bold ${user.role === 'SUPER_ADMIN' ? 'text-purple-700' : (user.role === 'ADMIN_CABANG' ? 'text-sky-700' : (user.role === 'VIEWER_POGI' ? 'text-amber-700' : 'text-[#006948]'))} uppercase tracking-wider truncate`;
+      }
+    }
+
+    // Hide Manage section heading for Branch Admin & Viewer
+    const allDivs = aside.querySelectorAll('div');
+    allDivs.forEach(div => {
+      if (div.children.length === 0 && div.innerText && div.innerText.trim().startsWith('PENGATURAN DATA')) {
+        div.style.display = (user.role === 'ADMIN_CABANG' || user.role === 'VIEWER_POGI') ? 'none' : 'block';
+      }
+    });
   }
 
+  // 3. Update Top Header User Avatar button
+  const topUserBtn = document.getElementById('topUserBtn');
+  if (topUserBtn) {
+    const topAv = topUserBtn.querySelector('div');
+    if (topAv) {
+      topAv.innerText = user.avatar || 'SR';
+      topAv.className = `w-7 h-7 rounded-lg ${user.avatarBg || 'bg-[#006948] text-white'} font-extrabold text-[11px] flex items-center justify-center shadow-2xs`;
+    }
+  }
+
+  // 4. Update Header Scope button label if Branch Admin
+  const orgBtn = document.getElementById('headerOrgScopeBtn') ||
+                 document.getElementById('orgScopeBtn') ||
+                 document.querySelector('header button[onclick*="OrgScope"]');
+  if (orgBtn) {
+    const orgSpan = orgBtn.querySelector('span.truncate') ||
+                    document.getElementById('selectedOrgScopeLabel') ||
+                    orgBtn.querySelector('span:not(.material-symbols-outlined)');
+    if (orgSpan) {
+      if (user.role === 'ADMIN_CABANG' && user.branch && user.branch !== 'Nasional') {
+        orgSpan.innerText = `Wilayah Cabang: ${user.branch}`;
+      } else {
+        if (!orgSpan.innerText.includes('POGI Cabang')) {
+          orgSpan.innerText = 'Semua Wilayah Nasional (38 Cabang)';
+        }
+      }
+    }
+  }
+
+  // 5. Sidebar Navigation Item Visibility
+  // Admin Performance link
+  document.querySelectorAll('a[href="admin-performance.html"]').forEach(link => {
+    link.style.display = (user.role === 'ADMIN_CABANG') ? 'none' : 'flex';
+  });
+
+  // Manage Data links
+  document.querySelectorAll('a[href*="manage.html"]').forEach(link => {
+    link.style.display = (user.role === 'ADMIN_CABANG' || user.role === 'VIEWER_POGI') ? 'none' : 'flex';
+  });
+
+  // 6. Page Guarding for Restricted Pages
+  const currentPath = window.location.pathname.toLowerCase();
+
+  // Guard: admin-performance.html for ADMIN_CABANG
+  if (currentPath.includes('admin-performance') && user.role === 'ADMIN_CABANG') {
+    const mainEl = document.querySelector('main');
+    if (mainEl) {
+      mainEl.innerHTML = `
+        <div class="p-8 max-w-xl mx-auto my-12 bg-white rounded-3xl border border-rose-200 shadow-xl text-center space-y-4">
+          <div class="w-16 h-16 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+            <span class="material-symbols-outlined text-3xl">lock</span>
+          </div>
+          <h2 class="text-lg font-black text-slate-900">Akses Modul Terbatas (RBAC)</h2>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Modul <strong>Admin Performance &amp; SLA Tracker</strong> adalah instrumen evaluasi internal untuk Tim Operasional dan Pengurus Pusat POGI Nasional. Akun <strong>Admin Cabang (${user.branch})</strong> tidak memiliki wewenang untuk mengakses halaman ini.
+          </p>
+          <div class="pt-2">
+            <a href="dashboard.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#006948] text-white text-xs font-bold hover:bg-[#005439] transition">
+              <span class="material-symbols-outlined text-sm">dashboard</span>
+              <span>Kembali ke Dashboard Cabang</span>
+            </a>
+          </div>
+        </div>
+      `;
+    }
+    return;
+  }
+
+  // Guard: manage.html for ADMIN_CABANG and VIEWER_POGI
+  if (currentPath.includes('manage.html') && (user.role === 'ADMIN_CABANG' || user.role === 'VIEWER_POGI')) {
+    const mainEl = document.querySelector('main');
+    if (mainEl) {
+      mainEl.innerHTML = `
+        <div class="p-8 max-w-xl mx-auto my-12 bg-white rounded-3xl border border-rose-200 shadow-xl text-center space-y-4">
+          <div class="w-16 h-16 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+            <span class="material-symbols-outlined text-3xl">admin_panel_settings</span>
+          </div>
+          <h2 class="text-lg font-black text-slate-900">Akses Pengaturan Terbatas (RBAC)</h2>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Modul <strong>Pengaturan Data (Manage)</strong> hanya dapat diakses oleh Administrator Nasional (Super Admin &amp; Admin Operasional Pusat).
+          </p>
+          <div class="pt-2">
+            <a href="dashboard.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#006948] text-white text-xs font-bold hover:bg-[#005439] transition">
+              <span class="material-symbols-outlined text-sm">dashboard</span>
+              <span>Kembali ke Dashboard</span>
+            </a>
+          </div>
+        </div>
+      `;
+    }
+    return;
+  }
+
+  // Guard: manage.html Tab User for ADMIN_OPERASIONAL
+  if (currentPath.includes('manage.html') && user.role === 'ADMIN_OPERASIONAL') {
+    const tabUserBtn = document.getElementById('tab-btn-user');
+    const sideUserBtn = document.getElementById('side-nav-user');
+    if (tabUserBtn) tabUserBtn.style.display = 'none';
+    if (sideUserBtn) sideUserBtn.style.display = 'none';
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('tab') === 'user' && typeof switchManageTab === 'function') {
+      switchManageTab('doctor');
+      showToast('Tab Kelola Pengguna hanya dapat diakses oleh Super Admin.', 'warning');
+    }
+  }
+
+  // 7. Top RBAC Notice Banner
   let banner = document.getElementById('rbacNoticeBanner');
+
+  // Helper: safe insert banner before <main>
+  function insertBannerBeforeMain(el) {
+    const mainEl = document.querySelector('main');
+    if (mainEl && mainEl.parentElement) {
+      mainEl.parentElement.insertBefore(el, mainEl);
+    } else {
+      document.body.prepend(el);
+    }
+  }
+
   if (user.role === 'VIEWER_POGI') {
     if (!banner) {
       banner = document.createElement('div');
       banner.id = 'rbacNoticeBanner';
-      banner.className = 'w-full bg-amber-50 border-b border-amber-200 py-1.5 px-4 text-xs font-bold text-amber-900 flex items-center justify-between shrink-0 shadow-2xs z-30';
-      const mainEl = document.querySelector('main') || document.body;
-      mainEl.parentElement.insertBefore(banner, mainEl);
+      banner.className = 'w-full bg-amber-50 border-b border-amber-200 py-1.5 px-4 text-xs font-bold text-amber-900 flex items-center justify-between shrink-0 z-30';
+      insertBannerBeforeMain(banner);
     }
     banner.innerHTML = `
       <div class="flex items-center gap-2">
         <span class="material-symbols-outlined text-base text-amber-600">visibility</span>
-        <span>Mode Akses: <strong>Viewer POGI (Read-Only Pusat)</strong> — Seluruh data pemantauan aktif, aksi mutasi dinonaktifkan.</span>
+        <span>Mode Akses: <strong>Viewer POGI (Read-Only Pusat)</strong> — Pemantauan data aktif, seluruh tombol mutasi, pengesahan, &amp; unggah dinonaktifkan.</span>
       </div>
-      <span class="px-2 py-0.5 rounded-full bg-amber-200/70 text-amber-900 text-[10px] font-black uppercase">Read-Only</span>
+      <span class="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 text-xs font-black uppercase">Read-Only</span>
     `;
     banner.classList.remove('hidden');
 
-    document.querySelectorAll('.rbac-write, #btnAddDoctor, #btnWaBlastMassal').forEach(btn => {
-      btn.setAttribute('disabled', 'true');
-      btn.classList.add('opacity-50', 'cursor-not-allowed');
-      btn.title = 'Aksi dinonaktifkan: Mode Akses Viewer Read-Only';
+    // --- VIEWER: Hide ALL write/operational buttons ---
+    // Class-based: .rbac-write (semua tombol mutasi)
+    document.querySelectorAll('.rbac-write').forEach(btn => { btn.style.display = 'none'; });
+    // Class-based: .rbac-operational (tombol operasional pusat)
+    document.querySelectorAll('.rbac-operational').forEach(btn => { btn.style.display = 'none'; });
+    // Class-based: .rbac-super-only (tombol super admin only)
+    document.querySelectorAll('.rbac-super-only').forEach(btn => { btn.style.display = 'none'; });
+    // ID-based fallback
+    ['btnAddDoctor','btnWaBlastMassal','btnWorkloadRebalance'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
     });
+    // Attribute-based: onclick selectors (safe, no special chars)
+    ['approveDoctorCredits','openUploadDoctorDocModal','openChangePicModal','openWorkloadRebalanceModal',
+     'openFollowUpModal','sendFollowUp','openAddEventModal','deleteDoctor','editDoctor'].forEach(fn => {
+      document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => { btn.style.display = 'none'; });
+    });
+    // Disable status selects
+    document.querySelectorAll('select[onchange*="handleDocStatusChange"]').forEach(sel => {
+      sel.setAttribute('disabled', 'true');
+      sel.classList.add('opacity-60', 'cursor-not-allowed');
+    });
+
   } else if (user.role === 'ADMIN_CABANG') {
     if (!banner) {
       banner = document.createElement('div');
       banner.id = 'rbacNoticeBanner';
-      banner.className = 'w-full bg-sky-50 border-b border-sky-200 py-1.5 px-4 text-xs font-bold text-sky-900 flex items-center justify-between shrink-0 shadow-2xs z-30';
-      const mainEl = document.querySelector('main') || document.body;
-      mainEl.parentElement.insertBefore(banner, mainEl);
+      banner.className = 'w-full bg-sky-50 border-b border-sky-200 py-1.5 px-4 text-xs font-bold text-sky-900 flex items-center justify-between shrink-0 z-30';
+      insertBannerBeforeMain(banner);
     }
+    const branchLabel = (user && user.branch) ? user.branch : 'Cabang';
     banner.innerHTML = `
       <div class="flex items-center gap-2">
         <span class="material-symbols-outlined text-base text-sky-600">domain</span>
-        <span>Mode Akses: <strong>Admin Cabang (${user.branch})</strong> — Akses data dibatasi ketat hanya untuk wilayah kerja cabang Anda (RULES.md Bab 6.2).</span>
+        <span>Mode Akses: <strong>Admin Cabang (${branchLabel})</strong> — Data terisolasi untuk wilayah cabang ${branchLabel} (RULES.md Bab 6.2).</span>
       </div>
-      <span class="px-2 py-0.5 rounded-full bg-sky-200/70 text-sky-900 text-[10px] font-black uppercase">Cabang ${user.branch}</span>
+      <span class="px-2 py-0.5 rounded-full bg-sky-200 text-sky-900 text-xs font-black uppercase">Cabang ${branchLabel}</span>
     `;
     banner.classList.remove('hidden');
 
-    document.querySelectorAll('.rbac-write, #btnAddDoctor, #btnWaBlastMassal').forEach(btn => {
-      btn.removeAttribute('disabled');
-      btn.classList.remove('opacity-50', 'cursor-not-allowed');
-      btn.title = '';
+    // --- ADMIN_CABANG: Hide operational-only buttons, allow upload ---
+    // Class-based: .rbac-operational (hide)
+    document.querySelectorAll('.rbac-operational').forEach(btn => { btn.style.display = 'none'; });
+    // Class-based: .rbac-super-only (hide)
+    document.querySelectorAll('.rbac-super-only').forEach(btn => { btn.style.display = 'none'; });
+    // Attribute-based: hide verify & PIC assignment
+    ['approveDoctorCredits','openChangePicModal','openWorkloadRebalanceModal',
+     'openFollowUpModal','sendFollowUp','deleteDoctor'].forEach(fn => {
+      document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => { btn.style.display = 'none'; });
     });
-  } else {
-    if (banner) banner.classList.add('hidden');
-    document.querySelectorAll('.rbac-write, #btnAddDoctor, #btnWaBlastMassal').forEach(btn => {
+    // Disable status selects
+    document.querySelectorAll('select[onchange*="handleDocStatusChange"]').forEach(sel => {
+      sel.setAttribute('disabled', 'true');
+      sel.classList.add('opacity-60', 'cursor-not-allowed');
+    });
+    // Allow write (upload, add doctor) for branch admin
+    document.querySelectorAll('.rbac-write').forEach(btn => {
+      btn.style.display = '';
       btn.removeAttribute('disabled');
       btn.classList.remove('opacity-50', 'cursor-not-allowed');
-      btn.title = '';
+    });
+    ['btnAddDoctor','btnWaBlastMassal'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.style.display = ''; el.removeAttribute('disabled'); }
+    });
+    document.querySelectorAll('button[onclick*="openUploadDoctorDocModal"]').forEach(btn => {
+      btn.style.display = '';
+      btn.removeAttribute('disabled');
+    });
+
+  } else if (user.role === 'ADMIN_OPERASIONAL') {
+    if (banner) banner.classList.add('hidden');
+    // --- ADMIN_OPERASIONAL: show all except super-only ---
+    document.querySelectorAll('.rbac-write, .rbac-operational').forEach(btn => {
+      btn.style.display = '';
+      btn.removeAttribute('disabled');
+      btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    });
+    document.querySelectorAll('.rbac-super-only').forEach(btn => { btn.style.display = 'none'; });
+    ['btnAddDoctor','btnWaBlastMassal','btnWorkloadRebalance'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.style.display = ''; el.removeAttribute('disabled'); }
+    });
+    ['approveDoctorCredits','openUploadDoctorDocModal','openChangePicModal','openWorkloadRebalanceModal',
+     'openFollowUpModal','sendFollowUp','openAddEventModal'].forEach(fn => {
+      document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => {
+        btn.style.display = '';
+        btn.removeAttribute('disabled');
+      });
+    });
+    document.querySelectorAll('select[onchange*="handleDocStatusChange"]').forEach(sel => {
+      sel.removeAttribute('disabled');
+      sel.classList.remove('opacity-60', 'cursor-not-allowed');
+    });
+
+  } else {
+    // SUPER_ADMIN: show everything
+    if (banner) banner.classList.add('hidden');
+    document.querySelectorAll('.rbac-write, .rbac-operational, .rbac-super-only').forEach(btn => {
+      btn.style.display = '';
+      btn.removeAttribute('disabled');
+      btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    });
+    ['btnAddDoctor','btnWaBlastMassal','btnWorkloadRebalance'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.style.display = ''; el.removeAttribute('disabled'); }
+    });
+    ['approveDoctorCredits','openUploadDoctorDocModal','openChangePicModal','openWorkloadRebalanceModal',
+     'openFollowUpModal','sendFollowUp','openAddEventModal','deleteDoctor','editDoctor'].forEach(fn => {
+      document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => {
+        btn.style.display = '';
+        btn.removeAttribute('disabled');
+      });
+    });
+    document.querySelectorAll('select[onchange*="handleDocStatusChange"]').forEach(sel => {
+      sel.removeAttribute('disabled');
+      sel.classList.remove('opacity-60', 'cursor-not-allowed');
     });
   }
 }
 
 function initRbacRoleSwitcher() {
+  if (typeof PogiStore === 'undefined') return;
+  const user = PogiStore.getCurrentUser();
+
+  // 1. Add interactive role switcher directly in top sticky header
+  // Find the flex container that holds the notif + user buttons (right side of header)
+  const userBtn = document.getElementById('topUserBtn');
+  if (userBtn && !document.getElementById('headerRbacPill')) {
+    const pill = document.createElement('div');
+    pill.id = 'headerRbacPill';
+    pill.className = 'hidden sm:flex items-center gap-1.5 py-1 px-2.5 rounded-xl border border-slate-200/90 bg-slate-50 hover:bg-white text-xs font-bold text-slate-700 shadow-2xs transition';
+    pill.title = 'Ubah Peran Pengguna Aktif (Simulasi RBAC)';
+    pill.innerHTML = `
+      <span class="material-symbols-outlined text-[16px] text-[#006948]">shield_person</span>
+      <select id="topHeaderRoleSelect" onchange="switchUserRole(this.value)" class="bg-transparent text-xs font-bold text-slate-800 outline-none cursor-pointer">
+        <option value="SUPER_ADMIN">&#x1F451; Super Admin</option>
+        <option value="ADMIN_OPERASIONAL">&#x26A1; Admin Pusat</option>
+        <option value="ADMIN_CABANG">&#x1F3E2; Admin Cabang</option>
+        <option value="VIEWER_POGI">&#x1F441;&#xFE0F; Viewer POGI</option>
+      </select>
+    `;
+    // The userBtn is inside a .relative div, which is inside the flex header-right container
+    // We want to insert pill BEFORE the .relative wrapper that contains topUserBtn
+    const userBtnWrapper = userBtn.closest('.relative') || userBtn.parentElement;
+    const flexContainer = userBtnWrapper ? userBtnWrapper.parentElement : null;
+    if (flexContainer && flexContainer.contains(userBtnWrapper)) {
+      flexContainer.insertBefore(pill, userBtnWrapper);
+    } else if (userBtn.parentElement) {
+      // Fallback: append before userBtn inside its parent
+      userBtn.parentElement.insertBefore(pill, userBtn);
+    }
+  }
+
+  // 2. Add switcher inside dropdown as secondary
   const userDd = document.getElementById('topUserDropdown');
   if (userDd && !document.getElementById('headerRoleSwitcher')) {
     const switcherDiv = document.createElement('div');
@@ -559,17 +841,18 @@ function initRbacRoleSwitcher() {
       </select>
     `;
     const linksDiv = userDd.querySelector('.py-1') || userDd.children[1];
-    if (linksDiv) {
+    if (linksDiv && linksDiv.parentElement === userDd) {
       userDd.insertBefore(switcherDiv, linksDiv);
     } else {
       userDd.appendChild(switcherDiv);
     }
   }
+
+  applyRbacEnforcement();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     initRbacRoleSwitcher();
-    applyRbacEnforcement();
-  }, 50);
+  }, 30);
 });

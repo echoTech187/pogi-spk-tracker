@@ -336,7 +336,7 @@
                     <span class="material-symbols-outlined text-[15px] text-sky-600">assignment_ind</span>
                     <span>PIC:</span>
                     <span id="doctorAssignedTo" class="font-bold text-sky-950">Siti Rahma</span>
-                    <button type="button" onclick="openChangePicModal()" class="ml-1 text-[11px] text-[#006948] hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5" title="Ubah PIC Admin Pendamping">
+                    <button type="button" onclick="openChangePicModal()" class="ml-1 text-[11px] text-[#006948] hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5 rbac-operational" title="Ubah PIC Admin Pendamping">
                       <span class="material-symbols-outlined text-[12px]">swap_horiz</span> Ganti PIC
                     </button>
                   </div>
@@ -351,7 +351,7 @@
             <!-- Action Buttons -->
             <div id="doctorActionButtonsContainer" class="flex items-center gap-2.5 flex-wrap shrink-0">
               <button type="button" onclick="approveDoctorCredits()"
-                class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
+                class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
                 <span class="material-symbols-outlined text-base">verified</span>
                 <span>Verifikasi Kredit (+4.5 SKP)</span>
               </button>
@@ -389,7 +389,7 @@
                   <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>Verifikator
                 </div>
               </div>
-              <button type="button" onclick="openChangePicModal()" class="mt-2 text-left text-[11px] text-[#006948] font-bold hover:underline inline-flex items-center gap-1">
+              <button type="button" onclick="openChangePicModal()" class="mt-2 text-left text-[11px] text-[#006948] font-bold hover:underline inline-flex items-center gap-1 rbac-operational">
                 <span class="material-symbols-outlined text-[13px]">swap_horiz</span> Alihkan PIC
               </button>
             </div>
@@ -645,7 +645,7 @@
               </div>
               <div class="flex items-center gap-2 shrink-0">
                 <button type="button" onclick="openUploadDoctorDocModal()"
-                  class="px-3.5 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs">
+                  class="px-3.5 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write">
                   <span class="material-symbols-outlined text-base">upload_file</span>
                   <span>Unggah Berkas Baru</span>
                 </button>
@@ -1074,6 +1074,35 @@
     function renderDoctorDetails(doc) {
       if (!doc) return;
 
+      const currentUser = (typeof PogiStore !== 'undefined') ? PogiStore.getCurrentUser() : null;
+      if (currentUser && currentUser.role === 'ADMIN_CABANG' && currentUser.branch && currentUser.branch !== 'Nasional') {
+        const userBranch = currentUser.branch.toLowerCase().trim();
+        const docBranch = (doc.province || '').toLowerCase().trim();
+        if (docBranch && docBranch !== userBranch) {
+          const mainEl = document.querySelector('main');
+          if (mainEl) {
+            mainEl.innerHTML = `
+              <div class="p-8 max-w-xl mx-auto my-12 bg-white rounded-3xl border border-rose-200 shadow-xl text-center space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+                  <span class="material-symbols-outlined text-3xl">block</span>
+                </div>
+                <h2 class="text-lg font-black text-slate-900">Akses Terbatas Cabang (RBAC)</h2>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                  Anda login sebagai <strong>${currentUser.roleLabel}</strong>. Dokter <strong>${doc.name}</strong> terdaftar di <strong>Cabang ${doc.province}</strong>. Sesuai aturan isolasi data cabang (RULES.md Bab 6.2), Anda hanya memiliki wewenang untuk melihat data dokter di wilayah <strong>${currentUser.branch}</strong>.
+                </p>
+                <div class="pt-2">
+                  <a href="doctors.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#006948] text-white text-xs font-bold hover:bg-[#005439] transition">
+                    <span class="material-symbols-outlined text-sm">arrow_back</span>
+                    <span>Kembali ke Daftar Dokter Cabang ${currentUser.branch}</span>
+                  </a>
+                </div>
+              </div>
+            `;
+          }
+          return;
+        }
+      }
+
       const initials = doc.initials || doc.avatar || 'DR';
       const pel = doc.pelayananCredits !== undefined ? doc.pelayananCredits : 46;
       const peng = doc.pengabdianCredits !== undefined ? doc.pengabdianCredits : 16;
@@ -1081,6 +1110,8 @@
       const isComplete = (doc.status === 'Complete');
 
       document.getElementById('breadcrumbDoctorName').innerText = doc.name;
+
+
       document.getElementById('doctorAvatar').innerText = initials;
       document.getElementById('doctorPogiId').innerText = doc.pogiId;
       document.getElementById('doctorName').innerText = doc.name;
@@ -1125,24 +1156,40 @@
         }
       }
 
-      // Update Action Buttons Container (Verifikasi Kredit / Status Terverifikasi)
-      const actionContainer = document.getElementById('doctorActionButtonsContainer');
+      // Update Action Buttons Container (Verifikasi Kredit / Status Terverifikasi / RBAC Mode)
+      const actionContainer = document.getElementById("doctorActionButtonsContainer");
       if (actionContainer) {
-        const pending = doc.pendingCredits || 0;
-        if (pending > 0 || !isComplete) {
+        if (currentUser && currentUser.role === "ADMIN_CABANG") {
           actionContainer.innerHTML = `
-            <button type="button" onclick="approveDoctorCredits()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="Klik untuk memvalidasi dan menyetujui pengajuan kredit pending dokter ini">
-              <span class="material-symbols-outlined text-base">verified</span>
-              <span>Verifikasi Kredit (+${(pending > 0 ? pending : 4.5).toFixed(1)} SKP)</span>
-            </button>
+            <span class="px-3.5 py-2 rounded-xl bg-sky-50 text-sky-800 border border-sky-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+              <span class="material-symbols-outlined text-base text-sky-600">hourglass_top</span>
+              <span>Menunggu Verifikasi Tim Data Pusat</span>
+            </span>
+          `;
+        } else if (currentUser && currentUser.role === "VIEWER_POGI") {
+          actionContainer.innerHTML = `
+            <span class="px-3.5 py-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+              <span class="material-symbols-outlined text-base text-amber-600">visibility</span>
+              <span>Mode Akses Read-Only</span>
+            </span>
           `;
         } else {
-          actionContainer.innerHTML = `
-            <div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#006948] font-extrabold text-xs flex items-center gap-1.5 shadow-2xs">
-              <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
-              <span>Seluruh Kredit Terverifikasi</span>
-            </div>
-          `;
+          const pending = doc.pendingCredits || 0;
+          if (pending > 0 || !isComplete) {
+            actionContainer.innerHTML = `
+              <button type="button" onclick="approveDoctorCredits()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer rbac-operational" title="Klik untuk memvalidasi dan menyetujui pengajuan kredit pending dokter ini">
+                <span class="material-symbols-outlined text-base">verified</span>
+                <span>Verifikasi Kredit (+${(pending > 0 ? pending : 4.5).toFixed(1)} SKP)</span>
+              </button>
+            `;
+          } else {
+            actionContainer.innerHTML = `
+              <div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#006948] font-extrabold text-xs flex items-center gap-1.5 shadow-2xs">
+                <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
+                <span>Seluruh Kredit Terverifikasi</span>
+              </div>
+            `;
+          }
         }
       }
 
@@ -1374,7 +1421,7 @@
                   </p>
                 </div>
               </div>
-              <button type="button" onclick="openUploadDoctorDocModal()" class="px-3 py-1.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shrink-0 transition flex items-center gap-1 shadow-xs">
+              <button type="button" onclick="openUploadDoctorDocModal()" class="px-3 py-1.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shrink-0 transition flex items-center gap-1 shadow-xs rbac-write">
                 <span class="material-symbols-outlined text-sm">add_circle</span>
                 <span>Unggah Berkas Susulan</span>
               </button>
@@ -1410,7 +1457,7 @@
               <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${m.statusBadgeClass}">${m.status}</span></td>
               <td class="py-3 px-3 text-slate-600 max-w-xs truncate">${m.reason}</td>
               <td class="py-3 px-3 text-center">
-                <button type="button" onclick="openUploadDoctorDocModal()" class="px-2.5 py-1 rounded bg-[#006948] hover:bg-[#005439] text-white font-bold text-[11px] transition inline-flex items-center gap-1 shadow-2xs">
+                <button type="button" onclick="openUploadDoctorDocModal()" class="px-2.5 py-1 rounded bg-[#006948] hover:bg-[#005439] text-white font-bold text-[11px] transition inline-flex items-center gap-1 shadow-2xs rbac-write">
                   <span class="material-symbols-outlined text-xs">upload</span> Unggah Berkas
                 </button>
               </td>

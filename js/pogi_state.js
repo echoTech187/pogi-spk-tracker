@@ -10508,18 +10508,16 @@ const PogiStore = {
         } catch (e) {}
       }
     }
-    return {
-      id: 'usr-super',
-      name: 'Super Admin',
-      email: 'super@example.com',
-      role: 'SUPER_ADMIN',
-      roleLabel: 'Super Admin (Energi Cipta)',
-      branch: 'Nasional',
-      canWrite: true
-    };
+    const defaultUser = this.getAllRoles()[0];
+    this._currentUser = defaultUser;
+    return defaultUser;
   },
 
   setCurrentUser(user) {
+    if (typeof user === 'string') {
+      const found = this.getAllRoles().find(r => r.role === user);
+      if (found) user = found;
+    }
     this._currentUser = user;
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('pogi_current_user', JSON.stringify(user));
@@ -10531,63 +10529,130 @@ const PogiStore = {
     return [
       {
         role: 'SUPER_ADMIN',
+        id: 'usr-super',
         name: 'Super Admin',
+        displayName: 'Super Admin',
         email: 'super@example.com',
         roleLabel: 'Super Admin (Energi Cipta)',
+        shortRole: 'SUPER ADMIN',
         branch: 'Nasional',
+        avatar: 'SA',
+        avatarBg: 'bg-purple-700 text-white',
         badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
-        description: 'Akses penuh nasional: kelola master pengguna, verifikasi, blast WA, & ekspor laporan'
+        description: 'Akses penuh nasional: kelola pengguna sistem, verifikasi kredit, redistribusi beban, & konfigurasi master',
+        canWrite: true
       },
       {
         role: 'ADMIN_OPERASIONAL',
+        id: 'usr-op-01',
         name: 'Siti Rahma, S.Farm',
-        email: 'siti.rahma@energicipta.id',
+        displayName: 'Siti Rahma, S.Farm',
+        email: 'sekretariat.pusat@pogi.or.id',
         roleLabel: 'Admin Operasional (Tim Data PP POGI)',
+        shortRole: 'TIM DATA PUSAT',
         branch: 'Nasional',
+        avatar: 'SR',
+        avatarBg: 'bg-[#006948] text-white',
         badgeClass: 'bg-emerald-100 text-[#006948] border-emerald-200',
-        description: 'Akses operasional: verifikasi kredit SKP, unggah repositori, & sinkronisasi Kemenkes'
+        description: 'Akses operasional nasional: verifikasi kredit SKP, unggah repositori cloud, & SLA Kemenkes',
+        canWrite: true
       },
       {
         role: 'ADMIN_CABANG',
+        id: 'usr-branch-jabar',
         name: 'dr. Firman (Admin Cabang Jabar)',
-        email: 'admin.jabar@pogi.or.id',
+        displayName: 'dr. Firman',
+        email: 'sekretariat.jabar@pogi.or.id',
         roleLabel: 'Admin Cabang (POGI Jawa Barat)',
+        shortRole: 'POGI JAWA BARAT',
         branch: 'Jawa Barat',
+        avatar: 'DF',
+        avatarBg: 'bg-sky-700 text-white',
         badgeClass: 'bg-sky-100 text-sky-800 border-sky-200',
-        description: 'Akses terisolasi: hanya dapat melihat & mengunggah berkas untuk wilayah Jawa Barat'
+        description: 'Akses terisolasi cabang: hanya dapat melihat dokter & mengunggah berkas untuk wilayah Jawa Barat',
+        canWrite: true
       },
       {
         role: 'VIEWER_POGI',
+        id: 'usr-viewer-01',
         name: 'Pengurus Pusat POGI',
+        displayName: 'Pengurus Pusat POGI',
         email: 'pengurus.pusat@pogi.or.id',
-        roleLabel: 'Viewer POGI (Read-Only)',
+        roleLabel: 'Viewer POGI (Read-Only Pusat)',
+        shortRole: 'VIEWER EKSEKUTIF',
         branch: 'Nasional',
+        avatar: 'PP',
+        avatarBg: 'bg-amber-600 text-white',
         badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
-        description: 'Akses pantau laporan & grafik eksekutif (seluruh tombol aksi mutasi dinonaktifkan)'
+        description: 'Akses pantau laporan & grafik eksekutif (seluruh tombol aksi mutasi & pengesahan dinonaktifkan)',
+        canWrite: false
       }
     ];
   },
 
   canPerform(action) {
     const user = this.getCurrentUser();
+    if (!user) return false;
     if (user.role === 'SUPER_ADMIN') return true;
+
     if (user.role === 'ADMIN_OPERASIONAL') {
-      return action !== 'MANAGE_USERS';
+      const forbidden = ['MANAGE_USERS', 'MANAGE_SYSTEM', 'DELETE_DOCTOR'];
+      return !forbidden.includes(action);
     }
+
     if (user.role === 'ADMIN_CABANG') {
-      return ['VIEW_DOCTORS', 'UPLOAD_DOC', 'VIEW_REPORTS'].includes(action);
+      const allowed = [
+        'VIEW_DASHBOARD',
+        'VIEW_DOCTORS',
+        'CREATE_DOCTOR',
+        'UPLOAD_DOC',
+        'SEND_REMINDER',
+        'VIEW_REPORTS',
+        'EXPORT_REPORT'
+      ];
+      return allowed.includes(action);
     }
+
     if (user.role === 'VIEWER_POGI') {
-      return ['VIEW_DASHBOARD', 'VIEW_DOCTORS', 'VIEW_REPORTS', 'EXPORT_REPORT'].includes(action);
+      const allowed = [
+        'VIEW_DASHBOARD',
+        'VIEW_DOCTORS',
+        'VIEW_PROVINCES',
+        'VIEW_EVENTS',
+        'VIEW_ACTIVITY',
+        'VIEW_REPORTS',
+        'EXPORT_REPORT',
+        'VIEW_ADMIN_PERF'
+      ];
+      return allowed.includes(action);
     }
+
     return false;
+  },
+
+  isSuperAdmin() {
+    return this.getCurrentUser().role === 'SUPER_ADMIN';
+  },
+
+  isOperational() {
+    const r = this.getCurrentUser().role;
+    return r === 'SUPER_ADMIN' || r === 'ADMIN_OPERASIONAL';
+  },
+
+  isBranchAdmin() {
+    return this.getCurrentUser().role === 'ADMIN_CABANG';
+  },
+
+  isViewer() {
+    return this.getCurrentUser().role === 'VIEWER_POGI';
   },
 
   getDoctorsForCurrentUser() {
     const user = this.getCurrentUser();
     const all = this.getDoctors();
-    if (user.role === 'ADMIN_CABANG' && user.branch && user.branch !== 'Nasional') {
-      return all.filter(d => d.province && d.province.toLowerCase() === user.branch.toLowerCase());
+    if (user && user.role === 'ADMIN_CABANG' && user.branch && user.branch !== 'Nasional') {
+      const userBranch = user.branch.toLowerCase().trim();
+      return all.filter(d => (d.province && d.province.toLowerCase().trim() === userBranch));
     }
     return all;
   },

@@ -289,11 +289,11 @@
             </p>
           </div>
           <div class="flex items-center gap-2 shrink-0 flex-wrap">
-            <button type="button" onclick="openWaBlastModal()" id="btnWaBlastMassal" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write">
+            <button type="button" onclick="openWaBlastModal()" id="btnWaBlastMassal" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational">
               <span class="material-symbols-outlined text-base">campaign</span>
               <span>Kirim WA Blast Massal</span>
             </button>
-            <button type="button" onclick="openAddDoctorModal()" id="btnAddDoctor" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write">
+            <button type="button" onclick="openAddDoctorModal()" id="btnAddDoctor" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational">
               <span class="material-symbols-outlined text-base">person_add</span>
               <span>Daftarkan Dokter Baru</span>
             </button>
@@ -497,7 +497,7 @@
               <span class="material-symbols-outlined text-xs">visibility</span> Lihat Berkas PDF
             </button>
             <span class="text-slate-300">&bull;</span>
-            <button type="button" onclick="approvePendingCredits()" class="text-[11px] text-emerald-700 font-bold hover:underline flex items-center gap-1">
+            <button type="button" onclick="approvePendingCredits()" class="text-[11px] text-emerald-700 font-bold hover:underline flex items-center gap-1 rbac-operational">
               <span class="material-symbols-outlined text-xs">check_circle</span> Setujui &amp; Tambahkan ke Akumulasi
             </button>
           </div>
@@ -784,7 +784,7 @@ Admin Data PP POGI & PT Energi Cipta
 
         <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
           <button type="button" onclick="closeWaBlastModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">Batal</button>
-          <button type="button" onclick="startWaBlastQueue()" class="px-5 py-2.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white font-extrabold shadow-md transition flex items-center gap-1.5">
+          <button type="button" onclick="startWaBlastQueue()" class="px-5 py-2.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white font-extrabold shadow-md transition flex items-center gap-1.5 rbac-operational">
             <span class="material-symbols-outlined text-base">send</span>
             <span>Mulai Kirim Blast (Message Queue)</span>
           </button>
@@ -1257,6 +1257,19 @@ Admin Data PP POGI & PT Energi Cipta
       let list = (typeof PogiStore !== 'undefined' && PogiStore.getDoctorsForCurrentUser)
         ? PogiStore.getDoctorsForCurrentUser()
         : PogiStore.getDoctors();
+
+      const currentUser = (typeof PogiStore !== 'undefined') ? PogiStore.getCurrentUser() : null;
+      if (currentUser && currentUser.role === 'ADMIN_CABANG' && currentUser.branch && currentUser.branch !== 'Nasional') {
+        const provFilter = document.getElementById('provinceFilter');
+        if (provFilter) {
+          provFilter.value = currentUser.branch;
+          provFilter.setAttribute('disabled', 'true');
+        }
+        const headCount = document.getElementById('headingTotalCount');
+        if (headCount) {
+          headCount.innerText = `${list.length} Terdaftar (Cabang ${currentUser.branch})`;
+        }
+      }
 
       // Filter by Kuartal & Tahun (Periode)
       if ((qVal && qVal !== 'ALL') || (yVal && yVal !== 'ALL')) {

@@ -393,7 +393,7 @@
               <div>Menampilkan <span id="manageDoctorCounter" class="font-bold text-slate-900">0</span> dokter dari total pangkalan data</div>
               <div class="flex items-center gap-3">
                 <button type="button" onclick="resetManageDoctorFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
+                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
                   <span class="material-symbols-outlined text-sm">person_add</span>
                   <span>Tambah Dokter</span>
                 </button>
@@ -517,7 +517,7 @@
               <div>Menampilkan <span id="manageInstCounter" class="font-bold text-slate-900">0</span> faskes jejaring</div>
               <div class="flex items-center gap-3">
                 <button type="button" onclick="resetManageInstFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
+                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
                   <span class="material-symbols-outlined text-sm">domain_add</span>
                   <span>Tambah Institusi</span>
                 </button>
@@ -595,7 +595,7 @@
               <div>Menampilkan <span id="manageEventCounter" class="font-bold text-slate-900">0</span> event SKP terdaftar</div>
               <div class="flex items-center gap-3">
                 <button type="button" onclick="resetManageEventFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
+                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
                   <span class="material-symbols-outlined text-sm">add_circle</span>
                   <span>Tambah Event SKP</span>
                 </button>
@@ -671,7 +671,7 @@
               <div>Menampilkan <span id="manageCatCounter" class="font-bold text-slate-900">0</span> kategori terverifikasi</div>
               <div class="flex items-center gap-3">
                 <button type="button" onclick="resetManageCatFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
+                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
                   <span class="material-symbols-outlined text-sm">category</span>
                   <span>Tambah Kategori</span>
                 </button>
@@ -746,7 +746,7 @@
               <div>Menampilkan <span id="manageUserCounter" class="font-bold text-slate-900">0</span> akun pengelola</div>
               <div class="flex items-center gap-3">
                 <button type="button" onclick="resetManageUserFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
+                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
                   <span class="material-symbols-outlined text-sm">manage_accounts</span>
                   <span>Tambah Pengguna</span>
                 </button>
@@ -1219,8 +1219,8 @@
                   <button type="button" onclick="openManageDetailModal('doctor', '${d.id}')" class="flex-1 py-1 px-2.5 rounded-lg bg-emerald-50 text-[#006948] text-xs font-bold transition flex items-center justify-center gap-1">
                     <span>Rincian</span>
                   </button>
-                  <button type="button" onclick="openManageEditModal('doctor', '${d.id}')" class="py-1 px-2.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition">Edit</button>
-                  <button type="button" onclick="deleteManageItem('doctor', '${d.id}')" class="py-1 px-2 rounded-lg text-red-600 hover:bg-red-50 text-xs font-bold transition">Hapus</button>
+                  <button type="button" onclick="openManageEditModal('doctor', '${d.id}')" class="py-1 px-2.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
+                  <button type="button" onclick="deleteManageItem('doctor', '${d.id}')" class="py-1 px-2 rounded-lg text-red-600 hover:bg-red-50 text-xs font-bold transition rbac-operational">Hapus</button>
                 </div>
               </div>
             `;
@@ -1353,7 +1353,7 @@
                   <span>Rincian</span>
                   <span class="material-symbols-outlined text-xs">arrow_forward</span>
                 </button>
-                <button type="button" onclick="openManageEditModal('institution', '${inst.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition">Edit</button>
+                <button type="button" onclick="openManageEditModal('institution', '${inst.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
               </div>
             </div>
           `).join('');
@@ -1491,7 +1491,7 @@
                     <span>Rincian</span>
                     <span class="material-symbols-outlined text-xs">arrow_forward</span>
                   </button>
-                  <button type="button" onclick="openManageEditModal('event', '${e.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition">Edit</button>
+                  <button type="button" onclick="openManageEditModal('event', '${e.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
                 </div>
               </div>
             `;
@@ -1609,7 +1609,7 @@
                   <span>Rincian</span>
                   <span class="material-symbols-outlined text-xs">arrow_forward</span>
                 </button>
-                <button type="button" onclick="openManageEditModal('category', '${cat.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition">Edit</button>
+                <button type="button" onclick="openManageEditModal('category', '${cat.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
               </div>
             </div>
           `).join('');
@@ -1730,7 +1730,7 @@
                   <span>Rincian</span>
                   <span class="material-symbols-outlined text-xs">arrow_forward</span>
                 </button>
-                <button type="button" onclick="openManageEditModal('user', '${usr.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition">Edit</button>
+                <button type="button" onclick="openManageEditModal('user', '${usr.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
               </div>
             </div>
           `).join('');

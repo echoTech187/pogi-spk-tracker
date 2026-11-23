@@ -477,7 +477,7 @@
                   <span class="material-symbols-outlined text-base text-slate-400">trending_down</span>
                   <span class="font-bold text-slate-600">Lowest</span>
                 </div>
-                <button type="button" onclick="openFollowUpModal('lowest')" class="text-[11px] text-red-600 hover:text-red-700 font-bold flex items-center gap-1 hover:underline">
+                <button type="button" onclick="openFollowUpModal('lowest')" class="text-[11px] text-red-600 hover:text-red-700 font-bold flex items-center gap-1 hover:underline rbac-operational">
                   <span class="material-symbols-outlined text-xs">notifications_active</span>
                   <span>Follow-Up 5 Terendah</span>
                 </button>
@@ -781,7 +781,7 @@
 
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
         <button type="button" onclick="closeFollowUpModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Batal</button>
-        <button type="button" onclick="sendFollowUpAction()" class="px-4 py-2.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1.5">
+        <button type="button" onclick="sendFollowUpAction()" class="px-4 py-2.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1.5 rbac-operational">
           <span class="material-symbols-outlined text-sm">send</span>
           <span>Kirimkan Notifikasi FU Sekarang</span>
         </button>
@@ -802,6 +802,19 @@
       initRecentActivities();
       initTopProvincesList();
       initInteractiveIndonesiaMap();
+
+      const currentUser = (typeof PogiStore !== 'undefined') ? PogiStore.getCurrentUser() : null;
+      if (currentUser && currentUser.role === 'ADMIN_CABANG' && currentUser.branch && currentUser.branch !== 'Nasional') {
+        const bLow = currentUser.branch.toLowerCase();
+        let sKey = 'jabar';
+        if (bLow.includes('dki') || bLow.includes('jakarta')) sKey = 'dki';
+        else if (bLow.includes('timur')) sKey = 'jatim';
+        if (typeof setOrgScope === 'function') {
+          setTimeout(() => setOrgScope(sKey, 'POGI Cabang ' + currentUser.branch), 100);
+        }
+        const orgBtn = document.getElementById('orgScopeBtn');
+        if (orgBtn) orgBtn.setAttribute('disabled', 'true');
+      }
     });
 
     function initRecentActivities() {
