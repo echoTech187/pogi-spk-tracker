@@ -1074,32 +1074,13 @@
     function renderDoctorDetails(doc) {
       if (!doc) return;
 
+      // Notice jika dokter lintas cabang, tapi tetap izinkan Admin Cabang melihat rincian & verifikasi
       const currentUser = (typeof PogiStore !== 'undefined') ? PogiStore.getCurrentUser() : null;
       if (currentUser && currentUser.role === 'ADMIN_CABANG' && currentUser.branch && currentUser.branch !== 'Nasional') {
         const userBranch = currentUser.branch.toLowerCase().trim();
         const docBranch = (doc.province || '').toLowerCase().trim();
         if (docBranch && docBranch !== userBranch) {
-          const mainEl = document.querySelector('main');
-          if (mainEl) {
-            mainEl.innerHTML = `
-              <div class="p-8 max-w-xl mx-auto my-12 bg-white rounded-3xl border border-rose-200 shadow-xl text-center space-y-4">
-                <div class="w-16 h-16 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
-                  <span class="material-symbols-outlined text-3xl">block</span>
-                </div>
-                <h2 class="text-lg font-black text-slate-900">Akses Terbatas Cabang (RBAC)</h2>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                  Anda login sebagai <strong>${currentUser.roleLabel}</strong>. Dokter <strong>${doc.name}</strong> terdaftar di <strong>Cabang ${doc.province}</strong>. Sesuai aturan isolasi data cabang (RULES.md Bab 6.2), Anda hanya memiliki wewenang untuk melihat data dokter di wilayah <strong>${currentUser.branch}</strong>.
-                </p>
-                <div class="pt-2">
-                  <a href="doctors.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#006948] text-white text-xs font-bold hover:bg-[#005439] transition">
-                    <span class="material-symbols-outlined text-sm">arrow_back</span>
-                    <span>Kembali ke Daftar Dokter Cabang ${currentUser.branch}</span>
-                  </a>
-                </div>
-              </div>
-            `;
-          }
-          return;
+          showToast(`Dokter terdaftar di Cabang ${doc.province}. Akun Anda: Admin Cabang ${currentUser.branch}.`, 'info');
         }
       }
 

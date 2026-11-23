@@ -466,34 +466,20 @@ function switchUserRole(roleKey) {
   showToast(`Peran beralih ke: ${target.roleLabel}`, 'info');
 
   const currentPath = window.location.pathname.toLowerCase();
-  if (currentPath.includes('admin-performance') && target.role === 'ADMIN_CABANG') {
+  // Verifikator tidak memiliki akses ke Admin Performance dan Master Data Manage
+  if (currentPath.includes('admin-performance') && target.role === 'VERIFIKATOR') {
     window.location.href = 'dashboard.html';
     return;
   }
-  if (currentPath.includes('manage.html') && target.role === 'ADMIN_CABANG') {
+  if (currentPath.includes('manage.html') && target.role === 'VERIFIKATOR') {
     window.location.href = 'dashboard.html';
     return;
   }
 
-  if (currentPath.includes('doctor-detail.html') || currentPath.includes('dashboard.html') || currentPath.includes('reports.html')) {
-    setTimeout(() => window.location.reload(), 250);
-    return;
-  }
-
-  if (typeof applyDoctorFilters === 'function') {
-    const provSelect = document.getElementById('provinceFilter') || document.getElementById('filterProvince');
-    if (provSelect) {
-      if (target.role === 'ADMIN_CABANG' && target.branch) {
-        provSelect.value = target.branch;
-        provSelect.setAttribute('disabled', 'true');
-      } else {
-        provSelect.removeAttribute('disabled');
-      }
-    }
-    applyDoctorFilters();
-  }
-
-  applyRbacEnforcement();
+  // Reload halaman seketika agar seluruh state tabel, tombol, dan guard langsung ter-render sesuai peran baru
+  setTimeout(() => {
+    window.location.reload();
+  }, 100);
 }
 
 function applyRbacEnforcement() {
@@ -533,11 +519,11 @@ function applyRbacEnforcement() {
       }
     }
 
-    // Hide Manage section heading for Branch Admin
+    // Sembunyikan heading Pengaturan Data di sidebar untuk Verifikator (Verifikator fokus review berkas)
     const allDivs = aside.querySelectorAll('div');
     allDivs.forEach(div => {
       if (div.children.length === 0 && div.innerText && div.innerText.trim().startsWith('PENGATURAN DATA')) {
-        div.style.display = (roleKey === 'ADMIN_CABANG') ? 'none' : 'block';
+        div.style.display = (roleKey === 'VERIFIKATOR') ? 'none' : 'block';
       }
     });
   }
@@ -572,21 +558,21 @@ function applyRbacEnforcement() {
   }
 
   // 5. Sidebar Navigation Item Visibility
-  // Admin Performance link
+  // Admin Performance link: Admin Cabang & Super Admin BISA akses, Verifikator DISEMBUNYIKAN
   document.querySelectorAll('a[href="admin-performance.html"]').forEach(link => {
-    link.style.display = (roleKey === 'ADMIN_CABANG') ? 'none' : 'flex';
+    link.style.display = (roleKey === 'VERIFIKATOR') ? 'none' : 'flex';
   });
 
-  // Manage Data links
+  // Manage Data links: Admin Cabang & Super Admin BISA akses, Verifikator DISEMBUNYIKAN
   document.querySelectorAll('a[href*="manage.html"]').forEach(link => {
-    link.style.display = (roleKey === 'ADMIN_CABANG') ? 'none' : 'flex';
+    link.style.display = (roleKey === 'VERIFIKATOR') ? 'none' : 'flex';
   });
 
   // 6. Page Guarding for Restricted Pages
   const currentPath = window.location.pathname.toLowerCase();
 
-  // Guard: admin-performance.html for ADMIN_CABANG
-  if (currentPath.includes('admin-performance') && roleKey === 'ADMIN_CABANG') {
+  // Guard: admin-performance.html untuk VERIFIKATOR
+  if (currentPath.includes('admin-performance') && roleKey === 'VERIFIKATOR') {
     const mainEl = document.querySelector('main');
     if (mainEl) {
       mainEl.innerHTML = `
@@ -596,32 +582,7 @@ function applyRbacEnforcement() {
           </div>
           <h2 class="text-lg font-black text-slate-900">Akses Modul Terbatas (RBAC)</h2>
           <p class="text-xs text-slate-600 leading-relaxed">
-            Modul <strong>Admin Performance &amp; SLA Tracker</strong> adalah instrumen evaluasi internal untuk Tim Operasional dan Pengurus Pusat POGI Nasional. Akun <strong>Admin Cabang (${user.branch || 'Daerah'})</strong> tidak memiliki wewenang untuk mengakses halaman ini.
-          </p>
-          <div class="pt-2">
-            <a href="dashboard.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#006948] text-white text-xs font-bold hover:bg-[#005439] transition">
-              <span class="material-symbols-outlined text-sm">dashboard</span>
-              <span>Kembali ke Dashboard Cabang</span>
-            </a>
-          </div>
-        </div>
-      `;
-    }
-    return;
-  }
-
-  // Guard: manage.html for ADMIN_CABANG
-  if (currentPath.includes('manage.html') && roleKey === 'ADMIN_CABANG') {
-    const mainEl = document.querySelector('main');
-    if (mainEl) {
-      mainEl.innerHTML = `
-        <div class="p-8 max-w-xl mx-auto my-12 bg-white rounded-3xl border border-rose-200 shadow-xl text-center space-y-4">
-          <div class="w-16 h-16 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
-            <span class="material-symbols-outlined text-3xl">admin_panel_settings</span>
-          </div>
-          <h2 class="text-lg font-black text-slate-900">Akses Pengaturan Terbatas (RBAC)</h2>
-          <p class="text-xs text-slate-600 leading-relaxed">
-            Modul <strong>Pengaturan Data (Manage)</strong> hanya dapat diakses oleh Administrator Nasional (Super Admin &amp; Verifikator Pusat).
+            Modul <strong>Admin Performance &amp; SLA Tracker</strong> adalah instrumen evaluasi untuk Administrator. Akun <strong>Verifikator</strong> dikhususkan untuk review &amp; unggah berkas fisik SKP.
           </p>
           <div class="pt-2">
             <a href="dashboard.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#006948] text-white text-xs font-bold hover:bg-[#005439] transition">
@@ -635,8 +596,33 @@ function applyRbacEnforcement() {
     return;
   }
 
-  // Guard: manage.html Tab User for VERIFIKATOR (Only Super Admin can manage users)
+  // Guard: manage.html untuk VERIFIKATOR
   if (currentPath.includes('manage.html') && roleKey === 'VERIFIKATOR') {
+    const mainEl = document.querySelector('main');
+    if (mainEl) {
+      mainEl.innerHTML = `
+        <div class="p-8 max-w-xl mx-auto my-12 bg-white rounded-3xl border border-rose-200 shadow-xl text-center space-y-4">
+          <div class="w-16 h-16 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+            <span class="material-symbols-outlined text-3xl">admin_panel_settings</span>
+          </div>
+          <h2 class="text-lg font-black text-slate-900">Akses Pengaturan Terbatas (RBAC)</h2>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Modul <strong>Pengaturan Data (Manage)</strong> hanya dapat diakses oleh Administrator (Super Admin &amp; Admin Cabang).
+          </p>
+          <div class="pt-2">
+            <a href="dashboard.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#006948] text-white text-xs font-bold hover:bg-[#005439] transition">
+              <span class="material-symbols-outlined text-sm">dashboard</span>
+              <span>Kembali ke Dashboard</span>
+            </a>
+          </div>
+        </div>
+      `;
+    }
+    return;
+  }
+
+  // Guard: manage.html Tab User untuk ADMIN_CABANG (Tab User eksklusif Super Admin)
+  if (currentPath.includes('manage.html') && roleKey === 'ADMIN_CABANG') {
     const tabUserBtn = document.getElementById('tab-btn-user');
     const sideUserBtn = document.getElementById('side-nav-user');
     if (tabUserBtn) tabUserBtn.style.display = 'none';
