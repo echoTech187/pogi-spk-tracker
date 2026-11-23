@@ -52,36 +52,30 @@
           </button>
         </div>
 
-        <!-- Quick 1-Click Login Shortcuts (4 Peran RBAC Lengkap) -->
+        <!-- Quick 1-Click Login Shortcuts (3 Role Resmi Sistem) -->
         <div class="space-y-2 p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200/80 text-[11px]">
           <div class="text-[10px] font-extrabold text-[#006948] uppercase tracking-wider flex items-center justify-between">
             <span>Akses Cepat Pengujian RBAC:</span>
-            <span class="text-[9px] bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded font-bold">4 Role Sesuai RULES.md</span>
+            <span class="text-[9px] bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded font-bold">3 Role Utama</span>
           </div>
-          <div class="grid grid-cols-2 gap-2 pt-0.5">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-0.5">
             <button type="button" onclick="fillQuickLogin('super_admin')" class="p-2.5 rounded-xl bg-white hover:bg-purple-50 border border-purple-200 hover:border-purple-300 text-left transition shadow-2xs">
               <div class="font-bold text-purple-900 leading-tight flex items-center gap-1">
-                <span>👑 1. Super Admin</span>
+                <span>👑 Super Admin</span>
               </div>
-              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">Energi Cipta (Full Akses Master)</div>
+              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">Full Akses &amp; Kelola Pengguna</div>
             </button>
-            <button type="button" onclick="fillQuickLogin('admin_pusat')" class="p-2.5 rounded-xl bg-white hover:bg-emerald-50 border border-emerald-300 text-left transition shadow-2xs">
+            <button type="button" onclick="fillQuickLogin('verifikator')" class="p-2.5 rounded-xl bg-white hover:bg-emerald-50 border border-emerald-300 text-left transition shadow-2xs">
               <div class="font-bold text-[#006948] leading-tight flex items-center gap-1">
-                <span>⚡ 2. Admin Pusat</span>
+                <span>⚡ Verifikator</span>
               </div>
-              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">Siti Rahma (Verifikator SKP)</div>
+              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">Siti Rahma (Verifikasi SKP)</div>
             </button>
-            <button type="button" onclick="fillQuickLogin('cabang_jabar')" class="p-2.5 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-left transition shadow-2xs">
+            <button type="button" onclick="fillQuickLogin('admin_cabang')" class="p-2.5 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-left transition shadow-2xs">
               <div class="font-bold text-sky-800 leading-tight flex items-center gap-1">
-                <span>🏢 3. Admin Jabar</span>
+                <span>🏢 Admin Cabang</span>
               </div>
-              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">dr. Firman (Terisolasi Cabang)</div>
-            </button>
-            <button type="button" onclick="fillQuickLogin('viewer_pogi')" class="p-2.5 rounded-xl bg-white hover:bg-amber-50 border border-amber-300 text-left transition shadow-2xs">
-              <div class="font-bold text-amber-800 leading-tight flex items-center gap-1">
-                <span>👁️ 4. Viewer POGI</span>
-              </div>
-              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">Pengurus Pusat (Read-Only)</div>
+              <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">dr. Firman (Cabang Jabar)</div>
             </button>
           </div>
         </div>
@@ -223,7 +217,7 @@
         tabAdmin.className = 'py-2.5 px-2 rounded-lg bg-white text-slate-900 shadow-xs transition';
         tabBranch.className = 'py-2.5 px-2 rounded-lg text-slate-500 hover:text-slate-900 transition';
         inputEmail.value = 'sekretariat.pusat@pogi.or.id';
-        currentSelectedRoleKey = 'ADMIN_OPERASIONAL';
+        currentSelectedRoleKey = 'VERIFIKATOR';
       } else {
         tabBranch.className = 'py-2.5 px-2 rounded-lg bg-white text-slate-900 shadow-xs transition';
         tabAdmin.className = 'py-2.5 px-2 rounded-lg text-slate-500 hover:text-slate-900 transition';
@@ -240,21 +234,16 @@
         email.value = 'super@example.com';
         pass.value = 'Super2026!Master';
         currentSelectedRoleKey = 'SUPER_ADMIN';
-      } else if (type === 'admin_pusat') {
+      } else if (type === 'verifikator' || type === 'admin_pusat') {
         switchLoginRole('admin');
         email.value = 'sekretariat.pusat@pogi.or.id';
         pass.value = 'POGI2026!Nasional';
-        currentSelectedRoleKey = 'ADMIN_OPERASIONAL';
-      } else if (type === 'cabang_jabar') {
+        currentSelectedRoleKey = 'VERIFIKATOR';
+      } else if (type === 'admin_cabang' || type === 'cabang_jabar') {
         switchLoginRole('branch');
         email.value = 'sekretariat.jabar@pogi.or.id';
         pass.value = 'POGIJabar2026!';
         currentSelectedRoleKey = 'ADMIN_CABANG';
-      } else if (type === 'viewer_pogi') {
-        switchLoginRole('admin');
-        email.value = 'pengurus.pusat@pogi.or.id';
-        pass.value = 'ViewerPOGI2026!';
-        currentSelectedRoleKey = 'VIEWER_POGI';
       }
       showToast('Kredensial peran ' + type.replace('_', ' ').toUpperCase() + ' terisi.', 'info');
     }
@@ -266,16 +255,14 @@
 
     function handleLogin() {
       const email = (document.getElementById('inputEmail')?.value || '').toLowerCase().trim();
-      let targetRole = 'ADMIN_OPERASIONAL';
+      let targetRole = 'VERIFIKATOR';
 
       if (email.includes('super') || currentSelectedRoleKey === 'SUPER_ADMIN') {
         targetRole = 'SUPER_ADMIN';
       } else if (email.includes('jabar') || currentSelectedRoleKey === 'ADMIN_CABANG') {
         targetRole = 'ADMIN_CABANG';
-      } else if (email.includes('viewer') || email.includes('pengurus.pusat') || currentSelectedRoleKey === 'VIEWER_POGI') {
-        targetRole = 'VIEWER_POGI';
       } else {
-        targetRole = 'ADMIN_OPERASIONAL';
+        targetRole = 'VERIFIKATOR';
       }
 
       if (typeof PogiStore !== 'undefined') {

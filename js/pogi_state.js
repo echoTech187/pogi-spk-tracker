@@ -9447,18 +9447,18 @@ const INITIAL_CATEGORIES = [
   { id: 'cat-11', name: 'Penyuluhan Kesehatan Masyarakat', type: 'Pengabdian', eventsCount: 3 }
 ];
 
-// Master Users (From Screenshot WhatsApp Image 2026-11-19 at 09.13.57.jpeg)
+// Master Users (3 Role Resmi: Super Admin, Verifikator, Admin Cabang)
 const INITIAL_USERS = [
-  { id: 'usr-01', name: 'Rina Kartika', email: 'user@example.com', role: 'User', created: '18 Nov 2026' },
-  { id: 'usr-02', name: 'Dimas Saputra', email: 'user2@example.com', role: 'User', created: '18 Nov 2026' },
-  { id: 'usr-03', name: 'Wahyu Setiawan', email: 'user3@example.com', role: 'User', created: '18 Nov 2026' },
-  { id: 'usr-04', name: 'Melati Sihombing', email: 'user4@example.com', role: 'User', created: '18 Nov 2026' },
-  { id: 'usr-05', name: 'Fikri Ramadhan', email: 'user5@example.com', role: 'User', created: '18 Nov 2026' },
-  { id: 'usr-06', name: 'Ayu Lestari', email: 'user6@example.com', role: 'User', created: '18 Nov 2026' },
-  { id: 'usr-07', name: 'Bagus Pranoto', email: 'user7@example.com', role: 'User', created: '18 Nov 2026' },
-  { id: 'usr-08', name: 'Citra Maharani', email: 'user8@example.com', role: 'User', created: '18 Nov 2026' },
-  { id: 'usr-09', name: 'Dodi Firmansyah', email: 'user9@example.com', role: 'User', created: '18 Nov 2026' },
-  { id: 'usr-10', name: 'Eka Putri', email: 'user10@example.com', role: 'User', created: '18 Nov 2026' }
+  { id: 'usr-01', name: 'Rina Kartika', email: 'user@example.com', role: 'Verifikator', created: '18 Nov 2026' },
+  { id: 'usr-02', name: 'Dimas Saputra', email: 'user2@example.com', role: 'Verifikator', created: '18 Nov 2026' },
+  { id: 'usr-03', name: 'Wahyu Setiawan', email: 'user3@example.com', role: 'Verifikator', created: '18 Nov 2026' },
+  { id: 'usr-04', name: 'Melati Sihombing', email: 'user4@example.com', role: 'Admin Cabang', created: '18 Nov 2026' },
+  { id: 'usr-05', name: 'Fikri Ramadhan', email: 'user5@example.com', role: 'Verifikator', created: '18 Nov 2026' },
+  { id: 'usr-06', name: 'Ayu Lestari', email: 'user6@example.com', role: 'Admin Cabang', created: '18 Nov 2026' },
+  { id: 'usr-07', name: 'Bagus Pranoto', email: 'user7@example.com', role: 'Verifikator', created: '18 Nov 2026' },
+  { id: 'usr-08', name: 'Citra Maharani', email: 'user8@example.com', role: 'Admin Cabang', created: '18 Nov 2026' },
+  { id: 'usr-09', name: 'Dodi Firmansyah', email: 'user9@example.com', role: 'Super Admin', created: '18 Nov 2026' },
+  { id: 'usr-10', name: 'Eka Putri', email: 'user10@example.com', role: 'Verifikator', created: '18 Nov 2026' }
 ];
 
 const INITIAL_ACTIVITIES = [
@@ -10272,11 +10272,33 @@ const PogiStore = {
   },
 
   getUsers() {
+    let users = INITIAL_USERS;
     if (typeof localStorage !== 'undefined') {
       const data = localStorage.getItem('pogi_users');
-      return data ? JSON.parse(data) : INITIAL_USERS;
+      if (data) {
+        try {
+          users = JSON.parse(data);
+        } catch (e) {
+          users = INITIAL_USERS;
+        }
+      }
     }
-    return INITIAL_USERS;
+    // Normalisasi role lama 'User' ke 3 role resmi (Super Admin, Verifikator, Admin Cabang)
+    const validRoles = ['Super Admin', 'Admin Cabang', 'Verifikator'];
+    let changed = false;
+    users = users.map((u, idx) => {
+      if (!validRoles.includes(u.role)) {
+        changed = true;
+        if (idx === 8) u.role = 'Super Admin';
+        else if (idx % 2 === 1) u.role = 'Admin Cabang';
+        else u.role = 'Verifikator';
+      }
+      return u;
+    });
+    if (changed && typeof localStorage !== 'undefined') {
+      localStorage.setItem('pogi_users', JSON.stringify(users));
+    }
+    return users;
   },
 
   saveUsers(list) {
@@ -10503,7 +10525,11 @@ const PogiStore = {
       const saved = localStorage.getItem('pogi_current_user');
       if (saved) {
         try {
-          this._currentUser = JSON.parse(saved);
+          const parsed = JSON.parse(saved);
+          // Migrasi jika ada session role lama
+          if (parsed.role === 'ADMIN_OPERASIONAL') parsed.role = 'VERIFIKATOR';
+          if (parsed.role === 'VIEWER_POGI') parsed.role = 'VERIFIKATOR';
+          this._currentUser = parsed;
           return this._currentUser;
         } catch (e) {}
       }
@@ -10515,7 +10541,14 @@ const PogiStore = {
 
   setCurrentUser(user) {
     if (typeof user === 'string') {
-      const found = this.getAllRoles().find(r => r.role === user);
+      const search = user.toUpperCase().replace(/\s+/g, '_');
+      const found = this.getAllRoles().find(r => 
+        r.role === user || 
+        r.role === search || 
+        r.roleLabel.toLowerCase() === user.toLowerCase() ||
+        (search === 'ADMIN_OPERASIONAL' && r.role === 'VERIFIKATOR') ||
+        (search === 'VIEWER_POGI' && r.role === 'VERIFIKATOR')
+      );
       if (found) user = found;
     }
     this._currentUser = user;
@@ -10533,28 +10566,28 @@ const PogiStore = {
         name: 'Super Admin',
         displayName: 'Super Admin',
         email: 'super@example.com',
-        roleLabel: 'Super Admin (Energi Cipta)',
+        roleLabel: 'Super Admin',
         shortRole: 'SUPER ADMIN',
         branch: 'Nasional',
         avatar: 'SA',
         avatarBg: 'bg-purple-700 text-white',
         badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
-        description: 'Akses penuh nasional: kelola pengguna sistem, verifikasi kredit, redistribusi beban, & konfigurasi master',
+        description: 'Akses penuh nasional: kelola pengguna sistem, seluruh master data, verifikasi kredit, redistribusi beban, & konfigurasi',
         canWrite: true
       },
       {
-        role: 'ADMIN_OPERASIONAL',
-        id: 'usr-op-01',
+        role: 'VERIFIKATOR',
+        id: 'usr-verifikator',
         name: 'Siti Rahma, S.Farm',
         displayName: 'Siti Rahma, S.Farm',
         email: 'sekretariat.pusat@pogi.or.id',
-        roleLabel: 'Admin Operasional (Tim Data PP POGI)',
-        shortRole: 'TIM DATA PUSAT',
+        roleLabel: 'Verifikator',
+        shortRole: 'VERIFIKATOR',
         branch: 'Nasional',
         avatar: 'SR',
         avatarBg: 'bg-[#006948] text-white',
         badgeClass: 'bg-emerald-100 text-[#006948] border-emerald-200',
-        description: 'Akses operasional nasional: verifikasi kredit SKP, unggah repositori cloud, & SLA Kemenkes',
+        description: 'Akses verifikator nasional: verifikasi & persetujuan kredit SKP, unggah repositori cloud, monitoring SLA Kemenkes, & WA reminder',
         canWrite: true
       },
       {
@@ -10563,29 +10596,14 @@ const PogiStore = {
         name: 'dr. Firman (Admin Cabang Jabar)',
         displayName: 'dr. Firman',
         email: 'sekretariat.jabar@pogi.or.id',
-        roleLabel: 'Admin Cabang (POGI Jawa Barat)',
-        shortRole: 'POGI JAWA BARAT',
+        roleLabel: 'Admin Cabang',
+        shortRole: 'ADMIN CABANG',
         branch: 'Jawa Barat',
         avatar: 'DF',
         avatarBg: 'bg-sky-700 text-white',
         badgeClass: 'bg-sky-100 text-sky-800 border-sky-200',
-        description: 'Akses terisolasi cabang: hanya dapat melihat dokter & mengunggah berkas untuk wilayah Jawa Barat',
+        description: 'Akses terisolasi cabang: monitoring dokter wilayah kerja cabang, pendaftaran dokter cabang, & unggah berkas fisik SKP',
         canWrite: true
-      },
-      {
-        role: 'VIEWER_POGI',
-        id: 'usr-viewer-01',
-        name: 'Pengurus Pusat POGI',
-        displayName: 'Pengurus Pusat POGI',
-        email: 'pengurus.pusat@pogi.or.id',
-        roleLabel: 'Viewer POGI (Read-Only Pusat)',
-        shortRole: 'VIEWER EKSEKUTIF',
-        branch: 'Nasional',
-        avatar: 'PP',
-        avatarBg: 'bg-amber-600 text-white',
-        badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
-        description: 'Akses pantau laporan & grafik eksekutif (seluruh tombol aksi mutasi & pengesahan dinonaktifkan)',
-        canWrite: false
       }
     ];
   },
@@ -10593,14 +10611,16 @@ const PogiStore = {
   canPerform(action) {
     const user = this.getCurrentUser();
     if (!user) return false;
-    if (user.role === 'SUPER_ADMIN') return true;
+    const role = (user.role || '').toUpperCase();
+    if (role === 'SUPER_ADMIN' || role === 'SUPER ADMIN') return true;
 
-    if (user.role === 'ADMIN_OPERASIONAL') {
-      const forbidden = ['MANAGE_USERS', 'MANAGE_SYSTEM', 'DELETE_DOCTOR'];
+    if (role === 'VERIFIKATOR' || role === 'ADMIN_OPERASIONAL') {
+      // Verifikator: wewenang operasional verifikasi & master katalog, kecuali kelola user dan hapus dokter
+      const forbidden = ['MANAGE_USERS', 'DELETE_DOCTOR'];
       return !forbidden.includes(action);
     }
 
-    if (user.role === 'ADMIN_CABANG') {
+    if (role === 'ADMIN_CABANG' || role === 'ADMIN CABANG') {
       const allowed = [
         'VIEW_DASHBOARD',
         'VIEW_DOCTORS',
@@ -10613,44 +10633,37 @@ const PogiStore = {
       return allowed.includes(action);
     }
 
-    if (user.role === 'VIEWER_POGI') {
-      const allowed = [
-        'VIEW_DASHBOARD',
-        'VIEW_DOCTORS',
-        'VIEW_PROVINCES',
-        'VIEW_EVENTS',
-        'VIEW_ACTIVITY',
-        'VIEW_REPORTS',
-        'EXPORT_REPORT',
-        'VIEW_ADMIN_PERF'
-      ];
-      return allowed.includes(action);
-    }
-
     return false;
   },
 
   isSuperAdmin() {
-    return this.getCurrentUser().role === 'SUPER_ADMIN';
+    const r = (this.getCurrentUser().role || '').toUpperCase();
+    return r === 'SUPER_ADMIN' || r === 'SUPER ADMIN';
+  },
+
+  isVerifikator() {
+    const r = (this.getCurrentUser().role || '').toUpperCase();
+    return r === 'VERIFIKATOR' || r === 'ADMIN_OPERASIONAL';
   },
 
   isOperational() {
-    const r = this.getCurrentUser().role;
-    return r === 'SUPER_ADMIN' || r === 'ADMIN_OPERASIONAL';
+    return this.isSuperAdmin() || this.isVerifikator();
   },
 
   isBranchAdmin() {
-    return this.getCurrentUser().role === 'ADMIN_CABANG';
+    const r = (this.getCurrentUser().role || '').toUpperCase();
+    return r === 'ADMIN_CABANG' || r === 'ADMIN CABANG';
   },
 
   isViewer() {
-    return this.getCurrentUser().role === 'VIEWER_POGI';
+    return false;
   },
 
   getDoctorsForCurrentUser() {
     const user = this.getCurrentUser();
     const all = this.getDoctors();
-    if (user && user.role === 'ADMIN_CABANG' && user.branch && user.branch !== 'Nasional') {
+    const role = (user && user.role) ? user.role.toUpperCase() : '';
+    if ((role === 'ADMIN_CABANG' || role === 'ADMIN CABANG') && user.branch && user.branch !== 'Nasional') {
       const userBranch = user.branch.toLowerCase().trim();
       return all.filter(d => (d.province && d.province.toLowerCase().trim() === userBranch));
     }

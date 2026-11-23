@@ -1676,6 +1676,12 @@
         if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="py-12 text-center text-slate-400 font-medium">Tidak ada pengguna yang cocok dengan filter.</td></tr>';
         if (mobileContainer) mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada data pengguna.</div>';
       } else {
+        const getRoleBadge = (role) => {
+          if (role === 'Super Admin') return '<span class="px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-extrabold text-[10px]">Super Admin</span>';
+          if (role === 'Admin Cabang') return '<span class="px-2.5 py-1 rounded-md bg-sky-50 text-sky-700 border border-sky-200 font-extrabold text-[10px]">Admin Cabang</span>';
+          return '<span class="px-2.5 py-1 rounded-md bg-emerald-50 text-[#006948] border border-emerald-200 font-extrabold text-[10px]">Verifikator</span>';
+        };
+
         // Desktop / Tablet Rows
         if (tbody) {
           tbody.innerHTML = pageUsers.map(usr => `
@@ -1693,7 +1699,7 @@
               </td>
               <td class="py-3 px-4 text-xs text-slate-700 font-mono">${usr.email}</td>
               <td class="py-3 px-4">
-                <span class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 font-bold text-[10px]">${usr.role}</span>
+                ${getRoleBadge(usr.role)}
               </td>
               <td class="py-3 px-4 text-[11px] text-slate-500">${usr.created || PogiStore.formatCurrentDate()}</td>
               <td class="py-3 px-4 text-center">
@@ -1723,7 +1729,7 @@
                     <div class="text-[10px] text-slate-400 font-mono">${usr.email}</div>
                   </div>
                 </div>
-                <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-bold text-[10px]">${usr.role}</span>
+                ${getRoleBadge(usr.role)}
               </div>
               <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2">
                 <button type="button" onclick="openManageDetailModal('user', '${usr.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#006948] text-xs font-bold transition flex items-center justify-center gap-1">

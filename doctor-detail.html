@@ -1159,18 +1159,11 @@
       // Update Action Buttons Container (Verifikasi Kredit / Status Terverifikasi / RBAC Mode)
       const actionContainer = document.getElementById("doctorActionButtonsContainer");
       if (actionContainer) {
-        if (currentUser && currentUser.role === "ADMIN_CABANG") {
+        if (currentUser && (currentUser.role === "ADMIN_CABANG" || currentUser.role === "Admin Cabang")) {
           actionContainer.innerHTML = `
             <span class="px-3.5 py-2 rounded-xl bg-sky-50 text-sky-800 border border-sky-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
               <span class="material-symbols-outlined text-base text-sky-600">hourglass_top</span>
-              <span>Menunggu Verifikasi Tim Data Pusat</span>
-            </span>
-          `;
-        } else if (currentUser && currentUser.role === "VIEWER_POGI") {
-          actionContainer.innerHTML = `
-            <span class="px-3.5 py-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
-              <span class="material-symbols-outlined text-base text-amber-600">visibility</span>
-              <span>Mode Akses Read-Only</span>
+              <span>Menunggu Verifikasi Verifikator Pusat</span>
             </span>
           `;
         } else {
