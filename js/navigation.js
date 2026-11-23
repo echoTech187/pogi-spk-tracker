@@ -671,63 +671,83 @@ function applyRbacEnforcement() {
     const branchLabel = (user && user.branch) ? user.branch : 'Jawa Barat';
     banner.innerHTML = `
       <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-base text-sky-600">domain</span>
-        <span>Mode Akses: <strong>Admin Cabang (${branchLabel})</strong> — Data terisolasi untuk wilayah cabang ${branchLabel}.</span>
+        <span class="material-symbols-outlined text-base text-sky-600">verified_user</span>
+        <span>Mode Akses: <strong>Admin Cabang (${branchLabel})</strong> — Memverifikasi pemenuhan kredit SKP &amp; mengelola data dokter wilayah cabang ${branchLabel}.</span>
       </div>
-      <span class="px-2 py-0.5 rounded-full bg-sky-200 text-sky-900 text-xs font-black uppercase">Cabang ${branchLabel}</span>
+      <span class="px-2 py-0.5 rounded-full bg-sky-200 text-sky-900 text-xs font-black uppercase">Admin Cabang ${branchLabel}</span>
     `;
     banner.classList.remove('hidden');
 
-    // --- ADMIN_CABANG: Hide operational-only buttons (approvals & PIC change), allow upload ---
-    document.querySelectorAll('.rbac-operational').forEach(btn => { btn.style.display = 'none'; });
-    document.querySelectorAll('.rbac-super-only').forEach(btn => { btn.style.display = 'none'; });
-    ['approveDoctorCredits','approvePendingCredits','openChangePicModal','openWorkloadRebalanceModal',
-     'deleteDoctor'].forEach(fn => {
-      document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => { btn.style.display = 'none'; });
+    // --- ADMIN_CABANG: Wewenang Verifikasi & Pengesahan Kredit SKP Wilayah Cabang ---
+    // Tombol Verifikasi & Setujui Kredit AKTIF untuk Admin Cabang
+    ['approveDoctorCredits','approvePendingCredits','openUploadDoctorDocModal'].forEach(fn => {
+      document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => {
+        btn.style.display = '';
+        btn.removeAttribute('disabled');
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+      });
     });
-    // Disable status change selects
+    // Status perubahan siklus AKTIF
     document.querySelectorAll('select[onchange*="handleDocStatusChange"]').forEach(sel => {
-      sel.setAttribute('disabled', 'true');
-      sel.classList.add('opacity-60', 'cursor-not-allowed');
+      sel.removeAttribute('disabled');
+      sel.classList.remove('opacity-60', 'cursor-not-allowed');
     });
-    // Allow upload & doctor registration for branch
+    // Write buttons (add doctor, upload, blast) AKTIF
     document.querySelectorAll('.rbac-write').forEach(btn => {
       btn.style.display = '';
       btn.removeAttribute('disabled');
       btn.classList.remove('opacity-50', 'cursor-not-allowed');
     });
-    ['btnAddDoctor'].forEach(id => {
+    ['btnAddDoctor','btnWaBlastMassal'].forEach(id => {
       const el = document.getElementById(id);
       if (el) { el.style.display = ''; el.removeAttribute('disabled'); }
     });
-    document.querySelectorAll('button[onclick*="openUploadDoctorDocModal"]').forEach(btn => {
-      btn.style.display = '';
-      btn.removeAttribute('disabled');
+    // Sembunyikan tombol Super Admin Only & Rebalance Beban Pusat
+    document.querySelectorAll('.rbac-super-only').forEach(btn => { btn.style.display = 'none'; });
+    ['openChangePicModal','openWorkloadRebalanceModal','deleteDoctor'].forEach(fn => {
+      document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => { btn.style.display = 'none'; });
     });
 
   } else if (roleKey === 'VERIFIKATOR') {
-    if (banner) banner.classList.add('hidden');
-    // --- VERIFIKATOR: Full operational & verification rights, but NOT user management ---
-    document.querySelectorAll('.rbac-write, .rbac-operational').forEach(btn => {
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'rbacNoticeBanner';
+      banner.className = 'w-full bg-amber-50 border-b border-amber-200 py-1.5 px-4 text-xs font-bold text-amber-900 flex items-center justify-between shrink-0 z-30';
+      insertBannerBeforeMain(banner);
+    }
+    banner.innerHTML = `
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-base text-amber-600">upload_file</span>
+        <span>Mode Akses: <strong>Verifikator Berkas</strong> — Bertugas mengunggah &amp; mereview berkas bukti fisik SKP (Pengesahan kredit diverifikasi oleh Admin Cabang).</span>
+      </div>
+      <span class="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 text-xs font-black uppercase">Review Berkas</span>
+    `;
+    banner.classList.remove('hidden');
+
+    // --- VERIFIKATOR: Hanya Unggah & Review Berkas (TIDAK menyetujui / memverifikasi kredit) ---
+    // Tombol Verifikasi & Setujui Kredit DISEMBUNYIKAN
+    ['approveDoctorCredits','approvePendingCredits'].forEach(fn => {
+      document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => { btn.style.display = 'none'; });
+    });
+    // Status perubahan siklus DIKUNCI
+    document.querySelectorAll('select[onchange*="handleDocStatusChange"]').forEach(sel => {
+      sel.setAttribute('disabled', 'true');
+      sel.classList.add('opacity-60', 'cursor-not-allowed');
+    });
+    // Tombol Unggah Berkas & Review Berkas AKTIF
+    document.querySelectorAll('button[onclick*="openUploadDoctorDocModal"]').forEach(btn => {
       btn.style.display = '';
       btn.removeAttribute('disabled');
       btn.classList.remove('opacity-50', 'cursor-not-allowed');
     });
+    document.querySelectorAll('.rbac-write').forEach(btn => {
+      btn.style.display = '';
+      btn.removeAttribute('disabled');
+    });
+    // Sembunyikan aksi super admin
     document.querySelectorAll('.rbac-super-only').forEach(btn => { btn.style.display = 'none'; });
-    ['btnAddDoctor','btnWaBlastMassal','btnWorkloadRebalance'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.style.display = ''; el.removeAttribute('disabled'); }
-    });
-    ['approveDoctorCredits','approvePendingCredits','openUploadDoctorDocModal','openChangePicModal',
-     'openWorkloadRebalanceModal','openFollowUpModal','sendFollowUp','openAddEventModal'].forEach(fn => {
-      document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => {
-        btn.style.display = '';
-        btn.removeAttribute('disabled');
-      });
-    });
-    document.querySelectorAll('select[onchange*="handleDocStatusChange"]').forEach(sel => {
-      sel.removeAttribute('disabled');
-      sel.classList.remove('opacity-60', 'cursor-not-allowed');
+    ['deleteDoctor','openChangePicModal'].forEach(fn => {
+      document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => { btn.style.display = 'none'; });
     });
 
   } else {

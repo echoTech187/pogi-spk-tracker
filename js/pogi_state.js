@@ -10587,7 +10587,7 @@ const PogiStore = {
         avatar: 'SR',
         avatarBg: 'bg-[#006948] text-white',
         badgeClass: 'bg-emerald-100 text-[#006948] border-emerald-200',
-        description: 'Akses verifikator nasional: verifikasi & persetujuan kredit SKP, unggah repositori cloud, monitoring SLA Kemenkes, & WA reminder',
+        description: 'Akses review berkas: bertugas mengunggah & mereview dokumen bukti fisik SKP anggota (Pengesahan kredit diverifikasi oleh Admin Cabang)',
         canWrite: true
       },
       {
@@ -10602,7 +10602,7 @@ const PogiStore = {
         avatar: 'DF',
         avatarBg: 'bg-sky-700 text-white',
         badgeClass: 'bg-sky-100 text-sky-800 border-sky-200',
-        description: 'Akses terisolasi cabang: monitoring dokter wilayah kerja cabang, pendaftaran dokter cabang, & unggah berkas fisik SKP',
+        description: 'Akses wilayah cabang: memverifikasi & menyetujui pemenuhan SKP dokter di wilayahnya, pendaftaran dokter cabang, & unggah berkas fisik SKP',
         canWrite: true
       }
     ];
@@ -10614,23 +10614,26 @@ const PogiStore = {
     const role = (user.role || '').toUpperCase();
     if (role === 'SUPER_ADMIN' || role === 'SUPER ADMIN') return true;
 
-    if (role === 'VERIFIKATOR' || role === 'ADMIN_OPERASIONAL') {
-      // Verifikator: wewenang operasional verifikasi & master katalog, kecuali kelola user dan hapus dokter
-      const forbidden = ['MANAGE_USERS', 'DELETE_DOCTOR'];
-      return !forbidden.includes(action);
-    }
-
     if (role === 'ADMIN_CABANG' || role === 'ADMIN CABANG') {
+      // Admin Cabang: Memverifikasi & menyetujui SKP dokter di wilayahnya
       const allowed = [
         'VIEW_DASHBOARD',
         'VIEW_DOCTORS',
         'CREATE_DOCTOR',
         'UPLOAD_DOC',
+        'VERIFY_CREDITS',
+        'APPROVE_CREDITS',
         'SEND_REMINDER',
         'VIEW_REPORTS',
         'EXPORT_REPORT'
       ];
       return allowed.includes(action);
+    }
+
+    if (role === 'VERIFIKATOR' || role === 'ADMIN_OPERASIONAL') {
+      // Verifikator: Mengunggah & mereview berkas (TIDAK menyetujui/memverifikasi kredit, tidak kelola user)
+      const forbidden = ['VERIFY_CREDITS', 'APPROVE_CREDITS', 'MANAGE_USERS', 'DELETE_DOCTOR'];
+      return !forbidden.includes(action);
     }
 
     return false;

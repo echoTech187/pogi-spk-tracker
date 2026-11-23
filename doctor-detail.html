@@ -1157,13 +1157,14 @@
       }
 
       // Update Action Buttons Container (Verifikasi Kredit / Status Terverifikasi / RBAC Mode)
+      // Admin Cabang memverifikasi kredit di wilayahnya; Verifikator hanya mengunggah & mereview berkas
       const actionContainer = document.getElementById("doctorActionButtonsContainer");
       if (actionContainer) {
-        if (currentUser && (currentUser.role === "ADMIN_CABANG" || currentUser.role === "Admin Cabang")) {
+        if (currentUser && (currentUser.role === "VERIFIKATOR" || currentUser.role === "Verifikator")) {
           actionContainer.innerHTML = `
-            <span class="px-3.5 py-2 rounded-xl bg-sky-50 text-sky-800 border border-sky-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
-              <span class="material-symbols-outlined text-base text-sky-600">hourglass_top</span>
-              <span>Menunggu Verifikasi Verifikator Pusat</span>
+            <span class="px-3.5 py-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+              <span class="material-symbols-outlined text-base text-amber-600">hourglass_top</span>
+              <span>Menunggu Verifikasi &amp; Persetujuan Admin Cabang</span>
             </span>
           `;
         } else {
