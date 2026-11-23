@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>POGI SKP Tracker - Masuk Konsol Pemantauan SKP Nasional</title>
-  <!-- Tailwind CSS CDN -->
+  <!-- Offline-ready local compiled Tailwind CSS (0ms delay, anti-FOUC) -->
+  <link rel="stylesheet" href="css/login-fallback.css">
+  <!-- Tailwind CSS CDN (Progressive Enhancement) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Core Styles -->
   <link rel="stylesheet" href="css/style.css">
@@ -42,7 +44,7 @@
 
         <!-- Segmented Tabs Peran -->
         <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-600">
-          <button id="tab-admin" type="button" onclick="switchLoginRole('admin')" class="py-2.5 px-2 rounded-lg bg-white text-slate-900 shadow-xs transition">
+          <button id="tab-admin" type="button" onclick="switchLoginRole('admin')" class="py-2.5 px-2 rounded-lg bg-white text-slate-900 shadow-sm transition">
             Pengurus Pusat / Tim Data
           </button>
           <button id="tab-branch" type="button" onclick="switchLoginRole('branch')" class="py-2.5 px-2 rounded-lg text-slate-500 hover:text-slate-900 transition">
@@ -57,15 +59,15 @@
             <span class="text-[9px] bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded font-bold">1-Klik Masuk</span>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-0.5">
-            <button type="button" onclick="fillQuickLogin('admin_pusat')" class="p-2.5 rounded-lg bg-white hover:bg-emerald-100/70 border border-emerald-300 text-left transition shadow-2xs">
+            <button type="button" onclick="fillQuickLogin('admin_pusat')" class="p-2.5 rounded-lg bg-white hover:bg-emerald-100/70 border border-emerald-300 text-left transition shadow-sm">
               <div class="font-bold text-[#006948] leading-tight">1. Admin Data Pusat</div>
               <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">Monitoring Nasional 38 Prov</div>
             </button>
-            <button type="button" onclick="fillQuickLogin('cabang_jabar')" class="p-2.5 rounded-lg bg-white hover:bg-sky-100/70 border border-sky-300 text-left transition shadow-2xs">
+            <button type="button" onclick="fillQuickLogin('cabang_jabar')" class="p-2.5 rounded-lg bg-white hover:bg-sky-100/70 border border-sky-300 text-left transition shadow-sm">
               <div class="font-bold text-sky-800 leading-tight">2. Admin POGI Jabar</div>
               <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">Follow-Up Wilayah Cabang</div>
             </button>
-            <button type="button" onclick="fillQuickLogin('rs_cipto')" class="p-2.5 rounded-lg bg-white hover:bg-amber-100/70 border border-amber-300 text-left transition shadow-2xs">
+            <button type="button" onclick="fillQuickLogin('rs_cipto')" class="p-2.5 rounded-lg bg-white hover:bg-amber-100/70 border border-amber-300 text-left transition shadow-sm">
               <div class="font-bold text-amber-800 leading-tight">3. PIC RS Jejaring</div>
               <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">RSUPN Cipto Mangunkusumo</div>
             </button>
@@ -108,7 +110,7 @@
 
         <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
           <span>&copy; 2026 Pengurus Pusat POGI</span>
-          <span class="text-emerald-700 font-bold">Terhubung SATUSEHAT SDMK</span>
+          <span class="text-emerald-700 font-bold">Terhubung</span>
         </div>
       </div>
     </div>

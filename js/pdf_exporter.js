@@ -313,7 +313,7 @@ const PogiPdfExporter = {
       <h2>PENGURUS BESAR PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA (POGI)</h2>
       <h3>KOMISI PENGEMBANGAN PENDIDIKAN PROFESI BERKELANJUTAN (P2KB) &amp; KREDENSIAL</h3>
       <p>Gedung POGI, Jl. Dr. Saharjo No. 100, Manggarai, Jakarta Selatan 12860 | Telp: (021) 8370-1234 | Email: p2kb@pogi.or.id</p>
-      <p>Sistem Pemantauan Standarisasi Mandatori 160 SKP &amp; Tata Kelola Medik Terintegrasi SATUSEHAT SDMK Kemenkes RI</p>
+      <p>Sistem Pemantauan Standarisasi Mandatori 160 SKP &amp; Tata Kelola Medik</p>
     </div>
     <div class="kop-badge-box">
       <span class="tag-badge tag-kemenkes">Kemenkes RI</span>
@@ -434,8 +434,23 @@ const PogiPdfExporter = {
 function exportDoctorsPdf(customDocs) {
   const docs = customDocs || (typeof currentFilteredDoctors !== 'undefined' && currentFilteredDoctors && currentFilteredDoctors.length > 0 ? currentFilteredDoctors : PogiStore.getDoctors());
   
+  const period = (typeof document !== 'undefined' && document.getElementById('periodFilter')) ? document.getElementById('periodFilter').value : 'Q4 2026';
+  
+  let periodHeader = 'Total Q4 (Target 8.0)';
+  let periodSubtitle = 'Kuartal Berjalan (Q4 2026)';
+  if (period === 'Q3 2026') {
+    periodHeader = 'Total Q3 (Target 8.0)';
+    periodSubtitle = 'Kuartal Lalu (Q3 2026)';
+  } else if (period === '2026') {
+    periodHeader = 'Tahun 2026 (Target 32.0)';
+    periodSubtitle = 'Tahun Berjalan 2026';
+  } else if (period === '5YEARS') {
+    periodHeader = 'Siklus 5 Thn (Target 160)';
+    periodSubtitle = 'Siklus 5 Tahun Penuh';
+  }
+
   const total = docs.length;
-  const complete = docs.filter(d => d.status === 'Complete').length;
+  const complete = docs.filter(d => (typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats ? PogiStore.getDoctorPeriodStats(d, period).isComplete : d.status === 'Complete')).length;
   const incomplete = total - complete;
   const rate = total > 0 ? ((complete / total) * 100).toFixed(1) : 0;
 
@@ -443,31 +458,35 @@ function exportDoctorsPdf(customDocs) {
     { label: 'No', align: 'center', thStyle: 'width: 25px;' },
     { label: 'Dokter Obgyn & No Anggota', thStyle: 'width: 170px;' },
     { label: 'Cabang Provinsi & RS Jejaring', thStyle: 'width: 160px;' },
-    { label: '● Pelayanan (Min 80)', align: 'center', thStyle: 'width: 85px;' },
-    { label: '● Pengabdian (Min 30)', align: 'center', thStyle: 'width: 85px;' },
-    { label: '● Pembelajaran (Min 50)', align: 'center', thStyle: 'width: 90px;' },
-    { label: 'Total Q4 (Target 8.0)', align: 'center', thStyle: 'width: 90px;' },
+    { label: `● Pelayanan (${period === '5YEARS' ? 'Min 80' : 'Tgt ' + (period === '2026' ? '16.0' : '4.0')})`, align: 'center', thStyle: 'width: 85px;' },
+    { label: `● Pengabdian (${period === '5YEARS' ? 'Min 30' : 'Tgt ' + (period === '2026' ? '6.0' : '1.5')})`, align: 'center', thStyle: 'width: 85px;' },
+    { label: `● Pembelajaran (${period === '5YEARS' ? 'Min 50' : 'Tgt ' + (period === '2026' ? '10.0' : '2.5')})`, align: 'center', thStyle: 'width: 90px;' },
+    { label: periodHeader, align: 'center', thStyle: 'width: 90px;' },
     { label: 'Pending', align: 'center', thStyle: 'width: 55px;' },
     { label: 'Status SKP', align: 'center', thStyle: 'width: 75px;' }
   ];
 
   const rows = docs.map((d, idx) => {
-    const statusBadge = d.status === 'Complete'
+    const s = (typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats)
+      ? PogiStore.getDoctorPeriodStats(d, period)
+      : { isComplete: d.status === 'Complete', achieved: d.q4Credits || 0, pelayanan: { achieved: d.pelayananCredits || 0, target: 56 }, pengabdian: { achieved: d.pengabdianCredits || 0, target: 8 }, pembelajaran: { achieved: d.pembelajaranCredits || 0, target: 72 }, pendingCredits: d.pendingCredits || 0 };
+
+    const statusBadge = s.isComplete
       ? '<span class="badge badge-complete">&#10003; Complete</span>'
       : '<span class="badge badge-incomplete">&#9888; Incomplete</span>';
 
-    const pendingBadge = d.pendingCredits > 0
-      ? `<span class="badge badge-pending">+${d.pendingCredits} SKP</span>`
+    const pendingBadge = s.pendingCredits > 0
+      ? `<span class="badge badge-pending">+${s.pendingCredits.toFixed(1)} SKP</span>`
       : '<span style="color:#94a3b8;">0 SKP</span>';
 
     return [
       idx + 1,
       `<div><strong>${d.name}</strong></div><div style="font-size:6.5pt; color:#64748b;">${d.pogiId} &bull; NIK: ${d.nik || '-'}</div>`,
       `<div><strong>${d.province}</strong></div><div style="font-size:6.5pt; color:#64748b;">${d.hospital || '-'}</div>`,
-      `<strong>${d.pelayananCredits || 0}</strong> / 80`,
-      `<strong>${d.pengabdianCredits || 0}</strong> / 30`,
-      `<strong>${d.pembelajaranCredits || 0}</strong> / 50`,
-      `<strong>${(d.q4Credits || 0).toFixed(1)}</strong> SKP`,
+      `<strong>${s.pelayanan.achieved.toFixed(period === '5YEARS' ? 0 : 1)}</strong> / ${s.pelayanan.target.toFixed(period === '5YEARS' ? 0 : 1)}`,
+      `<strong>${s.pengabdian.achieved.toFixed(period === '5YEARS' ? 0 : 1)}</strong> / ${s.pengabdian.target.toFixed(period === '5YEARS' ? 0 : 1)}`,
+      `<strong>${s.pembelajaran.achieved.toFixed(period === '5YEARS' ? 0 : 1)}</strong> / ${s.pembelajaran.target.toFixed(period === '5YEARS' ? 0 : 1)}`,
+      `<strong>${s.achieved.toFixed(1)}</strong> SKP`,
       pendingBadge,
       statusBadge
     ];
@@ -476,13 +495,13 @@ function exportDoctorsPdf(customDocs) {
   PogiPdfExporter.printDocument({
     title: 'LAPORAN DIREKTORI DOKTER SPESIALIS OBGYN & STATUS 160 SKP',
     docCode: `POGI-DOC-SPK-${Date.now().toString().slice(-6)}`,
-    subtitle: `Rekapitulasi Kepatuhan Pemenuhan Kredit SKP Kuartal Berjalan (Q4 2026) Terintegrasi SATUSEHAT`,
+    subtitle: `Rekapitulasi Kepatuhan Pemenuhan Kredit SKP ${periodSubtitle} Terintegrasi SATUSEHAT`,
     orientation: 'landscape',
     summaryStats: [
       { label: 'Total Dokter Terdata', value: `${total} Dokter`, type: 'info' },
       { label: 'Target Terpenuhi (Complete)', value: `${complete} Dokter`, type: 'success' },
       { label: 'Belum Terpenuhi (Incomplete)', value: `${incomplete} Dokter`, type: 'warning' },
-      { label: 'Tingkat Kepatuhan Nasional', value: `${rate}%`, type: 'success' }
+      { label: 'Tingkat Kepatuhan (' + periodSubtitle + ')', value: `${rate}%`, type: 'success' }
     ],
     columns,
     rows
@@ -709,7 +728,6 @@ function exportActivityPdf() {
  */
 function exportActiveManageTabPdf(targetTab) {
   const tab = targetTab || (typeof currentTab !== 'undefined' ? currentTab : 'doctor');
-  const tab = typeof currentTab !== 'undefined' ? currentTab : 'doctor';
   
   if (tab === 'doctor') {
     exportDoctorsPdf();
@@ -831,700 +849,697 @@ window.exportActiveManageTabPdf = exportActiveManageTabPdf;
 window.exportManageTabPdf = exportActiveManageTabPdf;
 window.printOfficialSkpReportPdf = printOfficialSkpReportPdf;
 
+
+
 /**
- * 8. CETAK SKP REPORT RESMI (PERSIS DOKUMEN ASLI KEMENKES skp-report-2026-11)
+ * =========================================================================
+ * CLIENT-SIDE DYNAMIC PDF GENERATOR (BUKAN WINDOW PRINT)
+ * Menggunakan library jsPDF & jspdf-autotable langsung di browser
+ * =========================================================================
  */
-function printOfficialSkpReportPdf() {
-  const html = `<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>SKP Report - November 2026</title>
-  <style>
-    @page {
-      size: A4 portrait;
-      margin: 18mm 20mm 15mm 20mm;
-    }
-    * {
-      box-sizing: border-box;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      font-size: 10pt;
-      line-height: 1.45;
-      color: #1e293b;
-      background: #ffffff;
-      margin: 0;
-      padding: 0;
-    }
-    .title {
-      font-size: 22pt;
-      font-weight: 800;
-      color: #0f172a;
-      margin: 0 0 2px 0;
-      letter-spacing: -0.5px;
-    }
-    .subtitle {
-      font-size: 10.5pt;
-      color: #64748b;
-      margin: 0 0 26px 0;
-      font-weight: 500;
-    }
-    .section-title {
-      font-size: 12pt;
-      font-weight: 800;
-      color: #0f172a;
-      margin: 22px 0 8px 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 9.5pt;
-      margin-bottom: 6px;
-    }
-    th {
-      font-weight: 700;
-      color: #0f172a;
-      border-bottom: 1.5px solid #0f172a;
-      padding: 6px 4px;
-      text-align: left;
-    }
-    th.right, td.right {
-      text-align: right;
-    }
-    td {
-      padding: 5.5px 4px;
-      border-bottom: 1px solid #e2e8f0;
-      color: #1e293b;
-    }
-    tr.total-row td {
-      font-weight: 800;
-      border-top: 1.5px solid #0f172a;
-      border-bottom: 1.5px solid #0f172a;
-    }
-    .footer {
-      margin-top: 36px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 8pt;
-      color: #94a3b8;
-      border-top: 1px solid #f1f5f9;
-      padding-top: 8px;
-    }
-  </style>
-</head>
-<body>
-  <div class="title">SKP Report</div>
-  <div class="subtitle">November 2026 &middot; 161 doctors</div>
 
-  <div class="section-title">Target vs realization</div>
-  <table>
-    <thead>
-      <tr>
-        <th>SKP type</th>
-        <th class="right">Target</th>
-        <th class="right">Realization</th>
-        <th class="right">Achievement</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>Pengabdian</td><td class="right">26,83</td><td class="right">27</td><td class="right">101%</td></tr>
-      <tr><td>Pelayanan</td><td class="right">281,75</td><td class="right">416</td><td class="right">148%</td></tr>
-      <tr><td>Pembelajaran</td><td class="right">120,75</td><td class="right">21,5</td><td class="right">18%</td></tr>
-      <tr class="total-row"><td>Total</td><td class="right">429,33</td><td class="right">464,5</td><td class="right">108%</td></tr>
-    </tbody>
-  </table>
+function getJsPdfInstance() {
+  const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (window.jsPDF || null);
+  if (!jsPDFClass) return null;
+  if (window.jspdfAutotable && window.jspdfAutotable.applyPlugin) {
+    try { window.jspdfAutotable.applyPlugin(jsPDFClass); } catch(e) {}
+  }
+  return jsPDFClass;
+}
 
-  <div class="section-title">Year to date</div>
-  <table>
-    <thead>
-      <tr>
-        <th>Month</th>
-        <th class="right">Target</th>
-        <th class="right">Realization</th>
-        <th class="right">Achievement</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>Januari 2026</td><td class="right">509,33</td><td class="right">126</td><td class="right">25%</td></tr>
-      <tr><td>Februari 2026</td><td class="right">496</td><td class="right">229</td><td class="right">46%</td></tr>
-      <tr><td>Maret 2026</td><td class="right">485,33</td><td class="right">1.039,5</td><td class="right">214%</td></tr>
-      <tr><td>April 2026</td><td class="right">482,67</td><td class="right">283,5</td><td class="right">59%</td></tr>
-      <tr><td>Mei 2026</td><td class="right">477,33</td><td class="right">285</td><td class="right">60%</td></tr>
-      <tr><td>Juni 2026</td><td class="right">469,33</td><td class="right">821,5</td><td class="right">175%</td></tr>
-      <tr><td>Juli 2026</td><td class="right">469,33</td><td class="right">214,5</td><td class="right">46%</td></tr>
-      <tr><td>Agustus 2026</td><td class="right">461,33</td><td class="right">257</td><td class="right">56%</td></tr>
-      <tr><td>September 2026</td><td class="right">448</td><td class="right">923,5</td><td class="right">206%</td></tr>
-      <tr><td>Oktober 2026</td><td class="right">442,67</td><td class="right">493,5</td><td class="right">111%</td></tr>
-      <tr><td>November 2026</td><td class="right">429,33</td><td class="right">464,5</td><td class="right">108%</td></tr>
-    </tbody>
-  </table>
+/**
+ * 8. CETAK & UNDUH SKP REPORT RESMI (1 HALAMAN PERSIS skp-report-2026-11)
+ */
+function printOfficialSkpReportPdf(monthName) {
+  const period = monthName || 'November 2026';
+  
+  const skpDb = {
+    'November 2026': {
+      doctors: '161 doctors',
+      genDate: '20/11/2026, 09.14.17',
+      tPeng: '26,83', rPeng: '27', aPeng: '101%',
+      tPel: '281,75', rPel: '416', aPel: '148%',
+      tPemb: '120,75', rPemb: '21,5', aPemb: '18%',
+      tTot: '429,33', rTot: '464,5', aTot: '108%',
+      statusPeng: { done: '27', sub: '24,5', rej: '4', notSub: '11' },
+      statusPel: { done: '416', sub: '499', rej: '59', notSub: '204' },
+      statusPemb: { done: '21,5', sub: '28,5', rej: '5,5', notSub: '8,5' },
+      ytdIdx: 11
+    },
+    'Oktober 2026': {
+      doctors: '158 doctors',
+      genDate: '31/10/2026, 17.00.00',
+      tPeng: '26,83', rPeng: '26', aPeng: '97%',
+      tPel: '281,75', rPel: '440', aPel: '156%',
+      tPemb: '120,75', rPemb: '27,5', aPemb: '23%',
+      tTot: '442,67', rTot: '493,5', aTot: '111%',
+      statusPeng: { done: '26', sub: '20', rej: '3', notSub: '12' },
+      statusPel: { done: '440', sub: '480', rej: '45', notSub: '190' },
+      statusPemb: { done: '27,5', sub: '30', rej: '5', notSub: '9' },
+      ytdIdx: 10
+    },
+    'September 2026': {
+      doctors: '152 doctors',
+      genDate: '30/09/2026, 17.00.00',
+      tPeng: '26,83', rPeng: '48', aPeng: '179%',
+      tPel: '281,75', rPel: '830', aPel: '295%',
+      tPemb: '120,75', rPemb: '45,5', aPemb: '38%',
+      tTot: '448,00', rTot: '923,5', aTot: '206%',
+      statusPeng: { done: '48', sub: '18', rej: '2', notSub: '8' },
+      statusPel: { done: '830', sub: '310', rej: '35', notSub: '115' },
+      statusPemb: { done: '45,5', sub: '22', rej: '4', notSub: '12' },
+      ytdIdx: 9
+    },
+    'Agustus 2026': {
+      doctors: '149 doctors',
+      genDate: '31/08/2026, 17.00.00',
+      tPeng: '26,83', rPeng: '13', aPeng: '48%',
+      tPel: '281,75', rPel: '230', aPel: '82%',
+      tPemb: '120,75', rPemb: '14', aPemb: '12%',
+      tTot: '461,33', rTot: '257,0', aTot: '56%',
+      statusPeng: { done: '13', sub: '16', rej: '3', notSub: '15' },
+      statusPel: { done: '230', sub: '340', rej: '42', notSub: '180' },
+      statusPemb: { done: '14', sub: '19', rej: '3', notSub: '14' },
+      ytdIdx: 8
+    },
+    'Juli 2026': {
+      doctors: '146 doctors',
+      genDate: '31/07/2026, 17.00.00',
+      tPeng: '26,83', rPeng: '11', aPeng: '41%',
+      tPel: '281,75', rPel: '190', aPel: '67%',
+      tPemb: '120,75', rPemb: '13,5', aPemb: '11%',
+      tTot: '469,33', rTot: '214,5', aTot: '46%',
+      statusPeng: { done: '11', sub: '14', rej: '2', notSub: '18' },
+      statusPel: { done: '190', sub: '310', rej: '38', notSub: '195' },
+      statusPemb: { done: '13,5', sub: '16', rej: '2', notSub: '16' },
+      ytdIdx: 7
+    },
+    'Juni 2026': {
+      doctors: '148 doctors',
+      genDate: '30/06/2026, 17.00.00',
+      tPeng: '26,83', rPeng: '42', aPeng: '157%',
+      tPel: '281,75', rPel: '740', aPel: '263%',
+      tPemb: '120,75', rPemb: '39,5', aPemb: '33%',
+      tTot: '469,33', rTot: '821,5', aTot: '175%',
+      statusPeng: { done: '42', sub: '15', rej: '2', notSub: '10' },
+      statusPel: { done: '740', sub: '280', rej: '25', notSub: '95' },
+      statusPemb: { done: '39,5', sub: '20', rej: '3', notSub: '11' },
+      ytdIdx: 6
+    }
+  };
 
-  <div class="section-title">SKP type by status (credits)</div>
-  <table>
-    <thead>
-      <tr>
-        <th>SKP type</th>
-        <th class="right">Done</th>
-        <th class="right">Submitted</th>
-        <th class="right">Rejected</th>
-        <th class="right">Not submitted</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>Pengabdian</td><td class="right">27</td><td class="right">24,5</td><td class="right">4</td><td class="right">11</td></tr>
-      <tr><td>Pelayanan</td><td class="right">416</td><td class="right">499</td><td class="right">59</td><td class="right">204</td></tr>
-      <tr><td>Pembelajaran</td><td class="right">21,5</td><td class="right">28,5</td><td class="right">5,5</td><td class="right">8,5</td></tr>
-    </tbody>
-  </table>
+  const ytdList = [
+    ['Januari 2026', '509,33', '126', '25%'],
+    ['Februari 2026', '496', '229', '46%'],
+    ['Maret 2026', '485,33', '1.039,5', '214%'],
+    ['April 2026', '482,67', '283,5', '59%'],
+    ['Mei 2026', '477,33', '285', '60%'],
+    ['Juni 2026', '469,33', '821,5', '175%'],
+    ['Juli 2026', '469,33', '214,5', '46%'],
+    ['Agustus 2026', '461,33', '257', '56%'],
+    ['September 2026', '448', '923,5', '206%'],
+    ['Oktober 2026', '442,67', '493,5', '111%'],
+    ['November 2026', '429,33', '464,5', '108%']
+  ];
 
-  <div class="footer">
-    <div>Generated 19/11/2026, 09.14.17</div>
-    <div>1 / 1</div>
-  </div>
+  const d = skpDb[period] || skpDb['November 2026'];
+  const JsPdf = getJsPdfInstance();
 
-  <script>
-    window.onload = function() {
-      setTimeout(function() {
-        window.focus();
-        window.print();
-      }, 250);
-    };
-  </script>
-</body>
-</html>`;
+  if (JsPdf) {
+    const doc = new JsPdf({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+    
+    // Header
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.setTextColor(17, 24, 39);
+    doc.text('SKP Report', 40, 52);
 
-  let iframe = document.getElementById('pogi-pdf-print-iframe');
-  if (iframe) document.body.removeChild(iframe);
-  iframe = document.createElement('iframe');
-  iframe.id = 'pogi-pdf-print-iframe';
-  iframe.style.position = 'fixed';
-  iframe.style.right = '0';
-  iframe.style.bottom = '0';
-  iframe.style.width = '0';
-  iframe.style.height = '0';
-  iframe.style.border = '0';
-  document.body.appendChild(iframe);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(107, 114, 128);
+    doc.text(period + ' · ' + d.doctors, 40, 68);
 
-  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-  iframeDoc.open();
-  iframeDoc.write(html);
-  iframeDoc.close();
+    // Section 1: Target vs realization
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11.5);
+    doc.setTextColor(17, 24, 39);
+    doc.text('Target vs realization', 40, 94);
 
-  if (typeof showToast === 'function') {
-    showToast('Mencetak Laporan Resmi SKP Report (Persis Dokumen Kemenkes)...', 'info');
+    doc.autoTable({
+      startY: 100,
+      margin: { left: 40, right: 40 },
+      head: [['SKP type', 'Target', 'Realization', 'Achievement']],
+      body: [
+        ['Pengabdian', d.tPeng, d.rPeng, d.aPeng],
+        ['Pelayanan', d.tPel, d.rPel, d.aPel],
+        ['Pembelajaran', d.tPemb, d.rPemb, d.aPemb],
+        ['Total', d.tTot, d.rTot, d.aTot]
+      ],
+      theme: 'plain',
+      styles: { font: 'helvetica', fontSize: 9.5, textColor: [31, 41, 55], cellPadding: 4.5 },
+      headStyles: { fontStyle: 'bold', textColor: [17, 24, 39], lineWidth: { bottom: 1.5 }, lineColor: [17, 24, 39] },
+      columnStyles: {
+        0: { halign: 'left', },
+        1: { halign: 'right', },
+        2: { halign: 'right', },
+        3: { halign: 'right', }
+      },
+      didParseCell: function(cellData) {
+        if (cellData.section === 'body') {
+          if (cellData.row.index === 3) {
+            cellData.cell.styles.fontStyle = 'bold';
+            cellData.cell.styles.textColor = [17, 24, 39];
+            cellData.cell.styles.lineWidth = { top: 1.5, bottom: 1.5 };
+            cellData.cell.styles.lineColor = [17, 24, 39];
+          } else {
+            cellData.cell.styles.lineWidth = { bottom: 0.5 };
+            cellData.cell.styles.lineColor = [229, 231, 235];
+          }
+        }
+      }
+    });
+
+    // Section 2: Year to date
+    const y2 = doc.lastAutoTable.finalY + 20;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11.5);
+    doc.setTextColor(17, 24, 39);
+    doc.text('Year to date', 40, y2);
+
+    doc.autoTable({
+      startY: y2 + 6,
+      margin: { left: 40, right: 40 },
+      head: [['Month', 'Target', 'Realization', 'Achievement']],
+      body: ytdList.slice(0, d.ytdIdx),
+      theme: 'plain',
+      styles: { font: 'helvetica', fontSize: 9.5, textColor: [31, 41, 55], cellPadding: 3.5 },
+      headStyles: { fontStyle: 'bold', textColor: [17, 24, 39], lineWidth: { bottom: 1.5 }, lineColor: [17, 24, 39] },
+      columnStyles: {
+        0: { halign: 'left', },
+        1: { halign: 'right', },
+        2: { halign: 'right', },
+        3: { halign: 'right', }
+      },
+      didParseCell: function(cellData) {
+        if (cellData.section === 'body') {
+          cellData.cell.styles.lineWidth = { bottom: 0.5 };
+          cellData.cell.styles.lineColor = [229, 231, 235];
+        }
+      }
+    });
+
+    // Section 3: SKP type by status
+    const y3 = doc.lastAutoTable.finalY + 20;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11.5);
+    doc.setTextColor(17, 24, 39);
+    doc.text('SKP type by status (credits)', 40, y3);
+
+    doc.autoTable({
+      startY: y3 + 6,
+      margin: { left: 40, right: 40 },
+      head: [['SKP type', 'Done', 'Submitted', 'Rejected', 'Not submitted']],
+      body: [
+        ['Pengabdian', d.statusPeng.done, d.statusPeng.sub, d.statusPeng.rej, d.statusPeng.notSub],
+        ['Pelayanan', d.statusPel.done, d.statusPel.sub, d.statusPel.rej, d.statusPel.notSub],
+        ['Pembelajaran', d.statusPemb.done, d.statusPemb.sub, d.statusPemb.rej, d.statusPemb.notSub]
+      ],
+      theme: 'plain',
+      styles: { font: 'helvetica', fontSize: 9.5, textColor: [31, 41, 55], cellPadding: 4.5 },
+      headStyles: { fontStyle: 'bold', textColor: [17, 24, 39], lineWidth: { bottom: 1.5 }, lineColor: [17, 24, 39] },
+      columnStyles: {
+        0: { halign: 'left', },
+        1: { halign: 'right', },
+        2: { halign: 'right', },
+        3: { halign: 'right', },
+        4: { halign: 'right', }
+      },
+      didParseCell: function(cellData) {
+        if (cellData.section === 'body') {
+          cellData.cell.styles.lineWidth = { bottom: 0.5 };
+          cellData.cell.styles.lineColor = [229, 231, 235];
+        }
+      }
+    });
+
+    // Footer
+    doc.setDrawColor(241, 245, 249);
+    doc.setLineWidth(1);
+    doc.line(40, 804, 555.28, 804);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text('Generated ' + d.genDate, 40, 820);
+    doc.text('1 / 1', 535, 820);
+
+    const filename = 'SKP_Report_' + period.replace(/\s+/g, '_') + '.pdf';
+    doc.save(filename);
+
+    if (typeof showToast === 'function') {
+      showToast('Berhasil mengunduh ' + filename, 'success');
+    }
+  } else {
+    // Fallback: unduh langsung dokumen referensi asli jika CDN belum termuat
+    const a = document.createElement('a');
+    a.href = 'assets/docs/skp-report-2026-11.pdf';
+    a.download = 'SKP_Report_' + period.replace(/\s+/g, '_') + '.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+}
+
+/**
+ * 9. CETAK & UNDUH LAPORAN BULANAN RESMI ONE POGI (3 HALAMAN PERSIS REVISI 01)
+ */
+function printOnePogiMonthlyReportPdf(monthName) {
+  const period = monthName || 'November 2026';
+
+  // 1. Prioritaskan Template Engine Resmi ONE POGI (100% Persis, Rapi, & Indah sesuai Monthly_Report_ONE_POGI_Revisi_01.pdf)
+  if (typeof window !== 'undefined' && typeof window.generateOnePogiOfficialPdfBlob === 'function') {
+    const blob = window.generateOnePogiOfficialPdfBlob(period);
+    const cleanName = period.replace(/\s+/g, '_');
+    const filename = 'Monthly_Report_ONE_POGI_' + cleanName + '.pdf';
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 400);
+
+    if (typeof showToast === 'function') {
+      showToast('Berhasil mengunduh dokumen resmi ' + filename, 'success');
+    }
+    return;
+  }
+
+  const monthlyDb = {
+    'November 2026': {
+      date: '20 November 2026',
+      cutoff: '1 November 2026',
+      realSkp: '464,5 SKP',
+      doctors: '161 Dokter',
+      records: '1.420 Record',
+      pending: '551 SKP (19 Dr)',
+      kendala: '8 Berkas',
+      nextMonth: 'DESEMBER 2026'
+    },
+    'Oktober 2026': {
+      date: '31 Oktober 2026',
+      cutoff: '1 Oktober 2026',
+      realSkp: '493,5 SKP',
+      doctors: '158 Dokter',
+      records: '1.380 Record',
+      pending: '412 SKP (14 Dr)',
+      kendala: '5 Berkas',
+      nextMonth: 'NOVEMBER 2026'
+    },
+    'September 2026': {
+      date: '30 September 2026',
+      cutoff: '1 September 2026',
+      realSkp: '923,5 SKP',
+      doctors: '152 Dokter',
+      records: '1.520 Record',
+      pending: '320 SKP (9 Dr)',
+      kendala: '4 Berkas',
+      nextMonth: 'OKTOBER 2026'
+    },
+    'Agustus 2026': {
+      date: '31 Agustus 2026',
+      cutoff: '1 Agustus 2026',
+      realSkp: '257,0 SKP',
+      doctors: '149 Dokter',
+      records: '1.250 Record',
+      pending: '480 SKP (20 Dr)',
+      kendala: '6 Berkas',
+      nextMonth: 'SEPTEMBER 2026'
+    },
+    'Juli 2026': {
+      date: '31 Juli 2026',
+      cutoff: '1 Juli 2026',
+      realSkp: '214,5 SKP',
+      doctors: '146 Dokter',
+      records: '1.180 Record',
+      pending: '510 SKP (22 Dr)',
+      kendala: '7 Berkas',
+      nextMonth: 'AGUSTUS 2026'
+    },
+    'Juni 2026': {
+      date: '30 Juni 2026',
+      cutoff: '1 Juni 2026',
+      realSkp: '821,5 SKP',
+      doctors: '148 Dokter',
+      records: '1.490 Record',
+      pending: '390 SKP (12 Dr)',
+      kendala: '5 Berkas',
+      nextMonth: 'JULI 2026'
+    }
+  };
+
+  const m = monthlyDb[period] || monthlyDb['November 2026'];
+  const JsPdf = getJsPdfInstance();
+
+  if (JsPdf) {
+    const doc = new JsPdf({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+    const blueHeader = [22, 58, 95];
+
+    function drawPageHeaderFooter(pageNum) {
+      // Header top line
+      doc.setDrawColor(213, 222, 232);
+      doc.setLineWidth(0.5);
+      doc.line(40, 36, 555.28, 36);
+
+      // Footer
+      doc.line(40, 804, 555.28, 804);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(100, 116, 139);
+      doc.text('IMPRUVE.ID | MONTHLY REPORT ONE POGI', 40, 818);
+      doc.text('Halaman ' + pageNum, 510, 818);
+    }
+
+    // ==========================================
+    // HALAMAN 1
+    // ==========================================
+    // Top banner
+    doc.setFillColor(22, 58, 95);
+    doc.rect(40, 28, 515.28, 22, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(255, 255, 255);
+    doc.text('IMPRUVE.ID', 48, 42);
+    doc.text('MONTHLY REPORT | ONE POGI', 390, 42);
+
+    // Title
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.setTextColor(22, 58, 95);
+    doc.text('LAPORAN BULANAN', 40, 74);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(71, 85, 105);
+    doc.text('Pengelolaan dan Penginputan Data Satuan Kredit Profesi (SKP) Dokter Spesialis Obstetri & Ginekologi.', 40, 88);
+
+    // Meta box
+    doc.autoTable({
+      startY: 96,
+      margin: { left: 40, right: 40 },
+      body: [
+        ['Periode laporan', period, 'PIC pelaksana', 'Siti Rahma, S.Farm'],
+        ['Tanggal laporan', m.date, 'Pelaksana', 'Impruve.Id'],
+        ['Nama program', 'ONE POGI', 'Unit/area', 'Nasional (38 Wilayah POGI)']
+      ],
+      theme: 'plain',
+      styles: { font: 'helvetica', fontSize: 7.5, textColor: [31, 41, 55], cellPadding: 2.5 },
+      columnStyles: {
+        0: { fontStyle: 'bold', textColor: [22, 58, 95] },
+        1: { },
+        2: { fontStyle: 'bold', textColor: [22, 58, 95] },
+        3: { }
+      }
+    });
+
+    // 1. Ringkasan Eksekutif
+    let curY = doc.lastAutoTable.finalY + 12;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(22, 58, 95);
+    doc.text('1. RINGKASAN EKSEKUTIF', 40, curY);
+
+    doc.autoTable({
+      startY: curY + 4,
+      margin: { left: 40, right: 40 },
+      head: [['Indikator', 'Jumlah', 'Keterangan']],
+      body: [
+        ['Total dokter unik yang diproses', m.doctors, 'Hitung dokter berbeda, bukan jumlah record kegiatan.'],
+        ['Total record keikutsertaan/kegiatan', m.records, 'Satu dokter dapat memiliki lebih dari satu record.'],
+        ['Data SKP berhasil diinput', m.realSkp, 'Input selesai dan tercatat resmi pada sistem ONE POGI.'],
+        ['Data dalam proses / validasi', m.pending, 'Menunggu kurasi verifikator Kemenkes Plataran Sehat.'],
+        ['Data terkendala / perbaikan', m.kendala, 'Perlu konfirmasi berkas atau perbaikan data identitas.']
+      ],
+      theme: 'grid',
+      styles: { font: 'helvetica', fontSize: 7.5, textColor: [31, 41, 55], cellPadding: 3, lineColor: [226, 232, 240] },
+      headStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' },
+      columnStyles: { 0: { }, 1: { fontStyle: 'bold' }, 2: { } }
+    });
+
+    // 2. Ringkasan Progres Pekerjaan
+    curY = doc.lastAutoTable.finalY + 12;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(22, 58, 95);
+    doc.text('2. RINGKASAN PROGRES PEKERJAAN', 40, curY);
+
+    doc.autoTable({
+      startY: curY + 4,
+      margin: { left: 40, right: 40 },
+      head: [['KPI', 'Realisasi', 'Target/Basis', 'Capaian', 'Status', 'Catatan']],
+      body: [
+        ['Total database anggota', '5700', '5700', '100.0%', 'Baseline', 'Basis data nasional PP POGI'],
+        ['Database terverifikasi', '3200', '5700', '56.1%', 'Proses', '56,1% dari total terverifikasi'],
+        ['Data belum lengkap', '1500', '5700', '26.3%', 'Tindak lanjut', 'Lengkapi berkas wajib STR/SIP'],
+        ['Data belum diproses', '1000', '5700', '17.5%', 'Prioritas', 'Alokasi tim verifikator data'],
+        ['Anggota memenuhi SKP', '2500', '5700', '43.9%', 'Monitoring', 'Capaian akumulatif periode'],
+        ['Anggota belum memenuhi', '2000', '5700', '35.1%', 'Tindak lanjut', 'Segmentasi pendampingan'],
+        ['Anggota dalam proses SKP', '1200', '5700', '21.1%', 'Monitoring', 'Pantau penyelesaian kurasi']
+      ],
+      theme: 'grid',
+      styles: { font: 'helvetica', fontSize: 7, textColor: [31, 41, 55], cellPadding: 2.8, lineColor: [226, 232, 240] },
+      headStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' }
+    });
+
+    // 3. Detail Penginputan Dokter (Part 1)
+    curY = doc.lastAutoTable.finalY + 12;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(22, 58, 95);
+    doc.text('3. DETAIL PENGINPUTAN DATA DOKTER (SAMPEL RESMI)', 40, curY);
+
+    doc.autoTable({
+      startY: curY + 4,
+      margin: { left: 40, right: 40 },
+      head: [['No', 'Nama Dokter / ID', 'Wilayah / Cabang', 'Kegiatan & Tanggal', 'SKP', 'Tgl Input', 'Status']],
+      body: [
+        ['1', 'dr. Budi Santoso, Sp.OG(K)', 'DKI Jakarta', 'PIT POGI 2026 (14 Nov)', '5 SKP', '18 Nov 2026', 'Terverifikasi'],
+        ['2', 'dr. Hendra Wijaya, Sp.OG', 'Jawa Barat', 'Simposium Fetomaternal (16 Nov)', '4 SKP', '19 Nov 2026', 'Terverifikasi']
+      ],
+      theme: 'grid',
+      styles: { font: 'helvetica', fontSize: 7, textColor: [31, 41, 55], cellPadding: 2.8, lineColor: [226, 232, 240] },
+      headStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' }
+    });
+
+    drawPageHeaderFooter(1);
+
+    // ==========================================
+    // HALAMAN 2
+    // ==========================================
+    doc.addPage();
+    drawPageHeaderFooter(2);
+
+    // 3. Detail Penginputan Dokter (Part 2)
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(22, 58, 95);
+    doc.text('3. DETAIL PENGINPUTAN DATA DOKTER (LANJUTAN)', 40, 52);
+
+    doc.autoTable({
+      startY: 58,
+      margin: { left: 40, right: 40 },
+      head: [['No', 'Nama Dokter / ID', 'Wilayah / Cabang', 'Kegiatan & Tanggal', 'SKP', 'Tgl Input', 'Status']],
+      body: [
+        ['3', 'dr. Ratna Sari, Sp.OG', 'Jawa Timur', 'Workshop USG Obgyn (10 Nov)', '3 SKP', '15 Nov 2026', 'Terverifikasi'],
+        ['4', 'dr. Ahmad Fauzi, Sp.OG', 'Sumatera Utara', 'Webinar Onkologi Ginekologi (08 Nov)', '2 SKP', '12 Nov 2026', 'Terverifikasi'],
+        ['5', 'dr. Dewi Lestari, Sp.OG', 'Sulawesi Selatan', 'Pelayanan Bakti Sosial (05 Nov)', '4 SKP', '09 Nov 2026', 'Terverifikasi'],
+        ['6', 'dr. I Made Sukadana, Sp.OG', 'Bali', 'Simposium Infertilitas (03 Nov)', '3 SKP', '06 Nov 2026', 'Terverifikasi'],
+        ['7', 'dr. Siti Nurhaliza, Sp.OG', 'Banten', 'Kursus Endokrinologi Repro (01 Nov)', '5 SKP', '04 Nov 2026', 'Terverifikasi']
+      ],
+      theme: 'grid',
+      styles: { font: 'helvetica', fontSize: 7, textColor: [31, 41, 55], cellPadding: 2.8, lineColor: [226, 232, 240] },
+      headStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' }
+    });
+
+    // 4. Rekapitulasi Berdasarkan Kegiatan
+    curY = doc.lastAutoTable.finalY + 12;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(22, 58, 95);
+    doc.text('4. REKAPITULASI BERDASARKAN KEGIATAN', 40, curY);
+
+    doc.autoTable({
+      startY: curY + 4,
+      margin: { left: 40, right: 40 },
+      head: [['No', 'Nama Kegiatan / Webinar', 'Tanggal Kegiatan', 'Peserta / Record', 'Bobot SKP', 'Status Input']],
+      body: [
+        ['1', 'PIT POGI Nasional 2026', '14-16 Nov 2026', '142 Dokter', '5 SKP', '142 Record (100%)'],
+        ['2', 'Webinar Fetomaternal Update', '08 Nov 2026', '98 Dokter', '3 SKP', '98 Record (100%)'],
+        ['3', 'Bakti Sosial Kesehatan Reproduksi', '04 Nov 2026', '64 Dokter', '4 SKP', '64 Record (100%)'],
+        ['4', 'Pelayanan Pasien Rujukan RSUP', '01-20 Nov 2026', '161 Dokter', '2.67 SKP', '161 Record (100%)']
+      ],
+      theme: 'grid',
+      styles: { font: 'helvetica', fontSize: 7.2, textColor: [31, 41, 55], cellPadding: 3, lineColor: [226, 232, 240] },
+      headStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' }
+    });
+
+    // 5. Kendala dan Permasalahan
+    curY = doc.lastAutoTable.finalY + 12;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(22, 58, 95);
+    doc.text('5. KENDALA DAN PERMASALAHAN', 40, curY);
+
+    doc.autoTable({
+      startY: curY + 4,
+      margin: { left: 40, right: 40 },
+      head: [['No', 'Kendala / Temuan', 'Dampak Terhadap Pekerjaan', 'Tindak Lanjut & PIC', 'Status']],
+      body: [
+        ['1', 'Sinkronisasi NIK dokter baru kurasi Kemenkes', 'Pending validasi 19 dokter', 'Koordinasi Ditjen Nakes - Siti Rahma', 'Proses'],
+        ['2', 'Berkas sertifikat webinar belum ada link P2KB', 'Tertunda 8 berkas SKP', 'Konfirmasi panitia cabang - Siti Rahma', 'Selesai'],
+        ['3', 'Perbedaan penulisan nama dokter di STR & SIP', 'Verifikasi manual 3 dokter', 'Pencocokan data KKI - Admin Cabang', 'Selesai']
+      ],
+      theme: 'grid',
+      styles: { font: 'helvetica', fontSize: 7.2, textColor: [31, 41, 55], cellPadding: 3, lineColor: [226, 232, 240] },
+      headStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' },
+      columnStyles: { 4: { fontStyle: 'bold', halign: 'center' } }
+    });
+
+    // 6. Rencana Tindak Lanjut
+    curY = doc.lastAutoTable.finalY + 12;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(22, 58, 95);
+    doc.text('6. RENCANA TINDAK LANJUT PERIODE BERIKUTNYA', 40, curY);
+
+    doc.autoTable({
+      startY: curY + 4,
+      margin: { left: 40, right: 40 },
+      head: [['No', 'Rencana Pekerjaan', 'Target Waktu', 'PIC Pelaksana']],
+      body: [
+        ['1', 'Finalisasi kurasi SKP pending bersama Kemenkes Plataran Sehat', 'Minggu IV', 'Siti Rahma, S.Farm'],
+        ['2', 'Sosialisasi upload bukti logbook digital terintegrasi ONE POGI', 'Minggu I', 'Tim IT ONE POGI'],
+        ['3', 'Rekonsiliasi data SKP triwulan Q4 bersama 38 Cabang POGI', 'Minggu II', 'Admin Data PP POGI'],
+        ['4', 'Penerbitan rekap laporan final penagihan invoice administrasi', 'Akhir Bulan', 'Keuangan Impruve.Id']
+      ],
+      theme: 'grid',
+      styles: { font: 'helvetica', fontSize: 7.2, textColor: [31, 41, 55], cellPadding: 3, lineColor: [226, 232, 240] },
+      headStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' }
+    });
+
+    // ==========================================
+    // HALAMAN 3
+    // ==========================================
+    doc.addPage();
+    drawPageHeaderFooter(3);
+
+    // 7. Project Plan Bulan Depan
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(22, 58, 95);
+    doc.text('7. PROJECT PLAN BULAN DEPAN (' + m.nextMonth + ')', 40, 52);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(100, 116, 139);
+    doc.text('Rencana kerja untuk periode bulan depan. Target dan PIC disesuaikan dengan kesepakatan bersama.', 40, 64);
+
+    doc.autoTable({
+      startY: 70,
+      margin: { left: 40, right: 40 },
+      head: [['No', 'Rencana Pekerjaan', 'Periode', 'Target', 'PIC']],
+      body: [
+        ['1', 'Pengumpulan / penerimaan data dokter', m.nextMonth + ', Minggu I-II', '161 Dokter', 'Siti Rahma'],
+        ['2', 'Pemeriksaan kelengkapan dan kesesuaian data', m.nextMonth + ', Minggu II', '100% Berkas', 'Verifikator'],
+        ['3', 'Penginputan data SKP ke sistem ONE POGI', m.nextMonth + ', Minggu III', 'Target 450 SKP', 'Tim Input'],
+        ['4', 'Verifikasi hasil penginputan sistem', m.nextMonth + ', Minggu IV', 'Zero Error', 'Supervisor'],
+        ['5', 'Monitoring status dan tindak lanjut laporan', m.nextMonth + ', Akhir Bulan', 'Laporan Lengkap', 'Siti Rahma']
+      ],
+      theme: 'grid',
+      styles: { font: 'helvetica', fontSize: 7.2, textColor: [31, 41, 55], cellPadding: 3, lineColor: [226, 232, 240] },
+      headStyles: { fillColor: [241, 245, 249], textColor: [15, 23, 42], fontStyle: 'bold' }
+    });
+
+    // 8. Dokumentasi / Lampiran
+    curY = doc.lastAutoTable.finalY + 12;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(22, 58, 95);
+    doc.text('8. DOKUMENTASI / LAMPIRAN', 40, curY);
+
+    doc.autoTable({
+      startY: curY + 4,
+      margin: { left: 40, right: 40 },
+      body: [
+        ['[ ✓ ]', 'Rekap data dokter / master tracking SKP lengkap per cabang'],
+        ['[ ✓ ]', 'Bukti tangkapan layar sistem SATUSEHAT Kemenkes & Plataran Sehat'],
+        ['[ ✓ ]', 'Rekap kegiatan ilmiah, webinar, dan partisipasi bakti sosial'],
+        ['[ ✓ ]', 'Catatan koordinasi / konfirmasi kurasi data Ditjen Nakes'],
+        ['[ ✓ ]', 'Lampiran rekap penagihan invoice biaya kelola data']
+      ],
+      theme: 'plain',
+      styles: { font: 'helvetica', fontSize: 7.2, textColor: [51, 65, 85], cellPadding: 2 },
+      columnStyles: { 0: { fontStyle: 'bold', textColor: [22, 58, 95] } }
+    });
+
+    // 9. Penutup & Tanda Tangan
+    curY = doc.lastAutoTable.finalY + 12;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(22, 58, 95);
+    doc.text('9. PENUTUP & PENGESAHAN', 40, curY);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(71, 85, 105);
+    const penutupText = 'Demikian laporan bulanan kegiatan pengelolaan dan penginputan data SKP dokter dalam program ONE POGI untuk periode ' + period + ' ini disusun sebagai dokumentasi pelaksanaan, monitoring progres, dan bahan evaluasi serta koordinasi untuk periode berikutnya.';
+    const splitPenutup = doc.splitTextToSize(penutupText, 515.28);
+    doc.text(splitPenutup, 40, curY + 12);
+
+    // Signature table
+    doc.autoTable({
+      startY: curY + 28,
+      margin: { left: 40, right: 40 },
+      body: [
+        [
+          'Disusun oleh,\n\n\n\nSiti Rahma, S.Farm\nImpruve.Id - Tim Pengelola Data\nTanggal: ' + m.date,
+          'Diperiksa / diketahui oleh,\n\n\n\nDr. dr. Yudi M. Hidayat, Sp.OG, Subsp.Obginsos, M.Kes\nKetua Umum Pengurus Pusat POGI\nTanggal: ' + m.date
+        ]
+      ],
+      theme: 'grid',
+      styles: { font: 'helvetica', fontSize: 7.2, textColor: [31, 41, 55], cellPadding: 6, lineColor: [203, 213, 225], fillColor: [248, 250, 252] },
+      columnStyles: { 0: { }, 1: { } }
+    });
+
+    // Notes
+    const noteY = doc.lastAutoTable.finalY + 8;
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(6.5);
+    doc.setTextColor(148, 163, 184);
+    doc.text('Catatan: Gunakan satuan hitung yang konsisten. Bedakan dokter unik, record kegiatan, dan transaksi SKP. Status berhasil hanya diberikan setelah hasil input diverifikasi pada sistem.', 40, noteY);
+
+    const filename = 'Monthly_Report_ONE_POGI_' + period.replace(/\s+/g, '_') + '.pdf';
+    doc.save(filename);
+
+    if (typeof showToast === 'function') {
+      showToast('Berhasil mengunduh ' + filename, 'success');
+    }
+  } else {
+    // Fallback: unduh langsung template resmi jika library belum siap
+    const a = document.createElement('a');
+    a.href = 'assets/docs/Monthly_Report_ONE_POGI_Revisi_01.pdf';
+    a.download = 'Monthly_Report_ONE_POGI_' + period.replace(/\s+/g, '_') + '.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 }
 
 window.printOfficialSkpReportPdf = printOfficialSkpReportPdf;
-
-
-/**
- * 9. CETAK LAPORAN BULANAN RESMI ONE POGI (PERSIS DOKUMEN REVISI 01 - 3 HALAMAN)
- */
-function printOnePogiMonthlyReportPdf(monthName) {
-  const period = monthName || 'November 2026';
-  const html = `<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Monthly Report ONE POGI - ${period}</title>
-  <style>
-    @page {
-      size: A4 portrait;
-      margin: 12mm 15mm 12mm 15mm;
-    }
-    * {
-      box-sizing: border-box;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      font-size: 8.5pt;
-      line-height: 1.35;
-      color: #1e293b;
-      background: #ffffff;
-      margin: 0;
-      padding: 0;
-    }
-    .page-container {
-      page-break-after: always;
-      position: relative;
-      min-height: 270mm;
-      padding-bottom: 12mm;
-    }
-    .page-container:last-child {
-      page-break-after: auto;
-    }
-    .top-navy-bar {
-      background: #112d4e;
-      color: #ffffff;
-      padding: 5px 12px;
-      font-size: 8pt;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: 3px;
-      margin-bottom: 14px;
-    }
-    .doc-title {
-      font-size: 20pt;
-      font-weight: 900;
-      color: #112d4e;
-      margin: 0 0 2px 0;
-      letter-spacing: -0.5px;
-    }
-    .doc-subtitle {
-      font-size: 9.5pt;
-      color: #475569;
-      margin: 0 0 14px 0;
-      font-weight: 500;
-    }
-    .meta-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 14px;
-      border: 1px solid #cbd5e1;
-    }
-    .meta-table td {
-      padding: 5px 8px;
-      border: 1px solid #e2e8f0;
-      font-size: 8pt;
-    }
-    .meta-table td.label {
-      font-weight: 700;
-      color: #334155;
-      background: #f8fafc;
-      width: 18%;
-    }
-    .meta-table td.val {
-      color: #0f172a;
-      width: 32%;
-    }
-    .section-title {
-      font-size: 10.5pt;
-      font-weight: 800;
-      color: #112d4e;
-      margin: 14px 0 6px 0;
-      letter-spacing: -0.2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .section-desc {
-      font-size: 7.5pt;
-      color: #64748b;
-      margin-bottom: 6px;
-      line-height: 1.3;
-    }
-    table.data-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 10px;
-      font-size: 8pt;
-    }
-    table.data-table th {
-      background: #112d4e;
-      color: #ffffff;
-      font-weight: 700;
-      padding: 5px 6px;
-      text-align: left;
-      border: 1px solid #112d4e;
-      font-size: 7.5pt;
-    }
-    table.data-table th.center, table.data-table td.center {
-      text-align: center;
-    }
-    table.data-table th.right, table.data-table td.right {
-      text-align: right;
-    }
-    table.data-table td {
-      padding: 4px 6px;
-      border: 1px solid #e2e8f0;
-      color: #1e293b;
-    }
-    table.data-table tr:nth-child(even) td {
-      background: #f8fafc;
-    }
-    .progress-track {
-      background: #e2e8f0;
-      border-radius: 4px;
-      height: 6px;
-      width: 50px;
-      display: inline-block;
-      overflow: hidden;
-      vertical-align: middle;
-      margin-right: 4px;
-    }
-    .progress-fill {
-      background: #3b82f6;
-      height: 100%;
-      border-radius: 4px;
-    }
-    .footer-bar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: space-between;
-      font-size: 7pt;
-      color: #94a3b8;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 4px;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- ================= PAGE 1 ================= -->
-  <div class="page-container">
-    <div class="top-navy-bar">
-      <span>IMPRUVE.ID</span>
-      <span>MONTHLY REPORT | ONE POGI</span>
-    </div>
-
-    <div class="doc-title">LAPORAN BULANAN</div>
-    <div class="doc-subtitle">Pengelolaan dan Penginputan Data Satuan Kredit Profesi (SKP) Dokter</div>
-
-    <table class="meta-table">
-      <tr>
-        <td class="label">Periode laporan</td>
-        <td class="val"><strong>${period}</strong></td>
-        <td class="label">Tanggal laporan</td>
-        <td class="val">20 November 2026</td>
-      </tr>
-      <tr>
-        <td class="label">Nama program</td>
-        <td class="val">ONE POGI</td>
-        <td class="label">PIC pelaksana</td>
-        <td class="val">Siti Rahma, S.Farm</td>
-      </tr>
-      <tr>
-        <td class="label">Pelaksana</td>
-        <td class="val">Impruve.Id</td>
-        <td class="label">Unit/area</td>
-        <td class="val">Pusat &amp; 38 Cabang POGI</td>
-      </tr>
-    </table>
-
-    <div class="section-title">1. RINGKASAN EKSEKUTIF</div>
-    <div class="section-desc">
-      Gambaran pelaksanaan pekerjaan periode laporan: pengelolaan data 160 SKP dokter spesialis obstetri &amp; ginekologi secara akuntabel, cutoff per tanggal 1, sebagai lampiran resmi penagihan invoice &amp; evaluasi berkala PP POGI.
-    </div>
-
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th style="width: 45%;">Indikator</th>
-          <th style="width: 15%; text-align: center;">Jumlah</th>
-          <th style="width: 40%;">Keterangan</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Total dokter unik yang diproses</td><td class="center font-bold">161 Dokter</td><td>Hitung dokter berbeda, bukan jumlah record kegiatan.</td></tr>
-        <tr><td>Total record keikutsertaan/kegiatan</td><td class="center font-bold">1.420 Record</td><td>Satu dokter dapat memiliki lebih dari satu record.</td></tr>
-        <tr><td>Data SKP berhasil diinput</td><td class="center font-bold" style="color: #059669;">464,5 SKP</td><td>Input selesai dan tercatat pada sistem SATUSEHAT.</td></tr>
-        <tr><td>Data dalam proses / menunggu validasi</td><td class="center font-bold" style="color: #d97706;">552 SKP (19 Dr)</td><td>Belum dapat dinyatakan selesai (menunggu verifikasi).</td></tr>
-        <tr><td>Data terkendala / perlu perbaikan</td><td class="center font-bold" style="color: #dc2626;">8 Berkas</td><td>Kendala STR / dokumen buram (tindak lanjut cabang).</td></tr>
-      </tbody>
-    </table>
-
-    <div class="section-title">2. RINGKASAN PROGRES PEKERJAAN</div>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>KPI</th>
-          <th class="center">Realisasi</th>
-          <th class="center">Target/Basis</th>
-          <th style="width: 18%;">Capaian</th>
-          <th>Status</th>
-          <th>Catatan</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Total database anggota</td><td class="center">5.700</td><td class="center">5.700</td>
-          <td><span class="progress-track"><span class="progress-fill" style="width: 100%;"></span></span> 100.0%</td>
-          <td>Baseline</td><td>Basis direktori Sp.OG</td>
-        </tr>
-        <tr>
-          <td>Database terverifikasi</td><td class="center">3.200</td><td class="center">5.700</td>
-          <td><span class="progress-track"><span class="progress-fill" style="width: 56.1%;"></span></span> 56.1%</td>
-          <td>Perlu percepatan</td><td>56,1% dari total</td>
-        </tr>
-        <tr>
-          <td>Data belum lengkap</td><td class="center">1.500</td><td class="center">5.700</td>
-          <td><span class="progress-track"><span class="progress-fill" style="width: 26.3%;"></span></span> 26.3%</td>
-          <td>Tindak lanjut</td><td>Lengkapi data wajib</td>
-        </tr>
-        <tr>
-          <td>Data belum diproses</td><td class="center">1.000</td><td class="center">5.700</td>
-          <td><span class="progress-track"><span class="progress-fill" style="width: 17.5%;"></span></span> 17.5%</td>
-          <td>Prioritas</td><td>Perlu alokasi verifikator</td>
-        </tr>
-        <tr>
-          <td>Anggota memenuhi SKP</td><td class="center">2.500</td><td class="center">5.700</td>
-          <td><span class="progress-track"><span class="progress-fill" style="width: 43.9%;"></span></span> 43.9%</td>
-          <td>Monitoring</td><td>Perlu validasi bukti</td>
-        </tr>
-        <tr>
-          <td>Anggota belum memenuhi SKP</td><td class="center">2.000</td><td class="center">5.700</td>
-          <td><span class="progress-track"><span class="progress-fill" style="width: 35.1%;"></span></span> 35.1%</td>
-          <td>Tindak lanjut</td><td>Segmentasi anggota</td>
-        </tr>
-        <tr>
-          <td>Anggota dalam proses SKP</td><td class="center">1.200</td><td class="center">5.700</td>
-          <td><span class="progress-track"><span class="progress-fill" style="width: 21.1%;"></span></span> 21.1%</td>
-          <td>Monitoring</td><td>Pantau penyelesaian</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="section-title">3. DETAIL PENGINPUTAN DATA DOKTER</div>
-    <div class="section-desc">Ringkasan transaksi penginputan data kredit dokter periode berjalan.</div>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th style="width: 5%;" class="center">No.</th>
-          <th style="width: 25%;">Nama dokter / ID</th>
-          <th style="width: 18%;">Wilayah/cabang</th>
-          <th style="width: 26%;">Kegiatan &amp; tanggal</th>
-          <th style="width: 8%;" class="center">SKP</th>
-          <th style="width: 10%;" class="center">Tgl. input</th>
-          <th style="width: 12%;">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="center">1</td>
-          <td><strong>dr. Cut Simatupang, Sp.OG</strong><br><span style="color:#64748b; font-size:6.5pt;">ID: POGI-2026-1001</span></td>
-          <td>DKI Jakarta</td>
-          <td>PIT POGI 2026<br><span style="color:#64748b; font-size:6.5pt;">15 Nov 2026</span></td>
-          <td class="center font-bold">8.8</td>
-          <td class="center">16/11/26</td>
-          <td><span style="color:#059669; font-weight:700;">Terverifikasi</span></td>
-        </tr>
-        <tr>
-          <td class="center">2</td>
-          <td><strong>dr. Ratna Kurniawan, Sp.OG</strong><br><span style="color:#64748b; font-size:6.5pt;">ID: POGI-2026-1002</span></td>
-          <td>Jawa Barat</td>
-          <td>Simposium Obstetri<br><span style="color:#64748b; font-size:6.5pt;">10 Nov 2026</span></td>
-          <td class="center font-bold">9.6</td>
-          <td class="center">12/11/26</td>
-          <td><span style="color:#059669; font-weight:700;">Terverifikasi</span></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="footer-bar">
-      <span>IMPRUVE.ID | MONTHLY REPORT ONE POGI</span>
-      <span>Halaman 1</span>
-    </div>
-  </div>
-
-  <!-- ================= PAGE 2 ================= -->
-  <div class="page-container">
-    <div class="top-navy-bar">
-      <span>IMPRUVE.ID</span>
-      <span>MONTHLY REPORT | ONE POGI &bull; Halaman 2</span>
-    </div>
-
-    <table class="data-table" style="margin-top: 10px;">
-      <thead>
-        <tr>
-          <th style="width: 5%;" class="center">No.</th>
-          <th style="width: 25%;">Nama dokter / ID</th>
-          <th style="width: 18%;">Wilayah/cabang</th>
-          <th style="width: 26%;">Kegiatan &amp; tanggal</th>
-          <th style="width: 8%;" class="center">SKP</th>
-          <th style="width: 10%;" class="center">Tgl. input</th>
-          <th style="width: 12%;">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td class="center">3</td><td><strong>dr. Sri Kusuma, Sp.OG</strong><br><span style="color:#64748b; font-size:6.5pt;">ID: POGI-2026-1003</span></td><td>Jawa Timur</td><td>Workshop USG Maternal (05/11)</td><td class="center font-bold">10.4</td><td class="center">08/11/26</td><td><span style="color:#059669; font-weight:700;">Terverifikasi</span></td></tr>
-        <tr><td class="center">4</td><td><strong>Dr. dr. Mega Simatupang, Sp.OG</strong><br><span style="color:#64748b; font-size:6.5pt;">ID: POGI-2026-1004</span></td><td>Bali</td><td>Baksos IVA Skrining (02/11)</td><td class="center font-bold">11.2</td><td class="center">05/11/26</td><td><span style="color:#059669; font-weight:700;">Terverifikasi</span></td></tr>
-        <tr><td class="center">5</td><td><strong>dr. Cut Kurniawan, Sp.OG</strong><br><span style="color:#64748b; font-size:6.5pt;">ID: POGI-2026-1005</span></td><td>Sumatera Utara</td><td>PIT POGI 2026 (15/11)</td><td class="center font-bold">12.0</td><td class="center">16/11/26</td><td><span style="color:#059669; font-weight:700;">Terverifikasi</span></td></tr>
-        <tr><td class="center">6</td><td><strong>Prof. Dr. dr. Ratna Kusuma, Sp.OG</strong><br><span style="color:#64748b; font-size:6.5pt;">ID: POGI-2026-1006</span></td><td>DKI Jakarta</td><td>Webinar Fetal Medicine (18/11)</td><td class="center font-bold">12.8</td><td class="center">19/11/26</td><td><span style="color:#059669; font-weight:700;">Terverifikasi</span></td></tr>
-        <tr><td class="center">7</td><td><strong>dr. Sri Simatupang, Sp.OG</strong><br><span style="color:#64748b; font-size:6.5pt;">ID: POGI-2026-1007</span></td><td>Jawa Barat</td><td>Visite &amp; Pelayanan Klinis (10/11)</td><td class="center font-bold">13.6</td><td class="center">12/11/26</td><td><span style="color:#059669; font-weight:700;">Terverifikasi</span></td></tr>
-      </tbody>
-    </table>
-
-    <div class="section-title">4. REKAPITULASI BERDASARKAN KEGIATAN</div>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th style="width: 5%;" class="center">No.</th>
-          <th style="width: 45%;">Nama kegiatan/webinar</th>
-          <th style="width: 15%;" class="center">Tanggal</th>
-          <th style="width: 15%;" class="center">Jumlah peserta</th>
-          <th style="width: 10%;" class="center">Jumlah SKP</th>
-          <th style="width: 15%;" class="center">Berhasil diinput</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td class="center">1</td><td>PIT POGI 2026 - Maternal &amp; Neonatal Emergency</td><td class="center">15 Nov 2026</td><td class="center">160 Peserta</td><td class="center">240 SKP</td><td class="center font-bold" style="color:#059669;">160 (100%)</td></tr>
-        <tr><td class="center">2</td><td>Simposium Nasional Onkologi Ginekologi Terpadu</td><td class="center">10 Nov 2026</td><td class="center">120 Peserta</td><td class="center">180 SKP</td><td class="center font-bold" style="color:#059669;">120 (100%)</td></tr>
-        <tr><td class="center">3</td><td>Workshop USG Obstetri Dasar &amp; Lanjut</td><td class="center">05 Nov 2026</td><td class="center">85 Peserta</td><td class="center">127,5 SKP</td><td class="center font-bold" style="color:#059669;">85 (100%)</td></tr>
-        <tr><td class="center">4</td><td>Bakti Sosial IVA Test &amp; Edukasi Reproduksi</td><td class="center">02 Nov 2026</td><td class="center">74 Peserta</td><td class="center">74 SKP</td><td class="center font-bold" style="color:#059669;">74 (100%)</td></tr>
-      </tbody>
-    </table>
-
-    <div class="section-title">5. KENDALA DAN PERMASALAHAN</div>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th style="width: 5%;" class="center">No.</th>
-          <th style="width: 32%;">Kendala / temuan</th>
-          <th style="width: 28%;">Dampak terhadap pekerjaan</th>
-          <th style="width: 25%;">Tindak lanjut / PIC</th>
-          <th style="width: 10%;">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td class="center">1</td><td>Keterlambatan sinkronisasi data API portal Kemenkes</td><td>Data SKP menunggu validasi</td><td>Koordinasi helpdesk SATUSEHAT (Siti Rahma)</td><td><span style="color:#d97706; font-weight:700;">On Progress</span></td></tr>
-        <tr><td class="center">2</td><td>Dokumen sertifikat resolusi rendah / tidak terbaca</td><td>Verifikasi ditunda sementara</td><td>Konfirmasi ulang via blast WA ke dokter ybs</td><td><span style="color:#059669; font-weight:700;">Resolved</span></td></tr>
-        <tr><td class="center">3</td><td>Perbedaan format penulisan STR dokter di RS jejaring</td><td>Gagal autovalidasi sistem</td><td>Rekonsiliasi master data cabang (Admin Cabang)</td><td><span style="color:#059669; font-weight:700;">Done</span></td></tr>
-      </tbody>
-    </table>
-
-    <div class="section-title">6. RENCANA TINDAK LANJUT PERIODE BERIKUTNYA</div>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th style="width: 5%;" class="center">No.</th>
-          <th style="width: 55%;">Rencana pekerjaan</th>
-          <th style="width: 25%;" class="center">Target waktu</th>
-          <th style="width: 15%;">PIC</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td class="center">1</td><td>Penerbitan rekapitulasi resmi &amp; lampiran penagihan invoice November</td><td class="center">Minggu ke-1 Desember 2026</td><td>Finance &amp; PIC</td></tr>
-        <tr><td class="center">2</td><td>Penyelesaian verifikasi 19 berkas SKP tertunda</td><td class="center">Minggu ke-2 Desember 2026</td><td>Siti Rahma, S.Farm</td></tr>
-        <tr><td class="center">3</td><td>Pelaksanaan webinar akreditasi batch Desember</td><td class="center">Minggu ke-3 Desember 2026</td><td>Divisi Ilmiah</td></tr>
-        <tr><td class="center">4</td><td>Rekonsiliasi data akhir tahun &amp; tutup buku kuartal</td><td class="center">Minggu ke-4 Desember 2026</td><td>Tim Data POGI</td></tr>
-      </tbody>
-    </table>
-
-    <div class="footer-bar">
-      <span>IMPRUVE.ID | MONTHLY REPORT ONE POGI</span>
-      <span>Halaman 2</span>
-    </div>
-  </div>
-
-  <!-- ================= PAGE 3 ================= -->
-  <div class="page-container">
-    <div class="top-navy-bar">
-      <span>IMPRUVE.ID</span>
-      <span>MONTHLY REPORT | ONE POGI &bull; Halaman 3</span>
-    </div>
-
-    <div class="section-title">7. PROJECT PLAN BULAN DEPAN (DESEMBER 2026)</div>
-    <div class="section-desc">Rencana kerja untuk periode bulan depan. Isi periode, target, dan PIC sesuai kesepakatan.</div>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th style="width: 5%;" class="center">No.</th>
-          <th style="width: 45%;">Rencana pekerjaan</th>
-          <th style="width: 25%;" class="center">Periode</th>
-          <th style="width: 10%;" class="center">Target</th>
-          <th style="width: 15%;">PIC</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td class="center">1</td><td>Pengumpulan / penerimaan data dokter</td><td class="center">Desember 2026, minggu ke-1</td><td class="center">200 Dokter</td><td>Tim Admin</td></tr>
-        <tr><td class="center">2</td><td>Pemeriksaan kelengkapan dan kesesuaian data</td><td class="center">Desember 2026, minggu ke-2</td><td class="center">100% Berkas</td><td>Tim Verifikator</td></tr>
-        <tr><td class="center">3</td><td>Penginputan data SKP ke sistem ONE POGI</td><td class="center">Desember 2026, minggu ke-3</td><td class="center">Min. 400 SKP</td><td>Tim Operator</td></tr>
-        <tr><td class="center">4</td><td>Verifikasi hasil penginputan</td><td class="center">Desember 2026, minggu ke-4</td><td class="center">100% Lolos</td><td>Kemenkes &amp; POGI</td></tr>
-        <tr><td class="center">5</td><td>Monitoring status dan tindak lanjut</td><td class="center">Desember 2026, minggu ke-4</td><td class="center">Rekap Final</td><td>Lead PIC</td></tr>
-      </tbody>
-    </table>
-
-    <div class="section-title">8. DOKUMENTASI / LAMPIRAN</div>
-    <div class="section-desc">Centang atau beri keterangan untuk dokumen pendukung yang disertakan:</div>
-    <table class="data-table" style="font-size: 8pt;">
-      <tr>
-        <td style="width: 50%;"><strong>&#9632;</strong> Rekap data dokter / master tracking</td>
-        <td style="width: 50%;"><strong>&#9632;</strong> Bukti atau tangkapan layar sistem (sesuai izin)</td>
-      </tr>
-      <tr>
-        <td><strong>&#9632;</strong> Rekap kegiatan dan keikutsertaan webinar</td>
-        <td><strong>&#9632;</strong> Catatan koordinasi / konfirmasi data</td>
-      </tr>
-      <tr>
-        <td><strong>&#9632;</strong> Bukti verifikasi atau penyelesaian input</td>
-        <td><strong>&#9632;</strong> Lampiran lain: <em>Invoice Tagihan &amp; Berita Acara Rekonsiliasi</em></td>
-      </tr>
-    </table>
-
-    <div class="section-title">9. PENUTUP</div>
-    <div class="section-desc">
-      Demikian laporan bulanan kegiatan pengelolaan dan penginputan data SKP dokter dalam program ONE POGI untuk periode <strong>${period}</strong> ini disusun sebagai dokumentasi pelaksanaan, monitoring progres, dan bahan evaluasi serta koordinasi untuk periode berikutnya.
-    </div>
-
-    <table style="width: 100%; margin-top: 20px; font-size: 8pt; border-collapse: collapse;">
-      <tr>
-        <td style="width: 50%; vertical-align: top; padding: 10px; border: 1px solid #cbd5e1; background: #f8fafc;">
-          <div>Disusun oleh,</div>
-          <div style="height: 48px;"></div>
-          <div><strong>Siti Rahma, S.Farm</strong></div>
-          <div style="color: #64748b;">Impruve.Id</div>
-          <div style="color: #64748b;">Tanggal: 20 November 2026</div>
-        </td>
-        <td style="width: 50%; vertical-align: top; padding: 10px; border: 1px solid #cbd5e1; background: #f8fafc;">
-          <div>Diperiksa / diketahui oleh,</div>
-          <div style="height: 48px;"></div>
-          <div><strong>Dr. dr. Yudi M. Hidayat, Sp.OG, Subsp. Onk, D.MAS</strong></div>
-          <div style="color: #64748b;">Ketua Umum PP POGI / ONE POGI</div>
-          <div style="color: #64748b;">Tanggal: 20 November 2026</div>
-        </td>
-      </tr>
-    </table>
-
-    <div style="margin-top: 10px; font-size: 6.5pt; color: #94a3b8; line-height: 1.3;">
-      Catatan pengisian: Gunakan satuan hitung yang konsisten. Bedakan dokter unik, record keikutsertaan kegiatan, dan transaksi/input SKP. Status "berhasil" hanya diberikan setelah hasil input diverifikasi pada sistem.
-    </div>
-
-    <div class="footer-bar">
-      <span>IMPRUVE.ID | MONTHLY REPORT ONE POGI</span>
-      <span>Halaman 3</span>
-    </div>
-  </div>
-
-</body>
-</html>`;
-
-  let iframe = document.getElementById('one-pogi-print-iframe');
-  if (iframe) document.body.removeChild(iframe);
-  iframe = document.createElement('iframe');
-  iframe.id = 'one-pogi-print-iframe';
-  iframe.style.position = 'fixed';
-  iframe.style.right = '0';
-  iframe.style.bottom = '0';
-  iframe.style.width = '0';
-  iframe.style.height = '0';
-  iframe.style.border = '0';
-  document.body.appendChild(iframe);
-
-  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-  iframeDoc.open();
-  iframeDoc.write(html);
-  iframeDoc.close();
-
-  setTimeout(function() {
-    iframe.contentWindow.focus();
-    iframe.contentWindow.print();
-  }, 350);
-
-  if (typeof showToast === 'function') {
-    showToast('Membuka Laporan Bulanan Resmi ONE POGI (3 Halaman)...', 'info');
-  }
-}
-
 window.printOnePogiMonthlyReportPdf = printOnePogiMonthlyReportPdf;
+window.downloadOfficialSkpReportPdf = printOfficialSkpReportPdf;
+window.downloadOnePogiMonthlyReportPdf = printOnePogiMonthlyReportPdf;

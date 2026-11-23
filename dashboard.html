@@ -87,6 +87,10 @@
               <span class="material-symbols-outlined text-[19px]">bar_chart</span>
               <span>Report</span>
             </a>
+            <a href="admin-performance.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[19px]">speed</span>
+              <span>Admin Performance</span>
+            </a>
           </nav>
         </div>
 
@@ -164,15 +168,15 @@
                 </button>
                 <button type="button" onclick="selectOrgScope('jabar', 'POGI Cabang Jawa Barat')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>POGI Cabang Jawa Barat</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">25 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
                 </button>
                 <button type="button" onclick="selectOrgScope('dki', 'POGI Cabang DKI Jakarta')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>POGI Cabang DKI Jakarta</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">28 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">22 Dokter</span>
                 </button>
                 <button type="button" onclick="selectOrgScope('jatim', 'POGI Cabang Jawa Timur')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>POGI Cabang Jawa Timur</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">26 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
                 </button>
               </div>
             </div>
@@ -284,8 +288,8 @@
                     <span>Jejak Audit &amp; Log Aktivitas</span>
                   </a>
                   <a href="reports.html" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
-                    <span class="material-symbols-outlined text-base text-slate-400">picture_as_pdf</span>
-                    <span>Laporan Eksekutif PDF</span>
+                    <span class="material-symbols-outlined text-base text-slate-400">description</span>
+                    <span>Laporan Bulanan SKP</span>
                   </a>
                 </div>
                 <div class="pt-1 border-t border-slate-100 px-2">
@@ -666,19 +670,19 @@
                   <div class="flex items-center gap-1.5 font-semibold">
                     <span class="w-3.5 h-3.5 rounded-full bg-[#dc2626] inline-block shadow-2xs"></span>
                     <span class="text-slate-800 font-extrabold">Merah:</span>
-                    <span>Sangat Kurang (&lt;40%)</span>
+                    <span>Sangat Kurang (&lt;50%)</span>
                   </div>
                   <span class="text-slate-300">|</span>
                   <div class="flex items-center gap-1.5 font-semibold">
-                    <span class="w-3.5 h-3.5 rounded-full bg-[#059669] inline-block shadow-2xs"></span>
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#16a34a] inline-block shadow-2xs"></span>
                     <span class="text-slate-800 font-extrabold">Hijau:</span>
-                    <span>Hampir Memenuhi (40% — 79%)</span>
+                    <span>Hampir Memenuhi (50% — 84%)</span>
                   </div>
                   <span class="text-slate-300">|</span>
                   <div class="flex items-center gap-1.5 font-semibold">
-                    <span class="w-3.5 h-3.5 rounded-full bg-[#f59e0b] inline-block shadow-2xs"></span>
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#eab308] inline-block shadow-2xs"></span>
                     <span class="text-slate-800 font-extrabold">Kuning:</span>
-                    <span>Terpenuhi (&ge;80%)</span>
+                    <span>Terpenuhi (&ge;85%)</span>
                   </div>
                   <span class="text-slate-300">|</span>
                   <div class="flex items-center gap-1.5 text-slate-500">
@@ -836,12 +840,12 @@
         let badgeColor = 'bg-red-50 text-red-700 border-red-200';
         let statusLabel = 'Sangat Kurang';
 
-        if (rate >= 80) {
-          dotColor = 'bg-[#f59e0b]';
+        if (rate >= 85) {
+          dotColor = 'bg-[#eab308]';
           badgeColor = 'bg-amber-50 text-amber-800 border-amber-200';
           statusLabel = 'Terpenuhi';
-        } else if (rate >= 40) {
-          dotColor = 'bg-[#059669]';
+        } else if (rate >= 50) {
+          dotColor = 'bg-[#16a34a]';
           badgeColor = 'bg-emerald-50 text-emerald-800 border-emerald-200';
           statusLabel = 'Hampir Memenuhi';
         }
@@ -896,9 +900,9 @@
       function getProvinceColor(stat) {
         if (!stat || stat.doctors === 0) return '#94a3b8'; // Abu-abu: Tidak ada dokter
         const rate = stat.completionRate;
-        if (rate >= 80) return '#f59e0b'; // Kuning (Terpenuhi: >= 80%)
-        if (rate >= 40) return '#059669'; // Hijau (Hampir Memenuhi: 40% - 79%)
-        return '#dc2626';                 // Merah (Sangat Kurang: < 40%)
+        if (rate >= 85) return '#eab308'; // Kuning (Terpenuhi: >= 85%) - Bab 4 RULES.md
+        if (rate >= 50) return '#16a34a'; // Hijau (Hampir Memenuhi: 50% - 84%) - Bab 4 RULES.md
+        return '#dc2626';                 // Merah (Sangat Kurang: < 50%) - Bab 4 RULES.md
       }
 
       geoJsonLayer = L.geoJSON(INDONESIA_38_GEOJSON, {
@@ -926,9 +930,9 @@
           let statusBadge = '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-red-900/90 text-red-200 border border-red-500/50">● Sangat Kurang</span>';
           if (!stat || stat.doctors === 0) {
             statusBadge = '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-800 text-slate-300 border border-slate-600">0 Dokter</span>';
-          } else if (stat.completionRate >= 80) {
+          } else if (stat.completionRate >= 85) {
             statusBadge = '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-900/90 text-amber-200 border border-amber-500/50">● Terpenuhi</span>';
-          } else if (stat.completionRate >= 40) {
+          } else if (stat.completionRate >= 50) {
             statusBadge = '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-900/90 text-emerald-200 border border-emerald-500/50">● Hampir Memenuhi</span>';
           }
 
@@ -1014,7 +1018,7 @@
     }
 
     function syncSatuSehat() {
-      showToast('Menghubungkan ke API Plataran Sehat & SATUSEHAT SDMK Kemenkes...', 'info');
+      showToast('Menghubungkan ke API Plataran Sehat...', 'info');
       setTimeout(() => {
         PogiStore.addActivity({
           actor: 'System Integration',
@@ -1036,9 +1040,9 @@
 
       const scopeData = {
         all: { total: 200, progress: 43, complete: 42, incomplete: 158, text: '200 doctors in 38 provinces.' },
-        jabar: { total: 25, progress: 64, complete: 16, incomplete: 9, text: '25 doctors in POGI Cabang Jawa Barat.' },
-        dki: { total: 28, progress: 85, complete: 24, incomplete: 4, text: '28 doctors in POGI Cabang DKI Jakarta.' },
-        jatim: { total: 26, progress: 65, complete: 17, incomplete: 9, text: '26 doctors in POGI Cabang Jawa Timur.' }
+        jabar: { total: 8, progress: 25, complete: 2, incomplete: 6, text: '8 doctors in POGI Cabang Jawa Barat.' },
+        dki: { total: 22, progress: 36, complete: 8, incomplete: 14, text: '22 doctors in POGI Cabang DKI Jakarta.' },
+        jatim: { total: 8, progress: 25, complete: 2, incomplete: 6, text: '8 doctors in POGI Cabang Jawa Timur.' }
       };
 
       const cur = scopeData[scope] || scopeData.all;

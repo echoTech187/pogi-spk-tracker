@@ -61,6 +61,10 @@
               <span class="material-symbols-outlined text-[19px]">bar_chart</span>
               <span>Report</span>
             </a>
+            <a href="admin-performance.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[19px]">speed</span>
+              <span>Admin Performance</span>
+            </a>
           </nav>
         </div>
 
@@ -135,15 +139,15 @@
                 </button>
                 <button type="button" onclick="selectOrgScope('jabar', 'POGI Cabang Jawa Barat')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>POGI Cabang Jawa Barat</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">25 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
                 </button>
                 <button type="button" onclick="selectOrgScope('dki', 'POGI Cabang DKI Jakarta')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>POGI Cabang DKI Jakarta</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">28 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">22 Dokter</span>
                 </button>
                 <button type="button" onclick="selectOrgScope('jatim', 'POGI Cabang Jawa Timur')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>POGI Cabang Jawa Timur</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">26 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
                 </button>
               </div>
             </div>
@@ -255,8 +259,8 @@
                     <span>Jejak Audit &amp; Log Aktivitas</span>
                   </a>
                   <a href="reports.html" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
-                    <span class="material-symbols-outlined text-base text-slate-400">picture_as_pdf</span>
-                    <span>Laporan Eksekutif PDF</span>
+                    <span class="material-symbols-outlined text-base text-slate-400">description</span>
+                    <span>Laporan Bulanan SKP</span>
                   </a>
                 </div>
                 <div class="pt-1 border-t border-slate-100 px-2">
@@ -334,13 +338,44 @@
                 <label class="block font-bold text-slate-700 mb-1 text-xs">Provinsi / Wilayah Cabang</label>
                 <select id="manageDoctorProvFilter" onchange="filterManageDoctorTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
                   <option value="ALL">Semua Cabang (38 Provinsi)</option>
-                  <option value="DKI Jakarta">DKI Jakarta</option>
-                  <option value="Jawa Barat">Jawa Barat</option>
-                  <option value="Jawa Timur">Jawa Timur</option>
-                  <option value="Jawa Tengah">Jawa Tengah</option>
-                  <option value="Bali">Bali</option>
-                  <option value="Sumatera Utara">Sumatera Utara</option>
-                  <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+                <option value="Aceh">Aceh</option>
+                <option value="Bali">Bali</option>
+                <option value="Banten">Banten</option>
+                <option value="Bengkulu">Bengkulu</option>
+                <option value="DI Yogyakarta">DI Yogyakarta</option>
+                <option value="DKI Jakarta">DKI Jakarta</option>
+                <option value="Gorontalo">Gorontalo</option>
+                <option value="Jambi">Jambi</option>
+                <option value="Jawa Barat">Jawa Barat</option>
+                <option value="Jawa Tengah">Jawa Tengah</option>
+                <option value="Jawa Timur">Jawa Timur</option>
+                <option value="Kalimantan Barat">Kalimantan Barat</option>
+                <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+                <option value="Kalimantan Tengah">Kalimantan Tengah</option>
+                <option value="Kalimantan Timur">Kalimantan Timur</option>
+                <option value="Kalimantan Utara">Kalimantan Utara</option>
+                <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
+                <option value="Kepulauan Riau">Kepulauan Riau</option>
+                <option value="Lampung">Lampung</option>
+                <option value="Maluku">Maluku</option>
+                <option value="Maluku Utara">Maluku Utara</option>
+                <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
+                <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
+                <option value="Papua">Papua</option>
+                <option value="Papua Barat">Papua Barat</option>
+                <option value="Papua Barat Daya">Papua Barat Daya</option>
+                <option value="Papua Pegunungan">Papua Pegunungan</option>
+                <option value="Papua Selatan">Papua Selatan</option>
+                <option value="Papua Tengah">Papua Tengah</option>
+                <option value="Riau">Riau</option>
+                <option value="Sulawesi Barat">Sulawesi Barat</option>
+                <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+                <option value="Sulawesi Tengah">Sulawesi Tengah</option>
+                <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
+                <option value="Sulawesi Utara">Sulawesi Utara</option>
+                <option value="Sumatera Barat">Sumatera Barat</option>
+                <option value="Sumatera Selatan">Sumatera Selatan</option>
+                <option value="Sumatera Utara">Sumatera Utara</option>
                 </select>
               </div>
 
@@ -358,13 +393,9 @@
               <div>Menampilkan <span id="manageDoctorCounter" class="font-bold text-slate-900">0</span> dokter dari total pangkalan data</div>
               <div class="flex items-center gap-3">
                 <button type="button" onclick="resetManageDoctorFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="exportDoctorsPdf()" class="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs">
-                  <span class="material-symbols-outlined text-base text-rose-600">picture_as_pdf</span>
-                  <span>Unduh PDF</span>
-                </button>
                 <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
                   <span class="material-symbols-outlined text-sm">person_add</span>
-                  <span>+ Tambah Dokter</span>
+                  <span>Tambah Dokter</span>
                 </button>
               </div>
             </div>
@@ -429,11 +460,45 @@
               <div>
                 <label class="block font-bold text-slate-700 mb-1 text-xs">Provinsi / Wilayah</label>
                 <select id="manageInstProvFilter" onchange="filterManageInstTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                  <option value="ALL">Semua Provinsi</option>
-                  <option value="DKI Jakarta">DKI Jakarta</option>
-                  <option value="Jawa Barat">Jawa Barat</option>
-                  <option value="Jawa Timur">Jawa Timur</option>
-                  <option value="Banten">Banten</option>
+                  <option value="ALL">Semua Provinsi (38 Wilayah)</option>
+                <option value="Aceh">Aceh</option>
+                <option value="Bali">Bali</option>
+                <option value="Banten">Banten</option>
+                <option value="Bengkulu">Bengkulu</option>
+                <option value="DI Yogyakarta">DI Yogyakarta</option>
+                <option value="DKI Jakarta">DKI Jakarta</option>
+                <option value="Gorontalo">Gorontalo</option>
+                <option value="Jambi">Jambi</option>
+                <option value="Jawa Barat">Jawa Barat</option>
+                <option value="Jawa Tengah">Jawa Tengah</option>
+                <option value="Jawa Timur">Jawa Timur</option>
+                <option value="Kalimantan Barat">Kalimantan Barat</option>
+                <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+                <option value="Kalimantan Tengah">Kalimantan Tengah</option>
+                <option value="Kalimantan Timur">Kalimantan Timur</option>
+                <option value="Kalimantan Utara">Kalimantan Utara</option>
+                <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
+                <option value="Kepulauan Riau">Kepulauan Riau</option>
+                <option value="Lampung">Lampung</option>
+                <option value="Maluku">Maluku</option>
+                <option value="Maluku Utara">Maluku Utara</option>
+                <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
+                <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
+                <option value="Papua">Papua</option>
+                <option value="Papua Barat">Papua Barat</option>
+                <option value="Papua Barat Daya">Papua Barat Daya</option>
+                <option value="Papua Pegunungan">Papua Pegunungan</option>
+                <option value="Papua Selatan">Papua Selatan</option>
+                <option value="Papua Tengah">Papua Tengah</option>
+                <option value="Riau">Riau</option>
+                <option value="Sulawesi Barat">Sulawesi Barat</option>
+                <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+                <option value="Sulawesi Tengah">Sulawesi Tengah</option>
+                <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
+                <option value="Sulawesi Utara">Sulawesi Utara</option>
+                <option value="Sumatera Barat">Sumatera Barat</option>
+                <option value="Sumatera Selatan">Sumatera Selatan</option>
+                <option value="Sumatera Utara">Sumatera Utara</option>
                 </select>
               </div>
 
@@ -452,13 +517,9 @@
               <div>Menampilkan <span id="manageInstCounter" class="font-bold text-slate-900">0</span> faskes jejaring</div>
               <div class="flex items-center gap-3">
                 <button type="button" onclick="resetManageInstFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="exportActiveManageTabPdf('institution')" class="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs">
-                  <span class="material-symbols-outlined text-base text-rose-600">picture_as_pdf</span>
-                  <span>Unduh PDF</span>
-                </button>
                 <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
                   <span class="material-symbols-outlined text-sm">domain_add</span>
-                  <span>+ Tambah Institusi</span>
+                  <span>Tambah Institusi</span>
                 </button>
               </div>
             </div>
@@ -534,13 +595,9 @@
               <div>Menampilkan <span id="manageEventCounter" class="font-bold text-slate-900">0</span> event SKP terdaftar</div>
               <div class="flex items-center gap-3">
                 <button type="button" onclick="resetManageEventFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="exportEventsPdf()" class="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs">
-                  <span class="material-symbols-outlined text-base text-rose-600">picture_as_pdf</span>
-                  <span>Unduh PDF</span>
-                </button>
                 <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
                   <span class="material-symbols-outlined text-sm">add_circle</span>
-                  <span>+ Tambah Event SKP</span>
+                  <span>Tambah Event SKP</span>
                 </button>
               </div>
             </div>
@@ -614,13 +671,9 @@
               <div>Menampilkan <span id="manageCatCounter" class="font-bold text-slate-900">0</span> kategori terverifikasi</div>
               <div class="flex items-center gap-3">
                 <button type="button" onclick="resetManageCatFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="exportActiveManageTabPdf('category')" class="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs">
-                  <span class="material-symbols-outlined text-base text-rose-600">picture_as_pdf</span>
-                  <span>Unduh PDF</span>
-                </button>
                 <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
                   <span class="material-symbols-outlined text-sm">category</span>
-                  <span>+ Tambah Kategori</span>
+                  <span>Tambah Kategori</span>
                 </button>
               </div>
             </div>
@@ -693,13 +746,9 @@
               <div>Menampilkan <span id="manageUserCounter" class="font-bold text-slate-900">0</span> akun pengelola</div>
               <div class="flex items-center gap-3">
                 <button type="button" onclick="resetManageUserFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="exportActiveManageTabPdf('user')" class="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs">
-                  <span class="material-symbols-outlined text-base text-rose-600">picture_as_pdf</span>
-                  <span>Unduh PDF</span>
-                </button>
                 <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
                   <span class="material-symbols-outlined text-sm">manage_accounts</span>
-                  <span>+ Tambah Pengguna</span>
+                  <span>Tambah Pengguna</span>
                 </button>
               </div>
             </div>
@@ -757,7 +806,7 @@
   <div id="manageAddModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 id="manageAddModalTitle" class="font-black text-slate-900 text-base">+ Add Item</h3>
+        <h3 id="manageAddModalTitle" class="font-black text-slate-900 text-base">Add Item</h3>
         <button onclick="closeManageAddModal()" class="text-slate-400 hover:text-slate-600 p-1">
           <span class="material-symbols-outlined text-xl">close</span>
         </button>
@@ -1069,7 +1118,7 @@
             const pel = d.pelayananCredits !== undefined ? d.pelayananCredits : (d.pelayanan?.achieved || 45);
             const peng = d.pengabdianCredits !== undefined ? d.pengabdianCredits : (d.pengabdian?.achieved || 15);
             const pemb = d.pembelajaranCredits !== undefined ? d.pembelajaranCredits : (d.pembelajaran?.achieved || 25);
-            const lastAct = d.lastActivity || 'Sync SATUSEHAT (Hari Ini)';
+            const lastAct = d.lastActivity || ('Sync SATUSEHAT (' + PogiStore.formatCurrentDate() + ')');
 
             return `
               <tr class="hover:bg-slate-50/80 transition">
@@ -1646,7 +1695,7 @@
               <td class="py-3 px-4">
                 <span class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 font-bold text-[10px]">${usr.role}</span>
               </td>
-              <td class="py-3 px-4 text-[11px] text-slate-500">${usr.created || 'Hari Ini'}</td>
+              <td class="py-3 px-4 text-[11px] text-slate-500">${usr.created || PogiStore.formatCurrentDate()}</td>
               <td class="py-3 px-4 text-center">
                 <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold">Aktif</span>
               </td>
@@ -1953,13 +2002,7 @@
             <div>
               <label class="font-bold text-slate-700 block mb-1">Provinsi / Cabang</label>
               <select id="editDocProv" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
-                <option ${item.province === 'DKI Jakarta' ? 'selected' : ''}>DKI Jakarta</option>
-                <option ${item.province === 'Jawa Barat' ? 'selected' : ''}>Jawa Barat</option>
-                <option ${item.province === 'Jawa Timur' ? 'selected' : ''}>Jawa Timur</option>
-                <option ${item.province === 'Jawa Tengah' ? 'selected' : ''}>Jawa Tengah</option>
-                <option ${item.province === 'Bali' ? 'selected' : ''}>Bali</option>
-                <option ${item.province === 'Sumatera Utara' ? 'selected' : ''}>Sumatera Utara</option>
-                <option ${item.province === 'Sulawesi Selatan' ? 'selected' : ''}>Sulawesi Selatan</option>
+                ${PogiStore.getProvinces().map(p => `<option value="${p.name}" ${item.province === p.name ? 'selected' : ''}>${p.name}</option>`).join('')}
               </select>
             </div>
             <div><label class="font-bold text-slate-700 block mb-1">Target SKP</label><input type="text" id="editDocSkp" value="${item.skpDisplay || '0 / 32'}" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold" /></div>
@@ -2168,7 +2211,46 @@
           <div><label class="font-bold text-slate-700 block mb-1">Nama Lengkap & Gelar</label><input required type="text" id="addDocName" placeholder="dr. ..., Sp.OG" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl" /></div>
           <div><label class="font-bold text-slate-700 block mb-1">NIK (16 Digit)</label><input required type="text" id="addDocNik" placeholder="3201..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl" /></div>
           <div class="grid grid-cols-2 gap-2">
-            <div><label class="font-bold text-slate-700 block mb-1">Provinsi / Cabang</label><select id="addDocProv" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl"><option>DKI Jakarta</option><option>Jawa Barat</option><option>Jawa Timur</option><option>Jawa Tengah</option><option>Bali</option><option>Sumatera Utara</option><option>Sulawesi Selatan</option></select></div>
+            <div><label class="font-bold text-slate-700 block mb-1">Provinsi / Cabang</label><select id="addDocProv" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+              <option value="Aceh">Aceh</option>
+              <option value="Bali">Bali</option>
+              <option value="Banten">Banten</option>
+              <option value="Bengkulu">Bengkulu</option>
+              <option value="DI Yogyakarta">DI Yogyakarta</option>
+              <option value="DKI Jakarta">DKI Jakarta</option>
+              <option value="Gorontalo">Gorontalo</option>
+              <option value="Jambi">Jambi</option>
+              <option value="Jawa Barat">Jawa Barat</option>
+              <option value="Jawa Tengah">Jawa Tengah</option>
+              <option value="Jawa Timur">Jawa Timur</option>
+              <option value="Kalimantan Barat">Kalimantan Barat</option>
+              <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+              <option value="Kalimantan Tengah">Kalimantan Tengah</option>
+              <option value="Kalimantan Timur">Kalimantan Timur</option>
+              <option value="Kalimantan Utara">Kalimantan Utara</option>
+              <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
+              <option value="Kepulauan Riau">Kepulauan Riau</option>
+              <option value="Lampung">Lampung</option>
+              <option value="Maluku">Maluku</option>
+              <option value="Maluku Utara">Maluku Utara</option>
+              <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
+              <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
+              <option value="Papua">Papua</option>
+              <option value="Papua Barat">Papua Barat</option>
+              <option value="Papua Barat Daya">Papua Barat Daya</option>
+              <option value="Papua Pegunungan">Papua Pegunungan</option>
+              <option value="Papua Selatan">Papua Selatan</option>
+              <option value="Papua Tengah">Papua Tengah</option>
+              <option value="Riau">Riau</option>
+              <option value="Sulawesi Barat">Sulawesi Barat</option>
+              <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+              <option value="Sulawesi Tengah">Sulawesi Tengah</option>
+              <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
+              <option value="Sulawesi Utara">Sulawesi Utara</option>
+              <option value="Sumatera Barat">Sumatera Barat</option>
+              <option value="Sumatera Selatan">Sumatera Selatan</option>
+              <option value="Sumatera Utara">Sumatera Utara</option>
+              </select></div>
             <div><label class="font-bold text-slate-700 block mb-1">Target SKP</label><input type="text" id="addDocSkp" value="0 / 32" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl" /></div>
           </div>
           <div><label class="font-bold text-slate-700 block mb-1">Rumah Sakit / Institusi</label><input type="text" id="addDocInst" placeholder="RSUP Dr. Cipto Mangunkusumo" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl" /></div>
@@ -2240,9 +2322,11 @@
           qAchieved: 0,
           skpDisplay: skp || '0 / 32',
           total5YearAchieved: 0,
-          pelayanan: { achieved: 0, target: 80 },
-          pengabdian: { achieved: 0, target: 30 },
-          pembelajaran: { achieved: 0, target: 50 },
+          uuid: PogiStore.generateUUIDv7(),
+          pelayanan: { achieved: 0, target: 56 },
+          pengabdian: { achieved: 0, target: 8 },
+          pembelajaran: { achieved: 0, target: 72 },
+          fleksibilitas: { achieved: 0, target: 24 },
           pendingCredits: 0,
           status: 'Incomplete',
           lastActivity: 'Baru ditambahkan',
@@ -2316,7 +2400,7 @@
           name,
           email,
           role,
-          created: 'Hari ini'
+          created: PogiStore.formatCurrentDate()
         });
         PogiStore.saveUsers(list);
         renderManageUserTable(null, true);

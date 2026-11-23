@@ -61,6 +61,10 @@
               <span class="material-symbols-outlined text-[19px]">bar_chart</span>
               <span>Report</span>
             </a>
+            <a href="admin-performance.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[19px]">speed</span>
+              <span>Admin Performance</span>
+            </a>
           </nav>
         </div>
 
@@ -135,15 +139,15 @@
                 </button>
                 <button type="button" onclick="selectOrgScope('jabar', 'POGI Cabang Jawa Barat')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>POGI Cabang Jawa Barat</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">25 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
                 </button>
                 <button type="button" onclick="selectOrgScope('dki', 'POGI Cabang DKI Jakarta')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>POGI Cabang DKI Jakarta</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">28 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">22 Dokter</span>
                 </button>
                 <button type="button" onclick="selectOrgScope('jatim', 'POGI Cabang Jawa Timur')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>POGI Cabang Jawa Timur</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">26 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
                 </button>
               </div>
             </div>
@@ -255,8 +259,8 @@
                     <span>Jejak Audit &amp; Log Aktivitas</span>
                   </a>
                   <a href="reports.html" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
-                    <span class="material-symbols-outlined text-base text-slate-400">picture_as_pdf</span>
-                    <span>Laporan Eksekutif PDF</span>
+                    <span class="material-symbols-outlined text-base text-slate-400">description</span>
+                    <span>Laporan Bulanan SKP</span>
                   </a>
                 </div>
                 <div class="pt-1 border-t border-slate-100 px-2">
@@ -289,10 +293,6 @@
             </p>
           </div>
           <div class="flex items-center gap-2.5 shrink-0">
-            <button type="button" onclick="exportActivityPdf()" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-extrabold shadow-2xs transition flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-base text-rose-600">picture_as_pdf</span>
-              <span>Ekspor Log (PDF)</span>
-            </button>
             <button type="button" onclick="refreshActivityLog()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
               <span class="material-symbols-outlined text-base" id="refreshIcon">refresh</span>
               <span>Segarkan Log</span>
@@ -310,7 +310,7 @@
           <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
             <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Doctor views</div>
             <div class="text-2xl font-black text-slate-900 mt-1">412</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">Hari ini</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">23 Nov 2026</div>
           </div>
           <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
             <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">SATUSEHAT opens</div>
@@ -329,6 +329,57 @@
           </div>
         </div>
 
+        <!-- MESIN OTOMASI PENGINGAT (CRON JOB SCHEDULER H-7 & H-2 - RULES.md BAB 3.2.A) -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-900/90 to-teal-900 text-white shadow-xl space-y-4">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-emerald-300 shrink-0">
+                <span class="material-symbols-outlined text-2xl">schedule_send</span>
+              </div>
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="font-black text-sm text-white">Mesin Otomasi Pengingat &amp; Cron Job Scheduler</h3>
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-black uppercase flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Worker Aktif
+                  </span>
+                </div>
+                <p class="text-xs text-emerald-100/70 mt-0.5">
+                  Eksekusi otomatis tugas terjadwal H-7 &amp; H-2 sebelum Cutoff 1 Des 2026 (00:00 WIB) sesuai regulasi RULES.md Bab 3.2.A
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0 flex-wrap">
+              <button type="button" onclick="runCronJobSimulation('H-7')" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                <span class="material-symbols-outlined text-sm text-emerald-300">play_circle</span>
+                <span>Simulasi Trigger H-7</span>
+              </button>
+              <button type="button" onclick="runCronJobSimulation('H-2')" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                <span class="material-symbols-outlined text-sm text-amber-300">warning</span>
+                <span>Simulasi Trigger H-2</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Schedule & Status Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10 text-xs">
+            <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+              <div class="text-[10px] text-emerald-200/60 font-bold uppercase tracking-wider">Jadwal Cutoff Bulanan</div>
+              <div class="text-sm font-black text-white mt-0.5">01 Des 2026 &bull; 00:00 WIB</div>
+              <div class="text-[10px] text-emerald-100/60 mt-0.5">Kunci data &amp; arsip laporan bulanan</div>
+            </div>
+            <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+              <div class="text-[10px] text-emerald-200/60 font-bold uppercase tracking-wider">Next Trigger: Pengingat Rutin H-7</div>
+              <div class="text-sm font-black text-emerald-300 mt-0.5">24 Nov 2026 &bull; 00:00 WIB</div>
+              <div class="text-[10px] text-emerald-100/60 mt-0.5">Sasaran: 158 Dokter Incomplete (Nasional)</div>
+            </div>
+            <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+              <div class="text-[10px] text-amber-200/60 font-bold uppercase tracking-wider">Next Trigger: Deadline Kritis H-2</div>
+              <div class="text-sm font-black text-amber-300 mt-0.5">29 Nov 2026 &bull; 00:00 WIB</div>
+              <div class="text-[10px] text-amber-100/60 mt-0.5">Eskalasi final sisa kekurangan kredit</div>
+            </div>
+          </div>
+        </div>
+
         <!-- Tabel Log Aktivitas -->
         <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-3">
@@ -342,6 +393,9 @@
               </button>
               <button type="button" onclick="filterActivityCategory('FollowUp')" id="tab-act-fu" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
                 <span class="w-2 h-2 rounded-full bg-amber-500"></span> Follow-Up Cabang
+              </button>
+              <button type="button" onclick="filterActivityCategory('Automation')" id="tab-act-auto" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-purple-500"></span> Otomasi Cron
               </button>
             </div>
 
@@ -584,7 +638,8 @@
         ALL: 'tab-act-all',
         Sync: 'tab-act-sync',
         Verification: 'tab-act-verif',
-        FollowUp: 'tab-act-fu'
+        FollowUp: 'tab-act-fu',
+        Automation: 'tab-act-auto'
       };
 
       for (const k in tabIds) {
@@ -602,9 +657,23 @@
       renderActivityTable(activeCategory, q, true);
     }
 
+    function runCronJobSimulation(triggerType) {
+      if (typeof PogiStore === 'undefined') return;
+      const res = PogiStore.runCronTrigger(triggerType);
+      showToast(`Simulasi Cron ${triggerType} Berhasil: ${res.recipientsCount} dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
+      filterActivityCategory('Automation');
+    }
+
     function filterActivities() {
       const q = (document.getElementById('searchActivityInput')?.value || '');
       renderActivityTable(activeCategory, q, true);
+    }
+
+    function runCronJobSimulation(triggerType) {
+      if (typeof PogiStore === 'undefined') return;
+      const res = PogiStore.runCronTrigger(triggerType);
+      showToast(`Simulasi Cron ${triggerType} Berhasil: ${res.recipientsCount} dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
+      filterActivityCategory('Automation');
     }
 
     function refreshActivityLog() {

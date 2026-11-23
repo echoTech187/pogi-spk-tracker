@@ -45,13 +45,25 @@ function selectOrgScope(scope, labelText) {
 
   // If on doctors.html, trigger page filter
   if (typeof applyDoctorFilters === 'function') {
-    const provSelect = document.getElementById('filterProvince');
+    const provSelect = document.getElementById('filterProvince') || document.getElementById('provinceFilter');
     if (provSelect) {
       if (scope === 'jabar') provSelect.value = 'Jawa Barat';
       else if (scope === 'dki') provSelect.value = 'DKI Jakarta';
       else if (scope === 'jatim') provSelect.value = 'Jawa Timur';
       else provSelect.value = 'ALL';
       applyDoctorFilters();
+    }
+  }
+
+  // If on provinces.html, filter search input
+  if (typeof filterProvinces === 'function') {
+    const searchInput = document.getElementById('searchProvinceInput');
+    if (searchInput) {
+      if (scope === 'jabar') searchInput.value = 'Jawa Barat';
+      else if (scope === 'dki') searchInput.value = 'DKI Jakarta';
+      else if (scope === 'jatim') searchInput.value = 'Jawa Timur';
+      else searchInput.value = '';
+      filterProvinces();
     }
   }
 }
@@ -82,6 +94,7 @@ function markAllNotificationsAsRead() {
 function toggleTopUserDropdown() {
   const dd = document.getElementById('topUserDropdown');
   if (dd) {
+    initRbacRoleSwitcher();
     dd.classList.toggle('hidden');
     // Close notif dropdown if open
     const notifDd = document.getElementById('topNotifDropdown');
@@ -436,4 +449,127 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 300);
     }
   } catch (err) {}
+});
+
+// -------------------------------------------------------------
+// BAB 6.1 & 6.2 — RBAC ENFORCEMENT & ROLE SIMULATION
+// -------------------------------------------------------------
+function switchUserRole(roleKey) {
+  if (typeof PogiStore === 'undefined') return;
+  const roles = PogiStore.getAllRoles();
+  const target = roles.find(r => r.role === roleKey) || roles[0];
+  PogiStore.setCurrentUser(target);
+  showToast(`Peran RBAC beralih ke: ${target.roleLabel}`, 'info');
+
+  applyRbacEnforcement();
+
+  // If on doctors.html, reload data to match branch isolation
+  if (typeof applyDoctorFilters === 'function') {
+    if (target.role === 'ADMIN_CABANG' && target.branch) {
+      const provSelect = document.getElementById('filterProvince') || document.getElementById('provinceFilter');
+      if (provSelect) provSelect.value = target.branch;
+    }
+    applyDoctorFilters();
+  }
+}
+
+function applyRbacEnforcement() {
+  if (typeof PogiStore === 'undefined') return;
+  const user = PogiStore.getCurrentUser();
+
+  const userRoleBadge = document.getElementById('navUserRoleBadge');
+  if (userRoleBadge) {
+    userRoleBadge.innerText = user.roleLabel || user.role;
+  }
+  const roleSelect = document.getElementById('headerRoleSwitcher');
+  if (roleSelect) {
+    roleSelect.value = user.role;
+  }
+
+  let banner = document.getElementById('rbacNoticeBanner');
+  if (user.role === 'VIEWER_POGI') {
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'rbacNoticeBanner';
+      banner.className = 'w-full bg-amber-50 border-b border-amber-200 py-1.5 px-4 text-xs font-bold text-amber-900 flex items-center justify-between shrink-0 shadow-2xs z-30';
+      const mainEl = document.querySelector('main') || document.body;
+      mainEl.parentElement.insertBefore(banner, mainEl);
+    }
+    banner.innerHTML = `
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-base text-amber-600">visibility</span>
+        <span>Mode Akses: <strong>Viewer POGI (Read-Only Pusat)</strong> — Seluruh data pemantauan aktif, aksi mutasi dinonaktifkan.</span>
+      </div>
+      <span class="px-2 py-0.5 rounded-full bg-amber-200/70 text-amber-900 text-[10px] font-black uppercase">Read-Only</span>
+    `;
+    banner.classList.remove('hidden');
+
+    document.querySelectorAll('.rbac-write, #btnAddDoctor, #btnWaBlastMassal').forEach(btn => {
+      btn.setAttribute('disabled', 'true');
+      btn.classList.add('opacity-50', 'cursor-not-allowed');
+      btn.title = 'Aksi dinonaktifkan: Mode Akses Viewer Read-Only';
+    });
+  } else if (user.role === 'ADMIN_CABANG') {
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'rbacNoticeBanner';
+      banner.className = 'w-full bg-sky-50 border-b border-sky-200 py-1.5 px-4 text-xs font-bold text-sky-900 flex items-center justify-between shrink-0 shadow-2xs z-30';
+      const mainEl = document.querySelector('main') || document.body;
+      mainEl.parentElement.insertBefore(banner, mainEl);
+    }
+    banner.innerHTML = `
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-base text-sky-600">domain</span>
+        <span>Mode Akses: <strong>Admin Cabang (${user.branch})</strong> — Akses data dibatasi ketat hanya untuk wilayah kerja cabang Anda (RULES.md Bab 6.2).</span>
+      </div>
+      <span class="px-2 py-0.5 rounded-full bg-sky-200/70 text-sky-900 text-[10px] font-black uppercase">Cabang ${user.branch}</span>
+    `;
+    banner.classList.remove('hidden');
+
+    document.querySelectorAll('.rbac-write, #btnAddDoctor, #btnWaBlastMassal').forEach(btn => {
+      btn.removeAttribute('disabled');
+      btn.classList.remove('opacity-50', 'cursor-not-allowed');
+      btn.title = '';
+    });
+  } else {
+    if (banner) banner.classList.add('hidden');
+    document.querySelectorAll('.rbac-write, #btnAddDoctor, #btnWaBlastMassal').forEach(btn => {
+      btn.removeAttribute('disabled');
+      btn.classList.remove('opacity-50', 'cursor-not-allowed');
+      btn.title = '';
+    });
+  }
+}
+
+function initRbacRoleSwitcher() {
+  const userDd = document.getElementById('topUserDropdown');
+  if (userDd && !document.getElementById('headerRoleSwitcher')) {
+    const switcherDiv = document.createElement('div');
+    switcherDiv.className = 'px-3.5 py-2.5 border-b border-slate-100 bg-slate-50/80';
+    switcherDiv.innerHTML = `
+      <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+        <span>Simulasi Peran RBAC (Bab 6.2)</span>
+        <span class="text-[9px] text-[#006948] font-black">4 Tingkat</span>
+      </div>
+      <select id="headerRoleSwitcher" onchange="switchUserRole(this.value)" class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#006948]">
+        <option value="SUPER_ADMIN">👑 Super Admin (Energi Cipta)</option>
+        <option value="ADMIN_OPERASIONAL">⚡ Admin Operasional (Siti Rahma)</option>
+        <option value="ADMIN_CABANG">🏢 Admin Cabang (POGI Jawa Barat)</option>
+        <option value="VIEWER_POGI">👁️ Viewer POGI (Read-Only Pusat)</option>
+      </select>
+    `;
+    const linksDiv = userDd.querySelector('.py-1') || userDd.children[1];
+    if (linksDiv) {
+      userDd.insertBefore(switcherDiv, linksDiv);
+    } else {
+      userDd.appendChild(switcherDiv);
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    initRbacRoleSwitcher();
+    applyRbacEnforcement();
+  }, 50);
 });

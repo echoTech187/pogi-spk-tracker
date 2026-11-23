@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" class="h-full bg-[#f4f7f6]">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,24 +12,31 @@
   <!-- Core Styles -->
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
   <!-- Mobile Backdrop Overlay -->
-  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
+  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)"
+    class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden">
+  </div>
 
   <div class="flex h-screen overflow-hidden">
     <!-- APP SIDEBAR -->
-    <aside id="appSidebar" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] lg:w-64 bg-white border-r border-slate-200/90 flex flex-col shrink-0 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static lg:inset-auto shadow-2xl lg:shadow-none print:hidden">
+    <aside id="appSidebar"
+      class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] lg:w-64 bg-white border-r border-slate-200/90 flex flex-col shrink-0 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static lg:inset-auto shadow-2xl lg:shadow-none print:hidden">
       <div class="px-4 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
         <a href="dashboard.html" class="flex items-center gap-2.5 min-w-0">
-          <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs shrink-0">
+          <div
+            class="w-10 h-10 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs shrink-0">
             <img src="assets/img/pogi_logo.jpg" alt="Logo POGI" class="w-full h-full object-contain">
           </div>
           <div class="min-w-0">
             <div class="font-black text-sm tracking-tight text-[#006948] leading-none">POGI SKP TRACKER</div>
-            <div class="text-[9px] text-slate-500 font-bold leading-tight mt-1 truncate">PP POGI &bull; Standar 160 SKP</div>
+            <div class="text-[9px] text-slate-500 font-bold leading-tight mt-1 truncate">PP POGI &bull; Standar 160 SKP
+            </div>
           </div>
         </a>
-        <button type="button" onclick="toggleMobileSidebar(false)" class="lg:hidden p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition">
+        <button type="button" onclick="toggleMobileSidebar(false)"
+          class="lg:hidden p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition">
           <span class="material-symbols-outlined text-xl">close</span>
         </button>
       </div>
@@ -39,29 +47,39 @@
             MONITORING NASIONAL
           </div>
           <nav class="space-y-1">
-            <a href="dashboard.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+            <a href="dashboard.html"
+              class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
               <span class="material-symbols-outlined text-[19px]">dashboard</span>
               <span>Dashboard</span>
             </a>
-            <a href="doctors.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+            <a href="doctors.html"
+              class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
               <span class="material-symbols-outlined text-[19px]">stethoscope</span>
               <span>Doctors</span>
             </a>
-            <a href="provinces.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+            <a href="provinces.html"
+              class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
               <span class="material-symbols-outlined text-[19px]">map</span>
               <span>Provinces</span>
             </a>
-            <a href="events.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+            <a href="events.html"
+              class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
               <span class="material-symbols-outlined text-[19px]">event</span>
               <span>Events</span>
             </a>
-            <a href="activity.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+            <a href="activity.html"
+              class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
               <span class="material-symbols-outlined text-[19px]">history</span>
               <span>Activity Log</span>
             </a>
-            <a href="reports.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition bg-[#006948] text-white shadow-xs">
+            <a href="reports.html"
+              class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition bg-[#006948] text-white shadow-xs">
               <span class="material-symbols-outlined text-[19px]">bar_chart</span>
               <span>Report</span>
+            </a>
+            <a href="admin-performance.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[19px]">speed</span>
+              <span>Admin Performance</span>
             </a>
           </nav>
         </div>
@@ -71,23 +89,28 @@
             PENGATURAN DATA (MANAGE)
           </div>
           <nav class="space-y-1">
-            <a href="manage.html?tab=doctor" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+            <a href="manage.html?tab=doctor"
+              class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
               <span class="material-symbols-outlined text-[18px]">person</span>
               <span>Doctor</span>
             </a>
-            <a href="manage.html?tab=institution" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+            <a href="manage.html?tab=institution"
+              class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
               <span class="material-symbols-outlined text-[18px]">domain</span>
               <span>Institution (RS)</span>
             </a>
-            <a href="manage.html?tab=event" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+            <a href="manage.html?tab=event"
+              class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
               <span class="material-symbols-outlined text-[18px]">calendar_month</span>
               <span>SKP Event</span>
             </a>
-            <a href="manage.html?tab=category" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+            <a href="manage.html?tab=category"
+              class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
               <span class="material-symbols-outlined text-[18px]">category</span>
               <span>Event Category</span>
             </a>
-            <a href="manage.html?tab=user" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+            <a href="manage.html?tab=user"
+              class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
               <span class="material-symbols-outlined text-[18px]">manage_accounts</span>
               <span>User</span>
             </a>
@@ -96,15 +119,19 @@
       </div>
 
       <div class="p-3 border-t border-slate-100 bg-slate-50/70">
-        <div class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
+        <div
+          class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
           <div class="flex items-center gap-2.5 min-w-0">
-            <div class="w-9 h-9 rounded-full bg-emerald-800 text-white font-extrabold text-xs flex items-center justify-center shrink-0">SR</div>
+            <div
+              class="w-9 h-9 rounded-full bg-emerald-800 text-white font-extrabold text-xs flex items-center justify-center shrink-0">
+              SR</div>
             <div class="min-w-0">
               <div class="text-xs font-bold text-slate-900 truncate">Siti Rahma, S.Farm</div>
               <div class="text-[9px] font-bold text-[#006948] uppercase tracking-wider truncate">TIM DATA PP POGI</div>
             </div>
           </div>
-          <button type="button" onclick="performLogout()" title="Keluar" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition shrink-0">
+          <button type="button" onclick="performLogout()" title="Keluar"
+            class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition shrink-0">
             <span class="material-symbols-outlined text-lg">logout</span>
           </button>
         </div>
@@ -114,38 +141,50 @@
     <!-- MAIN CONSOLE WRAPPER -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
       <!-- Top Sticky Header -->
-                  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200/90 shrink-0 w-full print:hidden">
+      <header
+        class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200/90 shrink-0 w-full print:hidden">
         <div class="h-14 sm:h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
           <!-- Left: Mobile menu & Scope Selector -->
           <div class="flex items-center gap-2 sm:gap-3 min-w-0 shrink-0">
-            <button type="button" onclick="toggleMobileSidebar(true)" class="lg:hidden p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition shrink-0" aria-label="Buka Menu">
+            <button type="button" onclick="toggleMobileSidebar(true)"
+              class="lg:hidden p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition shrink-0"
+              aria-label="Buka Menu">
               <span class="material-symbols-outlined text-2xl">menu</span>
             </button>
 
             <!-- Scope Selector (38 Provinsi / Cabang) -->
             <div class="relative">
-              <button type="button" id="headerOrgScopeBtn" onclick="toggleOrgScopeDropdown()" class="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 transition border border-slate-200 rounded-xl px-3 py-1.5 cursor-pointer max-w-[170px] sm:max-w-[240px]">
+              <button type="button" id="headerOrgScopeBtn" onclick="toggleOrgScopeDropdown()"
+                class="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 transition border border-slate-200 rounded-xl px-3 py-1.5 cursor-pointer max-w-[170px] sm:max-w-[240px]">
                 <span class="material-symbols-outlined text-[#006948] text-base shrink-0">public</span>
-                <span id="selectedOrgScopeLabel" class="text-xs font-bold text-slate-800 truncate">Semua Wilayah Nasional (38 Provinsi)</span>
+                <span id="selectedOrgScopeLabel" class="text-xs font-bold text-slate-800 truncate">Semua Wilayah
+                  Nasional (38 Provinsi)</span>
                 <span class="material-symbols-outlined text-sm text-slate-400 shrink-0">expand_more</span>
               </button>
-              <div id="orgScopeDropdown" class="hidden absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 text-xs">
-                <div class="px-3.5 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cakupan Pantauan</div>
-                <button type="button" onclick="selectOrgScope('all', 'Semua Wilayah Nasional (38 Provinsi)')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
+              <div id="orgScopeDropdown"
+                class="hidden absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 text-xs">
+                <div class="px-3.5 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cakupan
+                  Pantauan</div>
+                <button type="button" onclick="selectOrgScope('all', 'Semua Wilayah Nasional (38 Provinsi)')"
+                  class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>Seluruh Indonesia</span>
-                  <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-bold">200 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-bold">200
+                    Dokter</span>
                 </button>
-                <button type="button" onclick="selectOrgScope('jabar', 'POGI Cabang Jawa Barat')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
+                <button type="button" onclick="selectOrgScope('jabar', 'POGI Cabang Jawa Barat')"
+                  class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>POGI Cabang Jawa Barat</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">25 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
                 </button>
-                <button type="button" onclick="selectOrgScope('dki', 'POGI Cabang DKI Jakarta')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
+                <button type="button" onclick="selectOrgScope('dki', 'POGI Cabang DKI Jakarta')"
+                  class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>POGI Cabang DKI Jakarta</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">28 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">22 Dokter</span>
                 </button>
-                <button type="button" onclick="selectOrgScope('jatim', 'POGI Cabang Jawa Timur')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
+                <button type="button" onclick="selectOrgScope('jatim', 'POGI Cabang Jawa Timur')"
+                  class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
                   <span>POGI Cabang Jawa Timur</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">26 Dokter</span>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
                 </button>
               </div>
             </div>
@@ -154,73 +193,95 @@
           <!-- Center: Global Search Input (Inside Red Box 1) -->
           <div class="relative flex-1 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-2 sm:mx-4">
             <div class="relative flex items-center">
-              <span class="material-symbols-outlined absolute left-3 text-slate-400 text-lg pointer-events-none">search</span>
-              <input type="text" id="topGlobalSearchInput" oninput="handleGlobalTopSearch(this.value)" onkeydown="handleGlobalSearchKeydown(event)" placeholder="Cari dokter, nomor STR, SIP, atau ..." class="w-full pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-[#006948] rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none transition shadow-2xs">
-              <button type="button" id="clearTopSearchBtn" onclick="clearGlobalTopSearch()" class="hidden absolute right-2.5 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer">
+              <span
+                class="material-symbols-outlined absolute left-3 text-slate-400 text-lg pointer-events-none">search</span>
+              <input type="text" id="topGlobalSearchInput" oninput="handleGlobalTopSearch(this.value)"
+                onkeydown="handleGlobalSearchKeydown(event)" placeholder="Cari dokter, nomor STR, SIP, atau ..."
+                class="w-full pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-[#006948] rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none transition shadow-2xs">
+              <button type="button" id="clearTopSearchBtn" onclick="clearGlobalTopSearch()"
+                class="hidden absolute right-2.5 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer">
                 <span class="material-symbols-outlined text-sm">close</span>
               </button>
             </div>
             <!-- Dropdown Live Search Results -->
-            <div id="topSearchResultsDropdown" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-2 z-50 max-h-96 overflow-y-auto">
+            <div id="topSearchResultsDropdown"
+              class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-2 z-50 max-h-96 overflow-y-auto">
               <!-- Rendered dynamically -->
             </div>
           </div>
 
           <!-- Right: Notifikasi & Profil User SR -->
           <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-            
+
 
             <!-- Notification Bell with Red Dot Indicator -->
             <div class="relative">
-              <button type="button" id="topNotifBtn" onclick="toggleTopNotifDropdown()" class="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer" aria-label="Notifikasi">
+              <button type="button" id="topNotifBtn" onclick="toggleTopNotifDropdown()"
+                class="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer"
+                aria-label="Notifikasi">
                 <span class="material-symbols-outlined text-xl">notifications</span>
-                <span id="notifBadgeDot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white animate-pulse"></span>
+                <span id="notifBadgeDot"
+                  class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white animate-pulse"></span>
               </button>
               <!-- Notification Dropdown Menu -->
-              <div id="topNotifDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
+              <div id="topNotifDropdown"
+                class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
                 <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
                   <div class="font-bold text-slate-900 flex items-center gap-1.5">
                     <span>Pemberitahuan Sistem</span>
-                    <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-extrabold">3 Baru</span>
+                    <span id="notifUnreadBadge"
+                      class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-extrabold">3
+                      Baru</span>
                   </div>
-                  <button type="button" onclick="markAllNotificationsAsRead()" class="text-[11px] text-[#006948] hover:underline font-bold cursor-pointer">
+                  <button type="button" onclick="markAllNotificationsAsRead()"
+                    class="text-[11px] text-[#006948] hover:underline font-bold cursor-pointer">
                     Tandai Dibaca
                   </button>
                 </div>
                 <div id="notifListContainer" class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
-                  <div class="p-3.5 hover:bg-slate-50 transition flex items-start gap-3 cursor-pointer" onclick="window.location.href='doctors.html?filter=pending'">
-                    <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <div class="p-3.5 hover:bg-slate-50 transition flex items-start gap-3 cursor-pointer"
+                    onclick="window.location.href='doctors.html?filter=pending'">
+                    <div
+                      class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
                       <span class="material-symbols-outlined text-base">pending_actions</span>
                     </div>
                     <div class="min-w-0 flex-1">
                       <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
-                      <div class="text-[11px] text-slate-500 mt-0.5">64 Dokter Obgyn memiliki pending credits triwulan Q4 2026 yang belum diverifikasi.</div>
+                      <div class="text-[11px] text-slate-500 mt-0.5">64 Dokter Obgyn memiliki pending credits triwulan
+                        Q4 2026 yang belum diverifikasi.</div>
                       <div class="text-[9px] text-slate-400 mt-1 font-mono">15 menit yang lalu</div>
                     </div>
                   </div>
-                  <div class="p-3.5 hover:bg-slate-50 transition flex items-start gap-3 cursor-pointer" onclick="syncSatuSehat()">
-                    <div class="w-7 h-7 rounded-lg bg-emerald-50 text-[#006948] flex items-center justify-center shrink-0 mt-0.5">
+                  <div class="p-3.5 hover:bg-slate-50 transition flex items-start gap-3 cursor-pointer"
+                    onclick="syncSatuSehat()">
+                    <div
+                      class="w-7 h-7 rounded-lg bg-emerald-50 text-[#006948] flex items-center justify-center shrink-0 mt-0.5">
                       <span class="material-symbols-outlined text-base">cloud_sync</span>
                     </div>
                     <div class="min-w-0 flex-1">
                       <div class="font-bold text-slate-900 text-xs">Sinkronisasi SATUSEHAT Berhasil</div>
-                      <div class="text-[11px] text-slate-500 mt-0.5">200 data STR, SIP, dan NIK dokter spesialis Obgyn terverifikasi aktif dengan Kemenkes API.</div>
+                      <div class="text-[11px] text-slate-500 mt-0.5">200 data STR, SIP, dan NIK dokter spesialis Obgyn
+                        terverifikasi aktif dengan Kemenkes API.</div>
                       <div class="text-[9px] text-slate-400 mt-1 font-mono">1 jam yang lalu</div>
                     </div>
                   </div>
-                  <div class="p-3.5 hover:bg-slate-50 transition flex items-start gap-3 cursor-pointer" onclick="window.location.href='provinces.html'">
-                    <div class="w-7 h-7 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <div class="p-3.5 hover:bg-slate-50 transition flex items-start gap-3 cursor-pointer"
+                    onclick="window.location.href='provinces.html'">
+                    <div
+                      class="w-7 h-7 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0 mt-0.5">
                       <span class="material-symbols-outlined text-base">warning</span>
                     </div>
                     <div class="min-w-0 flex-1">
                       <div class="font-bold text-slate-900 text-xs">Peringatan Capaian Cabang Kritis</div>
-                      <div class="text-[11px] text-slate-500 mt-0.5">Cabang Papua Barat Daya &amp; Maluku capaian SKP masih di bawah ambang batas minimal (&lt;40%).</div>
+                      <div class="text-[11px] text-slate-500 mt-0.5">Cabang Papua Barat Daya &amp; Maluku capaian SKP
+                        masih di bawah ambang batas minimal (&lt;40%).</div>
                       <div class="text-[9px] text-slate-400 mt-1 font-mono">3 jam yang lalu</div>
                     </div>
                   </div>
                 </div>
                 <div class="px-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <a href="activity.html" class="text-slate-600 hover:text-[#006948] font-bold flex items-center gap-1 transition">
+                  <a href="activity.html"
+                    class="text-slate-600 hover:text-[#006948] font-bold flex items-center gap-1 transition">
                     <span>Buka Log Aktivitas Lengkap</span>
                     <span class="material-symbols-outlined text-xs">arrow_forward</span>
                   </a>
@@ -230,39 +291,48 @@
 
             <!-- User Avatar Profile Circle [SR] -->
             <div class="relative">
-              <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#006948] hover:bg-[#005439] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna: Siti Rahma, S.Farm">
+              <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()"
+                class="w-9 h-9 rounded-full bg-[#006948] hover:bg-[#005439] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20"
+                title="Profil Pengguna: Siti Rahma, S.Farm">
                 SR
               </button>
               <!-- User Profile Dropdown Menu -->
-              <div id="topUserDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
+              <div id="topUserDropdown"
+                class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
                 <div class="px-4 py-2 border-b border-slate-100 flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-[#006948] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs">
+                  <div
+                    class="w-10 h-10 rounded-full bg-[#006948] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs">
                     SR
                   </div>
                   <div class="min-w-0">
                     <div class="font-bold text-slate-900 text-xs truncate">Siti Rahma, S.Farm</div>
                     <div class="text-[10px] text-slate-500 truncate">Tim Data &amp; Verifikasi PP POGI</div>
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#006948] border border-emerald-200 text-[9px] font-bold mt-1">
+                    <span
+                      class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#006948] border border-emerald-200 text-[9px] font-bold mt-1">
                       <span class="w-1 h-1 rounded-full bg-emerald-600"></span> Super Admin &bull; Online
                     </span>
                   </div>
                 </div>
                 <div class="py-1">
-                  <a href="manage.html" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
+                  <a href="manage.html"
+                    class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
                     <span class="material-symbols-outlined text-base text-slate-400">admin_panel_settings</span>
                     <span>Pengelolaan Master Data</span>
                   </a>
-                  <a href="activity.html" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
+                  <a href="activity.html"
+                    class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
                     <span class="material-symbols-outlined text-base text-slate-400">history</span>
                     <span>Jejak Audit &amp; Log Aktivitas</span>
                   </a>
-                  <a href="reports.html" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
-                    <span class="material-symbols-outlined text-base text-slate-400">picture_as_pdf</span>
-                    <span>Laporan Eksekutif PDF</span>
+                  <a href="reports.html"
+                    class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
+                    <span class="material-symbols-outlined text-base text-slate-400">description</span>
+                    <span>Laporan Bulanan SKP</span>
                   </a>
                 </div>
                 <div class="pt-1 border-t border-slate-100 px-2">
-                  <button type="button" onclick="performLogout()" class="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 rounded-xl font-bold flex items-center gap-2 transition cursor-pointer">
+                  <button type="button" onclick="performLogout()"
+                    class="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 rounded-xl font-bold flex items-center gap-2 transition cursor-pointer">
                     <span class="material-symbols-outlined text-base">logout</span>
                     <span>Keluar Sistem (Logout)</span>
                   </button>
@@ -280,10 +350,12 @@
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-1">
           <div class="space-y-1">
             <div class="flex items-center gap-2 flex-wrap">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#112d4e] text-white tracking-wider uppercase shadow-2xs">
+              <span
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#112d4e] text-white tracking-wider uppercase shadow-2xs">
                 IMPRUVE.ID &bull; MONTHLY REPORT ONE POGI
               </span>
-              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-extrabold">
+              <span
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-extrabold">
                 <span class="w-1.5 h-1.5 rounded-full bg-[#006948]"></span> Cutoff: Setiap Tgl 1 per Bulan
               </span>
             </div>
@@ -291,62 +363,57 @@
               <span>LAPORAN BULANAN</span>
               <span class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(ONE POGI)</span>
             </h1>
-            <p class="text-xs text-slate-500 leading-relaxed max-w-3xl">
-              Pengelolaan dan Penginputan Data Satuan Kredit Profesi (SKP) Dokter Spesialis Obstetri &amp; Ginekologi. Terintegrasi SATUSEHAT SDMK &amp; Lampiran Penagihan Invoice.
+            <p class="text-xs text-slate-500 leading-relaxed max-w-7xl">
+              Pengelolaan dan Penginputan Data Satuan Kredit Profesi (SKP) Dokter Spesialis Obstetri &amp; Ginekologi mengacu pada KMK HK.01.07/MENKES/1561/2024 &amp; KMK HK.01.07/MENKES/1111/2026. Laporan resmi berkas &amp; lampiran penagihan invoice.
             </p>
           </div>
 
-          <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
-            <!-- Month Navigator (< November 2026 >) -->
-            <div class="flex items-center bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden text-xs">
-              <button type="button" onclick="changeMonthStep(-1)" title="Bulan Sebelumnya" class="p-2 hover:bg-slate-50 text-slate-600 border-r border-slate-100 transition flex items-center justify-center cursor-pointer">
-                <span class="material-symbols-outlined text-base">chevron_left</span>
-              </button>
-              <button type="button" onclick="toggleMonthPickerModal(true)" class="px-3.5 py-2 font-bold text-slate-800 hover:text-[#006948] hover:bg-emerald-50/50 transition flex items-center gap-1.5 select-none whitespace-nowrap cursor-pointer">
-                <span class="material-symbols-outlined text-sm text-[#006948]">calendar_month</span>
-                <span id="currentMonthLabel">November 2026</span>
-                <span class="material-symbols-outlined text-xs text-slate-400">expand_more</span>
-              </button>
-              <button type="button" onclick="changeMonthStep(1)" title="Bulan Berikutnya" class="p-2 hover:bg-slate-50 text-slate-600 border-l border-slate-100 transition flex items-center justify-center cursor-pointer">
-                <span class="material-symbols-outlined text-base">chevron_right</span>
-              </button>
-            </div>
 
+        </div>
+
+        <!-- Status Bar Update Admin -->
+        <div
+          class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/80 pb-3 text-xs text-slate-500">
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+              <!-- Month Navigator (< November 2026 >) -->
+              <div
+                class="flex items-center bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden text-xs">
+                <button type="button" onclick="changeMonthStep(-1)" title="Bulan Sebelumnya"
+                  class="p-2 hover:bg-slate-50 text-slate-600 border-r border-slate-100 transition flex items-center justify-center cursor-pointer">
+                  <span class="material-symbols-outlined text-base">chevron_left</span>
+                </button>
+                <button type="button" onclick="toggleMonthPickerModal(true)"
+                  class="px-3.5 py-2 font-bold text-slate-800 hover:text-[#006948] hover:bg-emerald-50/50 transition flex items-center gap-1.5 select-none whitespace-nowrap cursor-pointer">
+                  <span class="material-symbols-outlined text-sm text-[#006948]">calendar_month</span>
+                  <span id="currentMonthLabel">November 2026</span>
+                  <span class="material-symbols-outlined text-xs text-slate-400">expand_more</span>
+                </button>
+                <button type="button" onclick="changeMonthStep(1)" title="Bulan Berikutnya"
+                  class="p-2 hover:bg-slate-50 text-slate-600 border-l border-slate-100 transition flex items-center justify-center cursor-pointer">
+                  <span class="material-symbols-outlined text-base">chevron_right</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400 font-medium flex items-center justify-end gap-1.5">
             <!-- Tombol Arsip Laporan Bulanan (Flashback) -->
-            <button type="button" onclick="openArchiveModal(true)" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer">
+            <button type="button" onclick="openArchiveModal(true)"
+              class="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer">
               <span class="material-symbols-outlined text-base text-amber-600">folder_zip</span>
               <span>Arsip Laporan</span>
             </button>
 
-            <!-- Download PDF Resmi (Direct File Download + Print) -->
-            <a href="assets/docs/Monthly_Report_ONE_POGI_Revisi_01.pdf" download="Monthly_Report_ONE_POGI_Nov_2026.pdf" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs cursor-pointer">
-              <span class="material-symbols-outlined text-base">picture_as_pdf</span>
-              <span id="btnDownloadText">Unduh Dokumen PDF</span>
-            </a>
+            <!-- Tombol Report SKP (Dipindahkan ke sebelah Arsip Laporan) -->
+            <button type="button" onclick="downloadCurrentMonthSkpReport()"
+              class="px-3.5 py-2 rounded-xl bg-sky-700 hover:bg-sky-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+              title="Unduh PDF Resmi SKP Report (1 Halaman)">
+              <span class="material-symbols-outlined text-base">assessment</span>
+              <span>Report SKP</span>
+            </button>
           </div>
         </div>
 
-        <!-- VIEW SWITCHER TABS (Dua Mode Tampilan: Dashboard vs Dokumen Resmi ONE POGI) -->
-        <div class="flex items-center justify-between border-b border-slate-200/90 pb-2 print:hidden">
-          <div class="flex items-center gap-2">
-            <button type="button" onclick="switchReportTab('dashboard')" id="tab-btn-dashboard" class="px-4 py-2 rounded-xl bg-[#006948] text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer">
-              <span class="material-symbols-outlined text-base">dashboard</span>
-              <span>Dashboard Analitik Bulanan</span>
-            </button>
-            <button type="button" onclick="switchReportTab('document')" id="tab-btn-document" class="px-4 py-2 rounded-xl bg-white border border-slate-200/90 text-slate-700 hover:text-slate-900 text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer">
-              <span class="material-symbols-outlined text-base text-[#112d4e]">description</span>
-              <span>Dokumen Resmi ONE POGI (3 Halaman)</span>
-              <span class="px-2 py-0.5 rounded-full bg-blue-100 text-[#112d4e] text-[10px] font-black">Revisi 01</span>
-            </button>
-          </div>
-          <div class="text-xs text-slate-400 font-medium hidden sm:flex items-center gap-2">
-            <span>Terakhir Update: <strong class="text-slate-700">20 Nov 2026, 09:14 WIB</strong> (Siti Rahma)</span>
-          </div>
-        </div>
-
-        <!-- ========================================================================= -->
-        <!-- PANE 1: DASHBOARD ANALITIK BULANAN                                        -->
-        <!-- ========================================================================= -->
         <div id="pane-dashboard" class="space-y-6">
 
           <!-- 4 Summary KPI Cards (Murni Bulanan) -->
@@ -360,7 +427,8 @@
                   <span class="material-symbols-outlined text-lg">flag</span>
                 </div>
               </div>
-              <div id="cardTargetValue" class="text-2xl sm:text-3xl font-black text-slate-900 font-mono tracking-tight">429,33</div>
+              <div id="cardTargetValue" class="text-2xl sm:text-3xl font-black text-slate-900 font-mono tracking-tight">
+                429,33</div>
               <div class="text-[11px] text-slate-500 mt-1">161 doctors &times; 2,67 credits</div>
             </div>
 
@@ -372,8 +440,10 @@
                   <span class="material-symbols-outlined text-lg">trending_up</span>
                 </div>
               </div>
-              <div id="cardRealValue" class="text-2xl sm:text-3xl font-black text-emerald-800 font-mono tracking-tight">464,50</div>
-              <div class="text-[11px] text-slate-500 mt-1"><span class="text-emerald-700 font-bold">108%</span> of target (melampaui)</div>
+              <div id="cardRealValue" class="text-2xl sm:text-3xl font-black text-emerald-800 font-mono tracking-tight">
+                464,50</div>
+              <div class="text-[11px] text-slate-500 mt-1"><span class="text-emerald-700 font-bold">108%</span> of
+                target (melampaui)</div>
             </div>
 
             <!-- Card 3: Dokter Capai Target -->
@@ -384,8 +454,10 @@
                   <span class="material-symbols-outlined text-lg">task_alt</span>
                 </div>
               </div>
-              <div id="cardCompleteValue" class="text-2xl sm:text-3xl font-black text-sky-900 font-mono tracking-tight">142 Dokter</div>
-              <div class="text-[11px] text-slate-500 mt-1"><span class="text-sky-800 font-bold">88%</span> dari 161 dokter aktif</div>
+              <div id="cardCompleteValue" class="text-2xl sm:text-3xl font-black text-sky-900 font-mono tracking-tight">
+                142 Dokter</div>
+              <div class="text-[11px] text-slate-500 mt-1"><span class="text-sky-800 font-bold">88%</span> dari 161
+                dokter aktif</div>
             </div>
 
             <!-- Card 4: Waiting for validation -->
@@ -396,7 +468,8 @@
                   <span class="material-symbols-outlined text-lg">hourglass_top</span>
                 </div>
               </div>
-              <div id="cardPendingValue" class="text-2xl sm:text-3xl font-black text-amber-600 font-mono tracking-tight">552 SKP</div>
+              <div id="cardPendingValue"
+                class="text-2xl sm:text-3xl font-black text-amber-600 font-mono tracking-tight">552 SKP</div>
               <div class="text-[11px] text-slate-500 mt-1">19 dokter pending kurasi Kemenkes</div>
             </div>
 
@@ -409,10 +482,13 @@
             <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
               <div class="flex items-center justify-between border-b border-slate-100 pb-2">
                 <div>
-                  <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Target vs realization</h2>
-                  <p class="text-xs text-slate-400 font-normal mt-0.5">Total credits per month, January to November 2026.</p>
+                  <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Target vs realization
+                  </h2>
+                  <p class="text-xs text-slate-400 font-normal mt-0.5">Total credits per month, January to November
+                    2026.</p>
                 </div>
-                <span class="text-[10px] text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full font-bold border border-emerald-200">
+                <span
+                  class="text-[10px] text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full font-bold border border-emerald-200">
                   Jan - Nov 2026
                 </span>
               </div>
@@ -425,17 +501,22 @@
             <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
               <div class="flex items-center justify-between border-b border-slate-100 pb-2">
                 <div>
-                  <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Target vs realization by SKP type</h2>
-                  <p class="text-xs text-slate-400 font-normal mt-0.5">Pengabdian 101% &middot; Pelayanan 148% &middot; Pembelajaran 18%</p>
+                  <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Target vs realization by
+                    SKP type</h2>
+                  <p class="text-xs text-slate-400 font-normal mt-0.5">Pengabdian 101% &middot; Pelayanan 148% &middot;
+                    Pembelajaran 18%</p>
                 </div>
                 <div class="flex items-center gap-1.5 flex-wrap">
-                  <span class="flex items-center gap-1 text-sky-800 font-bold text-[10px] bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+                  <span
+                    class="flex items-center gap-1 text-sky-800 font-bold text-[10px] bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
                     <span class="w-1.5 h-1.5 rounded-full bg-sky-600"></span> Pelayanan
                   </span>
-                  <span class="flex items-center gap-1 text-amber-800 font-bold text-[10px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                  <span
+                    class="flex items-center gap-1 text-amber-800 font-bold text-[10px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                     <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span> Pengabdian
                   </span>
-                  <span class="flex items-center gap-1 text-emerald-800 font-bold text-[10px] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  <span
+                    class="flex items-center gap-1 text-emerald-800 font-bold text-[10px] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Pembelajaran
                   </span>
                 </div>
@@ -449,7 +530,8 @@
             <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
               <div class="flex items-center justify-between border-b border-slate-100 pb-2">
                 <div>
-                  <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Realization by SKP type</h2>
+                  <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Realization by SKP type
+                  </h2>
                   <p class="text-xs text-slate-400 font-normal mt-0.5">Share of Done credits this month.</p>
                 </div>
                 <span class="text-[10px] text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full font-bold">
@@ -470,9 +552,11 @@
               <div class="flex items-center justify-between border-b border-slate-100 pb-2">
                 <div>
                   <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">SKP type by status</h2>
-                  <p class="text-xs text-slate-400 font-normal mt-0.5">Credits of every entry on events this month, by entry status.</p>
+                  <p class="text-xs text-slate-400 font-normal mt-0.5">Credits of every entry on events this month, by
+                    entry status.</p>
                 </div>
-                <span class="text-[10px] text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full font-bold border border-emerald-200">
+                <span
+                  class="text-[10px] text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full font-bold border border-emerald-200">
                   <span class="w-1.5 h-1.5 rounded-full bg-[#006948] inline-block mr-1"></span>Status Realtime
                 </span>
               </div>
@@ -485,564 +569,306 @@
 
         </div>
 
-        <!-- ========================================================================= -->
-        <!-- PANE 2: DOKUMEN RESMI ONE POGI (PERSIS ATTACHMENT USER REVISI 01 - 3 HAL) -->
-        <!-- ========================================================================= -->
-        <div id="pane-document" class="hidden space-y-6">
-
-          <!-- Action bar on top of document -->
-          <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-[#112d4e] text-white flex items-center justify-center font-black text-sm shadow-xs">
-                ONE
-              </div>
-              <div>
-                <h3 class="font-extrabold text-sm text-slate-900">Dokumen Resmi Laporan Bulanan (ONE POGI Revisi 01)</h3>
-                <p class="text-xs text-slate-500">Standar resmi pelaporan data SKP dokter spesialis obstetri &amp; ginekologi.</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <button type="button" onclick="printOnePogiMonthlyReportPdf('November 2026')" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer">
-                <span class="material-symbols-outlined text-sm">print</span>
-                <span>Cetak Lembar Dokumen</span>
-              </button>
-              <a href="assets/docs/Monthly_Report_ONE_POGI_Revisi_01.pdf" download="Monthly_Report_ONE_POGI_Nov_2026.pdf" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs cursor-pointer">
-                <span class="material-symbols-outlined text-sm">download</span>
-                <span>Unduh Berkas PDF Asli</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- A4 Document Container (3 Halaman Sesuai Dokumen Revisi 01) -->
-          <div class="max-w-4xl mx-auto space-y-8 font-sans">
-
-            <!-- ================= HALAMAN 1 ================= -->
-            <div class="p-8 sm:p-12 rounded-3xl bg-white border border-slate-300 shadow-md space-y-6">
-              <div class="bg-[#112d4e] text-white px-4 py-2 rounded font-black text-xs tracking-wider flex justify-between items-center">
-                <span>IMPRUVE.ID</span>
-                <span>MONTHLY REPORT | ONE POGI</span>
-              </div>
-
-              <div>
-                <h2 class="text-2xl sm:text-3xl font-black text-[#112d4e] tracking-tight">LAPORAN BULANAN</h2>
-                <p class="text-sm text-slate-600 font-medium mt-0.5">Pengelolaan dan Penginputan Data Satuan Kredit Profesi (SKP) Dokter</p>
-              </div>
-
-              <!-- Metadata Table -->
-              <table class="w-full text-xs border-collapse border border-slate-300">
-                <tbody>
-                  <tr class="border-b border-slate-200">
-                    <td class="p-2.5 bg-slate-50 font-bold text-slate-700 w-1/4 border-r border-slate-200">Periode laporan</td>
-                    <td class="p-2.5 font-bold text-slate-900 w-1/4 border-r border-slate-200">November 2026</td>
-                    <td class="p-2.5 bg-slate-50 font-bold text-slate-700 w-1/4 border-r border-slate-200">Tanggal laporan</td>
-                    <td class="p-2.5 text-slate-900 w-1/4">20 November 2026</td>
-                  </tr>
-                  <tr class="border-b border-slate-200">
-                    <td class="p-2.5 bg-slate-50 font-bold text-slate-700 border-r border-slate-200">Nama program</td>
-                    <td class="p-2.5 font-bold text-[#112d4e] border-r border-slate-200">ONE POGI</td>
-                    <td class="p-2.5 bg-slate-50 font-bold text-slate-700 border-r border-slate-200">PIC pelaksana</td>
-                    <td class="p-2.5 text-slate-900">Siti Rahma, S.Farm</td>
-                  </tr>
-                  <tr>
-                    <td class="p-2.5 bg-slate-50 font-bold text-slate-700 border-r border-slate-200">Pelaksana</td>
-                    <td class="p-2.5 font-bold text-slate-900 border-r border-slate-200">Impruve.Id</td>
-                    <td class="p-2.5 bg-slate-50 font-bold text-slate-700 border-r border-slate-200">Unit/area</td>
-                    <td class="p-2.5 text-slate-900">Pusat &amp; 38 Cabang POGI</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <!-- 1. Ringkasan Eksekutif -->
-              <div class="space-y-2">
-                <h3 class="font-black text-sm text-[#112d4e] tracking-tight">1. RINGKASAN EKSEKUTIF</h3>
-                <p class="text-xs text-slate-500 leading-relaxed">
-                  Tuliskan gambaran singkat pelaksanaan pekerjaan selama periode laporan: cakupan kegiatan, progres utama, pencapaian, serta hal penting yang memerlukan perhatian atau koordinasi.
-                </p>
-                <table class="w-full text-xs border-collapse border border-slate-300">
-                  <thead class="bg-[#112d4e] text-white font-bold text-[11px]">
-                    <tr>
-                      <th class="p-2.5 text-left border border-[#112d4e] w-1/2">Indikator</th>
-                      <th class="p-2.5 text-center border border-[#112d4e] w-1/6">Jumlah</th>
-                      <th class="p-2.5 text-left border border-[#112d4e] w-1/3">Keterangan</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-200">
-                    <tr><td class="p-2.5 border border-slate-200">Total dokter unik yang diproses</td><td class="p-2.5 text-center font-bold border border-slate-200 font-mono">161 Dokter</td><td class="p-2.5 border border-slate-200 text-slate-500">Hitung dokter berbeda, bukan jumlah record kegiatan.</td></tr>
-                    <tr><td class="p-2.5 border border-slate-200">Total record keikutsertaan/kegiatan</td><td class="p-2.5 text-center font-bold border border-slate-200 font-mono">1.420 Record</td><td class="p-2.5 border border-slate-200 text-slate-500">Satu dokter dapat memiliki lebih dari satu record.</td></tr>
-                    <tr><td class="p-2.5 border border-slate-200">Data SKP berhasil diinput</td><td class="p-2.5 text-center font-bold text-emerald-700 border border-slate-200 font-mono">464,5 SKP</td><td class="p-2.5 border border-slate-200 text-slate-500">Input selesai dan tercatat pada sistem.</td></tr>
-                    <tr><td class="p-2.5 border border-slate-200">Data dalam proses / menunggu validasi</td><td class="p-2.5 text-center font-bold text-amber-700 border border-slate-200 font-mono">552 SKP (19 Dr)</td><td class="p-2.5 border border-slate-200 text-slate-500">Belum dapat dinyatakan selesai.</td></tr>
-                    <tr><td class="p-2.5 border border-slate-200">Data terkendala / perlu perbaikan</td><td class="p-2.5 text-center font-bold text-rose-600 border border-slate-200 font-mono">8 Berkas</td><td class="p-2.5 border border-slate-200 text-slate-500">Cantumkan alasan pada bagian kendala.</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- 2. Ringkasan Progres Pekerjaan -->
-              <div class="space-y-2">
-                <h3 class="font-black text-sm text-[#112d4e] tracking-tight">2. RINGKASAN PROGRES PEKERJAAN</h3>
-                <table class="w-full text-xs border-collapse border border-slate-300">
-                  <thead class="bg-[#112d4e] text-white font-bold text-[11px]">
-                    <tr>
-                      <th class="p-2 text-left border border-[#112d4e]">KPI</th>
-                      <th class="p-2 text-center border border-[#112d4e]">Realisasi</th>
-                      <th class="p-2 text-center border border-[#112d4e]">Target/Basis</th>
-                      <th class="p-2 text-left border border-[#112d4e] w-32">Capaian</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Status</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Catatan</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-200">
-                    <tr><td class="p-2 border border-slate-200 font-medium">Total database anggota</td><td class="p-2 text-center font-mono border border-slate-200">5.700</td><td class="p-2 text-center font-mono border border-slate-200">5.700</td><td class="p-2 border border-slate-200"><div class="flex items-center gap-1.5"><div class="w-16 bg-slate-200 h-2 rounded"><div class="bg-blue-600 h-2 rounded" style="width:100%"></div></div><span class="font-bold">100.0%</span></div></td><td class="p-2 border border-slate-200">Baseline</td><td class="p-2 border border-slate-200 text-slate-500">Basis ilustrasi</td></tr>
-                    <tr><td class="p-2 border border-slate-200 font-medium">Database terverifikasi</td><td class="p-2 text-center font-mono border border-slate-200">3.200</td><td class="p-2 text-center font-mono border border-slate-200">5.700</td><td class="p-2 border border-slate-200"><div class="flex items-center gap-1.5"><div class="w-16 bg-slate-200 h-2 rounded"><div class="bg-blue-600 h-2 rounded" style="width:56.1%"></div></div><span class="font-bold">56.1%</span></div></td><td class="p-2 border border-slate-200 text-amber-700 font-semibold">Perlu percepatan</td><td class="p-2 border border-slate-200 text-slate-500">56,1% dari total</td></tr>
-                    <tr><td class="p-2 border border-slate-200 font-medium">Data belum lengkap</td><td class="p-2 text-center font-mono border border-slate-200">1.500</td><td class="p-2 text-center font-mono border border-slate-200">5.700</td><td class="p-2 border border-slate-200"><div class="flex items-center gap-1.5"><div class="w-16 bg-slate-200 h-2 rounded"><div class="bg-blue-600 h-2 rounded" style="width:26.3%"></div></div><span class="font-bold">26.3%</span></div></td><td class="p-2 border border-slate-200 text-amber-700 font-semibold">Tindak lanjut</td><td class="p-2 border border-slate-200 text-slate-500">Lengkapi data wajib</td></tr>
-                    <tr><td class="p-2 border border-slate-200 font-medium">Data belum diproses</td><td class="p-2 text-center font-mono border border-slate-200">1.000</td><td class="p-2 text-center font-mono border border-slate-200">5.700</td><td class="p-2 border border-slate-200"><div class="flex items-center gap-1.5"><div class="w-16 bg-slate-200 h-2 rounded"><div class="bg-blue-600 h-2 rounded" style="width:17.5%"></div></div><span class="font-bold">17.5%</span></div></td><td class="p-2 border border-slate-200 text-rose-600 font-semibold">Prioritas</td><td class="p-2 border border-slate-200 text-slate-500">Perlu alokasi verifikator</td></tr>
-                    <tr><td class="p-2 border border-slate-200 font-medium">Anggota memenuhi SKP</td><td class="p-2 text-center font-mono border border-slate-200">2.500</td><td class="p-2 text-center font-mono border border-slate-200">5.700</td><td class="p-2 border border-slate-200"><div class="flex items-center gap-1.5"><div class="w-16 bg-slate-200 h-2 rounded"><div class="bg-blue-600 h-2 rounded" style="width:43.9%"></div></div><span class="font-bold">43.9%</span></div></td><td class="p-2 border border-slate-200 text-emerald-700 font-semibold">Monitoring</td><td class="p-2 border border-slate-200 text-slate-500">Perlu validasi bukti</td></tr>
-                    <tr><td class="p-2 border border-slate-200 font-medium">Anggota belum memenuhi SKP</td><td class="p-2 text-center font-mono border border-slate-200">2.000</td><td class="p-2 text-center font-mono border border-slate-200">5.700</td><td class="p-2 border border-slate-200"><div class="flex items-center gap-1.5"><div class="w-16 bg-slate-200 h-2 rounded"><div class="bg-blue-600 h-2 rounded" style="width:35.1%"></div></div><span class="font-bold">35.1%</span></div></td><td class="p-2 border border-slate-200 text-amber-700 font-semibold">Tindak lanjut</td><td class="p-2 border border-slate-200 text-slate-500">Segmentasi anggota</td></tr>
-                    <tr><td class="p-2 border border-slate-200 font-medium">Anggota dalam proses SKP</td><td class="p-2 text-center font-mono border border-slate-200">1.200</td><td class="p-2 text-center font-mono border border-slate-200">5.700</td><td class="p-2 border border-slate-200"><div class="flex items-center gap-1.5"><div class="w-16 bg-slate-200 h-2 rounded"><div class="bg-blue-600 h-2 rounded" style="width:21.1%"></div></div><span class="font-bold">21.1%</span></div></td><td class="p-2 border border-slate-200 text-emerald-700 font-semibold">Monitoring</td><td class="p-2 border border-slate-200 text-slate-500">Pantau penyelesaian</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- 3. Detail Penginputan Data Dokter (Bagian 1) -->
-              <div class="space-y-2">
-                <h3 class="font-black text-sm text-[#112d4e] tracking-tight">3. DETAIL PENGINPUTAN DATA DOKTER</h3>
-                <p class="text-xs text-slate-500 leading-relaxed">
-                  Gunakan tabel ini sebagai ringkasan atau lampiran. Untuk menjaga kerahasiaan, tampilkan nomor identitas/anggota hanya jika diperlukan, diizinkan, dan sesuai akses yang diberikan POGI.
-                </p>
-                <table class="w-full text-xs border-collapse border border-slate-300">
-                  <thead class="bg-[#112d4e] text-white font-bold text-[11px]">
-                    <tr>
-                      <th class="p-2 text-center border border-[#112d4e] w-12">No.</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Nama dokter / ID internal</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Wilayah/cabang</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Kegiatan &amp; tanggal</th>
-                      <th class="p-2 text-center border border-[#112d4e] w-16">SKP</th>
-                      <th class="p-2 text-center border border-[#112d4e] w-20">Tgl. input</th>
-                      <th class="p-2 text-left border border-[#112d4e] w-28">Status / catatan</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-200">
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">1</td><td class="p-2 border border-slate-200 font-bold">dr. Cut Simatupang, Sp.OG<br><span class="text-[10px] text-slate-400 font-normal">POGI-2026-1001</span></td><td class="p-2 border border-slate-200">DKI Jakarta</td><td class="p-2 border border-slate-200">PIT POGI 2026 (15 Nov 2026)</td><td class="p-2 text-center font-mono font-bold text-emerald-700 border border-slate-200">8.8</td><td class="p-2 text-center font-mono text-slate-500 border border-slate-200">16/11/26</td><td class="p-2 border border-slate-200 text-emerald-700 font-semibold">Terverifikasi</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">2</td><td class="p-2 border border-slate-200 font-bold">dr. Ratna Kurniawan, Sp.OG<br><span class="text-[10px] text-slate-400 font-normal">POGI-2026-1002</span></td><td class="p-2 border border-slate-200">Jawa Barat</td><td class="p-2 border border-slate-200">Simposium Obstetri (10 Nov 2026)</td><td class="p-2 text-center font-mono font-bold text-emerald-700 border border-slate-200">9.6</td><td class="p-2 text-center font-mono text-slate-500 border border-slate-200">12/11/26</td><td class="p-2 border border-slate-200 text-emerald-700 font-semibold">Terverifikasi</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="pt-4 border-t border-slate-200 flex justify-between text-[11px] text-slate-400 font-mono">
-                <span>IMPRUVE.ID | MONTHLY REPORT ONE POGI</span>
-                <span>Halaman 1</span>
-              </div>
-            </div>
-
-            <!-- ================= HALAMAN 2 ================= -->
-            <div class="p-8 sm:p-12 rounded-3xl bg-white border border-slate-300 shadow-md space-y-6">
-              <div class="bg-[#112d4e] text-white px-4 py-2 rounded font-black text-xs tracking-wider flex justify-between items-center">
-                <span>IMPRUVE.ID</span>
-                <span>MONTHLY REPORT | ONE POGI &bull; Halaman 2</span>
-              </div>
-
-              <!-- Sambungan Detail Penginputan Dokter -->
-              <div class="space-y-2">
-                <table class="w-full text-xs border-collapse border border-slate-300">
-                  <thead class="bg-[#112d4e] text-white font-bold text-[11px]">
-                    <tr>
-                      <th class="p-2 text-center border border-[#112d4e] w-12">No.</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Nama dokter / ID internal</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Wilayah/cabang</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Kegiatan &amp; tanggal</th>
-                      <th class="p-2 text-center border border-[#112d4e] w-16">SKP</th>
-                      <th class="p-2 text-center border border-[#112d4e] w-20">Tgl. input</th>
-                      <th class="p-2 text-left border border-[#112d4e] w-28">Status / catatan</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-200">
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">3</td><td class="p-2 border border-slate-200 font-bold">dr. Sri Kusuma, Sp.OG<br><span class="text-[10px] text-slate-400 font-normal">POGI-2026-1003</span></td><td class="p-2 border border-slate-200">Jawa Timur</td><td class="p-2 border border-slate-200">Workshop USG Maternal (05 Nov)</td><td class="p-2 text-center font-mono font-bold text-emerald-700 border border-slate-200">10.4</td><td class="p-2 text-center font-mono text-slate-500 border border-slate-200">08/11/26</td><td class="p-2 border border-slate-200 text-emerald-700 font-semibold">Terverifikasi</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">4</td><td class="p-2 border border-slate-200 font-bold">Dr. dr. Mega Simatupang, Sp.OG<br><span class="text-[10px] text-slate-400 font-normal">POGI-2026-1004</span></td><td class="p-2 border border-slate-200">Bali</td><td class="p-2 border border-slate-200">Baksos IVA Skrining (02 Nov)</td><td class="p-2 text-center font-mono font-bold text-emerald-700 border border-slate-200">11.2</td><td class="p-2 text-center font-mono text-slate-500 border border-slate-200">05/11/26</td><td class="p-2 border border-slate-200 text-emerald-700 font-semibold">Terverifikasi</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">5</td><td class="p-2 border border-slate-200 font-bold">dr. Cut Kurniawan, Sp.OG<br><span class="text-[10px] text-slate-400 font-normal">POGI-2026-1005</span></td><td class="p-2 border border-slate-200">Sumatera Utara</td><td class="p-2 border border-slate-200">PIT POGI 2026 (15 Nov)</td><td class="p-2 text-center font-mono font-bold text-emerald-700 border border-slate-200">12.0</td><td class="p-2 text-center font-mono text-slate-500 border border-slate-200">16/11/26</td><td class="p-2 border border-slate-200 text-emerald-700 font-semibold">Terverifikasi</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">6</td><td class="p-2 border border-slate-200 font-bold">Prof. Dr. dr. Ratna Kusuma, Sp.OG<br><span class="text-[10px] text-slate-400 font-normal">POGI-2026-1006</span></td><td class="p-2 border border-slate-200">DKI Jakarta</td><td class="p-2 border border-slate-200">Webinar Fetal Medicine (18 Nov)</td><td class="p-2 text-center font-mono font-bold text-emerald-700 border border-slate-200">12.8</td><td class="p-2 text-center font-mono text-slate-500 border border-slate-200">19/11/26</td><td class="p-2 border border-slate-200 text-emerald-700 font-semibold">Terverifikasi</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">7</td><td class="p-2 border border-slate-200 font-bold">dr. Sri Simatupang, Sp.OG<br><span class="text-[10px] text-slate-400 font-normal">POGI-2026-1007</span></td><td class="p-2 border border-slate-200">Jawa Barat</td><td class="p-2 border border-slate-200">Visite &amp; Pelayanan Klinis (10 Nov)</td><td class="p-2 text-center font-mono font-bold text-emerald-700 border border-slate-200">13.6</td><td class="p-2 text-center font-mono text-slate-500 border border-slate-200">12/11/26</td><td class="p-2 border border-slate-200 text-emerald-700 font-semibold">Terverifikasi</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- 4. Rekapitulasi Berdasarkan Kegiatan -->
-              <div class="space-y-2">
-                <h3 class="font-black text-sm text-[#112d4e] tracking-tight">4. REKAPITULASI BERDASARKAN KEGIATAN</h3>
-                <table class="w-full text-xs border-collapse border border-slate-300">
-                  <thead class="bg-[#112d4e] text-white font-bold text-[11px]">
-                    <tr>
-                      <th class="p-2 text-center border border-[#112d4e] w-12">No.</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Nama kegiatan/webinar</th>
-                      <th class="p-2 text-center border border-[#112d4e] w-28">Tanggal kegiatan</th>
-                      <th class="p-2 text-center border border-[#112d4e] w-28">Jumlah peserta</th>
-                      <th class="p-2 text-center border border-[#112d4e] w-24">Jumlah SKP</th>
-                      <th class="p-2 text-center border border-[#112d4e] w-28">Record diinput</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-200">
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">1</td><td class="p-2 border border-slate-200 font-semibold">PIT POGI 2026 - Maternal &amp; Neonatal Emergency</td><td class="p-2 text-center border border-slate-200">15 Nov 2026</td><td class="p-2 text-center font-mono border border-slate-200">160 Peserta</td><td class="p-2 text-center font-mono font-bold border border-slate-200">240 SKP</td><td class="p-2 text-center font-bold text-emerald-700 border border-slate-200">160 (100%)</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">2</td><td class="p-2 border border-slate-200 font-semibold">Simposium Nasional Onkologi Ginekologi Terpadu</td><td class="p-2 text-center border border-slate-200">10 Nov 2026</td><td class="p-2 text-center font-mono border border-slate-200">120 Peserta</td><td class="p-2 text-center font-mono font-bold border border-slate-200">180 SKP</td><td class="p-2 text-center font-bold text-emerald-700 border border-slate-200">120 (100%)</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">3</td><td class="p-2 border border-slate-200 font-semibold">Workshop USG Obstetri Dasar &amp; Lanjut</td><td class="p-2 text-center border border-slate-200">05 Nov 2026</td><td class="p-2 text-center font-mono border border-slate-200">85 Peserta</td><td class="p-2 text-center font-mono font-bold border border-slate-200">127,5 SKP</td><td class="p-2 text-center font-bold text-emerald-700 border border-slate-200">85 (100%)</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">4</td><td class="p-2 border border-slate-200 font-semibold">Bakti Sosial IVA Test &amp; Edukasi Reproduksi</td><td class="p-2 text-center border border-slate-200">02 Nov 2026</td><td class="p-2 text-center font-mono border border-slate-200">74 Peserta</td><td class="p-2 text-center font-mono font-bold border border-slate-200">74 SKP</td><td class="p-2 text-center font-bold text-emerald-700 border border-slate-200">74 (100%)</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- 5. Kendala dan Permasalahan -->
-              <div class="space-y-2">
-                <h3 class="font-black text-sm text-[#112d4e] tracking-tight">5. KENDALA DAN PERMASALAHAN</h3>
-                <table class="w-full text-xs border-collapse border border-slate-300">
-                  <thead class="bg-[#112d4e] text-white font-bold text-[11px]">
-                    <tr>
-                      <th class="p-2 text-center border border-[#112d4e] w-12">No.</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Kendala / temuan</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Dampak terhadap pekerjaan</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Tindak lanjut / PIC</th>
-                      <th class="p-2 text-left border border-[#112d4e] w-24">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-200">
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">1</td><td class="p-2 border border-slate-200">Keterlambatan sinkronisasi data dari portal Kemenkes</td><td class="p-2 border border-slate-200 text-slate-500">Data SKP menunggu validasi</td><td class="p-2 border border-slate-200">Koordinasi helpdesk SATUSEHAT (Siti Rahma)</td><td class="p-2 border border-slate-200 font-bold text-amber-700">On Progress</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">2</td><td class="p-2 border border-slate-200">Dokumen sertifikat resolusi rendah / tidak terbaca</td><td class="p-2 border border-slate-200 text-slate-500">Verifikasi ditunda sementara</td><td class="p-2 border border-slate-200">Konfirmasi ulang via blast WA ke dokter ybs</td><td class="p-2 border border-slate-200 font-bold text-emerald-700">Resolved</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">3</td><td class="p-2 border border-slate-200">Perbedaan format penulisan nomor STR &amp; NIK di RS jejaring</td><td class="p-2 border border-slate-200 text-slate-500">Gagal autovalidasi API sistem</td><td class="p-2 border border-slate-200">Rekonsiliasi master data cabang (Admin Cabang)</td><td class="p-2 border border-slate-200 font-bold text-emerald-700">Done</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- 6. Rencana Tindak Lanjut Periode Berikutnya -->
-              <div class="space-y-2">
-                <h3 class="font-black text-sm text-[#112d4e] tracking-tight">6. RENCANA TINDAK LANJUT PERIODE BERIKUTNYA</h3>
-                <table class="w-full text-xs border-collapse border border-slate-300">
-                  <thead class="bg-[#112d4e] text-white font-bold text-[11px]">
-                    <tr>
-                      <th class="p-2 text-center border border-[#112d4e] w-12">No.</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Rencana pekerjaan</th>
-                      <th class="p-2 text-center border border-[#112d4e] w-48">Target waktu</th>
-                      <th class="p-2 text-left border border-[#112d4e] w-36">PIC</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-200">
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">1</td><td class="p-2 border border-slate-200 font-medium">Penerbitan rekapitulasi resmi &amp; penagihan invoice November</td><td class="p-2 text-center border border-slate-200">Minggu ke-1 Desember 2026</td><td class="p-2 border border-slate-200">Tim Finance &amp; PIC</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">2</td><td class="p-2 border border-slate-200 font-medium">Penyelesaian verifikasi 19 berkas SKP tertunda</td><td class="p-2 text-center border border-slate-200">Minggu ke-2 Desember 2026</td><td class="p-2 border border-slate-200">Siti Rahma, S.Farm</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">3</td><td class="p-2 border border-slate-200 font-medium">Pelaksanaan webinar akreditasi batch Desember</td><td class="p-2 text-center border border-slate-200">Minggu ke-3 Desember 2026</td><td class="p-2 border border-slate-200">Divisi Ilmiah PP POGI</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">4</td><td class="p-2 border border-slate-200 font-medium">Rekonsiliasi data akhir tahun &amp; tutup buku kuartal</td><td class="p-2 text-center border border-slate-200">Minggu ke-4 Desember 2026</td><td class="p-2 border border-slate-200">Tim Sistem &amp; Data POGI</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="pt-4 border-t border-slate-200 flex justify-between text-[11px] text-slate-400 font-mono">
-                <span>IMPRUVE.ID | MONTHLY REPORT ONE POGI</span>
-                <span>Halaman 2</span>
-              </div>
-            </div>
-
-            <!-- ================= HALAMAN 3 ================= -->
-            <div class="p-8 sm:p-12 rounded-3xl bg-white border border-slate-300 shadow-md space-y-6">
-              <div class="bg-[#112d4e] text-white px-4 py-2 rounded font-black text-xs tracking-wider flex justify-between items-center">
-                <span>IMPRUVE.ID</span>
-                <span>MONTHLY REPORT | ONE POGI &bull; Halaman 3</span>
-              </div>
-
-              <!-- 7. Project Plan Bulan Depan -->
-              <div class="space-y-2">
-                <h3 class="font-black text-sm text-[#112d4e] tracking-tight">7. PROJECT PLAN BULAN DEPAN (DESEMBER 2026)</h3>
-                <p class="text-xs text-slate-500 leading-relaxed">
-                  Rencana kerja untuk periode bulan depan. Isi periode, target, dan PIC sesuai kesepakatan.
-                </p>
-                <table class="w-full text-xs border-collapse border border-slate-300">
-                  <thead class="bg-[#112d4e] text-white font-bold text-[11px]">
-                    <tr>
-                      <th class="p-2 text-center border border-[#112d4e] w-12">No.</th>
-                      <th class="p-2 text-left border border-[#112d4e]">Rencana pekerjaan</th>
-                      <th class="p-2 text-center border border-[#112d4e] w-48">Periode</th>
-                      <th class="p-2 text-center border border-[#112d4e] w-24">Target</th>
-                      <th class="p-2 text-left border border-[#112d4e] w-32">PIC</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-200">
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">1</td><td class="p-2 border border-slate-200 font-medium">Pengumpulan / penerimaan data dokter</td><td class="p-2 text-center border border-slate-200">Desember 2026, minggu ke-1</td><td class="p-2 text-center font-mono border border-slate-200">200 Dokter</td><td class="p-2 border border-slate-200">Tim Admin</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">2</td><td class="p-2 border border-slate-200 font-medium">Pemeriksaan kelengkapan dan kesesuaian data</td><td class="p-2 text-center border border-slate-200">Desember 2026, minggu ke-2</td><td class="p-2 text-center font-mono border border-slate-200">100% Berkas</td><td class="p-2 border border-slate-200">Tim Verifikator</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">3</td><td class="p-2 border border-slate-200 font-medium">Penginputan data SKP ke sistem ONE POGI</td><td class="p-2 text-center border border-slate-200">Desember 2026, minggu ke-3</td><td class="p-2 text-center font-mono border border-slate-200">Min. 400 SKP</td><td class="p-2 border border-slate-200">Tim Operator</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">4</td><td class="p-2 border border-slate-200 font-medium">Verifikasi hasil penginputan</td><td class="p-2 text-center border border-slate-200">Desember 2026, minggu ke-4</td><td class="p-2 text-center font-mono border border-slate-200">100% Lolos</td><td class="p-2 border border-slate-200">Kemenkes &amp; POGI</td></tr>
-                    <tr><td class="p-2 text-center border border-slate-200 font-mono">5</td><td class="p-2 border border-slate-200 font-medium">Monitoring status dan tindak lanjut</td><td class="p-2 text-center border border-slate-200">Desember 2026, minggu ke-4</td><td class="p-2 text-center font-mono border border-slate-200">Rekap Final</td><td class="p-2 border border-slate-200">Lead PIC</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- 8. Dokumentasi / Lampiran -->
-              <div class="space-y-2">
-                <h3 class="font-black text-sm text-[#112d4e] tracking-tight">8. DOKUMENTASI / LAMPIRAN</h3>
-                <p class="text-xs text-slate-500">Centang atau beri keterangan untuk dokumen pendukung yang disertakan:</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-                  <div class="flex items-center gap-2">
-                    <span class="w-4 h-4 rounded bg-[#112d4e] text-white flex items-center justify-center text-[10px] font-bold">&#10003;</span>
-                    <span class="font-medium text-slate-800">Rekap data dokter / master tracking</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-4 h-4 rounded bg-[#112d4e] text-white flex items-center justify-center text-[10px] font-bold">&#10003;</span>
-                    <span class="font-medium text-slate-800">Bukti atau tangkapan layar sistem (sesuai izin)</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-4 h-4 rounded bg-[#112d4e] text-white flex items-center justify-center text-[10px] font-bold">&#10003;</span>
-                    <span class="font-medium text-slate-800">Rekap kegiatan dan keikutsertaan webinar</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-4 h-4 rounded bg-[#112d4e] text-white flex items-center justify-center text-[10px] font-bold">&#10003;</span>
-                    <span class="font-medium text-slate-800">Catatan koordinasi / konfirmasi data</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-4 h-4 rounded bg-[#112d4e] text-white flex items-center justify-center text-[10px] font-bold">&#10003;</span>
-                    <span class="font-medium text-slate-800">Bukti verifikasi atau penyelesaian input</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-4 h-4 rounded bg-[#112d4e] text-white flex items-center justify-center text-[10px] font-bold">&#10003;</span>
-                    <span class="font-medium text-slate-800">Lampiran lain: <em>Invoice Tagihan &amp; Berita Acara Rekonsiliasi</em></span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 9. Penutup -->
-              <div class="space-y-4 pt-2">
-                <h3 class="font-black text-sm text-[#112d4e] tracking-tight">9. PENUTUP</h3>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                  Demikian laporan bulanan kegiatan pengelolaan dan penginputan data SKP dokter dalam program ONE POGI untuk periode <strong>November 2026</strong> ini disusun sebagai dokumentasi pelaksanaan, monitoring progres, dan bahan evaluasi serta koordinasi untuk periode berikutnya.
-                </p>
-
-                <!-- Tanda Tangan Resmi -->
-                <div class="grid grid-cols-2 gap-4 pt-2">
-                  <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 text-xs space-y-1">
-                    <div class="text-slate-500 font-medium">Disusun oleh,</div>
-                    <div class="h-14 flex items-end">
-                      <div class="font-black text-slate-900 border-b-2 border-slate-800 pb-0.5 inline-block">Siti Rahma, S.Farm</div>
-                    </div>
-                    <div class="text-slate-600 font-bold">Impruve.Id</div>
-                    <div class="text-[11px] text-slate-400">Tanggal: 20 November 2026</div>
-                  </div>
-
-                  <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 text-xs space-y-1">
-                    <div class="text-slate-500 font-medium">Diperiksa / diketahui oleh,</div>
-                    <div class="h-14 flex items-end">
-                      <div class="font-black text-slate-900 border-b-2 border-slate-800 pb-0.5 inline-block">Dr. dr. Yudi M. Hidayat, Sp.OG, Subsp. Onk, D.MAS</div>
-                    </div>
-                    <div class="text-slate-600 font-bold">Ketua Umum PP POGI / ONE POGI</div>
-                    <div class="text-[11px] text-slate-400">Tanggal: 20 November 2026</div>
-                  </div>
-                </div>
-
-                <p class="text-[10px] text-slate-400 leading-tight pt-2 border-t border-slate-100">
-                  Catatan pengisian: Gunakan satuan hitung yang konsisten. Bedakan dokter unik, record keikutsertaan kegiatan, dan transaksi/input SKP. Status "berhasil" sebaiknya hanya diberikan setelah hasil input diverifikasi pada sistem.
-                </p>
-              </div>
-
-              <div class="pt-4 border-t border-slate-200 flex justify-between text-[11px] text-slate-400 font-mono">
-                <span>IMPRUVE.ID | MONTHLY REPORT ONE POGI</span>
-                <span>Halaman 3</span>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-        <!-- ========================================================================= -->
-        <!-- MODAL POPUP 1: PILIHAN BULAN (PERSIS BPJS DI CHAT WHATSAPP)               -->
-        <!-- ========================================================================= -->
-        <div id="monthPickerModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-          <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden animate-scale-in">
-            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-[#006948] text-xl">calendar_month</span>
-                <h3 class="font-black text-sm text-slate-900">Pilih Bulan Laporan (Flashback)</h3>
-              </div>
-              <button type="button" onclick="toggleMonthPickerModal(false)" class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-xl transition cursor-pointer">
-                <span class="material-symbols-outlined text-lg">close</span>
-              </button>
-            </div>
-
-            <div class="p-6 space-y-4">
-              <div class="flex items-center justify-between px-1">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tahun Laporan</span>
-                <span class="text-xs font-black text-slate-900 bg-slate-100 px-3 py-1 rounded-xl">Tahun 2026</span>
-              </div>
-
-              <!-- 4x3 Grid Bulan (Persis Format BPJS) -->
-              <div class="grid grid-cols-4 gap-2.5 text-xs font-bold">
-                <button type="button" onclick="selectMonth(0)" id="mbtn-0" class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Jan</button>
-                <button type="button" onclick="selectMonth(1)" id="mbtn-1" class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Feb</button>
-                <button type="button" onclick="selectMonth(2)" id="mbtn-2" class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Mar</button>
-                <button type="button" onclick="selectMonth(3)" id="mbtn-3" class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Apr</button>
-                <button type="button" onclick="selectMonth(4)" id="mbtn-4" class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Mei</button>
-                <button type="button" onclick="selectMonth(5)" id="mbtn-5" class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Jun</button>
-                <button type="button" onclick="selectMonth(6)" id="mbtn-6" class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Jul</button>
-                <button type="button" onclick="selectMonth(7)" id="mbtn-7" class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Agu</button>
-                <button type="button" onclick="selectMonth(8)" id="mbtn-8" class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Sep</button>
-                <button type="button" onclick="selectMonth(9)" id="mbtn-9" class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Okt</button>
-                <button type="button" onclick="selectMonth(10)" id="mbtn-10" class="py-3 rounded-2xl bg-[#006948] text-white font-extrabold shadow-sm transition cursor-pointer text-center">Nov</button>
-                <button type="button" onclick="selectMonth(11)" id="mbtn-11" class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Des</button>
-              </div>
-
-              <div class="pt-2 text-[11px] text-slate-500 border-t border-slate-100 flex items-center justify-between">
-                <span>Cutoff: Setiap tgl 1</span>
-                <span class="text-emerald-700 font-bold">&bull; File PDF otomatis tersedia</span>
-              </div>
-            </div>
-
-            <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end">
-              <button type="button" onclick="toggleMonthPickerModal(false)" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition cursor-pointer">
-                Tutup
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ========================================================================= -->
-        <!-- MODAL POPUP 2: ARSIP FLASHBACK DOKUMEN (DIRAPIKAN TOTAL - MAX-W-4XL)      -->
-        <!-- ========================================================================= -->
-        <div id="archiveModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-          <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-4xl overflow-hidden animate-scale-in">
-            <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shadow-2xs">
-                  <span class="material-symbols-outlined text-xl">folder_zip</span>
-                </div>
-                <div>
-                  <h3 class="font-black text-base text-slate-900">Arsip File Laporan Bulanan (PDF Siap Unduh)</h3>
-                  <p class="text-xs text-slate-500">File tersimpan per bulan untuk kebutuhan flashback &amp; lampiran penagihan invoice.</p>
-                </div>
-              </div>
-              <button type="button" onclick="openArchiveModal(false)" class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-xl transition cursor-pointer">
-                <span class="material-symbols-outlined text-xl">close</span>
-              </button>
-            </div>
-
-            <div class="p-5 sm:p-6 max-h-[65vh] overflow-y-auto">
-              <div class="overflow-x-auto rounded-2xl border border-slate-200">
-                <table class="w-full text-left text-xs whitespace-nowrap">
-                  <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
-                    <tr>
-                      <th class="py-3 px-4 w-44">Periode Bulan</th>
-                      <th class="py-3 px-4 w-36">Tanggal Cutoff</th>
-                      <th class="py-3 px-4 w-48">Terakhir Update Admin</th>
-                      <th class="py-3 px-4 w-36 text-center">Status File</th>
-                      <th class="py-3 px-4 w-48 text-right">Aksi Unduh</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-100">
-                    <tr class="bg-emerald-50/50">
-                      <td class="py-3.5 px-4 font-bold text-slate-900 flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> November 2026 (Aktif)
-                      </td>
-                      <td class="py-3.5 px-4 text-slate-600 font-medium">1 November 2026</td>
-                      <td class="py-3.5 px-4 text-slate-600 font-mono">20 Nov 2026, 09:14 WIB</td>
-                      <td class="py-3.5 px-4 text-center">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-[#006948]">Tersedia (Resmi)</span>
-                      </td>
-                      <td class="py-3.5 px-4 text-right">
-                        <a href="assets/docs/Monthly_Report_ONE_POGI_Revisi_01.pdf" download="Monthly_Report_ONE_POGI_Nov_2026.pdf" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white font-bold text-xs shadow-xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm">download</span>
-                          <span>Unduh PDF</span>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="py-3.5 px-4 font-bold text-slate-800">Oktober 2026</td>
-                      <td class="py-3.5 px-4 text-slate-600">1 Oktober 2026</td>
-                      <td class="py-3.5 px-4 text-slate-600 font-mono">31 Okt 2026, 17:00 WIB</td>
-                      <td class="py-3.5 px-4 text-center">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
-                      </td>
-                      <td class="py-3.5 px-4 text-right">
-                        <a href="assets/docs/Monthly_Report_ONE_POGI_Revisi_01.pdf" download="Monthly_Report_ONE_POGI_Okt_2026.pdf" class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm text-rose-600">picture_as_pdf</span>
-                          <span>Unduh PDF</span>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="py-3.5 px-4 font-bold text-slate-800">September 2026</td>
-                      <td class="py-3.5 px-4 text-slate-600">1 September 2026</td>
-                      <td class="py-3.5 px-4 text-slate-600 font-mono">30 Sep 2026, 17:00 WIB</td>
-                      <td class="py-3.5 px-4 text-center">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
-                      </td>
-                      <td class="py-3.5 px-4 text-right">
-                        <a href="assets/docs/Monthly_Report_ONE_POGI_Revisi_01.pdf" download="Monthly_Report_ONE_POGI_Sep_2026.pdf" class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm text-rose-600">picture_as_pdf</span>
-                          <span>Unduh PDF</span>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="py-3.5 px-4 font-bold text-slate-800">Agustus 2026</td>
-                      <td class="py-3.5 px-4 text-slate-600">1 Agustus 2026</td>
-                      <td class="py-3.5 px-4 text-slate-600 font-mono">31 Agu 2026, 17:00 WIB</td>
-                      <td class="py-3.5 px-4 text-center">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
-                      </td>
-                      <td class="py-3.5 px-4 text-right">
-                        <a href="assets/docs/Monthly_Report_ONE_POGI_Revisi_01.pdf" download="Monthly_Report_ONE_POGI_Agu_2026.pdf" class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm text-rose-600">picture_as_pdf</span>
-                          <span>Unduh PDF</span>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="py-3.5 px-4 font-bold text-slate-800">Juli 2026</td>
-                      <td class="py-3.5 px-4 text-slate-600">1 Juli 2026</td>
-                      <td class="py-3.5 px-4 text-slate-600 font-mono">31 Jul 2026, 17:00 WIB</td>
-                      <td class="py-3.5 px-4 text-center">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
-                      </td>
-                      <td class="py-3.5 px-4 text-right">
-                        <a href="assets/docs/Monthly_Report_ONE_POGI_Revisi_01.pdf" download="Monthly_Report_ONE_POGI_Jul_2026.pdf" class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm text-rose-600">picture_as_pdf</span>
-                          <span>Unduh PDF</span>
-                        </a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="py-3.5 px-4 font-bold text-slate-800">Juni 2026</td>
-                      <td class="py-3.5 px-4 text-slate-600">1 Juni 2026</td>
-                      <td class="py-3.5 px-4 text-slate-600 font-mono">30 Jun 2026, 17:00 WIB</td>
-                      <td class="py-3.5 px-4 text-center">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
-                      </td>
-                      <td class="py-3.5 px-4 text-right">
-                        <a href="assets/docs/Monthly_Report_ONE_POGI_Revisi_01.pdf" download="Monthly_Report_ONE_POGI_Jun_2026.pdf" class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm text-rose-600">picture_as_pdf</span>
-                          <span>Unduh PDF</span>
-                        </a>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <div class="flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-sm text-[#006948]">verified</span>
-                <span>Sistem Penyimpanan Terpadu Impruve.Id &bull; Cutoff tgl 1</span>
-              </div>
-              <button type="button" onclick="openArchiveModal(false)" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition cursor-pointer">
-                Tutup
-              </button>
-            </div>
-          </div>
-        </div>
 
       </main>
     </div>
   </div>
 
+  <!-- ========================================================================= -->
+  <!-- MODAL POPUP 1: PILIHAN BULAN (PERSIS BPJS DI CHAT WHATSAPP)               -->
+  <!-- ========================================================================= -->
+  <div id="monthPickerModal"
+    class="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div
+      class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden animate-scale-in">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[#006948] text-xl">calendar_month</span>
+          <h3 class="font-black text-sm text-slate-900">Pilih Bulan Laporan (Flashback)</h3>
+        </div>
+        <button type="button" onclick="toggleMonthPickerModal(false)"
+          class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-xl transition cursor-pointer">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <div class="flex items-center justify-between px-1">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tahun Laporan</span>
+          <span class="text-xs font-black text-slate-900 bg-slate-100 px-3 py-1 rounded-xl">Tahun 2026</span>
+        </div>
+
+        <!-- 4x3 Grid Bulan (Persis Format BPJS) -->
+        <div class="grid grid-cols-4 gap-2.5 text-xs font-bold">
+          <button type="button" onclick="selectMonth(0)" id="mbtn-0"
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Jan</button>
+          <button type="button" onclick="selectMonth(1)" id="mbtn-1"
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Feb</button>
+          <button type="button" onclick="selectMonth(2)" id="mbtn-2"
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Mar</button>
+          <button type="button" onclick="selectMonth(3)" id="mbtn-3"
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Apr</button>
+          <button type="button" onclick="selectMonth(4)" id="mbtn-4"
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Mei</button>
+          <button type="button" onclick="selectMonth(5)" id="mbtn-5"
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Jun</button>
+          <button type="button" onclick="selectMonth(6)" id="mbtn-6"
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Jul</button>
+          <button type="button" onclick="selectMonth(7)" id="mbtn-7"
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Agu</button>
+          <button type="button" onclick="selectMonth(8)" id="mbtn-8"
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Sep</button>
+          <button type="button" onclick="selectMonth(9)" id="mbtn-9"
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Okt</button>
+          <button type="button" onclick="selectMonth(10)" id="mbtn-10"
+            class="py-3 rounded-2xl bg-[#006948] text-white font-extrabold shadow-sm transition cursor-pointer text-center">Nov</button>
+          <button type="button" onclick="selectMonth(11)" id="mbtn-11"
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Des</button>
+        </div>
+
+        <div class="pt-2 text-[11px] text-slate-500 border-t border-slate-100 flex items-center justify-between">
+          <span>Cutoff: Setiap tgl 1</span>
+          <span class="text-emerald-700 font-bold">&bull; File PDF otomatis tersedia</span>
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end">
+        <button type="button" onclick="toggleMonthPickerModal(false)"
+          class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition cursor-pointer">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL POPUP 2: ARSIP FLASHBACK DOKUMEN (DIRAPIKAN TOTAL - MAX-W-4XL)      -->
+  <!-- ========================================================================= -->
+  <div id="archiveModal"
+    class="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div
+      class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-5xl overflow-hidden animate-scale-in">
+      <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shadow-2xs">
+            <span class="material-symbols-outlined text-xl">folder_zip</span>
+          </div>
+          <div>
+            <h3 class="font-black text-base text-slate-900">Arsip File Laporan Bulanan (PDF Siap Unduh)</h3>
+            <p class="text-xs text-slate-500">File tersimpan per bulan untuk kebutuhan flashback &amp; lampiran
+              penagihan invoice.</p>
+          </div>
+        </div>
+        <button type="button" onclick="openArchiveModal(false)"
+          class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-xl transition cursor-pointer">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <div class="p-5 sm:p-6 max-h-[65vh] overflow-y-auto">
+        <div class="overflow-x-auto rounded-2xl border border-slate-200">
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+              <tr>
+                <th class="py-3 px-4 w-44">Periode Bulan</th>
+                <th class="py-3 px-4 w-36">Tanggal Cutoff</th>
+                <th class="py-3 px-4 w-48">Terakhir Update Admin</th>
+                <th class="py-3 px-4 w-36 text-center">Status File</th>
+                <th class="py-3 px-4 w-72 text-right">Aksi Laporan (Pilihan Format)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="bg-emerald-50/50">
+                <td class="py-3.5 px-4 font-bold text-slate-900 flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> November 2026 (Aktif)
+                </td>
+                <td class="py-3.5 px-4 text-slate-600 font-medium">1 November 2026</td>
+                <td class="py-3.5 px-4 text-slate-600 font-mono">20 Nov 2026, 09:14 WIB</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-[#006948]">Tersedia
+                    (Resmi)</span>
+                </td>
+                <td class="py-3.5 px-4 text-right">
+                  <div class="inline-flex items-center gap-2">
+                    <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
+                      title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
+                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                      <span>Lap. Bulanan</span>
+                    </button>
+                    <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
+                      title="Unduh PDF Resmi SKP Report (1 Halaman)"
+                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
+                      <span>Report SKP</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-bold text-slate-800">Oktober 2026</td>
+                <td class="py-3.5 px-4 text-slate-600">1 Oktober 2026</td>
+                <td class="py-3.5 px-4 text-slate-600 font-mono">31 Okt 2026, 17:00 WIB</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span
+                    class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
+                </td>
+                <td class="py-3.5 px-4 text-right">
+                  <div class="inline-flex items-center gap-2">
+                    <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
+                      title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
+                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                      <span>Lap. Bulanan</span>
+                    </button>
+                    <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
+                      title="Unduh PDF Resmi SKP Report (1 Halaman)"
+                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
+                      <span>Report SKP</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-bold text-slate-800">September 2026</td>
+                <td class="py-3.5 px-4 text-slate-600">1 September 2026</td>
+                <td class="py-3.5 px-4 text-slate-600 font-mono">30 Sep 2026, 17:00 WIB</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span
+                    class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
+                </td>
+                <td class="py-3.5 px-4 text-right">
+                  <div class="inline-flex items-center gap-2">
+                    <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
+                      title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
+                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                      <span>Lap. Bulanan</span>
+                    </button>
+                    <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
+                      title="Unduh PDF Resmi SKP Report (1 Halaman)"
+                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
+                      <span>Report SKP</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-bold text-slate-800">Agustus 2026</td>
+                <td class="py-3.5 px-4 text-slate-600">1 Agustus 2026</td>
+                <td class="py-3.5 px-4 text-slate-600 font-mono">31 Agu 2026, 17:00 WIB</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span
+                    class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
+                </td>
+                <td class="py-3.5 px-4 text-right">
+                  <div class="inline-flex items-center gap-2">
+                    <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
+                      title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
+                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                      <span>Lap. Bulanan</span>
+                    </button>
+                    <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
+                      title="Unduh PDF Resmi SKP Report (1 Halaman)"
+                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
+                      <span>Report SKP</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-bold text-slate-800">Juli 2026</td>
+                <td class="py-3.5 px-4 text-slate-600">1 Juli 2026</td>
+                <td class="py-3.5 px-4 text-slate-600 font-mono">31 Jul 2026, 17:00 WIB</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span
+                    class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
+                </td>
+                <td class="py-3.5 px-4 text-right">
+                  <div class="inline-flex items-center gap-2">
+                    <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
+                      title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
+                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                      <span>Lap. Bulanan</span>
+                    </button>
+                    <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
+                      title="Unduh PDF Resmi SKP Report (1 Halaman)"
+                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
+                      <span>Report SKP</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-bold text-slate-800">Juni 2026</td>
+                <td class="py-3.5 px-4 text-slate-600">1 Juni 2026</td>
+                <td class="py-3.5 px-4 text-slate-600 font-mono">30 Jun 2026, 17:00 WIB</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span
+                    class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
+                </td>
+                <td class="py-3.5 px-4 text-right">
+                  <div class="inline-flex items-center gap-2">
+                    <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
+                      title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
+                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                      <span>Lap. Bulanan</span>
+                    </button>
+                    <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
+                      title="Unduh PDF Resmi SKP Report (1 Halaman)"
+                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                      <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
+                      <span>Report SKP</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div
+        class="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        <div class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm text-[#006948]">verified</span>
+          <span>Sistem Penyimpanan Terpadu Impruve.Id &bull; Cutoff tgl 1</span>
+        </div>
+        <button type="button" onclick="openArchiveModal(false)"
+          class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition cursor-pointer">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- jsPDF & AutoTable for Client-Side Dynamic PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script>
+    if (!window.jspdf) {
+      document.write('<script src="js/vendor/jspdf.umd.min.js"><\/script>');
+      document.write('<script src="js/vendor/jspdf.plugin.autotable.min.js"><\/script>');
+    }
+  </script>
+
   <script src="js/pogi_state.js"></script>
   <script src="js/navigation.js"></script>
+  <script src="js/pogi_template_data.js"></script>
   <script src="js/pdf_exporter.js"></script>
   <script>
     let chartMonthInstance = null;
     let chartTypeInstance = null;
     let chartDonutInstance = null;
     let chartStatusInstance = null;
-    let activeTabMode = 'dashboard';
 
     const monthlyData = [
       { name: 'Januari 2026', short: 'Jan', target: 509.33, real: 126.0, complete: 38, pending: 24, pel: 110, peng: 6, pemb: 10, update: '31 Jan 2026, 17:00 WIB' },
@@ -1065,34 +891,6 @@
       initReportCharts();
       renderMonthView(10);
     });
-
-    function switchReportTab(tab) {
-      activeTabMode = tab;
-      const paneDash = document.getElementById('pane-dashboard');
-      const paneDoc = document.getElementById('pane-document');
-      const btnDash = document.getElementById('tab-btn-dashboard');
-      const btnDoc = document.getElementById('tab-btn-document');
-
-      if (tab === 'dashboard') {
-        if (paneDash) paneDash.classList.remove('hidden');
-        if (paneDoc) paneDoc.classList.add('hidden');
-        if (btnDash) btnDash.className = 'px-4 py-2 rounded-xl bg-[#006948] text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer';
-        if (btnDoc) btnDoc.className = 'px-4 py-2 rounded-xl bg-white border border-slate-200/90 text-slate-700 hover:text-slate-900 text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer';
-        
-        // Re-render chart sizes
-        setTimeout(() => {
-          if (chartMonthInstance) chartMonthInstance.resize();
-          if (chartTypeInstance) chartTypeInstance.resize();
-          if (chartDonutInstance) chartDonutInstance.resize();
-          if (chartStatusInstance) chartStatusInstance.resize();
-        }, 50);
-      } else {
-        if (paneDash) paneDash.classList.add('hidden');
-        if (paneDoc) paneDoc.classList.remove('hidden');
-        if (btnDoc) btnDoc.className = 'px-4 py-2 rounded-xl bg-[#112d4e] text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer';
-        if (btnDash) btnDash.className = 'px-4 py-2 rounded-xl bg-white border border-slate-200/90 text-slate-700 hover:text-slate-900 text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer';
-      }
-    }
 
     function toggleMonthPickerModal(show) {
       const modal = document.getElementById('monthPickerModal');
@@ -1276,6 +1074,16 @@
         window.print();
       }
     }
+
+    function downloadCurrentMonthSkpReport() {
+      const currentMonth = (monthlyData && monthlyData[currentSelectedMonthIndex])
+        ? monthlyData[currentSelectedMonthIndex].name
+        : 'November 2026';
+      if (typeof printOfficialSkpReportPdf === 'function') {
+        printOfficialSkpReportPdf(currentMonth);
+      }
+    }
   </script>
 </body>
+
 </html>

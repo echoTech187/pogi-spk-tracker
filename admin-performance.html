@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-[#f4f7f6]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POGI SKP Tracker - Admin Performance &amp; SLA Tracker</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .kpi-gradient-1 { background: linear-gradient(135deg, #022b1f 0%, #004d34 100%); }
+    .pulse-amber { animation: pulseAmber 2s infinite; }
+    @keyframes pulseAmber {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+  </style>
+</head>
+<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
+  <!-- Mobile Backdrop Overlay -->
+  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
+
+  <div class="flex h-screen overflow-hidden">
+    <!-- APP SIDEBAR -->
+    <aside id="appSidebar" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] lg:w-64 bg-white border-r border-slate-200/90 flex flex-col shrink-0 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static lg:inset-auto shadow-2xl lg:shadow-none">
+      <div class="px-4 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
+        <a href="dashboard.html" class="flex items-center gap-2.5 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs shrink-0">
+            <img src="assets/img/pogi_logo.jpg" alt="Logo POGI" class="w-full h-full object-contain">
+          </div>
+          <div class="min-w-0">
+            <div class="font-black text-sm tracking-tight text-[#006948] leading-none">POGI SKP TRACKER</div>
+            <div class="text-[9px] text-slate-500 font-bold leading-tight mt-1 truncate">PP POGI &bull; Standar 160 SKP</div>
+          </div>
+        </a>
+        <button type="button" onclick="toggleMobileSidebar(false)" class="lg:hidden p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition" aria-label="Tutup Menu">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <div class="px-3 py-4 flex-1 overflow-y-auto space-y-6">
+        <div>
+          <div class="px-3 mb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+            MONITORING NASIONAL
+          </div>
+          <nav class="space-y-1">
+            <a href="dashboard.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[19px]">dashboard</span>
+              <span>Dashboard</span>
+            </a>
+            <a href="doctors.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[19px]">stethoscope</span>
+              <span>Doctors</span>
+            </a>
+            <a href="provinces.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[19px]">map</span>
+              <span>Provinces</span>
+            </a>
+            <a href="events.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[19px]">event</span>
+              <span>Events</span>
+            </a>
+            <a href="activity.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[19px]">history</span>
+              <span>Activity Log</span>
+            </a>
+            <a href="reports.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[19px]">bar_chart</span>
+              <span>Report</span>
+            </a>
+            <a href="admin-performance.html" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition bg-[#006948] text-white shadow-xs">
+              <span class="material-symbols-outlined text-[19px]">speed</span>
+              <span>Admin Performance</span>
+            </a>
+          </nav>
+        </div>
+
+        <div>
+          <div class="px-3 mb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+            PENGATURAN DATA (MANAGE)
+          </div>
+          <nav class="space-y-1">
+            <a href="manage.html?tab=doctor" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[18px]">person</span>
+              <span>Doctor</span>
+            </a>
+            <a href="manage.html?tab=institution" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[18px]">domain</span>
+              <span>Institution (RS)</span>
+            </a>
+            <a href="manage.html?tab=event" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+              <span>SKP Event</span>
+            </a>
+            <a href="manage.html?tab=category" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[18px]">category</span>
+              <span>Event Category</span>
+            </a>
+            <a href="manage.html?tab=user" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <span class="material-symbols-outlined text-[18px]">manage_accounts</span>
+              <span>User</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- User Info Footer -->
+      <div class="p-3 border-t border-slate-100">
+        <div class="flex items-center gap-3 p-2 rounded-xl bg-slate-50 border border-slate-100">
+          <div class="w-8 h-8 rounded-full bg-[#006948] text-white flex items-center justify-center font-black text-xs shrink-0">
+            SR
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="font-bold text-xs text-slate-800 truncate">Siti Rahma, S.Farm</div>
+            <div class="text-[10px] text-slate-400 font-semibold uppercase truncate">TIM DATA PP POGI</div>
+          </div>
+          <a href="index.html" class="text-slate-400 hover:text-rose-600 transition p-1" title="Keluar">
+            <span class="material-symbols-outlined text-lg">logout</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      <!-- TOPBAR -->
+      <header class="bg-white border-b border-slate-200/90 sticky top-0 z-30 px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <button type="button" onclick="toggleMobileSidebar(true)" class="lg:hidden p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition shrink-0" aria-label="Buka Menu">
+            <span class="material-symbols-outlined text-2xl">menu</span>
+          </button>
+          <!-- Scope Selector Pill -->
+          <div class="relative">
+            <button type="button" onclick="toggleOrgScopeDropdown()" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-bold transition border border-slate-200/80">
+              <span class="material-symbols-outlined text-[#006948] text-base">public</span>
+              <span id="selectedOrgScopeLabel">Semua Wilayah Nasional (38 Cabang)</span>
+              <span class="material-symbols-outlined text-slate-400 text-sm">expand_more</span>
+            </button>
+            <div id="orgScopeDropdown" class="hidden absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2 z-50 text-xs">
+              <div class="px-3 py-1.5 font-bold text-[10px] text-slate-400 uppercase tracking-wider">Pilih Wilayah Kerja</div>
+              <button type="button" onclick="selectOrgScope('all', 'Semua Wilayah Nasional (38 Cabang)')" class="w-full text-left px-3 py-2 hover:bg-slate-50 font-semibold flex items-center justify-between text-slate-800">
+                <span>Semua Wilayah Nasional (38 Cabang)</span>
+                <span class="material-symbols-outlined text-sm text-[#006948]">check</span>
+              </button>
+              <button type="button" onclick="selectOrgScope('jabar', 'POGI Cabang Jawa Barat')" class="w-full text-left px-3 py-2 hover:bg-slate-50 font-semibold text-slate-600">
+                <span>POGI Cabang Jawa Barat</span>
+              </button>
+              <button type="button" onclick="selectOrgScope('dki', 'POGI Cabang DKI Jakarta')" class="w-full text-left px-3 py-2 hover:bg-slate-50 font-semibold text-slate-600">
+                <span>POGI Cabang DKI Jakarta</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <!-- Notification Bell -->
+          <div class="relative">
+            <button type="button" onclick="toggleTopNotifDropdown()" class="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition relative" title="Notifikasi Sistem">
+              <span class="material-symbols-outlined text-xl">notifications</span>
+              <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500"></span>
+            </button>
+          </div>
+          <!-- User Profile Pill -->
+          <div class="w-8 h-8 rounded-full bg-[#006948] text-white flex items-center justify-center font-black text-xs shrink-0 shadow-xs">
+            SR
+          </div>
+        </div>
+      </header>
+
+      <!-- PAGE CONTENT BODY -->
+      <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
+        <!-- Hero Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+          <div>
+            <div class="flex items-center gap-2 text-xs font-bold text-[#006948] uppercase tracking-wider">
+              <span class="material-symbols-outlined text-sm">speed</span>
+              <span>STANDAR OPERASIONAL B2B ENERGI CIPTA &bull; KEMENKES MANUAL-ASSISTED SYNC</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Admin Performance &amp; SLA Tracker</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl leading-relaxed">
+              Pemantauan terpusat kecepatan SLA verifikasi berkas (&le; 24 jam), rasio akurasi persetujuan Kemenkes, produktivitas tim data, dan penyeimbang beban kerja (*workload balancing*).
+            </p>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="flex items-center gap-2 shrink-0">
+            <button type="button" onclick="openWorkloadRebalanceModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+              <span class="material-symbols-outlined text-sm text-emerald-400">balance</span>
+              <span>Redistribusi Beban Dokter</span>
+            </button>
+            <button type="button" onclick="exportKpiReport()" class="px-3.5 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs">
+              <span class="material-symbols-outlined text-sm">download</span>
+              <span>Ekspor Rekap KPI</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Executive Summary KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Card 1: SLA Speed -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs relative overflow-hidden">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Rata-Rata SLA Tim</span>
+              <span class="material-symbols-outlined text-sky-600 text-xl">timer</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="kpiTeamSla" class="text-3xl font-black text-slate-900 font-mono">15.1 Jam</span>
+              <span class="text-xs text-slate-400 font-medium">/ 24 Jam</span>
+            </div>
+            <div class="mt-2 flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-[#006948] border border-emerald-200">
+                &check; On-Track SLA (-37%)
+              </span>
+              <span class="text-[11px] text-slate-400">Target &lt; 24 Jam</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Approval Rate -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs relative overflow-hidden">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Akurasi Lolos Kemenkes</span>
+              <span class="material-symbols-outlined text-emerald-600 text-xl">verified</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="kpiTeamApproval" class="text-3xl font-black text-[#006948] font-mono">98.2%</span>
+              <span class="text-xs text-slate-400 font-medium">Approval</span>
+            </div>
+            <div class="mt-2 flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-[#006948] border border-emerald-200">
+                Sangat Teliti
+              </span>
+              <span class="text-[11px] text-slate-400">Rejection rate &lt; 2%</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Total Throughput Docs -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs relative overflow-hidden">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Berkas Diverifikasi</span>
+              <span class="material-symbols-outlined text-indigo-600 text-xl">task_alt</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="kpiTeamProcessed" class="text-3xl font-black text-slate-900 font-mono">1,628</span>
+              <span class="text-xs text-slate-400 font-medium">Dokumen</span>
+            </div>
+            <div class="mt-2 flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                +18% Bulan Ini
+              </span>
+              <span class="text-[11px] text-slate-400">Siklus Q4 2026</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Member Compliance -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs relative overflow-hidden">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Dokter Capai Target Q4</span>
+              <span class="material-symbols-outlined text-amber-600 text-xl">medical_services</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="kpiTeamComplete" class="text-3xl font-black text-slate-900 font-mono">42 / 200</span>
+              <span id="kpiTeamRate" class="text-xs text-slate-500 font-bold font-mono">(21%)</span>
+            </div>
+            <div class="mt-2 flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200">
+                Proses Verifikasi
+              </span>
+              <span class="text-[11px] text-slate-400">Target &ge; 8.0 SKP</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Visual Comparison Panels (SLA Benchmarking & Workload Balance) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- SLA Benchmarking Bar Chart Panel (2 Cols) -->
+          <div class="lg:col-span-2 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="font-extrabold text-sm sm:text-base text-slate-900">Perbandingan Kecepatan SLA Pemrosesan per Admin</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Batas waktu maksimal SLA adalah 24 jam. Semakin rendah bar, semakin cepat admin merespons berkas.</p>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-black bg-slate-100 text-slate-700 font-mono">Limit: 24.0 Jam</span>
+            </div>
+
+            <!-- Dynamic SLA Horizontal Bar List -->
+            <div id="slaBarContainer" class="space-y-3 pt-2">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Workload Balance & Capacity Health (1 Col) -->
+          <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs space-y-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="font-extrabold text-sm sm:text-base text-slate-900">Kapasitas &amp; Beban Kerja</h3>
+                <span class="material-symbols-outlined text-amber-600 text-lg">pie_chart</span>
+              </div>
+              <p class="text-xs text-slate-500">Distribusi 200 dokter binaan ke dalam tim admin operasional.</p>
+
+              <div class="mt-4 p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-bold text-slate-700">Rekomendasi Kapasitas:</span>
+                  <span class="font-black text-[#006948] font-mono">35 - 40 Dokter / Admin</span>
+                </div>
+                <div class="text-[11px] text-slate-500 leading-relaxed">
+                  Beban di atas 42 dokter berisiko menurunkan kecepatan verifikasi menjelang tanggal 1 (*cutoff* bulanan).
+                </div>
+              </div>
+
+              <!-- Mini Capacity Roster -->
+              <div id="workloadMiniList" class="mt-4 space-y-2.5">
+                <!-- Rendered via JS -->
+              </div>
+            </div>
+
+            <button type="button" onclick="openWorkloadRebalanceModal()" class="w-full mt-4 py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#006948] text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-200">
+              <span class="material-symbols-outlined text-sm">tune</span>
+              <span>Buka Tool Seimbangkan Beban (Rebalancer)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 3: Leaderboard & Performance Evaluation Table -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden space-y-4 p-5 sm:p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="font-extrabold text-base text-slate-900">Leaderboard Evaluasi Kinerja Personil Admin</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Penilaian tertimbang berdasarkan Kecepatan SLA (35%), Akurasi Kemenkes (30%), Volume Berkas (20%), dan Kepatuhan Dokter (15%).</p>
+            </div>
+
+            <!-- Table Filters -->
+            <div class="flex items-center gap-2">
+              <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="Cari admin..." class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700 w-44">
+              <select id="adminTierFilter" onchange="filterAdminTable()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700">
+                <option value="ALL">Semua Tier Kinerja</option>
+                <option value="Top Performer">Top Performer 🌟</option>
+                <option value="Good Performer">Good Performer ✅</option>
+                <option value="Needs Attention">Needs Attention ⚠️</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Table Wrapper -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs whitespace-nowrap">
+              <thead class="bg-slate-50 border-y border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
+                <tr>
+                  <th class="py-3 px-3.5 text-center">Peringkat</th>
+                  <th class="py-3 px-3">Personil Admin</th>
+                  <th class="py-3 px-3 text-center">Dokter Binaan</th>
+                  <th class="py-3 px-3 text-center">Berkas Diproses</th>
+                  <th class="py-3 px-3 text-center">Rata-Rata SLA</th>
+                  <th class="py-3 px-3 text-center">Akurasi Kemenkes</th>
+                  <th class="py-3 px-3 text-center">Dokter Complete</th>
+                  <th class="py-3 px-3 text-center">Skor Kinerja</th>
+                  <th class="py-3 px-3 text-center">Aksi Manajemen</th>
+                </tr>
+              </thead>
+              <tbody id="adminLeaderboardBody" class="divide-y divide-slate-100 font-medium">
+                <!-- Rendered dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL 1: Detail Kinerja & Log Aktivitas Admin (Drill-Down Modal) -->
+  <div id="adminDetailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 shrink-0">
+        <div class="flex items-center gap-3">
+          <div id="modalAdminAvatar" class="w-10 h-10 rounded-2xl bg-[#006948] text-white flex items-center justify-center font-black text-sm">
+            SR
+          </div>
+          <div>
+            <h3 id="modalAdminName" class="font-black text-slate-900 text-sm">Siti Rahma, S.Farm</h3>
+            <p id="modalAdminRole" class="text-[11px] text-slate-500">Lead Verifikator Tim Data Pusat</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAdminDetailModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto space-y-4 pr-1 text-xs">
+        <!-- 3 Highlights Cards in Modal -->
+        <div class="grid grid-cols-3 gap-2.5">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 text-center">
+            <div class="text-[10px] text-slate-400 font-bold uppercase">Dokter Asuhan</div>
+            <div id="modalAdminDocCount" class="text-lg font-black text-slate-900 mt-0.5 font-mono">38 Dokter</div>
+          </div>
+          <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-center">
+            <div class="text-[10px] text-emerald-700 font-bold uppercase">Rata-Rata SLA</div>
+            <div id="modalAdminSla" class="text-lg font-black text-[#006948] mt-0.5 font-mono">9.4 Jam</div>
+          </div>
+          <div class="p-3 rounded-xl bg-sky-50 border border-sky-100 text-center">
+            <div class="text-[10px] text-sky-700 font-bold uppercase">Skor KPI</div>
+            <div id="modalAdminScore" class="text-lg font-black text-sky-800 mt-0.5 font-mono">84 / 100</div>
+          </div>
+        </div>
+
+        <!-- Section: Daftar Dokter Binaan -->
+        <div>
+          <h4 class="font-extrabold text-slate-800 text-xs mb-2 flex items-center justify-between">
+            <span>Daftar Dokter Binaan Terpantau</span>
+            <span id="modalDoctorBadgeCount" class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold">38 Dokter</span>
+          </h4>
+          <div class="max-h-48 overflow-y-auto border border-slate-200 rounded-xl divide-y divide-slate-100">
+            <div id="modalDoctorListContainer" class="p-2 space-y-1">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Riwayat Aksi Log Aktivitas -->
+        <div>
+          <h4 class="font-extrabold text-slate-800 text-xs mb-2">Riwayat Tindakan Terbaru di Sistem</h4>
+          <div id="modalActivityLogContainer" class="space-y-1.5 border border-slate-200 rounded-xl p-3 bg-slate-50/50">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 shrink-0">
+        <button type="button" onclick="closeAdminDetailModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Redistribusi Beban Dokter (Workload Rebalancer) -->
+  <div id="workloadRebalanceModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[#006948] text-xl">balance</span>
+          <h3 class="font-black text-slate-900 text-sm">Redistribusi Beban Kerja Dokter Binaan</h3>
+        </div>
+        <button type="button" onclick="closeWorkloadRebalanceModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-3.5 text-xs">
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-relaxed">
+          <strong>Manajemen Kapasitas:</strong> Pindahkan penugasan dokter dari admin yang memiliki beban tinggi ke admin yang berkapasitas longgar agar SLA &lt; 24 jam tetap terjaga.
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Pilih Dokter yang Akan Dialihkan</label>
+          <select id="rebalanceDoctorSelect" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700">
+            <!-- Rendered via JS -->
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Admin Penerima Tugas Baru</label>
+          <select id="rebalanceTargetAdminSelect" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700">
+            <!-- Rendered via JS -->
+          </select>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+        <button type="button" onclick="closeWorkloadRebalanceModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Batal</button>
+        <button type="button" onclick="submitRebalance()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs">
+          <span class="material-symbols-outlined text-sm">check</span>
+          <span>Simpan &amp; Alihkan Dokter</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="js/pogi_state.js"></script>
+  <script src="js/navigation.js"></script>
+  <script>
+    let performanceData = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadPerformanceData();
+    });
+
+    function loadPerformanceData() {
+      performanceData = PogiStore.getAdminPerformanceMetrics();
+      renderExecutiveCards(performanceData.summary);
+      renderSlaBars(performanceData.admins);
+      renderWorkloadMiniList(performanceData.admins);
+      renderLeaderboardTable(performanceData.admins);
+      populateRebalanceDropdowns();
+    }
+
+    function renderExecutiveCards(summary) {
+      document.getElementById('kpiTeamSla').innerText = `${summary.avgTeamSla} Jam`;
+      document.getElementById('kpiTeamApproval').innerText = `${summary.avgTeamApproval}%`;
+      document.getElementById('kpiTeamProcessed').innerText = summary.totalProcessedDocs.toLocaleString('id-ID');
+      document.getElementById('kpiTeamComplete').innerText = `${summary.totalCompleteDocs} / ${summary.totalAssignedDocs}`;
+      document.getElementById('kpiTeamRate').innerText = `(${summary.teamComplianceRate}%)`;
+    }
+
+    function renderSlaBars(admins) {
+      const container = document.getElementById('slaBarContainer');
+      if (!container) return;
+
+      container.innerHTML = admins.map(a => {
+        // Percentage of 24 hours SLA limit
+        const pct = Math.min(100, Math.round((a.avgSla / 24) * 100));
+        let barColor = 'bg-emerald-500';
+        let badgeColor = 'bg-emerald-50 text-emerald-800';
+        if (a.avgSla > 20) {
+          barColor = 'bg-amber-500';
+          badgeColor = 'bg-amber-50 text-amber-800';
+        } else if (a.avgSla > 15) {
+          barColor = 'bg-sky-500';
+          badgeColor = 'bg-sky-50 text-sky-800';
+        }
+
+        return `
+          <div class="space-y-1">
+            <div class="flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-lg ${a.avatarBg} flex items-center justify-center font-bold text-[10px] shrink-0">${a.avatar}</span>
+                <span class="font-bold text-slate-800">${a.displayName}</span>
+                <span class="text-[10px] text-slate-400 font-medium">(${a.doctorCount} dokter)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="font-mono font-black text-slate-900 text-xs">${a.avgSla} Jam</span>
+                <span class="px-2 py-0.2 rounded text-[10px] font-bold ${badgeColor}">SLA ${pct}%</span>
+              </div>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div class="${barColor} h-2 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderWorkloadMiniList(admins) {
+      const container = document.getElementById('workloadMiniList');
+      if (!container) return;
+
+      container.innerHTML = admins.map(a => {
+        return `
+          <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded ${a.avatarBg} flex items-center justify-center text-[9px] font-bold">${a.avatar}</span>
+              <span class="font-bold text-slate-800 truncate max-w-[120px]">${a.name}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-mono font-black text-slate-900">${a.doctorCount} Dok</span>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold border ${a.workloadClass}">${a.workloadStatus}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderLeaderboardTable(admins) {
+      const tbody = document.getElementById('adminLeaderboardBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = admins.map((a, idx) => {
+        const rank = idx + 1;
+        let rankBadge = `<span class="w-6 h-6 rounded-full bg-slate-100 text-slate-600 font-black text-xs inline-flex items-center justify-center">${rank}</span>`;
+        if (rank === 1) rankBadge = `<span class="w-6 h-6 rounded-full bg-amber-400 text-amber-950 font-black text-xs inline-flex items-center justify-center shadow-xs">#1</span>`;
+        else if (rank === 2) rankBadge = `<span class="w-6 h-6 rounded-full bg-slate-300 text-slate-900 font-black text-xs inline-flex items-center justify-center shadow-xs">#2</span>`;
+        else if (rank === 3) rankBadge = `<span class="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-xs">#3</span>`;
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-3 px-3.5 text-center">${rankBadge}</td>
+            <td class="py-3 px-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl ${a.avatarBg} flex items-center justify-center font-black text-xs shrink-0 shadow-2xs">
+                  ${a.avatar}
+                </div>
+                <div>
+                  <div class="font-bold text-slate-900">${a.displayName}</div>
+                  <div class="text-[10px] text-slate-400">${a.role}</div>
+                </div>
+              </div>
+            </td>
+            <td class="py-3 px-3 text-center">
+              <div class="font-mono font-black text-slate-900 text-xs">${a.doctorCount} Dokter</div>
+              <div class="text-[10px] text-slate-400 font-medium">Beban ${Math.round((a.doctorCount / 200) * 100)}%</div>
+            </td>
+            <td class="py-3 px-3 text-center font-mono font-bold text-slate-800">
+              ${a.processedDocs} <span class="text-[10px] text-slate-400">Berkas</span>
+            </td>
+            <td class="py-3 px-3 text-center">
+              <span class="font-mono font-black text-[#006948] text-xs">${a.avgSla} Jam</span>
+              <div class="text-[10px] text-emerald-600 font-bold">&check; Target &lt; 24 Jam</div>
+            </td>
+            <td class="py-3 px-3 text-center">
+              <span class="font-mono font-black text-slate-900 text-xs">${a.approvalRate}%</span>
+              <div class="text-[10px] text-slate-400">${a.rejections} Reject</div>
+            </td>
+            <td class="py-3 px-3 text-center">
+              <span class="font-mono font-black text-slate-900 text-xs">${a.completeCount} / ${a.doctorCount}</span>
+              <div class="text-[10px] text-slate-500 font-bold font-mono">(${a.complianceRate}%)</div>
+            </td>
+            <td class="py-3 px-3 text-center">
+              <div class="inline-flex flex-col items-center">
+                <span class="px-2.5 py-1 rounded-full text-xs font-black border font-mono ${a.tierBadgeClass}">${a.overallScore} / 100</span>
+                <span class="text-[9px] text-slate-500 font-bold mt-0.5">${a.tier}</span>
+              </div>
+            </td>
+            <td class="py-3 px-3 text-center">
+              <div class="inline-flex items-center gap-1.5">
+                <button type="button" onclick="showAdminDetailModal('${a.id}')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition flex items-center gap-1">
+                  <span class="material-symbols-outlined text-xs">visibility</span>
+                  <span>Rincian</span>
+                </button>
+                <button type="button" onclick="openWorkloadRebalanceModal('${a.name}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#006948] font-bold text-[11px] transition flex items-center gap-1 border border-emerald-200">
+                  <span class="material-symbols-outlined text-xs">tune</span>
+                  <span>Alihkan</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterAdminTable() {
+      if (!performanceData) return;
+      const search = (document.getElementById('adminSearchInput').value || '').toLowerCase();
+      const tier = document.getElementById('adminTierFilter').value;
+
+      const filtered = performanceData.admins.filter(a => {
+        const matchSearch = a.name.toLowerCase().includes(search) || a.displayName.toLowerCase().includes(search) || a.role.toLowerCase().includes(search);
+        const matchTier = tier === 'ALL' || a.tier.includes(tier);
+        return matchSearch && matchTier;
+      });
+
+      renderLeaderboardTable(filtered);
+    }
+
+    function showAdminDetailModal(adminId) {
+      if (!performanceData) return;
+      const admin = performanceData.admins.find(a => a.id === adminId);
+      if (!admin) return;
+
+      document.getElementById('modalAdminAvatar').innerText = admin.avatar;
+      document.getElementById('modalAdminName').innerText = admin.displayName;
+      document.getElementById('modalAdminRole').innerText = admin.role;
+      document.getElementById('modalAdminDocCount').innerText = `${admin.doctorCount} Dokter`;
+      document.getElementById('modalAdminSla').innerText = `${admin.avgSla} Jam`;
+      document.getElementById('modalAdminScore').innerText = `${admin.overallScore} / 100`;
+      document.getElementById('modalDoctorBadgeCount').innerText = `${admin.doctorCount} Dokter`;
+
+      // Render assigned doctors
+      const doctors = PogiStore.getDoctors().filter(d => (d.assignedTo && d.assignedTo.toLowerCase().includes(admin.name.toLowerCase())) || (admin.name === 'Siti Rahma' && d.assignedTo === 'Siti Rahma'));
+      const docListCont = document.getElementById('modalDoctorListContainer');
+      if (doctors.length === 0) {
+        docListCont.innerHTML = `<div class="p-3 text-center text-slate-400 italic">Belum ada dokter yang ditugaskan ke admin ini.</div>`;
+      } else {
+        docListCont.innerHTML = doctors.map(d => {
+          const statusBadge = d.status === 'Complete'
+            ? `<span class="px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-100 text-[#006948]">Complete</span>`
+            : `<span class="px-2 py-0.2 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700">Incomplete</span>`;
+          return `
+            <div class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition text-xs">
+              <div>
+                <a href="doctor-detail.html?id=${d.id}" class="font-bold text-slate-900 hover:text-[#006948] hover:underline">${d.name}</a>
+                <div class="text-[10px] text-slate-400 font-mono">STR: ${d.strNumber} &bull; ${d.hospital}</div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="font-mono font-bold text-slate-700 text-[11px]">${d.q4Credits || 0} SKP</span>
+                ${statusBadge}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render recent activities
+      const allActs = PogiStore.getActivities();
+      const adminActs = allActs.filter(act => act.actor.toLowerCase().includes(admin.name.toLowerCase()) || act.details.toLowerCase().includes(admin.name.toLowerCase()));
+      const actCont = document.getElementById('modalActivityLogContainer');
+      const sampleActs = adminActs.length > 0 ? adminActs.slice(0, 4) : allActs.slice(0, 3);
+
+      actCont.innerHTML = sampleActs.map(act => `
+        <div class="flex items-start gap-2 text-xs py-1">
+          <span class="material-symbols-outlined text-xs text-[#006948] mt-0.5">check_circle</span>
+          <div class="min-w-0 flex-1">
+            <div class="font-bold text-slate-800">${act.action}</div>
+            <div class="text-[11px] text-slate-600">${act.details}</div>
+            <div class="text-[10px] text-slate-400 font-mono mt-0.5">${act.timestamp}</div>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('adminDetailModal').classList.remove('hidden');
+    }
+
+    function closeAdminDetailModal() {
+      document.getElementById('adminDetailModal').classList.add('hidden');
+    }
+
+    function populateRebalanceDropdowns() {
+      const docSelect = document.getElementById('rebalanceDoctorSelect');
+      const adminSelect = document.getElementById('rebalanceTargetAdminSelect');
+      if (!docSelect || !adminSelect) return;
+
+      const doctors = PogiStore.getDoctors();
+      docSelect.innerHTML = doctors.map(d => `
+        <option value="${d.id}">${d.name} (Saat ini dipegang: ${d.assignedTo || 'Unassigned'})</option>
+      `).join('');
+
+      const adminNames = ['Siti Rahma', 'Dewi Lestari', 'Wahyu Setiawan', 'Melati Sihombing', 'Rina Kartika', 'Dimas Saputra', 'Fikri Ramadhan'];
+      adminSelect.innerHTML = adminNames.map(name => `
+        <option value="${name}">${name}</option>
+      `).join('');
+    }
+
+    function openWorkloadRebalanceModal(preferredAdminName) {
+      populateRebalanceDropdowns();
+      if (preferredAdminName) {
+        // filter doctor select to that admin
+        const docSelect = document.getElementById('rebalanceDoctorSelect');
+        const doctors = PogiStore.getDoctors();
+        const docFromAdmin = doctors.find(d => d.assignedTo === preferredAdminName);
+        if (docFromAdmin) docSelect.value = docFromAdmin.id;
+      }
+      document.getElementById('workloadRebalanceModal').classList.remove('hidden');
+    }
+
+    function closeWorkloadRebalanceModal() {
+      document.getElementById('workloadRebalanceModal').classList.add('hidden');
+    }
+
+    function submitRebalance() {
+      const docId = document.getElementById('rebalanceDoctorSelect').value;
+      const targetAdmin = document.getElementById('rebalanceTargetAdminSelect').value;
+
+      if (!docId || !targetAdmin) return;
+      const success = PogiStore.reassignDoctor(docId, targetAdmin);
+      if (success) {
+        closeWorkloadRebalanceModal();
+        loadPerformanceData();
+        showToast(`Dokter berhasil dialihkan ke admin ${targetAdmin}!`, 'success');
+      }
+    }
+
+    function exportKpiReport() {
+      showToast('Mengunduh Laporan Rekap KPI & SLA Kinerja Admin (Q4 2026)...', 'success');
+      setTimeout(() => {
+        showToast('File Rekap_KPI_Admin_Performance_POGI_2026.pdf berhasil diunduh!', 'info');
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
