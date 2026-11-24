@@ -53,14 +53,36 @@
         </div>
 
         
-        <!-- Event Cards Grid (Desktop 3 columns, Tablet 2 columns, Mobile 1 column matching Image 2) -->
-        <div id="eventsGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          <!-- Rendered dynamically by JavaScript -->
-        </div>
+        <!-- Event Table Container (Table Row View persis halaman lainnya) -->
+        <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+          <div class="hidden md:block overflow-x-auto">
+            <table class="w-full text-left text-xs whitespace-nowrap">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+                <tr>
+                  <th class="py-3.5 px-4">Nama Kegiatan &amp; Tanggal</th>
+                  <th class="py-3.5 px-4">Subbidang</th>
+                  <th class="py-3.5 px-4">Penyelenggara / Lokasi</th>
+                  <th class="py-3.5 px-4 text-center">Nilai SKP</th>
+                  <th class="py-3.5 px-4 text-center">Peserta Tuntas</th>
+                  <th class="py-3.5 px-4 text-center">Status</th>
+                  <th class="py-3.5 px-4 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="eventsTableBody" class="divide-y divide-slate-100 font-medium">
+                <!-- Rendered dynamically by JavaScript -->
+              </tbody>
+            </table>
+          </div>
 
-        <!-- MedCred Pagination Footer -->
-        <div id="eventsGridPagination" class="px-4 py-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <!-- Rendered dynamically -->
+          <!-- Mobile Cards (< md) -->
+          <div id="eventsMobileCards" class="md:hidden divide-y divide-slate-100 p-2 sm:p-3 space-y-3">
+            <!-- Rendered dynamically for mobile -->
+          </div>
+
+          <!-- MedCred Pagination Footer -->
+          <div id="eventsGridPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <!-- Rendered dynamically -->
+          </div>
         </div>
 
   </div>
@@ -231,7 +253,7 @@
     window.LIVE_SERVER_EVENTS = LIVE_SERVER_EVENTS;
     window.LIVE_SERVER_DOCTORS = LIVE_SERVER_DOCTORS;
     let activeFilter = 'ALL';
-    let eventPagination = { page: 1, limit: 6, total: LIVE_SERVER_EVENTS.length || 0 };
+    let eventPagination = { page: 1, limit: 10, total: LIVE_SERVER_EVENTS.length || 0 };
     let currentFilteredEvents = null;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -248,7 +270,7 @@
     }
 
     function setEventPageLimit(limit) {
-      eventPagination.limit = parseInt(limit, 10) || 6;
+      eventPagination.limit = parseInt(limit, 10) || 10;
       eventPagination.page = 1;
       renderEventsGrid(false);
     }
@@ -258,8 +280,9 @@
       const events = (LIVE_SERVER_EVENTS && LIVE_SERVER_EVENTS.length > 0)
         ? LIVE_SERVER_EVENTS
         : [];
-      const gridContainer = document.getElementById('eventsGridContainer');
-      if (!gridContainer) return;
+      const tbody = document.getElementById('eventsTableBody');
+      const mobileContainer = document.getElementById('eventsMobileCards');
+      if (!tbody && !mobileContainer) return;
 
       const filtered = activeFilter === 'ALL' ? events : events.filter(e => e.type === activeFilter);
       currentFilteredEvents = filtered;
@@ -274,66 +297,104 @@
       const pageEvents = filtered.slice(start, end);
 
       if (pageEvents.length === 0) {
-        gridContainer.innerHTML = '<div class="col-span-full py-12 text-center text-slate-400 font-medium">Tidak ada kegiatan yang ditemukan pada subbidang ini.</div>';
+        if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="py-12 text-center text-slate-400 font-medium">Tidak ada kegiatan yang ditemukan pada subbidang ini.</td></tr>';
+        if (mobileContainer) mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada data kegiatan.</div>';
       } else {
-        gridContainer.innerHTML = pageEvents.map(e => {
-          let badgeColor = 'bg-sky-100 text-sky-800 border-sky-200';
-          if (e.type === 'Pembelajaran') badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
-          if (e.type === 'Pengabdian') badgeColor = 'bg-amber-100 text-amber-800 border-amber-200';
-          const typeBadge = e.typeBadge || badgeColor;
+        // Desktop Table Rows
+        if (tbody) {
+          tbody.innerHTML = pageEvents.map(e => {
+            let badgeColor = 'bg-sky-100 text-sky-800 border-sky-200';
+            if (e.type === 'Pembelajaran') badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+            if (e.type === 'Pengabdian') badgeColor = 'bg-amber-100 text-amber-800 border-amber-200';
+            const typeBadge = e.typeBadge || badgeColor;
 
-          const eventTitle = e.title || e.name || 'Kegiatan Ilmiah & Pelayanan POGI';
-          const eventVenue = e.venue || e.category || 'PP POGI / Daring';
-          const docCount = e.doctors ? e.doctors.replace('done', 'selesai') : ((e.doctorsCompleted || 0) + ' / 100 selesai');
-          const creditsVal = e.creditsDisplay || (e.credits ? e.credits.toString().replace('.', ',') : '1');
+            const eventTitle = e.title || e.name || 'Kegiatan Ilmiah & Pelayanan POGI';
+            const eventVenue = e.venue || e.category || 'PP POGI & Kolegium Obgyn';
+            const docCount = e.doctors ? e.doctors.replace('done', 'selesai') : ((e.doctorsCompleted || 0) + ' / 100 selesai');
+            const creditsVal = e.creditsDisplay || (e.credits ? e.credits.toString().replace('.', ',') : '1');
 
-          return `
-            <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs hover:shadow-md transition flex flex-col justify-between space-y-4">
-              <div>
-                <!-- Top Badges -->
-                <div class="flex items-center justify-between mb-3">
-                  <div class="flex items-center gap-1.5">
-                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${typeBadge} border">
-                      ${e.type}
-                    </span>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                      ${e.id}
-                    </span>
+            return `
+              <tr class="hover:bg-slate-50/80 transition">
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-slate-900 text-xs leading-snug">${eventTitle}</div>
+                  <div class="text-[10px] text-slate-400 font-mono mt-0.5 flex items-center gap-1.5 flex-wrap">
+                    <span class="inline-flex items-center gap-0.5"><span class="material-symbols-outlined text-[11px] text-slate-400">calendar_month</span>${e.date || 'Periode Q4 2026'}</span>
+                    <span>&bull;</span>
+                    <span class="bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded font-mono text-[9px] font-bold">${e.id}</span>
                   </div>
+                </td>
+                <td class="py-3.5 px-4">
+                  <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${typeBadge} border">
+                    ${e.type}
+                  </span>
+                </td>
+                <td class="py-3.5 px-4 text-xs font-semibold text-slate-600">
+                  <div class="flex items-center gap-1 text-slate-700">
+                    <span class="material-symbols-outlined text-xs text-slate-400 shrink-0">location_on</span>
+                    <span class="truncate max-w-xs">${eventVenue}</span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4 text-center">
                   <span class="px-2.5 py-1 rounded-lg bg-[#16b3ac] text-white font-black text-xs shadow-2xs">
                     ${creditsVal} SKP
                   </span>
-                </div>
-                <!-- Title -->
-                <h3 class="font-extrabold text-sm text-slate-900 leading-snug line-clamp-2">
-                  ${eventTitle}
-                </h3>
-                <!-- Date & Category -->
-                <div class="mt-2.5 space-y-1 text-xs text-slate-500">
-                  <div class="flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-xs text-slate-400">calendar_month</span>
-                    <span>${e.date || 'Periode Q4 2026'}</span>
-                  </div>
-                  <div class="flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-xs text-slate-400">location_on</span>
-                    <span class="truncate">${eventVenue}</span>
-                  </div>
-                </div>
-              </div>
+                </td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="text-xs font-black text-slate-800">${docCount}</span>
+                </td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Terakreditasi
+                  </span>
+                </td>
+                <td class="py-3.5 px-4 text-center">
+                  <button type="button" onclick="openEventParticipants('${e.id}', '${eventTitle.replace(/'/g, "\\'")}', '${creditsVal}')" class="px-3 py-1.5 rounded-xl border border-slate-200 hover:border-[#16b3ac] hover:bg-emerald-50 text-slate-700 hover:text-[#16b3ac] font-bold text-xs transition inline-flex items-center gap-1 shadow-2xs cursor-pointer">
+                    <span class="material-symbols-outlined text-sm">groups</span>
+                    <span>Lihat Peserta</span>
+                  </button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
 
-              <!-- Footer with Peserta Tuntas & Button -->
-              <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                <div>
-                  <div class="text-[10px] text-slate-400">Peserta Tuntas:</div>
-                  <div class="font-black text-slate-900 text-xs mt-0.5">${docCount}</div>
+        // Mobile Cards (< md)
+        if (mobileContainer) {
+          mobileContainer.innerHTML = pageEvents.map(e => {
+            let badgeColor = 'bg-sky-100 text-sky-800 border-sky-200';
+            if (e.type === 'Pembelajaran') badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+            if (e.type === 'Pengabdian') badgeColor = 'bg-amber-100 text-amber-800 border-amber-200';
+            const typeBadge = e.typeBadge || badgeColor;
+
+            const eventTitle = e.title || e.name || 'Kegiatan Ilmiah & Pelayanan POGI';
+            const eventVenue = e.venue || e.category || 'PP POGI & Kolegium Obgyn';
+            const docCount = e.doctors ? e.doctors.replace('done', 'selesai') : ((e.doctorsCompleted || 0) + ' / 100 selesai');
+            const creditsVal = e.creditsDisplay || (e.credits ? e.credits.toString().replace('.', ',') : '1');
+
+            return `
+              <div class="bg-white rounded-xl border border-slate-200 p-4 space-y-3 shadow-2xs">
+                <div class="flex items-center justify-between">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${typeBadge} border">
+                    ${e.type}
+                  </span>
+                  <span class="px-2.5 py-1 rounded-lg bg-[#16b3ac] text-white font-black text-xs">
+                    ${creditsVal} SKP
+                  </span>
                 </div>
-                <button type="button" onclick="openEventParticipants('${e.id}', '${eventTitle.replace(/'/g, "\\'")}', '${creditsVal}')" class="px-3 py-1.5 rounded-xl border border-slate-200 hover:border-[#16b3ac] hover:bg-emerald-50 text-slate-700 hover:text-[#16b3ac] font-bold text-xs transition">
-                  Lihat Peserta
-                </button>
+                <div>
+                  <div class="font-bold text-slate-900 text-xs">${eventTitle}</div>
+                  <div class="text-[10px] text-slate-400 font-mono mt-1">${e.date || 'Q4 2026'} &bull; ${eventVenue}</div>
+                </div>
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                  <span class="text-slate-500 font-medium">Peserta: <strong class="text-slate-900">${docCount}</strong></span>
+                  <button type="button" onclick="openEventParticipants('${e.id}', '${eventTitle.replace(/'/g, "\\'")}', '${creditsVal}')" class="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-700 font-bold text-xs hover:border-[#16b3ac] hover:bg-emerald-50">
+                    Lihat Peserta
+                  </button>
+                </div>
               </div>
-            </div>
-          `;
-        }).join('');
+            `;
+          }).join('');
+        }
       }
 
       // Render MedCred Pagination Controls
@@ -348,7 +409,7 @@
         onPageChangeFn: 'changeEventPage',
         onLimitChangeFn: 'setEventPageLimit',
         currentLimit: eventPagination.limit,
-        limits: [6, 12, 24, 50]
+        limits: [10, 25, 50]
       });
     }
 
