@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\Route;
 // 1. RUTE PUBLIK & AUTENTIKASI (GUEST)
 // =========================================================================
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:15,1')->name('login.post');
 Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
-Route::post('/switch-role', [AuthController::class, 'switchRole'])->name('switch-role');
+Route::post('/switch-role', [AuthController::class, 'switchRole'])->middleware(['auth', 'role:SUPER_ADMIN'])->name('switch-role');
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -28,7 +28,7 @@ Route::get('/', function () {
 // =========================================================================
 // 2. RUTE TERPROTEKSI (AUTH + ACTIVE USER + RBAC MIDDLEWARE)
 // =========================================================================
-Route::middleware(['active'])->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
 
     // 2.1 Dashboard Nasional (Dapat diakses oleh Super Admin, Pusat, Verifikator, & Cabang)
     Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -40,10 +40,10 @@ Route::middleware(['active'])->group(function () {
         return view('doctors');
     })->name('doctors.index')->middleware(['role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG', 'branch.scope']);
 
-    // 2.3 Portofolio Detail Dokter (Semua role termasuk USER_DOKTER untuk akses mandiri)
+    // 2.3 Portofolio Detail Dokter (Semua role termasuk USER_DOKTER & DOKTER untuk akses mandiri)
     Route::get('/doctor-detail', function () {
         return view('doctor-detail');
-    })->name('doctors.show')->middleware(['role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG,USER_DOKTER', 'branch.scope']);
+    })->name('doctors.show')->middleware(['role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG,USER_DOKTER,DOKTER', 'branch.scope']);
 
     // 2.4 Peta Provinsi & Katalog Events
     Route::get('/provinces', function () {

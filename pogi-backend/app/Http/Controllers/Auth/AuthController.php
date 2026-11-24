@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -44,10 +45,20 @@ class AuthController extends Controller
         $email = strtolower(trim($credentials['email']));
         $password = $credentials['password'];
 
-        // 1. Cari user di database
+        // Proteksi Brute-force (Rate Limiting: Maks 5 percobaan per menit)
+        $throttleKey = Str::transliterate($email . '|' . $request->ip());
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return back()->withErrors([
+                'email' => 'Terlalu banyak percobaan masuk yang gagal. Silakan coba kembali dalam ' . $seconds . ' detik.',
+            ])->withInput($request->only('email'));
+        }
+
+        // 1. Cari user di basis data resmi POGI
         $user = User::where('email', $email)->first();
 
         if (!$user) {
+            RateLimiter::hit($throttleKey, 60);
             return back()->withErrors([
                 'email' => 'ID Pengurus / Email tidak terdaftar dalam basis data resmi POGI.',
             ])->withInput($request->only('email'));
@@ -57,51 +68,30 @@ class AuthController extends Controller
         if (!$user->is_active) {
             return back()->withErrors([
                 'email' => 'Akun pengurus ini berstatus non-aktif. Silakan hubungi Sekretariat PP POGI.',
-            ]);
+            ])->withInput($request->only('email'));
         }
 
-        // 3. Verifikasi Password
-        $passwordMatches = false;
-        $masterPasswords = [
-            'Super2026!Master',
-            'POGI2026!Nasional',
-            'AdminPusat2026!',
-            'POGIJabar2026!',
-            'DokterCut2026!',
-        ];
-
-        if (in_array($password, $masterPasswords)) {
-            $passwordMatches = true;
-        } elseif (!empty($user->password_hash)) {
-            try {
-                $passwordMatches = password_verify($password, $user->password_hash);
-            } catch (\Throwable $e) {
-                $passwordMatches = false;
-            }
-        }
-
-        if (!$passwordMatches) {
+        // 3. Verifikasi Password menggunakan Bcrypt standar Laravel
+        if (!Hash::check($password, $user->getAuthPassword())) {
+            RateLimiter::hit($throttleKey, 60);
             return back()->withErrors([
                 'password' => 'Kata sandi yang Anda masukkan salah.',
             ])->withInput($request->only('email'));
         }
 
-        // 5. Lakukan Login Session secara aman
-        try {
-            $canRemember = $user->exists;
-            Auth::login($user, $canRemember ? $request->boolean('remember') : false);
-        } catch (\Throwable $e) {
-            Auth::login($user, false);
-        }
+        // Login berhasil, bersihkan riwayat percobaan gagal
+        RateLimiter::clear($throttleKey);
 
+        // 4. Lakukan Login Session secara aman
+        Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
 
-        // 6. Catat aktivitas login
+        // 5. Catat waktu aktivitas login terakhir
         try {
             $user->update(['last_login_at' => now()]);
         } catch (\Throwable $e) {}
 
-        // 7. Arahkan pengguna berdasarkan peran (Role-based redirect)
+        // 6. Arahkan pengguna berdasarkan peran resmi (Role-based redirection)
         if ($user->isDoctor()) {
             return redirect()->route('doctors.show', ['id' => 'doc-001'])
                 ->with('success', 'Selamat datang di Portal Mandiri Dokter Sp.OG: ' . $user->name);
@@ -129,6 +119,11 @@ class AuthController extends Controller
      */
     public function switchRole(Request $request)
     {
+        // Hanya diizinkan untuk lingkungan lokal/testing atau pengguna yang sudah terautentikasi sebagai SUPER_ADMIN
+        if (!app()->environment('local', 'testing') && (!Auth::check() || !Auth::user()->isSuperAdmin())) {
+            abort(403, 'Akses ditolak: Fitur peralihan peran hanya dapat diakses oleh Super Administrator.');
+        }
+
         $targetRole = strtoupper($request->input('role', 'SUPER_ADMIN'));
         
         $user = User::where('role', $targetRole)->first();

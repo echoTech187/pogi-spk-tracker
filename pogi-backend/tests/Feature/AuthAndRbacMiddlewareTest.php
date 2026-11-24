@@ -153,4 +153,43 @@ class AuthAndRbacMiddlewareTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_login_with_wrong_password_fails(): void
+    {
+        $response = $this->post('/login', [
+            'email'    => 'super@example.com',
+            'password' => 'WrongPassword2026!',
+        ]);
+
+        $response->assertSessionHasErrors('password');
+        $this->assertGuest();
+    }
+
+    public function test_guest_is_redirected_to_login_for_all_protected_modules(): void
+    {
+        $protectedUrls = [
+            '/dashboard',
+            '/doctors',
+            '/doctor-detail',
+            '/provinces',
+            '/events',
+            '/reports',
+            '/admin-performance',
+            '/activity',
+            '/manage',
+        ];
+
+        foreach ($protectedUrls as $url) {
+            $this->get($url)->assertRedirect('/login');
+        }
+    }
+
+    public function test_non_super_admin_cannot_switch_role(): void
+    {
+        $adminCabang = $this->makeUser('ADMIN_CABANG');
+
+        $this->actingAs($adminCabang)
+            ->post('/switch-role', ['role' => 'SUPER_ADMIN'])
+            ->assertStatus(403);
+    }
 }

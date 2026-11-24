@@ -8,6 +8,7 @@ enum SystemRole: string
     case ADMIN_PUSAT  = 'ADMIN_PUSAT';
     case ADMIN_POGI   = 'ADMIN_POGI';
     case ADMIN_CABANG = 'ADMIN_CABANG';
+    case DOKTER       = 'DOKTER';
     case USER_DOKTER  = 'USER_DOKTER';
 
     public function label(): string
@@ -17,7 +18,7 @@ enum SystemRole: string
             self::ADMIN_PUSAT  => 'Pengurus Pusat POGI (Monitoring & SLA)',
             self::ADMIN_POGI   => 'Admin POGI (Verifikator SKP)',
             self::ADMIN_CABANG => 'Pengurus Cabang Daerah',
-            self::USER_DOKTER  => 'Dokter Spesialis Obgyn (Anggota)',
+            self::DOKTER, self::USER_DOKTER => 'Dokter Spesialis Obgyn (Anggota)',
         };
     }
 
@@ -28,7 +29,7 @@ enum SystemRole: string
             self::ADMIN_PUSAT  => 'indigo',
             self::ADMIN_POGI   => 'emerald',
             self::ADMIN_CABANG => 'sky',
-            self::USER_DOKTER  => 'teal',
+            self::DOKTER, self::USER_DOKTER => 'teal',
         };
     }
 }

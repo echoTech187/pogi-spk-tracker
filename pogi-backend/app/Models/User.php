@@ -68,6 +68,11 @@ class User extends Authenticatable
         return $this->password_hash ?? $this->password;
     }
 
+    public function getAuthPasswordName(): string
+    {
+        return 'password_hash';
+    }
+
     /**
      * Perlindungan penyimpanan database jika ada kendala koneksi
      */
@@ -121,8 +126,9 @@ class User extends Authenticatable
         $roles = is_array($roles) ? $roles : func_get_args();
         $normalized = array_map(fn($r) => strtoupper($r instanceof SystemRole ? $r->value : (string) $r), $roles);
 
-        // Alias penanganan USER_DOKTER dan DOKTER
-        if (in_array('DOKTER', $normalized) && $userRole === 'USER_DOKTER') {
+        // Alias penanganan dua arah: USER_DOKTER <-> DOKTER
+        if ((in_array('DOKTER', $normalized, true) || in_array('USER_DOKTER', $normalized, true)) &&
+            ($userRole === 'DOKTER' || $userRole === 'USER_DOKTER')) {
             return true;
         }
 
