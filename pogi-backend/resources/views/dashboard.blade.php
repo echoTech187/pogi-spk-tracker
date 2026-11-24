@@ -123,7 +123,7 @@
         </div>
       </div>
 
-      <!-- Bottom Profile Card (Sesuai Screenshot Klien: Super Admin) -->
+      <!-- Bottom Profile Card (Sesuai Akun Login Resmi) -->
       <div class="p-3 border-t border-slate-100 bg-slate-50/70">
         <div class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
           <div class="flex items-center gap-2.5 min-w-0">
@@ -131,8 +131,8 @@
               <span class="material-symbols-outlined text-lg">admin_panel_settings</span>
             </div>
             <div class="min-w-0">
-              <div class="text-xs font-bold text-slate-900 truncate">Super Admin</div>
-              <div class="text-[10px] text-slate-400 font-mono truncate">super@example.com</div>
+              <div class="text-xs font-bold text-slate-900 truncate">{{ $user?->full_name ?? 'Super Admin' }}</div>
+              <div class="text-[10px] text-slate-400 font-mono truncate">{{ $user?->email ?? 'super@example.com' }}</div>
             </div>
           </div>
           <button type="button" onclick="performLogout()" title="Keluar" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition shrink-0">
@@ -157,27 +157,17 @@
             <div class="relative">
               <button type="button" id="headerOrgScopeBtn" onclick="toggleOrgScopeDropdown()" class="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 transition border border-slate-200 rounded-xl px-3 py-1.5 cursor-pointer max-w-[170px] sm:max-w-[240px]">
                 <span class="material-symbols-outlined text-[#006948] text-base shrink-0">public</span>
-                <span id="selectedOrgScopeLabel" class="text-xs font-bold text-slate-800 truncate">Semua Wilayah Nasional (38 Provinsi)</span>
+                <span id="selectedOrgScopeLabel" class="text-xs font-bold text-slate-800 truncate">{{ $summary->activeScopeLabel }}</span>
                 <span class="material-symbols-outlined text-sm text-slate-400 shrink-0">expand_more</span>
               </button>
-              <div id="orgScopeDropdown" class="hidden absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 text-xs">
+              <div id="orgScopeDropdown" class="hidden absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 text-xs max-h-80 overflow-y-auto">
                 <div class="px-3.5 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cakupan Pantauan</div>
-                <button type="button" onclick="selectOrgScope('all', 'Semua Wilayah Nasional (38 Provinsi)')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-                  <span>Seluruh Indonesia</span>
-                  <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-bold">200 Dokter</span>
-                </button>
-                <button type="button" onclick="selectOrgScope('jabar', 'POGI Cabang Jawa Barat')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-                  <span>POGI Cabang Jawa Barat</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
-                </button>
-                <button type="button" onclick="selectOrgScope('dki', 'POGI Cabang DKI Jakarta')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-                  <span>POGI Cabang DKI Jakarta</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">22 Dokter</span>
-                </button>
-                <button type="button" onclick="selectOrgScope('jatim', 'POGI Cabang Jawa Timur')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-                  <span>POGI Cabang Jawa Timur</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
-                </button>
+                @foreach($summary->scopeOptions as $opt)
+                  <button type="button" onclick="selectOrgScope('{{ $opt['id'] }}', '{{ $opt['name'] }}')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
+                    <span class="truncate pr-2">{{ $opt['name'] }}</span>
+                    <span class="px-2 py-0.5 rounded-full {{ $opt['id'] === 'all' ? 'bg-emerald-100 text-[#006948]' : 'bg-sky-100 text-sky-800' }} text-[10px] font-bold shrink-0">{{ $opt['count'] }} Dokter</span>
+                  </button>
+                @endforeach
               </div>
             </div>
           </div>
@@ -259,22 +249,40 @@
               </div>
             </div>
 
+            @php
+              $userName = $user?->full_name ?? 'Siti Rahma, S.Farm';
+              $parts = preg_split('/\s+/', trim($userName));
+              $initials = '';
+              if (count($parts) >= 2) {
+                  $initials = strtoupper(mb_substr($parts[0], 0, 1) . mb_substr($parts[1], 0, 1));
+              } else {
+                  $initials = strtoupper(mb_substr($userName, 0, 2));
+              }
+              $roleLabel = match($user?->role?->value ?? '') {
+                  'SUPER_ADMIN' => 'Super Admin',
+                  'ADMIN_PUSAT' => 'Admin Pusat',
+                  'ADMIN_POGI' => 'Admin POGI',
+                  'ADMIN_CABANG' => 'Admin Cabang',
+                  'DOKTER', 'USER_DOKTER' => 'Dokter Obgyn',
+                  default => 'Super Admin'
+              };
+            @endphp
             <!-- User Avatar Profile Circle [SR] -->
             <div class="relative">
-              <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#006948] hover:bg-[#005439] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna: Siti Rahma, S.Farm">
-                SR
+              <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#006948] hover:bg-[#005439] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna: {{ $userName }}">
+                {{ $initials }}
               </button>
               <!-- User Profile Dropdown Menu -->
               <div id="topUserDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
                 <div class="px-4 py-2 border-b border-slate-100 flex items-center gap-3">
                   <div class="w-10 h-10 rounded-full bg-[#006948] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs">
-                    SR
+                    {{ $initials }}
                   </div>
                   <div class="min-w-0">
-                    <div class="font-bold text-slate-900 text-xs truncate">Siti Rahma, S.Farm</div>
-                    <div class="text-[10px] text-slate-500 truncate">Tim Data &amp; Verifikasi PP POGI</div>
+                    <div class="font-bold text-slate-900 text-xs truncate">{{ $userName }}</div>
+                    <div class="text-[10px] text-slate-500 truncate">{{ $user?->email ?? 'secretariat.pusat@pogi.or.id' }}</div>
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#006948] border border-emerald-200 text-[9px] font-bold mt-1">
-                      <span class="w-1 h-1 rounded-full bg-emerald-600"></span> Super Admin &bull; Online
+                      <span class="w-1 h-1 rounded-full bg-emerald-600"></span> {{ $roleLabel }} &bull; Online
                     </span>
                   </div>
                 </div>
@@ -336,7 +344,7 @@
                 <span class="material-symbols-outlined text-lg">group</span>
               </div>
             </div>
-            <div id="metricTotalDoctors" class="text-2xl sm:text-3xl font-black text-slate-900">200</div>
+            <div id="metricTotalDoctors" class="text-2xl sm:text-3xl font-black text-slate-900">{{ $summary->totalDoctors }}</div>
             <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
               <span class="text-emerald-700 font-bold">100% Sp.OG</span> terdaftar aktif
             </div>
@@ -350,9 +358,9 @@
                 <span class="material-symbols-outlined text-lg">trending_up</span>
               </div>
             </div>
-            <div id="metricAvgProgress" class="text-2xl sm:text-3xl font-black text-emerald-800">43%</div>
+            <div id="metricAvgProgress" class="text-2xl sm:text-3xl font-black text-emerald-800">{{ $summary->avgProgressPct }}%</div>
             <div class="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
-              <div id="metricAvgProgressBar" class="bg-[#006948] h-2 rounded-full" style="width: 43%"></div>
+              <div id="metricAvgProgressBar" class="bg-[#006948] h-2 rounded-full" style="width: {{ min(100, $summary->avgProgressPct) }}%"></div>
             </div>
             <div class="text-[10px] text-slate-500 mt-1">Target Kuartal: 8.0 SKP / dokter</div>
           </div>
@@ -365,9 +373,9 @@
                 <span class="material-symbols-outlined text-lg">check_circle</span>
               </div>
             </div>
-            <div id="metricComplete" class="text-2xl sm:text-3xl font-black text-emerald-700">42</div>
+            <div id="metricComplete" class="text-2xl sm:text-3xl font-black text-emerald-700">{{ $summary->completeCount }}</div>
             <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
-              <span class="font-bold text-emerald-800">21%</span> telah penuhi target periode
+              <span class="font-bold text-emerald-800">{{ $summary->completePercentage() }}%</span> telah penuhi target periode
             </div>
           </div>
 
@@ -379,9 +387,9 @@
                 <span class="material-symbols-outlined text-lg">warning</span>
               </div>
             </div>
-            <div id="metricIncomplete" class="text-2xl sm:text-3xl font-black text-amber-600">158</div>
+            <div id="metricIncomplete" class="text-2xl sm:text-3xl font-black text-amber-600">{{ $summary->incompleteCount }}</div>
             <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
-              <span class="font-bold text-amber-800">79%</span> butuh follow-up ke RS/Cabang
+              <span class="font-bold text-amber-800">{{ $summary->incompletePercentage() }}%</span> butuh follow-up ke RS/Cabang
             </div>
           </div>
         </div>
@@ -394,7 +402,7 @@
               <p class="text-xs text-slate-500">Kewajiban pemenuhan kredit dokter Obgyn harus proporsional di seluruh 3 subbidang wajib.</p>
             </div>
             <span class="text-xs font-bold text-[#006948] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-              Rata-rata Akumulasi: 43.8%
+              Rata-rata Akumulasi: {{ number_format($summary->avgAccumulationPct, 1) }}%
             </span>
           </div>
 
@@ -408,9 +416,9 @@
                 </div>
                 <span class="text-[11px] font-bold text-sky-800 bg-sky-100 px-2 py-0.5 rounded">Min 80 SKP</span>
               </div>
-              <div class="text-xl font-black text-slate-900">58.4% <span class="text-xs font-normal text-slate-500">(rata-rata)</span></div>
+              <div class="text-xl font-black text-slate-900">{{ number_format($summary->avgPelayananPct, 1) }}% <span class="text-xs font-normal text-slate-500">(rata-rata)</span></div>
               <div class="w-full bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
-                <div class="progress-bar-pelayanan h-2 rounded-full" style="width: 58.4%"></div>
+                <div class="progress-bar-pelayanan h-2 rounded-full" style="width: {{ min(100, $summary->avgPelayananPct) }}%"></div>
               </div>
               <div class="text-[10px] text-slate-500 mt-2">Praktik rawat inap/jalan, bedah sectio caesarea, jaga IGD maternal</div>
             </div>
@@ -424,9 +432,9 @@
                 </div>
                 <span class="text-[11px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded">Min 30 SKP</span>
               </div>
-              <div class="text-xl font-black text-slate-900">41.2% <span class="text-xs font-normal text-slate-500">(rata-rata)</span></div>
+              <div class="text-xl font-black text-slate-900">{{ number_format($summary->avgPengabdianPct, 1) }}% <span class="text-xs font-normal text-slate-500">(rata-rata)</span></div>
               <div class="w-full bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
-                <div class="progress-bar-pengabdian h-2 rounded-full" style="width: 41.2%"></div>
+                <div class="progress-bar-pengabdian h-2 rounded-full" style="width: {{ min(100, $summary->avgPengabdianPct) }}%"></div>
               </div>
               <div class="text-[10px] text-slate-500 mt-2">Bakti sosial IVA, skrining ca serviks masal, edukasi reproduksi</div>
             </div>
@@ -440,9 +448,9 @@
                 </div>
                 <span class="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Min 50 SKP</span>
               </div>
-              <div class="text-xl font-black text-slate-900">52.8% <span class="text-xs font-normal text-slate-500">(rata-rata)</span></div>
+              <div class="text-xl font-black text-slate-900">{{ number_format($summary->avgPembelajaranPct, 1) }}% <span class="text-xs font-normal text-slate-500">(rata-rata)</span></div>
               <div class="w-full bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
-                <div class="progress-bar-pembelajaran h-2 rounded-full" style="width: 52.8%"></div>
+                <div class="progress-bar-pembelajaran h-2 rounded-full" style="width: {{ min(100, $summary->avgPembelajaranPct) }}%"></div>
               </div>
               <div class="text-[10px] text-slate-500 mt-2">PIT POGI, simposium ilmiah, workshop USG terakreditasi</div>
             </div>
@@ -483,75 +491,20 @@
                 </button>
               </div>
 
-              <!-- Bali: 0 / 10 complete 0% -->
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-extrabold text-slate-800">Bali</span>
-                  <div class="flex items-center gap-3">
-                    <span class="text-slate-400 font-medium text-[11px] stat-count">0 / 10 complete</span>
-                    <span class="font-black text-slate-900 w-10 text-right stat-pct">0%</span>
+              @foreach($summary->lowestProvinces as $prov)
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">{{ $prov['name'] }}</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-slate-400 font-medium text-[11px] stat-count">{{ $prov['complete'] }} / {{ $prov['total'] }} complete</span>
+                      <span class="font-black text-slate-900 w-10 text-right stat-pct">{{ $prov['pct'] }}%</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-slate-300 h-1.5 rounded-full" style="width: {{ min(100, $prov['pct']) }}%"></div>
                   </div>
                 </div>
-                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                  <div class="bg-slate-300 h-1.5 rounded-full" style="width: 0%"></div>
-                </div>
-              </div>
-
-              <!-- Nusa Tenggara Timur: 0 / 7 complete 0% -->
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-extrabold text-slate-800">Nusa Tenggara Timur</span>
-                  <div class="flex items-center gap-3">
-                    <span class="text-slate-400 font-medium text-[11px] stat-count">0 / 7 complete</span>
-                    <span class="font-black text-slate-900 w-10 text-right stat-pct">0%</span>
-                  </div>
-                </div>
-                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                  <div class="bg-slate-300 h-1.5 rounded-full" style="width: 0%"></div>
-                </div>
-              </div>
-
-              <!-- Papua: 0 / 4 complete 0% -->
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-extrabold text-slate-800">Papua</span>
-                  <div class="flex items-center gap-3">
-                    <span class="text-slate-400 font-medium text-[11px] stat-count">0 / 4 complete</span>
-                    <span class="font-black text-slate-900 w-10 text-right stat-pct">0%</span>
-                  </div>
-                </div>
-                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                  <div class="bg-slate-300 h-1.5 rounded-full" style="width: 0%"></div>
-                </div>
-              </div>
-
-              <!-- Aceh: 0 / 3 complete 0% -->
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-extrabold text-slate-800">Aceh</span>
-                  <div class="flex items-center gap-3">
-                    <span class="text-slate-400 font-medium text-[11px] stat-count">0 / 3 complete</span>
-                    <span class="font-black text-slate-900 w-10 text-right stat-pct">0%</span>
-                  </div>
-                </div>
-                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                  <div class="bg-slate-300 h-1.5 rounded-full" style="width: 0%"></div>
-                </div>
-              </div>
-
-              <!-- Kepulauan Bangka Belitung: 0 / 3 complete 0% -->
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-extrabold text-slate-800">Kepulauan Bangka Belitung</span>
-                  <div class="flex items-center gap-3">
-                    <span class="text-slate-400 font-medium text-[11px] stat-count">0 / 3 complete</span>
-                    <span class="font-black text-slate-900 w-10 text-right stat-pct">0%</span>
-                  </div>
-                </div>
-                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                  <div class="bg-slate-300 h-1.5 rounded-full" style="width: 0%"></div>
-                </div>
-              </div>
+              @endforeach
             </div>
 
             <!-- Right Column: Highest -->
@@ -561,75 +514,20 @@
                 <span class="font-bold text-slate-600">Highest</span>
               </div>
 
-              <!-- Sulawesi Utara: 2 / 3 complete 67% -->
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-extrabold text-slate-800">Sulawesi Utara</span>
-                  <div class="flex items-center gap-3">
-                    <span class="text-slate-400 font-medium text-[11px] stat-count">2 / 3 complete</span>
-                    <span class="font-black text-slate-900 w-10 text-right stat-pct">67%</span>
+              @foreach($summary->highestProvinces as $prov)
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">{{ $prov['name'] }}</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-slate-400 font-medium text-[11px] stat-count">{{ $prov['complete'] }} / {{ $prov['total'] }} complete</span>
+                      <span class="font-black text-slate-900 w-10 text-right stat-pct">{{ $prov['pct'] }}%</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-[#006948] h-1.5 rounded-full" style="width: {{ min(100, $prov['pct']) }}%"></div>
                   </div>
                 </div>
-                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                  <div class="bg-[#006948] h-1.5 rounded-full" style="width: 67%"></div>
-                </div>
-              </div>
-
-              <!-- Kalimantan Utara: 2 / 3 complete 67% -->
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-extrabold text-slate-800">Kalimantan Utara</span>
-                  <div class="flex items-center gap-3">
-                    <span class="text-slate-400 font-medium text-[11px] stat-count">2 / 3 complete</span>
-                    <span class="font-black text-slate-900 w-10 text-right stat-pct">67%</span>
-                  </div>
-                </div>
-                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                  <div class="bg-[#006948] h-1.5 rounded-full" style="width: 67%"></div>
-                </div>
-              </div>
-
-              <!-- Papua Pegunungan: 3 / 6 complete 50% -->
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-extrabold text-slate-800">Papua Pegunungan</span>
-                  <div class="flex items-center gap-3">
-                    <span class="text-slate-400 font-medium text-[11px] stat-count">3 / 6 complete</span>
-                    <span class="font-black text-slate-900 w-10 text-right stat-pct">50%</span>
-                  </div>
-                </div>
-                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                  <div class="bg-[#006948] h-1.5 rounded-full" style="width: 50%"></div>
-                </div>
-              </div>
-
-              <!-- Sumatera Barat: 2 / 4 complete 50% -->
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-extrabold text-slate-800">Sumatera Barat</span>
-                  <div class="flex items-center gap-3">
-                    <span class="text-slate-400 font-medium text-[11px] stat-count">2 / 4 complete</span>
-                    <span class="font-black text-slate-900 w-10 text-right stat-pct">50%</span>
-                  </div>
-                </div>
-                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                  <div class="bg-[#006948] h-1.5 rounded-full" style="width: 50%"></div>
-                </div>
-              </div>
-
-              <!-- Jambi: 3 / 7 complete 43% -->
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-extrabold text-slate-800">Jambi</span>
-                  <div class="flex items-center gap-3">
-                    <span class="text-slate-400 font-medium text-[11px] stat-count">3 / 7 complete</span>
-                    <span class="font-black text-slate-900 w-10 text-right stat-pct">43%</span>
-                  </div>
-                </div>
-                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                  <div class="bg-[#006948] h-1.5 rounded-full" style="width: 43%"></div>
-                </div>
-              </div>
+              @endforeach
             </div>
           </div>
 
@@ -650,7 +548,7 @@
                 <span class="material-symbols-outlined text-[#006948] text-xl">map</span>
                 <h2 class="text-base font-extrabold text-slate-900">Doctors by province</h2>
               </div>
-              <p id="mapSubTitle" class="text-xs text-slate-500 mt-0.5">200 doctors in 38 provinces.</p>
+              <p id="mapSubTitle" class="text-xs text-slate-500 mt-0.5">{{ $summary->totalDoctors }} doctors in 38 provinces.</p>
             </div>
             <a href="/provinces" class="text-xs font-bold text-[#006948] hover:underline flex items-center gap-1">
               <span>Monitoring 38 Cabang</span>
@@ -794,6 +692,7 @@
   <script src="/js/navigation.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
+    const POGI_SERVER_DATA = @json($summary->toArray());
     let leafletMap = null;
     let geoJsonLayer = null;
     const provinceLayerMap = {};
@@ -809,16 +708,15 @@
         let sKey = 'jabar';
         if (bLow.includes('dki') || bLow.includes('jakarta')) sKey = 'dki';
         else if (bLow.includes('timur')) sKey = 'jatim';
-        if (typeof setOrgScope === 'function') {
-          setTimeout(() => setOrgScope(sKey, 'POGI Cabang ' + currentUser.branch), 100);
-        }
-        const orgBtn = document.getElementById('orgScopeBtn');
+        const orgBtn = document.getElementById('headerOrgScopeBtn');
         if (orgBtn) orgBtn.setAttribute('disabled', 'true');
       }
     });
 
     function initRecentActivities() {
-      const acts = PogiStore.getActivities().slice(0, 3);
+      const acts = (POGI_SERVER_DATA && POGI_SERVER_DATA.recentActivities && POGI_SERVER_DATA.recentActivities.length)
+        ? POGI_SERVER_DATA.recentActivities.slice(0, 3)
+        : PogiStore.getActivities().slice(0, 3);
       const container = document.getElementById('recentActivityList');
       if (container) {
         container.innerHTML = acts.map(a => `
@@ -842,10 +740,11 @@
       const pogiProvinces = (typeof PogiStore !== 'undefined' && PogiStore.getProvinces) 
         ? PogiStore.getProvinces() 
         : [];
+      const topList = (POGI_SERVER_DATA && POGI_SERVER_DATA.topProvinces && POGI_SERVER_DATA.topProvinces.length)
+        ? POGI_SERVER_DATA.topProvinces
+        : [...pogiProvinces].sort((a, b) => b.doctors - a.doctors).slice(0, 8);
       const container = document.getElementById('topProvincesList');
       if (!container) return;
-
-      const topList = [...pogiProvinces].sort((a, b) => b.doctors - a.doctors).slice(0, 8);
 
       container.innerHTML = topList.map(item => {
         const rate = item.completionRate || 0;
@@ -899,7 +798,9 @@
         attributionControl: false
       });
 
-      const pogiProvinces = PogiStore.getProvinces();
+      const pogiProvinces = (POGI_SERVER_DATA && POGI_SERVER_DATA.provincesData && POGI_SERVER_DATA.provincesData.length)
+        ? POGI_SERVER_DATA.provincesData
+        : PogiStore.getProvinces();
 
       function getProvinceStats(provName) {
         if (!provName) return null;
@@ -1044,45 +945,11 @@
     }
 
     function selectOrgScope(scope, labelText) {
-      const label = document.getElementById('selectedOrgScopeLabel');
-      if (label) {
-        label.innerText = labelText || (scope === 'all' ? 'Semua Wilayah Nasional (38 Provinsi)' : scope);
-      }
-      const dd = document.getElementById('orgScopeDropdown');
-      if (dd) dd.classList.add('hidden');
-
-      const scopeData = {
-        all: { total: 200, progress: 43, complete: 42, incomplete: 158, text: '200 doctors in 38 provinces.' },
-        jabar: { total: 8, progress: 25, complete: 2, incomplete: 6, text: '8 doctors in POGI Cabang Jawa Barat.' },
-        dki: { total: 22, progress: 36, complete: 8, incomplete: 14, text: '22 doctors in POGI Cabang DKI Jakarta.' },
-        jatim: { total: 8, progress: 25, complete: 2, incomplete: 6, text: '8 doctors in POGI Cabang Jawa Timur.' }
-      };
-
-      const cur = scopeData[scope] || scopeData.all;
-      const elTot = document.getElementById('metricTotalDoctors');
-      const elProg = document.getElementById('metricAvgProgress');
-      const elProgBar = document.getElementById('metricAvgProgressBar');
-      const elComp = document.getElementById('metricComplete');
-      const elIncomp = document.getElementById('metricIncomplete');
-      const elMapSub = document.getElementById('mapSubTitle');
-
-      if (elTot) elTot.innerText = cur.total;
-      if (elProg) elProg.innerText = cur.progress + '%';
-      if (elProgBar) elProgBar.style.width = cur.progress + '%';
-      if (elComp) elComp.innerText = cur.complete;
-      if (elIncomp) elIncomp.innerText = cur.incomplete;
-      if (elMapSub) elMapSub.innerText = cur.text;
-
-      if (scope !== 'all') {
-        const provNameMap = { jabar: 'Jawa Barat', dki: 'DKI Jakarta', jatim: 'Jawa Timur' };
-        highlightMapProvince(provNameMap[scope] || '');
+      if (scope === 'all') {
+        window.location.href = '/dashboard';
       } else {
-        resetMapProvince('DKI Jakarta');
-        resetMapProvince('Jawa Barat');
-        resetMapProvince('Jawa Timur');
+        window.location.href = '/dashboard?scope=' + encodeURIComponent(scope);
       }
-
-      showToast('Cakupan Wilayah Diperbarui: ' + (labelText || scope), 'info');
     }
 
     function setCompletionMetric(mode) {

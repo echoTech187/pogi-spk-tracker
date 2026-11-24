@@ -108,15 +108,24 @@ class User extends Authenticatable
     // METODE PEMERIKSAAN RBAC (5 PERAN RESMI SISTEM)
     // =========================================================================
 
+    public function getRoleValue(): string
+    {
+        if ($this->role instanceof SystemRole) {
+            return $this->role->value;
+        }
+
+        return (string) ($this->role ?? '');
+    }
+
     public function hasRole(string|array $roles): bool
     {
         if ($this->isSuperAdmin()) {
             return true; // Super Admin memiliki wewenang penuh
         }
 
-        $userRole = strtoupper((string) $this->role);
+        $userRole = strtoupper($this->getRoleValue());
         $roles = is_array($roles) ? $roles : func_get_args();
-        $normalized = array_map(fn($r) => strtoupper((string) $r), $roles);
+        $normalized = array_map(fn($r) => strtoupper($r instanceof SystemRole ? $r->value : (string) $r), $roles);
 
         // Alias penanganan USER_DOKTER dan DOKTER
         if (in_array('DOKTER', $normalized) && $userRole === 'USER_DOKTER') {
@@ -128,27 +137,27 @@ class User extends Authenticatable
 
     public function isSuperAdmin(): bool
     {
-        return strtoupper((string) $this->role) === 'SUPER_ADMIN';
+        return strtoupper($this->getRoleValue()) === 'SUPER_ADMIN';
     }
 
     public function isAdminPusat(): bool
     {
-        return strtoupper((string) $this->role) === 'ADMIN_PUSAT';
+        return strtoupper($this->getRoleValue()) === 'ADMIN_PUSAT';
     }
 
     public function isAdminPogi(): bool
     {
-        return strtoupper((string) $this->role) === 'ADMIN_POGI';
+        return strtoupper($this->getRoleValue()) === 'ADMIN_POGI';
     }
 
     public function isAdminCabang(): bool
     {
-        return strtoupper((string) $this->role) === 'ADMIN_CABANG';
+        return strtoupper($this->getRoleValue()) === 'ADMIN_CABANG';
     }
 
     public function isDoctor(): bool
     {
-        $role = strtoupper((string) $this->role);
+        $role = strtoupper($this->getRoleValue());
         return $role === 'USER_DOKTER' || $role === 'DOKTER';
     }
 

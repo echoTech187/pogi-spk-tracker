@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,9 +31,9 @@ Route::get('/', function () {
 Route::middleware(['active'])->group(function () {
 
     // 2.1 Dashboard Nasional (Dapat diakses oleh Super Admin, Pusat, Verifikator, & Cabang)
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard')
+        ->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
 
     // 2.2 Direktori Dokter (Dengan Isolasi Cabang Otomatis untuk ADMIN_CABANG)
     Route::get('/doctors', function () {
