@@ -194,7 +194,7 @@
     });
 
     function changeProvincePage(p) {
-      const list = currentFilteredProvinces || (LIVE_SERVER_PROVINCES.length > 0 ? LIVE_SERVER_PROVINCES : PogiStore.getProvinces());
+      const list = currentFilteredProvinces || (LIVE_SERVER_PROVINCES.length > 0 ? LIVE_SERVER_PROVINCES : []);
       const totalPages = Math.max(1, Math.ceil(list.length / provincePagination.limit));
       if (p < 1) p = 1;
       if (p > totalPages) p = totalPages;
@@ -216,7 +216,7 @@
       if (resetPage) provincePagination.page = 1;
       const provinces = (LIVE_SERVER_PROVINCES && LIVE_SERVER_PROVINCES.length > 0)
         ? LIVE_SERVER_PROVINCES
-        : ((typeof PogiStore !== 'undefined') ? PogiStore.getProvinces() : []);
+        : [];
       const tbody = document.getElementById('provincesTableBody');
       if (!tbody) return;
 
@@ -318,7 +318,7 @@
       }
       showToast('Pesan pengingat tindak lanjut berhasil dikirimkan ke Sekretariat POGI Cabang ' + name + ' untuk ' + count + ' dokter.', 'success');
       PogiStore.addActivity({
-        actor: 'Siti Rahma (Admin Data)',
+        actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
         action: 'Kirim FU Cabang Daerah',
         details: 'Notifikasi FU terkirim ke Sekretariat POGI Cabang ' + name + ' (' + count + ' dokter belum tuntas)',
         category: 'FollowUp'
@@ -328,7 +328,7 @@
     function notifyAllLowProvinces() {
       showToast('Notifikasi darurat terkirim ke seluruh Sekretariat Cabang dengan kepatuhan <50%!', 'warning');
       PogiStore.addActivity({
-        actor: 'Siti Rahma (Admin Data)',
+        actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
         action: 'Kirim FU Massal Kritis',
         details: 'Pengiriman surat teguran pemenuhan 160 SKP ke seluruh cabang kategori Kritis.',
         category: 'FollowUp'

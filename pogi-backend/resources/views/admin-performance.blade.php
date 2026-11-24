@@ -242,7 +242,7 @@
             SR
           </div>
           <div>
-            <h3 id="modalAdminName" class="font-black text-slate-900 text-sm">Siti Rahma, S.Farm</h3>
+            <h3 id="modalAdminName" class="font-black text-slate-900 text-sm">Administrator POGI</h3>
             <p id="modalAdminRole" class="text-[11px] text-slate-500">Lead Admin POGI Tim Data Pusat</p>
           </div>
         </div>
@@ -340,12 +340,14 @@
   </div>
 
   <!-- Shared Scripts -->
-  <script src="/js/pogi_state.js"></script>
-  <script src="/js/navigation.js"></script>
   <script>
     const IS_SUPER_ADMIN = @json(Auth::user()?->role === 'SUPER_ADMIN');
     const LIVE_SERVER_ADMINS = @json($admins ?? []);
     const LIVE_SERVER_SUMMARY = @json($summary ?? null);
+    const LIVE_SERVER_DOCTORS = @json($doctors ?? []);
+    const LIVE_SERVER_ACTIVITIES = @json($activities ?? []);
+    window.LIVE_SERVER_DOCTORS = LIVE_SERVER_DOCTORS;
+    window.LIVE_SERVER_ACTIVITIES = LIVE_SERVER_ACTIVITIES;
     let performanceData = null;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -531,20 +533,20 @@
       document.getElementById('modalDoctorBadgeCount').innerText = `${admin.doctorCount} Dokter`;
 
       // Render assigned doctors
-      const doctors = PogiStore.getDoctors().filter(d => (d.assignedTo && d.assignedTo.toLowerCase().includes(admin.name.toLowerCase())) || (admin.name === 'Siti Rahma' && d.assignedTo === 'Siti Rahma'));
+      const doctors = (LIVE_SERVER_DOCTORS || []).filter(d => (d.assignedTo && d.assignedTo.toLowerCase().includes(admin.name.toLowerCase())) || (admin.displayName && d.assignedTo && d.assignedTo.toLowerCase().includes(admin.displayName.toLowerCase())));
       const docListCont = document.getElementById('modalDoctorListContainer');
       if (doctors.length === 0) {
         docListCont.innerHTML = `<div class="p-3 text-center text-slate-400 italic">Belum ada dokter yang ditugaskan ke admin ini.</div>`;
       } else {
         docListCont.innerHTML = doctors.map(d => {
-          const statusBadge = d.status === 'Complete'
+          const statusBadge = (d.status === 'Complete' || d.status === 'COMPLETE')
             ? `<span class="px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-100 text-[#16b3ac]">Complete</span>`
             : `<span class="px-2 py-0.2 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700">Incomplete</span>`;
           return `
             <div class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition text-xs">
               <div>
                 <a href="/doctor-detail?id=${d.id}" class="font-bold text-slate-900 hover:text-[#16b3ac] hover:underline">${d.name}</a>
-                <div class="text-[10px] text-slate-400 font-mono">STR: ${d.strNumber} &bull; ${d.hospital}</div>
+                <div class="text-[10px] text-slate-400 font-mono">STR: ${d.strNumber || '-'} &bull; ${d.hospital || '-'}</div>
               </div>
               <div class="flex items-center gap-2">
                 <span class="font-mono font-bold text-slate-700 text-[11px]">${d.q4Credits || 0} SKP</span>
@@ -556,8 +558,8 @@
       }
 
       // Render recent activities
-      const allActs = PogiStore.getActivities();
-      const adminActs = allActs.filter(act => act.actor.toLowerCase().includes(admin.name.toLowerCase()) || act.details.toLowerCase().includes(admin.name.toLowerCase()));
+      const allActs = LIVE_SERVER_ACTIVITIES || [];
+      const adminActs = allActs.filter(act => act.actor && (act.actor.toLowerCase().includes(admin.name.toLowerCase()) || (admin.displayName && act.actor.toLowerCase().includes(admin.displayName.toLowerCase()))));
       const actCont = document.getElementById('modalActivityLogContainer');
       const sampleActs = adminActs.length > 0 ? adminActs.slice(0, 4) : allActs.slice(0, 3);
 
@@ -584,12 +586,14 @@
       const adminSelect = document.getElementById('rebalanceTargetAdminSelect');
       if (!docSelect || !adminSelect) return;
 
-      const doctors = PogiStore.getDoctors();
+      const doctors = LIVE_SERVER_DOCTORS || [];
       docSelect.innerHTML = doctors.map(d => `
         <option value="${d.id}">${d.name} (Saat ini dipegang: ${d.assignedTo || 'Unassigned'})</option>
       `).join('');
 
-      const adminNames = ['Anna', 'Vivi', 'Lily', 'Dewi Lestari', 'Fikri Ramadhan', 'Siti Rahma'];
+      const adminNames = (LIVE_SERVER_ADMINS && LIVE_SERVER_ADMINS.length > 0)
+        ? LIVE_SERVER_ADMINS.map(a => a.name)
+        : ['Anna', 'Vivi', 'Lily'];
       adminSelect.innerHTML = adminNames.map(name => `
         <option value="${name}">${name} (Admin POGI)</option>
       `).join('');
@@ -600,7 +604,7 @@
       if (preferredAdminName) {
         // filter doctor select to that admin
         const docSelect = document.getElementById('rebalanceDoctorSelect');
-        const doctors = PogiStore.getDoctors();
+        const doctors = LIVE_SERVER_DOCTORS || [];
         const docFromAdmin = doctors.find(d => d.assignedTo === preferredAdminName);
         if (docFromAdmin) docSelect.value = docFromAdmin.id;
       }
@@ -616,12 +620,13 @@
       const targetAdmin = document.getElementById('rebalanceTargetAdminSelect').value;
 
       if (!docId || !targetAdmin) return;
-      const success = PogiStore.reassignDoctor(docId, targetAdmin);
-      if (success) {
-        closeWorkloadRebalanceModal();
-        loadPerformanceData();
-        showToast(`Dokter berhasil dialihkan ke admin ${targetAdmin}!`, 'success');
+      const doc = (LIVE_SERVER_DOCTORS || []).find(d => String(d.id) === String(docId));
+      if (doc) {
+        doc.assignedTo = targetAdmin;
       }
+      closeWorkloadRebalanceModal();
+      loadPerformanceData();
+      showToast(`Dokter berhasil dialihkan ke admin ${targetAdmin}!`, 'success');
     }
 
     function exportKpiReport() {

@@ -90,15 +90,48 @@
     return source.substring(0, idx) + replacement + source.substring(idx + target.length);
   }
 
-  function populateStreams(monthName) {
+  function populateStreams(monthName, dynamicOptions = {}) {
     const m = MONTHLY_RECORDS[monthName] || MONTHLY_RECORDS['November 2026'];
     const period = monthName || 'November 2026';
+
+    const picName = dynamicOptions.picName ||
+      (typeof window !== 'undefined' && window.CURRENT_USER && window.CURRENT_USER.name) ||
+      (typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ||
+      'Admin POGI';
+
+    const liveDocs = (dynamicOptions.doctors && dynamicOptions.doctors.length > 0)
+      ? dynamicOptions.doctors
+      : ((typeof window !== 'undefined' && Array.isArray(window.LIVE_SERVER_DOCTORS) && window.LIVE_SERVER_DOCTORS.length > 0)
+        ? window.LIVE_SERVER_DOCTORS
+        : []);
+
+    // Helper for doctor sample rows
+    function getSampleDoc(idx, fallbackName, fallbackProv) {
+      if (liveDocs.length > 0) {
+        const d = liveDocs[idx % liveDocs.length];
+        return {
+          name: d.name || fallbackName,
+          province: d.province || fallbackProv,
+          skp: (d.q4Credits || d.total_skp || 5) + ' SKP',
+          status: (d.status === 'Complete' || d.status === 'COMPLETE') ? 'Terverifikasi' : 'Proses Verifikasi'
+        };
+      }
+      return {
+        name: fallbackName,
+        province: fallbackProv,
+        skp: '5 SKP',
+        status: 'Terverifikasi'
+      };
+    }
+
+    const doc1 = getSampleDoc(0, 'Dokter Spesialis Obgyn I', 'DKI Jakarta');
+    const doc2 = getSampleDoc(1, 'Dokter Spesialis Obgyn II', 'Jawa Barat');
 
     // ================= PAGE 1 =================
     let s1 = STREAM_P1_TEMPLATE;
     s1 = s1.replace('([Bulan Tahun])', '(' + period + ')');
     s1 = s1.replace('([Tanggal])', '(' + m.date + ')');
-    s1 = s1.replace('([Nama PIC])', '(Siti Rahma, S.Farm)');
+    s1 = s1.replace('([Nama PIC])', '(' + picName + ')');
     s1 = s1.replace('([Jika relevan])', '(Nasional (38 Wilayah POGI))');
 
     // 5 Indikator Ringkasan Eksekutif
@@ -108,44 +141,39 @@
     s1 = replaceFirst(s1, '([...])', '(' + m.pending + ')');
     s1 = replaceFirst(s1, '([...])', '(' + m.kendala + ')');
 
-    // Detail Dokter Page 1 (Sampel 2 Dokter)
+    // Detail Dokter Page 1 (Sampel 2 Dokter dari Database)
     // Row 1
-    s1 = replaceFirst(s1, '([Nama / ID])', '(dr. Budi Santoso, Sp.OG(K))');
-    s1 = replaceFirst(s1, '([Wilayah])', '(DKI Jakarta)');
+    s1 = replaceFirst(s1, '([Nama / ID])', '(' + doc1.name + ')');
+    s1 = replaceFirst(s1, '([Wilayah])', '(' + doc1.province + ')');
     s1 = replaceFirst(s1, '([Nama kegiatan])', '(PIT POGI 2026)');
     s1 = replaceFirst(s1, '([Tanggal])', '(14 Nov 2026)');
-    s1 = replaceFirst(s1, '([...])', '(5 SKP)');
+    s1 = replaceFirst(s1, '([...])', '(' + doc1.skp + ')');
     s1 = replaceFirst(s1, '([...])', '(18 Nov 2026)');
-    s1 = replaceFirst(s1, '([Status / catatan])', '(Terverifikasi)');
+    s1 = replaceFirst(s1, '([Status / catatan])', '(' + doc1.status + ')');
 
     // Row 2
-    s1 = replaceFirst(s1, '([Nama / ID])', '(dr. Hendra Wijaya, Sp.OG)');
-    s1 = replaceFirst(s1, '([Wilayah])', '(Jawa Barat)');
+    s1 = replaceFirst(s1, '([Nama / ID])', '(' + doc2.name + ')');
+    s1 = replaceFirst(s1, '([Wilayah])', '(' + doc2.province + ')');
     s1 = replaceFirst(s1, '([Nama kegiatan])', '(Simposium Fetomaternal)');
     s1 = replaceFirst(s1, '([Tanggal])', '(16 Nov 2026)');
-    s1 = replaceFirst(s1, '([...])', '(4 SKP)');
+    s1 = replaceFirst(s1, '([...])', '(' + doc2.skp + ')');
     s1 = replaceFirst(s1, '([...])', '(19 Nov 2026)');
-    s1 = replaceFirst(s1, '([Status / catatan])', '(Terverifikasi)');
+    s1 = replaceFirst(s1, '([Status / catatan])', '(' + doc2.status + ')');
 
     // ================= PAGE 2 =================
     let s2 = STREAM_P2_TEMPLATE;
-    const doctorsP2 = [
-      ['dr. Ratna Sari, Sp.OG', 'Jawa Timur', 'Workshop USG Obgyn', '10 Nov 2026', '3 SKP', '15 Nov 2026', 'Terverifikasi'],
-      ['dr. Ahmad Fauzi, Sp.OG', 'Sumatera Utara', 'Webinar Onkologi Ginekologi', '08 Nov 2026', '2 SKP', '12 Nov 2026', 'Terverifikasi'],
-      ['dr. Dewi Lestari, Sp.OG', 'Sulawesi Selatan', 'Pelayanan Bakti Sosial', '05 Nov 2026', '4 SKP', '09 Nov 2026', 'Terverifikasi'],
-      ['dr. I Made Sukadana, Sp.OG', 'Bali', 'Simposium Infertilitas', '03 Nov 2026', '3 SKP', '06 Nov 2026', 'Terverifikasi'],
-      ['dr. Siti Nurhaliza, Sp.OG', 'Banten', 'Kursus Endokrinologi Repro', '01 Nov 2026', '5 SKP', '04 Nov 2026', 'Terverifikasi']
-    ];
+    const provDefaults = ['Jawa Timur', 'Sumatera Utara', 'Sulawesi Selatan', 'Bali', 'Banten'];
+    const actDefaults = ['Workshop USG Obgyn', 'Webinar Onkologi Ginekologi', 'Pelayanan Bakti Sosial', 'Simposium Infertilitas', 'Kursus Endokrinologi'];
 
-    for (let i = 0; i < doctorsP2.length; i++) {
-      const d = doctorsP2[i];
-      s2 = replaceFirst(s2, '([Nama / ID])', '(' + d[0] + ')');
-      s2 = replaceFirst(s2, '([Wilayah])', '(' + d[1] + ')');
-      s2 = replaceFirst(s2, '([Nama kegiatan])', '(' + d[2] + ')');
-      s2 = replaceFirst(s2, '([Tanggal])', '(' + d[3] + ')');
-      s2 = replaceFirst(s2, '([...])', '(' + d[4] + ')');
-      s2 = replaceFirst(s2, '([...])', '(' + d[5] + ')');
-      s2 = replaceFirst(s2, '([Status / catatan])', '(' + d[6] + ')');
+    for (let i = 0; i < 5; i++) {
+      const d = getSampleDoc(i + 2, 'Dokter Spesialis Obgyn ' + (i + 3), provDefaults[i]);
+      s2 = replaceFirst(s2, '([Nama / ID])', '(' + d.name + ')');
+      s2 = replaceFirst(s2, '([Wilayah])', '(' + d.province + ')');
+      s2 = replaceFirst(s2, '([Nama kegiatan])', '(' + actDefaults[i] + ')');
+      s2 = replaceFirst(s2, '([Tanggal])', '(10 Nov 2026)');
+      s2 = replaceFirst(s2, '([...])', '(' + d.skp + ')');
+      s2 = replaceFirst(s2, '([...])', '(15 Nov 2026)');
+      s2 = replaceFirst(s2, '([Status / catatan])', '(' + d.status + ')');
     }
 
     // Section 4: Rekap Kegiatan
@@ -167,8 +195,8 @@
 
     // Section 5: Kendala
     const kendalaList = [
-      ['Sinkronisasi NIK dokter kurasi Kemenkes', 'Pending validasi 19 dokter', 'Koordinasi Ditjen Nakes - Siti Rahma', 'Proses'],
-      ['Berkas sertifikat webinar belum ada link P2KB', 'Tertunda 8 berkas SKP', 'Konfirmasi panitia cabang - Siti Rahma', 'Selesai'],
+      ['Sinkronisasi NIK dokter kurasi Kemenkes', 'Pending validasi 19 dokter', 'Koordinasi Ditjen Nakes - PIC POGI', 'Proses'],
+      ['Berkas sertifikat webinar belum ada link P2KB', 'Tertunda 8 berkas SKP', 'Konfirmasi panitia cabang - PIC POGI', 'Selesai'],
       ['Perbedaan penulisan nama dokter di STR & SIP', 'Verifikasi manual 3 dokter', 'Pencocokan data KKI - Admin Cabang', 'Selesai']
     ];
 
@@ -182,7 +210,7 @@
 
     // Section 6: Rencana Tindak Lanjut
     const tindakList = [
-      ['Finalisasi kurasi SKP pending bersama Ditjen Nakes', 'Minggu IV', 'Siti Rahma, S.Farm'],
+      ['Finalisasi kurasi SKP pending bersama Ditjen Nakes', 'Minggu IV', picName],
       ['Sosialisasi upload bukti logbook digital ONE POGI', 'Minggu I', 'Tim IT ONE POGI'],
       ['Rekonsiliasi data SKP triwulan Q4 bersama 38 Cabang', 'Minggu II', 'Admin Data PP POGI'],
       ['Penerbitan rekap laporan final penagihan invoice', 'Akhir Bulan', 'Keuangan Impruve.Id']
@@ -201,11 +229,11 @@
     s3 = s3.replaceAll('Desember 2026,', m.nextMonth.charAt(0) + m.nextMonth.slice(1).toLowerCase() + ',');
 
     const planList = [
-      ['Minggu I-II', '161 Dokter', 'Siti Rahma'],
+      ['Minggu I-II', '161 Dokter', picName],
       ['Minggu II', '100% Berkas', 'Verifikator'],
       ['Minggu III', 'Target 450 SKP', 'Tim Input'],
       ['Minggu IV', 'Zero Error', 'Supervisor'],
-      ['Akhir Bulan', 'Laporan Lengkap', 'Siti Rahma']
+      ['Akhir Bulan', 'Laporan Lengkap', picName]
     ];
 
     for (let i = 0; i < planList.length; i++) {
@@ -218,8 +246,9 @@
     s3 = s3.replace('([Bulan Tahun] ini disusun sebagai dokumentasi pelaksanaan, monitoring progres, dan bahan evaluasi serta koordinasi untuk)',
                     '(' + period + ' ini disusun sebagai dokumentasi pelaksanaan, monitoring progres, dan bahan evaluasi serta koordinasi untuk)');
 
-    s3 = s3.replace('([Nama PIC])', '(Siti Rahma, S.Farm)');
-    s3 = s3.replace('([Nama / Jabatan])', '(dr. Budi Santoso, Sp.OG(K))');
+    const authKetumName = dynamicOptions.ketumName || 'Prof. Dr. dr. Yudi M. Hidayat, Sp.OG, Subsp. Onk';
+    s3 = s3.replace('([Nama PIC])', '(' + picName + ')');
+    s3 = s3.replace('([Nama / Jabatan])', '(' + authKetumName + ')');
     s3 = s3.replace('([POGI / pihak terkait])', '(Pengurus Pusat POGI)');
 
     return [s1, s2, s3];
@@ -276,14 +305,14 @@
     return bytes;
   }
 
-  function generateOnePogiOfficialPdfBlob(monthName) {
-    const streams = populateStreams(monthName);
+  function generateOnePogiOfficialPdfBlob(monthName, dynamicOptions) {
+    const streams = populateStreams(monthName, dynamicOptions);
     const bytes = assemblePdfBytes(streams[0], streams[1], streams[2]);
     return new Blob([bytes], { type: 'application/pdf' });
   }
 
-  function generateOnePogiOfficialPdfBytes(monthName) {
-    const streams = populateStreams(monthName);
+  function generateOnePogiOfficialPdfBytes(monthName, dynamicOptions) {
+    const streams = populateStreams(monthName, dynamicOptions);
     return assemblePdfBytes(streams[0], streams[1], streams[2]);
   }
 

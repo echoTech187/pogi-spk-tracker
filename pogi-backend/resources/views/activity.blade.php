@@ -290,7 +290,7 @@
     });
 
     function changeActivityPage(p) {
-      const list = currentFilteredActivities || (LIVE_SERVER_LOGS.length > 0 ? LIVE_SERVER_LOGS : PogiStore.getActivities());
+      const list = currentFilteredActivities || (LIVE_SERVER_LOGS.length > 0 ? LIVE_SERVER_LOGS : []);
       const totalPages = Math.max(1, Math.ceil(list.length / activityPagination.limit));
       if (p < 1) p = 1;
       if (p > totalPages) p = totalPages;
@@ -315,7 +315,7 @@
             category: l.action && l.action.includes('KEMENKES') ? 'Kemenkes' : (l.action && l.action.includes('PIC') ? 'Admin' : 'Operasional'),
             time: l.created_at ? new Date(l.created_at).toLocaleString('id-ID') : 'Baru saja'
           }))
-        : ((typeof PogiStore !== 'undefined') ? PogiStore.getActivities() : []);
+        : [];
       const tbody = document.getElementById('activityTableBody');
       if (!tbody) return;
 

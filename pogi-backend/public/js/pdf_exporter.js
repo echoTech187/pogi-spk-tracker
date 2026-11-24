@@ -1,3 +1,16 @@
+
+function getActivePdfUserName() {
+  if (typeof window !== 'undefined') {
+    if (window.CURRENT_USER && window.CURRENT_USER.name) return window.CURRENT_USER.name;
+    if (window.AUTH_USER && window.AUTH_USER.name) return window.AUTH_USER.name;
+  }
+  if (typeof PogiStore !== 'undefined' && typeof PogiStore.getCurrentUser === 'function') {
+    const u = PogiStore.getCurrentUser();
+    if (u && u.name) return u.name;
+  }
+  return 'Admin POGI';
+}
+
 /**
  * POGI SKP TRACKER - OFFICIAL PDF EXPORTER MODULE
  * Menggantikan seluruh ekspor CSV menjadi Dokumen PDF Resmi Standar PP POGI & Kemenkes RI.
@@ -330,7 +343,7 @@ const PogiPdfExporter = {
     <div class="meta-details">
       <div><strong>No. Dokumen:</strong> ${generatedDocCode}</div>
       <div><strong>Tanggal Terbit:</strong> ${formattedDate}, ${formattedTime}</div>
-      <div><strong>Dicetak Oleh:</strong> Siti Rahma, S.Farm (Tim Data PP POGI)</div>
+      <div><strong>Dicetak Oleh:</strong> ${getActivePdfUserName()} (Tim Data PP POGI)</div>
     </div>
   </div>
 
@@ -378,7 +391,7 @@ const PogiPdfExporter = {
     <div class="sig-box">
       <div>Jakarta, ${formattedDate}</div>
       <div class="sig-role">Tim Pengelola Data &amp; Verifikator Sistem</div>
-      <div class="sig-name">Siti Rahma, S.Farm</div>
+      <div class="sig-name">${getActivePdfUserName()}</div>
       <div class="sig-id">ID Administrator: POGI-DATA-2026</div>
       <div class="stamp-badge">&#10003; TEREGISTRASI SISTEM KEMENKES</div>
     </div>
@@ -432,7 +445,7 @@ const PogiPdfExporter = {
  * 1. EXPORT DIRECTORY DOKTER KE PDF
  */
 function exportDoctorsPdf(customDocs) {
-  const docs = customDocs || (typeof currentFilteredDoctors !== 'undefined' && currentFilteredDoctors && currentFilteredDoctors.length > 0 ? currentFilteredDoctors : PogiStore.getDoctors());
+  const docs = customDocs || (typeof currentFilteredDoctors !== 'undefined' && currentFilteredDoctors && currentFilteredDoctors.length > 0 ? currentFilteredDoctors : ((typeof window !== 'undefined' && Array.isArray(window.LIVE_SERVER_DOCTORS) && window.LIVE_SERVER_DOCTORS.length > 0) ? window.LIVE_SERVER_DOCTORS : (typeof PogiStore !== 'undefined' ? PogiStore.getDoctors() : [])));
   
   const period = (typeof document !== 'undefined' && document.getElementById('periodFilter')) ? document.getElementById('periodFilter').value : 'Q4 2026';
   
@@ -509,7 +522,7 @@ function exportDoctorsPdf(customDocs) {
 
   if (typeof PogiStore !== 'undefined' && PogiStore.addActivity) {
     PogiStore.addActivity({
-      actor: 'Siti Rahma (Admin Data)',
+      actor: getActivePdfUserName(),
       action: 'Ekspor PDF Dokter',
       details: `Mengunduh Laporan Resmi PDF Direktori Dokter Obgyn (${total} data)`,
       category: 'Verification'
@@ -521,7 +534,7 @@ function exportDoctorsPdf(customDocs) {
  * 2. EXPORT KATALOG EVENT SKP KE PDF
  */
 function exportEventsPdf() {
-  const events = PogiStore.getEvents();
+  const events = (typeof window !== 'undefined' && Array.isArray(window.LIVE_SERVER_EVENTS) && window.LIVE_SERVER_EVENTS.length > 0) ? window.LIVE_SERVER_EVENTS : (typeof PogiStore !== 'undefined' ? PogiStore.getEvents() : []);
   const total = events.length;
 
   const columns = [
@@ -562,7 +575,7 @@ function exportEventsPdf() {
 
   if (typeof PogiStore !== 'undefined' && PogiStore.addActivity) {
     PogiStore.addActivity({
-      actor: 'Siti Rahma (Admin Data)',
+      actor: getActivePdfUserName(),
       action: 'Ekspor PDF Event',
       details: `Mengunduh Katalog Resmi Kegiatan SKP Terakreditasi (${total} event)`,
       category: 'Verification'
@@ -574,7 +587,7 @@ function exportEventsPdf() {
  * 3. EXPORT PESERTA EVENT KE PDF
  */
 function exportEventParticipantsPdf() {
-  const doctors = PogiStore.getDoctors().slice(0, 15);
+  const doctors = ((typeof window !== 'undefined' && Array.isArray(window.LIVE_SERVER_DOCTORS) && window.LIVE_SERVER_DOCTORS.length > 0) ? window.LIVE_SERVER_DOCTORS : (typeof PogiStore !== 'undefined' ? PogiStore.getDoctors() : [])).slice(0, 15);
   
   const columns = [
     { label: 'No', align: 'center', thStyle: 'width: 30px;' },
@@ -614,7 +627,7 @@ function exportEventParticipantsPdf() {
  * 4. EXPORT 38 WILAYAH PROVINSI KE PDF
  */
 function exportProvincesPdf() {
-  const provinces = PogiStore.getProvinces();
+  const provinces = (typeof window !== 'undefined' && Array.isArray(window.LIVE_SERVER_PROVINCES) && window.LIVE_SERVER_PROVINCES.length > 0) ? window.LIVE_SERVER_PROVINCES : (typeof PogiStore !== 'undefined' ? PogiStore.getProvinces() : []);
   const totalProv = provinces.length;
   const totalDoctors = provinces.reduce((sum, p) => sum + (p.doctors || 0), 0);
   const totalComplete = provinces.reduce((sum, p) => sum + (p.complete || 0), 0);
@@ -666,7 +679,7 @@ function exportProvincesPdf() {
 
   if (typeof PogiStore !== 'undefined' && PogiStore.addActivity) {
     PogiStore.addActivity({
-      actor: 'Siti Rahma (Admin Data)',
+      actor: getActivePdfUserName(),
       action: 'Ekspor PDF Provinsi',
       details: `Mengunduh Matriks Laporan PDF 38 Cabang Provinsi POGI`,
       category: 'Verification'
@@ -678,7 +691,7 @@ function exportProvincesPdf() {
  * 5. EXPORT LOG AKTIVITAS / AUDIT TRAIL KE PDF
  */
 function exportActivityPdf() {
-  const activities = PogiStore.getActivities();
+  const activities = (typeof window !== 'undefined' && ((Array.isArray(window.LIVE_SERVER_ACTIVITIES) && window.LIVE_SERVER_ACTIVITIES.length > 0) || (Array.isArray(window.LIVE_SERVER_LOGS) && window.LIVE_SERVER_LOGS.length > 0))) ? (window.LIVE_SERVER_ACTIVITIES || window.LIVE_SERVER_LOGS) : (typeof PogiStore !== 'undefined' ? PogiStore.getActivities() : []);
   const total = activities.length;
 
   const columns = [
@@ -715,7 +728,7 @@ function exportActivityPdf() {
 
   if (typeof PogiStore !== 'undefined' && PogiStore.addActivity) {
     PogiStore.addActivity({
-      actor: 'Siti Rahma (Admin Data)',
+      actor: getActivePdfUserName(),
       action: 'Ekspor PDF Log Audit',
       details: `Mengunduh Laporan Resmi PDF Jejak Audit (${total} entri log)`,
       category: 'Verification'
@@ -734,7 +747,7 @@ function exportActiveManageTabPdf(targetTab) {
   } else if (tab === 'event') {
     exportEventsPdf();
   } else if (tab === 'institution') {
-    const insts = PogiStore.getInstitutions();
+    const insts = (typeof window !== 'undefined' && Array.isArray(window.LIVE_MANAGE_INSTITUTIONS) && window.LIVE_MANAGE_INSTITUTIONS.length > 0) ? window.LIVE_MANAGE_INSTITUTIONS : (typeof PogiStore !== 'undefined' ? PogiStore.getInstitutions() : []);
     const columns = [
       { label: 'No', align: 'center', thStyle: 'width: 30px;' },
       { label: 'Kode RS', thStyle: 'width: 100px;' },
@@ -762,7 +775,7 @@ function exportActiveManageTabPdf(targetTab) {
       rows
     });
   } else if (tab === 'category') {
-    const cats = PogiStore.getCategories();
+    const cats = (typeof window !== 'undefined' && Array.isArray(window.LIVE_MANAGE_CATEGORIES) && window.LIVE_MANAGE_CATEGORIES.length > 0) ? window.LIVE_MANAGE_CATEGORIES : (typeof PogiStore !== 'undefined' ? PogiStore.getCategories() : []);
     const columns = [
       { label: 'No', align: 'center', thStyle: 'width: 30px;' },
       { label: 'Kode Kategori', thStyle: 'width: 100px;' },
@@ -797,12 +810,17 @@ function exportActiveManageTabPdf(targetTab) {
       { label: 'Wilayah Akses', thStyle: 'width: 150px;' },
       { label: 'Status Akun', align: 'center', thStyle: 'width: 100px;' }
     ];
-    const rows = [
-      [1, '<strong>dr. Budi Santoso, Sp.OG(K)</strong>', 'budi.santoso@pogi.or.id', 'Super Admin (PP POGI)', 'Nasional (38 Cabang)', '<span class="badge badge-complete">Aktif</span>'],
-      [2, '<strong>Siti Rahma, S.Farm</strong>', 'siti.rahma@pogi.or.id', 'Admin Data & Verifikator', 'Nasional (38 Cabang)', '<span class="badge badge-complete">Aktif</span>'],
-      [3, '<strong>dr. Hendra Wijaya, Sp.OG</strong>', 'hendra.w@pogi-jabar.org', 'Admin Cabang POGI', 'Jawa Barat', '<span class="badge badge-complete">Aktif</span>'],
-      [4, '<strong>dr. Ratna Sari, Sp.OG</strong>', 'ratna.sari@pogi-jatim.org', 'Admin Cabang POGI', 'Jawa Timur', '<span class="badge badge-complete">Aktif</span>']
-    ];
+    const liveUsers = (typeof window !== 'undefined' && Array.isArray(window.LIVE_MANAGE_USERS) && window.LIVE_MANAGE_USERS.length > 0)
+      ? window.LIVE_MANAGE_USERS
+      : (typeof PogiStore !== 'undefined' ? PogiStore.getUsers() : []);
+    const rows = liveUsers.map((u, idx) => [
+      idx + 1,
+      '<strong>' + (u.name || 'Pengguna') + '</strong>',
+      u.email || '-',
+      u.role || u.display_role || 'Admin POGI',
+      u.branch_name || u.branch || 'Pusat',
+      '<span class="badge badge-complete">Aktif</span>'
+    ]);
     PogiPdfExporter.printDocument({
       title: 'MASTER DATA PENGGUNA SISTEM & HAK AKSES POGI TRACKER',
       docCode: `POGI-USR-PDF-${Date.now().toString().slice(-6)}`,
@@ -1252,7 +1270,7 @@ function printOnePogiMonthlyReportPdf(monthName) {
       startY: 96,
       margin: { left: 40, right: 40 },
       body: [
-        ['Periode laporan', period, 'PIC pelaksana', 'Siti Rahma, S.Farm'],
+        ['Periode laporan', period, 'PIC pelaksana', getActivePdfUserName()],
         ['Tanggal laporan', m.date, 'Pelaksana', 'Impruve.Id'],
         ['Nama program', 'ONE POGI', 'Unit/area', 'Nasional (38 Wilayah POGI)']
       ],
@@ -1399,8 +1417,8 @@ function printOnePogiMonthlyReportPdf(monthName) {
       margin: { left: 40, right: 40 },
       head: [['No', 'Kendala / Temuan', 'Dampak Terhadap Pekerjaan', 'Tindak Lanjut & PIC', 'Status']],
       body: [
-        ['1', 'Sinkronisasi NIK dokter baru kurasi Kemenkes', 'Pending validasi 19 dokter', 'Koordinasi Ditjen Nakes - Siti Rahma', 'Proses'],
-        ['2', 'Berkas sertifikat webinar belum ada link P2KB', 'Tertunda 8 berkas SKP', 'Konfirmasi panitia cabang - Siti Rahma', 'Selesai'],
+        ['1', 'Sinkronisasi NIK dokter baru kurasi Kemenkes', 'Pending validasi 19 dokter', 'Koordinasi Ditjen Nakes - PIC POGI', 'Proses'],
+        ['2', 'Berkas sertifikat webinar belum ada link P2KB', 'Tertunda 8 berkas SKP', 'Konfirmasi panitia cabang - PIC POGI', 'Selesai'],
         ['3', 'Perbedaan penulisan nama dokter di STR & SIP', 'Verifikasi manual 3 dokter', 'Pencocokan data KKI - Admin Cabang', 'Selesai']
       ],
       theme: 'grid',
@@ -1421,7 +1439,7 @@ function printOnePogiMonthlyReportPdf(monthName) {
       margin: { left: 40, right: 40 },
       head: [['No', 'Rencana Pekerjaan', 'Target Waktu', 'PIC Pelaksana']],
       body: [
-        ['1', 'Finalisasi kurasi SKP pending bersama Kemenkes Plataran Sehat', 'Minggu IV', 'Siti Rahma, S.Farm'],
+        ['1', 'Finalisasi kurasi SKP pending bersama Kemenkes Plataran Sehat', 'Minggu IV', getActivePdfUserName()],
         ['2', 'Sosialisasi upload bukti logbook digital terintegrasi ONE POGI', 'Minggu I', 'Tim IT ONE POGI'],
         ['3', 'Rekonsiliasi data SKP triwulan Q4 bersama 38 Cabang POGI', 'Minggu II', 'Admin Data PP POGI'],
         ['4', 'Penerbitan rekap laporan final penagihan invoice administrasi', 'Akhir Bulan', 'Keuangan Impruve.Id']
@@ -1453,11 +1471,11 @@ function printOnePogiMonthlyReportPdf(monthName) {
       margin: { left: 40, right: 40 },
       head: [['No', 'Rencana Pekerjaan', 'Periode', 'Target', 'PIC']],
       body: [
-        ['1', 'Pengumpulan / penerimaan data dokter', m.nextMonth + ', Minggu I-II', '161 Dokter', 'Siti Rahma'],
+        ['1', 'Pengumpulan / penerimaan data dokter', m.nextMonth + ', Minggu I-II', '161 Dokter', getActivePdfUserName()],
         ['2', 'Pemeriksaan kelengkapan dan kesesuaian data', m.nextMonth + ', Minggu II', '100% Berkas', 'Verifikator'],
         ['3', 'Penginputan data SKP ke sistem ONE POGI', m.nextMonth + ', Minggu III', 'Target 450 SKP', 'Tim Input'],
         ['4', 'Verifikasi hasil penginputan sistem', m.nextMonth + ', Minggu IV', 'Zero Error', 'Supervisor'],
-        ['5', 'Monitoring status dan tindak lanjut laporan', m.nextMonth + ', Akhir Bulan', 'Laporan Lengkap', 'Siti Rahma']
+        ['5', 'Monitoring status dan tindak lanjut laporan', m.nextMonth + ', Akhir Bulan', 'Laporan Lengkap', getActivePdfUserName()]
       ],
       theme: 'grid',
       styles: { font: 'helvetica', fontSize: 7.2, textColor: [31, 41, 55], cellPadding: 3, lineColor: [226, 232, 240] },
@@ -1506,7 +1524,7 @@ function printOnePogiMonthlyReportPdf(monthName) {
       margin: { left: 40, right: 40 },
       body: [
         [
-          'Disusun oleh,\n\n\n\nSiti Rahma, S.Farm\nImpruve.Id - Tim Pengelola Data\nTanggal: ' + m.date,
+          'Disusun oleh,\n\n\n\n' + getActivePdfUserName() + '\nTim Pengelola Data POGI\nTanggal: ' + m.date,
           'Diperiksa / diketahui oleh,\n\n\n\nDr. dr. Yudi M. Hidayat, Sp.OG, Subsp.Obginsos, M.Kes\nKetua Umum Pengurus Pusat POGI\nTanggal: ' + m.date
         ]
       ],

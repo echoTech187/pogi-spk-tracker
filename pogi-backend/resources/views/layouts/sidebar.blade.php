@@ -26,14 +26,19 @@
         MONITORING NASIONAL
       </div>
       <nav class="space-y-1">
+        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT', 'ADMIN_POGI', 'ADMIN_CABANG']))
         <a href="{{ url('/dashboard') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition {{ Request::is('dashboard') || Request::is('/') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">dashboard</span>
           <span>Dashboard</span>
         </a>
+        @endif
+        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT', 'ADMIN_CABANG', 'ADMIN_POGI']))
         <a href="{{ url('/doctors') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('doctors*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">stethoscope</span>
           <span>Doctors</span>
         </a>
+        @endif
+        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT', 'ADMIN_POGI', 'ADMIN_CABANG']))
         <a href="{{ url('/provinces') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('provinces*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">map</span>
           <span>Provinces</span>
@@ -42,6 +47,7 @@
           <span class="material-symbols-outlined text-[19px]">event</span>
           <span>Events</span>
         </a>
+        @endif
         @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT']))
         <a href="{{ url('/activity') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('activity*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">history</span>

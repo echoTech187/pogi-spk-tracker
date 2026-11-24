@@ -119,9 +119,48 @@ class AdminPerformanceController extends Controller
             'teamComplianceRate' => $totalAssignedTeam > 0 ? round(($totalCompleteTeam / $totalAssignedTeam) * 100, 1) : 0,
         ];
 
+        $doctors = DB::table('doctors')
+            ->leftJoin('pogi_branches', 'doctors.branch_id', '=', 'pogi_branches.id')
+            ->leftJoin('institutions', 'doctors.primary_institution_id', '=', 'institutions.id')
+            ->leftJoin('users as pic', 'doctors.assigned_pic_id', '=', 'pic.id')
+            ->leftJoin('doctor_skp_periods as period', function ($join) {
+                $join->on('doctors.id', '=', 'period.doctor_id')
+                     ->where('period.is_active', true);
+            })
+            ->select(
+                'doctors.id',
+                'doctors.full_name as name',
+                'doctors.str_number as strNumber',
+                'institutions.name as hospital',
+                'doctors.status',
+                'pic.full_name as assignedTo',
+                DB::raw('COALESCE(period.achieved_total_credits, 0) as q4Credits')
+            )
+            ->get();
+
+        $activities = DB::table('audit_logs')
+            ->leftJoin('users', 'audit_logs.user_id', '=', 'users.id')
+            ->select(
+                'audit_logs.id',
+                'audit_logs.action',
+                DB::raw("COALESCE(audit_logs.entity_name, 'Aktivitas Kredensial') as details"),
+                'audit_logs.created_at as timestamp',
+                'users.full_name as actor'
+            )
+            ->orderBy('audit_logs.created_at', 'desc')
+            ->take(30)
+            ->get()
+            ->map(function ($act) {
+                $act->actor = $act->actor ?: 'Admin POGI';
+                $act->timestamp = $act->timestamp ? Carbon::parse($act->timestamp)->format('d M Y, H.i') : 'Baru saja';
+                return $act;
+            });
+
         return view('admin-performance', [
             'admins' => $adminsData,
             'summary' => $teamSummary,
+            'doctors' => $doctors,
+            'activities' => $activities,
         ]);
     }
 }

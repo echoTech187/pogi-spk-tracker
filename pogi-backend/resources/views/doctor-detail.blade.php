@@ -271,7 +271,7 @@
                 </div>
                 <div class="text-[11px] text-slate-500 mt-0.5">
                   Folder Cloud Anggota: <code id="metaVaultPath"
-                    class="font-mono text-[#16b3ac] font-bold">cloud-storage://pogi-skp-vault/{{ $doctor->id ?? 'doc-001' }}/</code>
+                    class="font-mono text-[#16b3ac] font-bold">cloud-storage://pogi-skp-vault/{{ $doctor->id ?? '' }}/</code>
                 </div>
               </div>
             </div>
@@ -1003,9 +1003,9 @@
       }
 
       const initials = doc.initials || doc.avatar || 'DR';
-      const pel = doc.pelayananCredits !== undefined ? doc.pelayananCredits : 46;
-      const peng = doc.pengabdianCredits !== undefined ? doc.pengabdianCredits : 16;
-      const pemb = doc.pembelajaranCredits !== undefined ? doc.pembelajaranCredits : 29;
+      const pel = doc.pelayananCredits !== undefined ? doc.pelayananCredits : (doc.pelayanan?.achieved || 0);
+      const peng = doc.pengabdianCredits !== undefined ? doc.pengabdianCredits : (doc.pengabdian?.achieved || 0);
+      const pemb = doc.pembelajaranCredits !== undefined ? doc.pembelajaranCredits : (doc.pembelajaran?.achieved || 0);
       const isComplete = (doc.status === 'Complete');
 
       document.getElementById('breadcrumbDoctorName').innerText = doc.name;

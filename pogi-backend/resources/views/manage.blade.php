@@ -814,11 +814,11 @@
     }
 
     function getDefaultListForTab(tab) {
-      if (tab === 'doctor') return (window.LIVE_MANAGE_DOCTORS && window.LIVE_MANAGE_DOCTORS.length > 0) ? window.LIVE_MANAGE_DOCTORS : PogiStore.getDoctors();
-      if (tab === 'institution') return (window.LIVE_MANAGE_INSTITUTIONS && window.LIVE_MANAGE_INSTITUTIONS.length > 0) ? window.LIVE_MANAGE_INSTITUTIONS : PogiStore.getInstitutions();
-      if (tab === 'event') return (window.LIVE_MANAGE_EVENTS && window.LIVE_MANAGE_EVENTS.length > 0) ? window.LIVE_MANAGE_EVENTS : PogiStore.getEvents();
-      if (tab === 'category') return (window.LIVE_MANAGE_CATEGORIES && window.LIVE_MANAGE_CATEGORIES.length > 0) ? window.LIVE_MANAGE_CATEGORIES : PogiStore.getCategories();
-      if (tab === 'user') return (window.LIVE_MANAGE_USERS && window.LIVE_MANAGE_USERS.length > 0) ? window.LIVE_MANAGE_USERS : PogiStore.getUsers();
+      if (tab === 'doctor') return window.LIVE_MANAGE_DOCTORS || [];
+      if (tab === 'institution') return window.LIVE_MANAGE_INSTITUTIONS || [];
+      if (tab === 'event') return window.LIVE_MANAGE_EVENTS || [];
+      if (tab === 'category') return window.LIVE_MANAGE_CATEGORIES || [];
+      if (tab === 'user') return window.LIVE_MANAGE_USERS || [];
       return [];
     }
 
@@ -1004,7 +1004,7 @@
       const prov = document.getElementById('manageDoctorProvFilter')?.value || 'ALL';
       const stat = document.getElementById('manageDoctorStatusFilter')?.value || 'ALL';
 
-      const all = PogiStore.getDoctors();
+      const all = getDefaultListForTab('doctor');
       const filtered = all.filter(d => {
         const matchQ = (d.name || '').toLowerCase().includes(q) || (d.nik && d.nik.includes(q)) || (d.pogiId && d.pogiId.toLowerCase().includes(q)) || (d.strNumber && d.strNumber.includes(q));
         const matchProv = prov === 'ALL' || d.province === prov;
@@ -1134,7 +1134,7 @@
     function filterManageInstTable() {
       const q = (document.getElementById('searchManageInstInput')?.value || '').toLowerCase();
       const prov = document.getElementById('manageInstProvFilter')?.value || 'ALL';
-      const all = PogiStore.getInstitutions();
+      const all = getDefaultListForTab('institution');
       const filtered = all.filter(i => {
         const matchQ = (i.name || '').toLowerCase().includes(q) || (i.address || '').toLowerCase().includes(q);
         const matchProv = prov === 'ALL' || i.province === prov;
@@ -1273,7 +1273,7 @@
     function filterManageEventTable() {
       const q = (document.getElementById('searchManageEventInput')?.value || '').toLowerCase();
       const type = document.getElementById('manageEventTypeFilter')?.value || 'ALL';
-      const all = PogiStore.getEvents();
+      const all = getDefaultListForTab('event');
       const filtered = all.filter(e => {
         const matchQ = (e.name || e.title || '').toLowerCase().includes(q) || (e.category || '').toLowerCase().includes(q);
         const matchType = type === 'ALL' || e.type === type;
@@ -1390,7 +1390,7 @@
     function filterManageCatTable() {
       const q = (document.getElementById('searchManageCatInput')?.value || '').toLowerCase();
       const type = document.getElementById('manageCatTypeFilter')?.value || 'ALL';
-      const all = PogiStore.getCategories();
+      const all = getDefaultListForTab('category');
       const filtered = all.filter(c => {
         const matchQ = (c.name || '').toLowerCase().includes(q);
         const matchType = type === 'ALL' || c.type === type;
@@ -1519,7 +1519,7 @@
     function filterManageUserTable() {
       const q = (document.getElementById('searchManageUserInput')?.value || '').toLowerCase();
       const role = document.getElementById('manageUserRoleFilter')?.value || 'ALL';
-      const all = PogiStore.getUsers();
+      const all = getDefaultListForTab('user');
       const filtered = all.filter(u => {
         const matchQ = (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q);
         const matchRole = role === 'ALL' || u.role === role;
@@ -1579,7 +1579,7 @@
       let html = '';
 
       if (type === 'doctor') {
-        item = PogiStore.getDoctors().find(d => d.id === id);
+        item = getDefaultListForTab('doctor').find(d => String(d.id) === String(id));
         if (!item) return;
         title.innerText = 'Rincian Dokter: ' + item.name;
         html = `
@@ -1637,7 +1637,7 @@
           </div>
         `;
       } else if (type === 'institution') {
-        item = PogiStore.getInstitutions().find(i => i.id === id);
+        item = getDefaultListForTab('institution').find(i => String(i.id) === String(id));
         if (!item) return;
         title.innerText = 'Rincian RS: ' + item.name;
         html = `
@@ -1660,7 +1660,7 @@
           </div>
         `;
       } else if (type === 'event') {
-        item = PogiStore.getEvents().find(e => e.id === id);
+        item = getDefaultListForTab('event').find(e => String(e.id) === String(id));
         if (!item) return;
         title.innerText = 'Rincian Kegiatan SKP: ' + (item.name || item.title);
         html = `
@@ -1691,7 +1691,7 @@
           </div>
         `;
       } else if (type === 'category') {
-        item = PogiStore.getCategories().find(c => c.id === id);
+        item = getDefaultListForTab('category').find(c => String(c.id) === String(id));
         if (!item) return;
         title.innerText = 'Rincian Kategori: ' + item.name;
         html = `
@@ -1713,7 +1713,7 @@
           </div>
         `;
       } else if (type === 'user') {
-        item = PogiStore.getUsers().find(u => u.id === id);
+        item = getDefaultListForTab('user').find(u => String(u.id) === String(id));
         if (!item) return;
         title.innerText = 'Rincian User: ' + item.name;
         html = `
@@ -1756,7 +1756,7 @@
       activeActionContext = { type, id };
 
       if (type === 'doctor') {
-        const item = PogiStore.getDoctors().find(d => d.id === id);
+        const item = getDefaultListForTab('doctor').find(d => String(d.id) === String(id));
         if (!item) return;
         title.innerText = 'Edit Dokter Obgyn: ' + item.name;
         container.innerHTML = `
@@ -1775,7 +1775,7 @@
           <div><label class="font-bold text-slate-700 block mb-1">No. WhatsApp</label><input type="text" id="editDocPhone" value="${item.phone || ''}" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono" /></div>
         `;
       } else if (type === 'institution') {
-        const item = PogiStore.getInstitutions().find(i => i.id === id);
+        const item = getDefaultListForTab('institution').find(i => String(i.id) === String(id));
         if (!item) return;
         title.innerText = 'Edit Rumah Sakit: ' + item.name;
         container.innerHTML = `
@@ -1784,7 +1784,7 @@
           <div><label class="font-bold text-slate-700 block mb-1">Alamat Lengkap</label><textarea id="editInstAddr" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">${item.address || ''}</textarea></div>
         `;
       } else if (type === 'event') {
-        const item = PogiStore.getEvents().find(e => e.id === id);
+        const item = getDefaultListForTab('event').find(e => String(e.id) === String(id));
         if (!item) return;
         title.innerText = 'Edit Event: ' + (item.name || item.title);
         container.innerHTML = `
@@ -1804,7 +1804,7 @@
           <div><label class="font-bold text-slate-700 block mb-1">Tanggal Pelaksanaan</label><input type="text" id="editEvDate" value="${item.date || ''}" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl" /></div>
         `;
       } else if (type === 'category') {
-        const item = PogiStore.getCategories().find(c => c.id === id);
+        const item = getDefaultListForTab('category').find(c => String(c.id) === String(id));
         if (!item) return;
         title.innerText = 'Edit Kategori: ' + item.name;
         container.innerHTML = `
@@ -1819,7 +1819,7 @@
           </div>
         `;
       } else if (type === 'user') {
-        const item = PogiStore.getUsers().find(u => u.id === id);
+        const item = getDefaultListForTab('user').find(u => String(u.id) === String(id));
         if (!item) return;
         title.innerText = 'Edit User: ' + item.name;
         container.innerHTML = `
@@ -1851,7 +1851,7 @@
       if (!type || !id) return;
 
       if (type === 'doctor') {
-        const docs = PogiStore.getDoctors();
+        const docs = getDefaultListForTab('doctor');
         const doc = docs.find(d => d.id === id);
         if (doc) {
           doc.name = document.getElementById('editDocName').value;
@@ -1860,23 +1860,23 @@
           doc.institution = document.getElementById('editDocInst').value;
           doc.phone = document.getElementById('editDocPhone').value;
           doc.skpDisplay = document.getElementById('editDocSkp').value;
-          PogiStore.saveDoctors(docs);
+          
           renderManageDoctorTable(null, false);
           showToast('Data Dokter ' + doc.name + ' berhasil diperbarui!', 'success');
         }
       } else if (type === 'institution') {
-        const list = PogiStore.getInstitutions();
+        const list = getDefaultListForTab('institution');
         const inst = list.find(i => i.id === id);
         if (inst) {
           inst.name = document.getElementById('editInstName').value;
           inst.province = document.getElementById('editInstProv').value;
           inst.address = document.getElementById('editInstAddr').value;
-          PogiStore.saveInstitutions(list);
+          
           renderManageInstTable(null, false);
           showToast('Data Institusi berhasil diperbarui!', 'success');
         }
       } else if (type === 'event') {
-        const list = PogiStore.getEvents();
+        const list = getDefaultListForTab('event');
         const ev = list.find(e => e.id === id);
         if (ev) {
           ev.name = document.getElementById('editEvName').value;
@@ -1886,35 +1886,35 @@
           ev.credits = parseFloat(ev.creditsDisplay) || 1;
           ev.category = document.getElementById('editEvCat').value;
           ev.date = document.getElementById('editEvDate').value;
-          PogiStore.saveEvents(list);
+          
           renderManageEventTable(null, false);
           showToast('Data SKP Event berhasil diperbarui!', 'success');
         }
       } else if (type === 'category') {
-        const list = PogiStore.getCategories();
+        const list = getDefaultListForTab('category');
         const cat = list.find(c => c.id === id);
         if (cat) {
           cat.name = document.getElementById('editCatName').value;
           cat.type = document.getElementById('editCatType').value;
-          PogiStore.saveCategories(list);
+          
           renderManageCatTable(null, false);
           showToast('Data Kategori berhasil diperbarui!', 'success');
         }
       } else if (type === 'user') {
-        const list = PogiStore.getUsers();
+        const list = getDefaultListForTab('user');
         const usr = list.find(u => u.id === id);
         if (usr) {
           usr.name = document.getElementById('editUsrName').value;
           usr.email = document.getElementById('editUsrEmail').value;
           usr.role = document.getElementById('editUsrRole').value;
-          PogiStore.saveUsers(list);
+          
           renderManageUserTable(null, false);
           showToast('Data User berhasil diperbarui!', 'success');
         }
       }
 
       PogiStore.addActivity({
-        actor: 'Siti Rahma (Admin Data)',
+        actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
         action: 'Update Data ' + type.toUpperCase(),
         details: 'Memperbarui data master ' + type + ' ID: ' + id,
         category: 'Verification'
@@ -1929,34 +1929,24 @@
       }
 
       if (type === 'doctor') {
-        let docs = PogiStore.getDoctors();
-        docs = docs.filter(d => d.id !== id);
-        PogiStore.saveDoctors(docs);
+        window.LIVE_MANAGE_DOCTORS = (window.LIVE_MANAGE_DOCTORS || []).filter(d => String(d.id) !== String(id));
         renderManageDoctorTable(null, false);
       } else if (type === 'institution') {
-        let list = PogiStore.getInstitutions();
-        list = list.filter(i => i.id !== id);
-        PogiStore.saveInstitutions(list);
+        window.LIVE_MANAGE_INSTITUTIONS = (window.LIVE_MANAGE_INSTITUTIONS || []).filter(i => String(i.id) !== String(id));
         renderManageInstTable(null, false);
       } else if (type === 'event') {
-        let list = PogiStore.getEvents();
-        list = list.filter(e => e.id !== id);
-        PogiStore.saveEvents(list);
+        window.LIVE_MANAGE_EVENTS = (window.LIVE_MANAGE_EVENTS || []).filter(e => String(e.id) !== String(id));
         renderManageEventTable(null, false);
       } else if (type === 'category') {
-        let list = PogiStore.getCategories();
-        list = list.filter(c => c.id !== id);
-        PogiStore.saveCategories(list);
+        window.LIVE_MANAGE_CATEGORIES = (window.LIVE_MANAGE_CATEGORIES || []).filter(c => String(c.id) !== String(id));
         renderManageCatTable(null, false);
       } else if (type === 'user') {
-        let list = PogiStore.getUsers();
-        list = list.filter(u => u.id !== id);
-        PogiStore.saveUsers(list);
+        window.LIVE_MANAGE_USERS = (window.LIVE_MANAGE_USERS || []).filter(u => String(u.id) !== String(id));
         renderManageUserTable(null, false);
       }
 
       PogiStore.addActivity({
-        actor: 'Siti Rahma (Admin Data)',
+        actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
         action: 'Hapus Data ' + type.toUpperCase(),
         details: 'Menghapus data ' + type + ' dari database master ID: ' + id,
         category: 'Verification'
@@ -2072,7 +2062,7 @@
         const phone = document.getElementById('addDocPhone').value;
         const skp = document.getElementById('addDocSkp').value;
 
-        const docs = PogiStore.getDoctors();
+        const docs = getDefaultListForTab('doctor');
         docs.unshift({
           id: 'doc-' + Date.now(),
           name,
@@ -2106,7 +2096,7 @@
         const prov = document.getElementById('addInstProv').value;
         const addr = document.getElementById('addInstAddr').value;
 
-        const list = PogiStore.getInstitutions();
+        const list = getDefaultListForTab('institution');
         list.unshift({
           id: 'inst-' + Date.now(),
           name,
@@ -2124,7 +2114,7 @@
         const cat = document.getElementById('addEvCat').value;
         const date = document.getElementById('addEvDate').value;
 
-        const list = PogiStore.getEvents();
+        const list = getDefaultListForTab('event');
         list.unshift({
           id: 'ev-' + Date.now(),
           name,
@@ -2145,7 +2135,7 @@
         const name = document.getElementById('addCatName').value;
         const type = document.getElementById('addCatType').value;
 
-        const list = PogiStore.getCategories();
+        const list = getDefaultListForTab('category');
         list.unshift({
           id: 'cat-' + Date.now(),
           name,
@@ -2160,7 +2150,7 @@
         const email = document.getElementById('addUsrEmail').value;
         const role = document.getElementById('addUsrRole').value;
 
-        const list = PogiStore.getUsers();
+        const list = getDefaultListForTab('user');
         list.unshift({
           id: 'usr-' + Date.now(),
           name,
@@ -2174,7 +2164,7 @@
       }
 
       PogiStore.addActivity({
-        actor: 'Siti Rahma (Admin Data)',
+        actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
         action: 'Tambah ' + currentTab.toUpperCase(),
         details: 'Menambahkan data baru pada tab master: ' + currentTab,
         category: 'Verification'

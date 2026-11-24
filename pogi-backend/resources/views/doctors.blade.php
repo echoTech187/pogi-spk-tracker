@@ -353,7 +353,7 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">PIC Admin / Dokter Binaan</label>
             <select id="newDocAssignedTo" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
-              <option value="Siti Rahma">Siti Rahma (Lead Admin POGI Tim Data Pusat)</option>
+              <option value="Anna">Anna (Admin POGI)</option><option value="Vivi">Vivi (Admin POGI)</option><option value="Lily">Lily (Admin POGI)</option>
               <option value="Dewi Lestari">Dewi Lestari (Admin POGI DKI &amp; Banten)</option>
               <option value="Wahyu Setiawan">Wahyu Setiawan (Admin POGI Jawa Barat)</option>
               <option value="Melati Sihombing">Melati Sihombing (Admin POGI Jawa Tengah &amp; DIY)</option>
@@ -486,7 +486,7 @@
                 <span>POGI SKP TRACKER (NOTIFIKASI RESMI ENERGI CIPTA)</span>
               </div>
               <div id="blastMessagePreviewBody" class="whitespace-pre-line font-mono text-[10.5px]">
-Yth. dr. Nurul Anggraini, Sp.OG (POGI Cabang DKI Jakarta),
+Yth. [Nama Dokter], Sp.OG (POGI Cabang [Provinsi]),
 
 Berdasarkan regulasi resmi Kemenkes RI (KMK HK.01.07/MENKES/1561/2024 & KMK HK.01.07/MENKES/1111/2026), masa cutoff pemantauan SKP periode berjalan akan dikunci pada 01 Des 2026 pukul 00:00 WIB.
 
@@ -655,8 +655,14 @@ Admin Data PP POGI & PT Energi Cipta
 
 
     const LIVE_DATABASE_DOCTORS = @json($doctors ?? []);
+    const LIVE_SERVER_PROVINCES = @json($provinces ?? []);
+    const LIVE_SERVER_INSTITUTIONS = @json($institutions ?? []);
+    window.LIVE_DATABASE_DOCTORS = LIVE_DATABASE_DOCTORS;
+    window.LIVE_SERVER_DOCTORS = LIVE_DATABASE_DOCTORS;
+    window.LIVE_SERVER_PROVINCES = LIVE_SERVER_PROVINCES;
+    window.LIVE_SERVER_INSTITUTIONS = LIVE_SERVER_INSTITUTIONS;
     let activeDoctorId = null;
-    let doctorPagination = { page: 1, limit: 10, total: LIVE_DATABASE_DOCTORS.length || 200 };
+    let doctorPagination = { page: 1, limit: 10, total: LIVE_DATABASE_DOCTORS.length || 0 };
     let currentFilteredDoctors = null;
     let currentPipelineFilter = 'all';
 
@@ -1166,7 +1172,7 @@ Admin Data PP POGI & PT Energi Cipta
       // 1. Populasi Dropdown Provinsi (38 Provinsi Nasional)
       const provSelect = document.getElementById('newDocProv');
       if (provSelect && provSelect.options.length <= 1) {
-        const provs = (typeof INITIAL_PROVINCES !== 'undefined') ? INITIAL_PROVINCES : [];
+        const provs = (typeof LIVE_SERVER_PROVINCES !== 'undefined' && LIVE_SERVER_PROVINCES.length > 0) ? LIVE_SERVER_PROVINCES : [];
         provs.forEach(p => {
           const opt = document.createElement('option');
           opt.value = p.name || p;
@@ -1178,7 +1184,7 @@ Admin Data PP POGI & PT Energi Cipta
       // 2. Populasi Dropdown Institusi / RS Jejaring
       const instSelect = document.getElementById('newDocInst');
       if (instSelect && instSelect.options.length <= 1) {
-        const insts = (typeof INITIAL_INSTITUTIONS !== 'undefined') ? INITIAL_INSTITUTIONS : [];
+        const insts = (typeof LIVE_SERVER_INSTITUTIONS !== 'undefined' && LIVE_SERVER_INSTITUTIONS.length > 0) ? LIVE_SERVER_INSTITUTIONS : [];
         insts.forEach(inst => {
           const opt = document.createElement('option');
           opt.value = inst.name || inst;
@@ -1206,7 +1212,7 @@ Admin Data PP POGI & PT Energi Cipta
       const periodEnd = (document.getElementById('newDocPeriodEnd')?.value || '31 Des 2030').trim();
       const lmsUser = (document.getElementById('newDocLmsUsername')?.value || '').trim();
       const lmsPass = (document.getElementById('newDocLmsPassword')?.value || '').trim();
-      const assignedTo = (document.getElementById('newDocAssignedTo') ? document.getElementById('newDocAssignedTo').value : 'Siti Rahma');
+      const assignedTo = (document.getElementById('newDocAssignedTo') ? document.getElementById('newDocAssignedTo').value : 'Anna');
 
       if (!name) {
         showToast('Mohon masukkan nama dokter!', 'error');

@@ -246,6 +246,9 @@
     }
 
     const LIVE_SERVER_EVENTS = @json($events ?? []);
+    const LIVE_SERVER_DOCTORS = @json($doctors ?? []);
+    window.LIVE_SERVER_EVENTS = LIVE_SERVER_EVENTS;
+    window.LIVE_SERVER_DOCTORS = LIVE_SERVER_DOCTORS;
     let activeFilter = 'ALL';
     let eventPagination = { page: 1, limit: 6, total: LIVE_SERVER_EVENTS.length || 0 };
     let currentFilteredEvents = null;
@@ -255,7 +258,7 @@
     });
 
     function changeEventPage(p) {
-      const list = currentFilteredEvents || (LIVE_SERVER_EVENTS.length > 0 ? LIVE_SERVER_EVENTS : PogiStore.getEvents());
+      const list = currentFilteredEvents || (LIVE_SERVER_EVENTS.length > 0 ? LIVE_SERVER_EVENTS : []);
       const totalPages = Math.max(1, Math.ceil(list.length / eventPagination.limit));
       if (p < 1) p = 1;
       if (p > totalPages) p = totalPages;
@@ -273,7 +276,7 @@
       if (resetPage) eventPagination.page = 1;
       const events = (LIVE_SERVER_EVENTS && LIVE_SERVER_EVENTS.length > 0)
         ? LIVE_SERVER_EVENTS
-        : ((typeof PogiStore !== 'undefined') ? PogiStore.getEvents() : []);
+        : [];
       const gridContainer = document.getElementById('eventsGridContainer');
       if (!gridContainer) return;
 
@@ -378,21 +381,25 @@
       if (titleEl) titleEl.innerText = 'Peserta: ' + title;
       if (metaEl) metaEl.innerText = 'Nilai Kredit: +' + credits + ' SKP • Terverifikasi Plataran Sehat Kemenkes';
 
-      const doctors = PogiStore.getDoctors().slice(0, 10);
-      tbody.innerHTML = doctors.map(d => `
-        <tr class="hover:bg-slate-50 transition">
-          <td class="py-2.5 px-3">
-            <div class="font-bold text-slate-900">${d.name}</div>
-            <div class="text-[10px] text-slate-400 font-mono">${d.pogiId}</div>
-          </td>
-          <td class="py-2.5 px-3 text-slate-600">${d.province}</td>
-          <td class="py-2.5 px-3 text-slate-600">${d.institution}</td>
-          <td class="py-2.5 px-3 text-center">
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">Tuntas Hadir</span>
-          </td>
-          <td class="py-2.5 px-3 text-center font-black text-[#16b3ac]">+${credits} SKP</td>
-        </tr>
-      `).join('');
+      const doctors = (LIVE_SERVER_DOCTORS && LIVE_SERVER_DOCTORS.length > 0) ? LIVE_SERVER_DOCTORS : [];
+      if (doctors.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400 italic">Belum ada peserta dokter terdaftar untuk kegiatan ini.</td></tr>`;
+      } else {
+        tbody.innerHTML = doctors.map(d => `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="py-2.5 px-3">
+              <div class="font-bold text-slate-900">${d.name}</div>
+              <div class="text-[10px] text-slate-400 font-mono">${d.pogiId || '-'}</div>
+            </td>
+            <td class="py-2.5 px-3 text-slate-600">${d.province || '-'}</td>
+            <td class="py-2.5 px-3 text-slate-600">${d.institution || '-'}</td>
+            <td class="py-2.5 px-3 text-center">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">Tuntas Hadir</span>
+            </td>
+            <td class="py-2.5 px-3 text-center font-black text-[#16b3ac]">+${credits} SKP</td>
+          </tr>
+        `).join('');
+      }
 
       modal.classList.remove('hidden');
     }

@@ -183,7 +183,7 @@ function handleGlobalTopSearch(query) {
   html += `
     </div>
     <div class="px-3.5 pt-2 border-t border-slate-100 text-center">
-      <a href="doctors.html?search=${encodeURIComponent(query)}" class="text-[#16b3ac] hover:underline font-bold text-[11px]">
+      <a href="/doctors?search=${encodeURIComponent(query)}" class="text-[#16b3ac] hover:underline font-bold text-[11px]">
         Lihat semua dokter di Direktori &rarr;
       </a>
     </div>
@@ -197,7 +197,7 @@ function handleGlobalSearchKeydown(e) {
   if (e.key === 'Enter') {
     const input = document.getElementById('topGlobalSearchInput');
     if (input && input.value.trim()) {
-      window.location.href = 'doctors.html?search=' + encodeURIComponent(input.value.trim());
+      window.location.href = '/doctors?search=' + encodeURIComponent(input.value.trim());
     }
   } else if (e.key === 'Escape') {
     clearGlobalTopSearch();
@@ -229,7 +229,7 @@ function selectGlobalSearchResult(docId) {
   if (typeof openDoctorDetailModal === 'function') {
     openDoctorDetailModal(docId);
   } else {
-    window.location.href = 'doctors.html?openDoc=' + encodeURIComponent(docId);
+    window.location.href = '/doctor-detail?id=' + encodeURIComponent(docId);
   }
 }
 
@@ -481,13 +481,13 @@ function switchUserRole(roleKey) {
   
   // Guard per role saat berpindah role
   if (target.role === 'DOKTER') {
-    if (currentPath.includes('admin-performance') || currentPath.includes('manage.html') || currentPath.includes('provinces.html')) {
-      window.location.href = 'doctor-detail.html?id=doc-001';
+    if (currentPath.includes('admin-performance') || currentPath.includes('manage') || currentPath.includes('provinces.html')) {
+      window.location.href = '/doctor-detail';
       return;
     }
   } else if (target.role === 'ADMIN_POGI' || target.role === 'VERIFIKATOR' || target.role === 'ADMIN_CABANG') {
     if (currentPath.includes('admin-performance')) {
-      window.location.href = 'dashboard.html';
+      window.location.href = '/dashboard';
       return;
     }
   }
@@ -534,7 +534,7 @@ function applyRbacEnforcement() {
     if (profileCard) {
       const avatarEl = profileCard.querySelector('.rounded-full') || profileCard.querySelector('div');
       if (avatarEl) {
-        avatarEl.innerText = user.avatar || (roleKey === 'SUPER_ADMIN' ? 'SA' : (roleKey === 'ADMIN_PUSAT' ? 'BP' : (roleKey === 'ADMIN_CABANG' ? 'DF' : (roleKey === 'DOKTER' ? 'CS' : 'AP'))));
+        avatarEl.innerText = user.avatar || (user.name ? user.name.replace(/dr\.\s*|Sp\.OG.*|Prof\.|Dr\./gi, '').trim().split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() : (roleKey === 'SUPER_ADMIN' ? 'SA' : (roleKey === 'ADMIN_PUSAT' ? 'PP' : (roleKey === 'ADMIN_CABANG' ? 'AC' : (roleKey === 'DOKTER' ? 'DR' : 'AP')))));
         avatarEl.className = 'w-9 h-9 rounded-full ' + (user.avatarBg || (roleKey === 'SUPER_ADMIN' ? 'bg-purple-700 text-white' : (roleKey === 'ADMIN_PUSAT' ? 'bg-indigo-700 text-white' : (roleKey === 'ADMIN_CABANG' ? 'bg-sky-700 text-white' : (roleKey === 'DOKTER' ? 'bg-teal-700 text-white' : 'bg-[#16b3ac] text-white'))))) + ' font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs';
       }
       const textContainer = profileCard.querySelector('.min-w-0');
@@ -548,17 +548,17 @@ function applyRbacEnforcement() {
 
     // Nav Item Visibility:
     // admin-performance.html: KHUSUS Admin Pusat & Super Admin (Memantau aktivitas & kinerja verifikator)
-    document.querySelectorAll('a[href="admin-performance.html"]').forEach(link => {
+    document.querySelectorAll('a[href*="admin-performance"]').forEach(link => {
       link.style.display = (roleKey === 'SUPER_ADMIN' || roleKey === 'ADMIN_PUSAT') ? 'flex' : 'none';
     });
 
     // manage.html (Pengaturan Data): Disembunyikan untuk User/Dokter
-    document.querySelectorAll('a[href*="manage.html"]').forEach(link => {
+    document.querySelectorAll('a[href*="manage"]').forEach(link => {
       link.style.display = (roleKey === 'DOKTER') ? 'none' : 'flex';
     });
 
     // provinces.html & activity.html: Disembunyikan untuk User/Dokter
-    document.querySelectorAll('a[href*="provinces.html"], a[href*="activity.html"]').forEach(link => {
+    document.querySelectorAll('a[href*="provinces"], a[href*="activity"]').forEach(link => {
       link.style.display = (roleKey === 'DOKTER') ? 'none' : 'flex';
     });
 
@@ -576,7 +576,7 @@ function applyRbacEnforcement() {
   if (topUserBtn) {
     const topAv = topUserBtn.querySelector('div');
     if (topAv) {
-      topAv.innerText = user.avatar || (roleKey === 'SUPER_ADMIN' ? 'SA' : (roleKey === 'ADMIN_PUSAT' ? 'BP' : (roleKey === 'ADMIN_CABANG' ? 'DF' : (roleKey === 'DOKTER' ? 'CS' : 'AP'))));
+      topAv.innerText = user.avatar || (user.name ? user.name.replace(/dr\.\s*|Sp\.OG.*|Prof\.|Dr\./gi, '').trim().split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() : (roleKey === 'SUPER_ADMIN' ? 'SA' : (roleKey === 'ADMIN_PUSAT' ? 'PP' : (roleKey === 'ADMIN_CABANG' ? 'AC' : (roleKey === 'DOKTER' ? 'DR' : 'AP')))));
       topAv.className = 'w-7 h-7 rounded-lg ' + (user.avatarBg || (roleKey === 'SUPER_ADMIN' ? 'bg-purple-700 text-white' : (roleKey === 'ADMIN_PUSAT' ? 'bg-indigo-700 text-white' : (roleKey === 'ADMIN_CABANG' ? 'bg-sky-700 text-white' : (roleKey === 'DOKTER' ? 'bg-teal-700 text-white' : 'bg-[#16b3ac] text-white'))))) + ' font-extrabold text-[11px] flex items-center justify-center shadow-2xs';
     }
   }
@@ -619,7 +619,7 @@ function applyRbacEnforcement() {
             Modul <strong>Admin Performance &amp; SLA Tracker</strong> adalah instrumen evaluasi nasional untuk <strong>Admin Pusat</strong> dan <strong>Super Admin</strong> guna memantau performa serta kecepatan verifikasi tim Admin POGI.
           </p>
           <div class="pt-2">
-            <a href="dashboard.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#16b3ac] text-white text-xs font-bold hover:bg-[#129993] transition">
+            <a href="/dashboard" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#16b3ac] text-white text-xs font-bold hover:bg-[#129993] transition">
               <span class="material-symbols-outlined text-sm">dashboard</span>
               <span>Kembali ke Dashboard</span>
             </a>
@@ -631,7 +631,7 @@ function applyRbacEnforcement() {
   }
 
   // Guard: manage.html untuk DOKTER
-  if (currentPath.includes('manage.html') && roleKey === 'DOKTER') {
+  if (currentPath.includes('manage') && roleKey === 'DOKTER') {
     const mainEl = document.querySelector('main');
     if (mainEl) {
       mainEl.innerHTML = `
@@ -644,7 +644,7 @@ function applyRbacEnforcement() {
             Modul <strong>Pengaturan Data (Manage)</strong> hanya dapat diakses oleh Administrator &amp; Admin POGI. Sebagai dokter, Anda dapat mengakses portofolio SKP Anda secara mandiri.
           </p>
           <div class="pt-2">
-            <a href="doctor-detail.html?id=doc-001" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#16b3ac] text-white text-xs font-bold hover:bg-[#129993] transition">
+            <a href="/doctor-detail" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#16b3ac] text-white text-xs font-bold hover:bg-[#129993] transition">
               <span class="material-symbols-outlined text-sm">person</span>
               <span>Ke Profil SKP Saya</span>
             </a>
@@ -656,7 +656,7 @@ function applyRbacEnforcement() {
   }
 
   // Guard: manage.html Tab User — EKSKLUSIF Super Admin (Sembunyikan untuk selain Super Admin)
-  if (currentPath.includes('manage.html') && roleKey !== 'SUPER_ADMIN') {
+  if (currentPath.includes('manage') && roleKey !== 'SUPER_ADMIN') {
     const tabUserBtn = document.getElementById('tab-btn-user');
     const sideUserBtn = document.getElementById('side-nav-user');
     if (tabUserBtn) tabUserBtn.style.display = 'none';
@@ -690,7 +690,7 @@ function applyRbacEnforcement() {
     banner.innerHTML = `
       <div class="flex items-center gap-2">
         <span class="material-symbols-outlined text-base text-indigo-600">monitoring</span>
-        <span>Mode Akses: <strong>Admin Pusat (Bagus Pranoto)</strong> — Memantau setiap aktifitas, log audit, dan performa SLA tim Admin POGI.</span>
+        <span>Mode Akses: <strong>POGI Pusat (${user.name || 'Pengurus Pusat'})</strong> — Memantau setiap aktifitas, log audit, dan performa SLA tim Admin POGI di seluruh wilayah cabang.</span>
       </div>
       <span class="px-2.5 py-0.5 rounded-full bg-indigo-200 text-indigo-900 text-xs font-black uppercase">Pemantau Admin POGI</span>
     `;
@@ -720,7 +720,7 @@ function applyRbacEnforcement() {
     banner.innerHTML = `
       <div class="flex items-center gap-2">
         <span class="material-symbols-outlined text-base text-[#16b3ac]">verified_user</span>
-        <span>Mode Akses: <strong>Admin POGI (Siti Rahma, S.Farm)</strong> — Melakukan kesesuaian dokumen, validasi SKP, verifikasi kredit, &amp; monitoring dokter PJ.</span>
+        <span>Mode Akses: <strong>Admin POGI (${user.name || 'Tim Verifikator'})</strong> — Melakukan kesesuaian dokumen, validasi SKP, verifikasi kredit, &amp; sinkronisasi Kemenkes.</span>
       </div>
       <span class="px-2.5 py-0.5 rounded-full bg-emerald-200 text-[#16b3ac] text-xs font-black uppercase">Admin POGI</span>
     `;

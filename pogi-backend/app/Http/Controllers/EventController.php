@@ -57,10 +57,25 @@ class EventController extends Controller
             'total_categories' => $categories->count(),
         ];
 
+        $doctors = DB::table('doctors')
+            ->leftJoin('pogi_branches', 'doctors.branch_id', '=', 'pogi_branches.id')
+            ->leftJoin('institutions', 'doctors.primary_institution_id', '=', 'institutions.id')
+            ->leftJoin('provinces', 'doctors.province_id', '=', 'provinces.id')
+            ->select(
+                'doctors.id',
+                'doctors.full_name as name',
+                'doctors.npa_pogi as pogiId',
+                'provinces.name as province',
+                'institutions.name as institution'
+            )
+            ->take(15)
+            ->get();
+
         return view('events', [
             'events' => $events,
             'categories' => $categories,
             'metrics' => $metrics,
+            'doctors' => $doctors,
         ]);
     }
 }
