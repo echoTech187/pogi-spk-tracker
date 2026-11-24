@@ -379,7 +379,12 @@ function performLogout() {
       sessionStorage.clear();
     } catch (e) {}
 
-    window.location.href = '/logout';
+    const isLaravel = document.querySelector('meta[name="csrf-token"]') !== null;
+    if (isLaravel) {
+      window.location.href = '/logout';
+    } else {
+      window.location.href = 'index.html';
+    }
   }
 }
 
