@@ -102,6 +102,9 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/activity', [ActivityController::class, 'index'])
         ->name('activity')
         ->middleware('role:SUPER_ADMIN,ADMIN_PUSAT');
+    Route::post('/activity/cron-simulation', [ActivityController::class, 'simulateCron'])
+        ->name('activity.cron-simulation')
+        ->middleware('role:SUPER_ADMIN,ADMIN_PUSAT');
 
     // 2.10 Pengaturan Master Data (Eksklusif SUPER_ADMIN - RULES.md Bab 7)
     Route::get('/manage', [ManageController::class, 'index'])

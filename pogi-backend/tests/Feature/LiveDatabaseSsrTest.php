@@ -62,6 +62,32 @@ class LiveDatabaseSsrTest extends TestCase
         $response->assertStatus(200)
             ->assertViewHas('logs')
             ->assertViewHas('metrics');
+
+        $logs = $response->viewData('logs');
+        $this->assertNotEmpty($logs);
+        $categories = collect($logs)->pluck('category')->unique();
+        $this->assertTrue($categories->contains('Sync'));
+        $this->assertTrue($categories->contains('Verification'));
+        $this->assertTrue($categories->contains('Automation'));
+    }
+
+    public function test_activity_cron_simulation_records_audit_log(): void
+    {
+        $superAdmin = $this->getSuperAdmin();
+
+        $response = $this->actingAs($superAdmin)->postJson('/activity/cron-simulation', [
+            'trigger' => 'H-7'
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('trigger', 'H-7')
+            ->assertJsonPath('log.category', 'Automation');
+
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'CRON_TRIGGER_H7_REMINDER',
+            'entity_name' => 'cron_scheduler'
+        ]);
     }
 
     public function test_admin_performance_renders_live_team_metrics(): void

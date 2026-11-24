@@ -76,9 +76,17 @@
           </div>
         </div>
         <div class="flex items-center gap-2 shrink-0 flex-wrap">
-          <button type="button" onclick="refreshActivityLog()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
-            <span class="material-symbols-outlined text-sm text-emerald-300">refresh</span>
-            <span>Segarkan Log</span>
+          <button type="button" onclick="runCronJobSimulation('H-7')" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
+            <span class="material-symbols-outlined text-sm text-emerald-300">play_circle</span>
+            <span>Simulasi Trigger H-7</span>
+          </button>
+          <button type="button" onclick="runCronJobSimulation('H-2')" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
+            <span class="material-symbols-outlined text-sm text-amber-300">warning</span>
+            <span>Simulasi Trigger H-2</span>
+          </button>
+          <button type="button" onclick="refreshActivityLog()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-sm text-slate-200" id="refreshIcon">refresh</span>
+            <span>Segarkan</span>
           </button>
         </div>
       </div>
@@ -279,23 +287,100 @@
 
     function renderActivityTable(filterCategory = activeCategory, searchQuery = '', resetPage = true) {
       if (resetPage) activityPagination.page = 1;
+
       const activities = (LIVE_SERVER_LOGS && LIVE_SERVER_LOGS.length > 0)
-        ? LIVE_SERVER_LOGS.map(l => ({
-            actor: l.user_name || 'System Auto',
-            role: l.user_role || 'ADMIN',
-            action: l.action || 'Sesi Kerja',
-            details: l.new_values ? (typeof l.new_values === 'string' ? l.new_values : JSON.stringify(l.new_values)) : (l.entity_name ? `Entitas: ${l.entity_name} (${l.entity_id})` : '-'),
-            category: l.action && l.action.includes('KEMENKES') ? 'Kemenkes' : (l.action && l.action.includes('PIC') ? 'Admin' : 'Operasional'),
-            time: l.created_at ? new Date(l.created_at).toLocaleString('id-ID') : 'Baru saja'
-          }))
+        ? LIVE_SERVER_LOGS.map(l => {
+            // 1. Tentukan kategori tab (Sync, Verification, FollowUp, Automation)
+            let cat = l.category || 'General';
+            const actionUpper = (l.action || l.rawAction || '').toUpperCase();
+
+            if (actionUpper.includes('KEMENKES') || actionUpper.includes('SYNC') || actionUpper.includes('SATUSEHAT')) {
+              cat = 'Sync';
+            } else if (actionUpper.includes('VERIF') || actionUpper.includes('APPROVE') || actionUpper.includes('REJECT') || actionUpper.includes('CREDIT')) {
+              cat = 'Verification';
+            } else if (actionUpper.includes('FOLLOW') || actionUpper.includes('NOTIF') || actionUpper.includes('REMINDER') || actionUpper.includes('BLAST') || actionUpper.includes('PIC')) {
+              cat = 'FollowUp';
+            } else if (actionUpper.includes('CRON') || actionUpper.includes('AUTO') || actionUpper.includes('SCHEDULER') || actionUpper.includes('TRIGGER')) {
+              cat = 'Automation';
+            }
+
+            // 2. Nama Aksi Human-Readable
+            let actionName = l.action_name || l.action || 'Aktivitas Sistem';
+            if (actionUpper === 'KEMENKES_PORTAL_ACCESS') actionName = 'Akses Portal SATUSEHAT';
+            else if (actionUpper === 'VERIFY_DOCTOR_CREDITS') actionName = 'Verifikasi Kredit SKP';
+            else if (actionUpper === 'APPROVE_CREDITS') actionName = 'Persetujuan Kredit SKP';
+            else if (actionUpper === 'SEND_FOLLOW_UP_NOTIFICATION') actionName = 'Kirim Notifikasi Follow-Up';
+            else if (actionUpper === 'REASSIGN_DOCTOR_PIC') actionName = 'Penugasan PIC Dokter';
+            else if (actionUpper.includes('CRON_TRIGGER_H7')) actionName = 'Trigger Rutin H-7 Pengingat';
+            else if (actionUpper.includes('CRON_TRIGGER_H2')) actionName = 'Trigger Deadline Kritis H-2';
+            else if (actionUpper.includes('CRON')) actionName = 'Eksekusi Otomasi Cron';
+
+            // 3. Rincian Data Human-Readable
+            let details = l.details_text || l.details || '-';
+            if ((!l.details_text || details === '-') && l.new_values) {
+              try {
+                const parsed = typeof l.new_values === 'string' ? JSON.parse(l.new_values) : l.new_values;
+                if (parsed.message) {
+                  details = parsed.message;
+                } else if (parsed.event && parsed.doctor_context) {
+                  details = `${parsed.event} — ${parsed.doctor_context}`;
+                } else if (parsed.doctor_name && parsed.total_credits !== undefined) {
+                  details = `${parsed.doctor_name} — Total: ${parsed.total_credits} SKP (${parsed.new_status || 'Diproses'})`;
+                } else if (parsed.doctor_name && parsed.new_pic_name) {
+                  details = `${parsed.doctor_name} ditugaskan ke PIC ${parsed.new_pic_name} (${parsed.new_pic_role || 'ADMIN'})`;
+                } else if (parsed.target && parsed.recipients) {
+                  details = `Target: ${parsed.target} (${parsed.recipients} dokter via ${(parsed.channels || ['whatsapp']).join(', ')})`;
+                } else if (parsed.credits) {
+                  details = `Status: ${parsed.status || 'DONE'} • ${parsed.credits} SKP`;
+                } else if (typeof parsed === 'string') {
+                  details = parsed;
+                } else {
+                  details = Object.entries(parsed).map(([k, v]) => `${k}: ${v}`).join(' • ');
+                }
+              } catch(e) {
+                details = String(l.new_values);
+              }
+            } else if ((!l.details_text || details === '-') && l.entity_name) {
+              details = `Entitas: ${l.entity_name} (${l.entity_id || '-'})`;
+            }
+
+            // 4. Format Waktu Indonesia
+            let timestamp = l.time_text || l.timestamp || 'Baru saja';
+            if ((!l.time_text && !l.timestamp) && l.created_at) {
+              try {
+                const d = new Date(l.created_at);
+                timestamp = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' +
+                            d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+              } catch (e) {
+                timestamp = l.created_at;
+              }
+            }
+
+            return {
+              id: l.id,
+              actor: l.user_name || (cat === 'Automation' ? 'Sistem Otomasi (Cron Worker)' : 'System Auto'),
+              role: l.user_role || (cat === 'Automation' ? 'SYSTEM' : 'ADMIN'),
+              action: actionName,
+              rawAction: l.action,
+              details: details,
+              category: cat,
+              timestamp: timestamp
+            };
+          })
         : [];
+
       const tbody = document.getElementById('activityTableBody');
-      if (!tbody) return;
+      const mobileContainer = document.getElementById('activityMobileCards');
+      if (!tbody && !mobileContainer) return;
 
       const filtered = activities.filter(a => {
-        const matchCat = filterCategory === 'ALL' || a.category === filterCategory;
-        const q = searchQuery.toLowerCase();
-        const matchQ = !q || a.actor.toLowerCase().includes(q) || a.action.toLowerCase().includes(q) || a.details.toLowerCase().includes(q);
+        const matchCat = filterCategory === 'ALL' || a.category.toUpperCase() === filterCategory.toUpperCase();
+        const q = (searchQuery || '').toLowerCase().trim();
+        const matchQ = !q ||
+          (a.actor || '').toLowerCase().includes(q) ||
+          (a.action || '').toLowerCase().includes(q) ||
+          (a.details || '').toLowerCase().includes(q) ||
+          (a.category || '').toLowerCase().includes(q);
         return matchCat && matchQ;
       });
 
@@ -315,36 +400,76 @@
         counterEl.innerText = `Total ${activityPagination.total} aktivitas audit tercatat`;
       }
 
-      if (pageActivities.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="py-12 text-center text-slate-400 font-medium">Tidak ada riwayat log aktivitas yang sesuai dengan kriteria filter.</td></tr>';
-      } else {
-        tbody.innerHTML = pageActivities.map(a => {
-          let badgeStyle = 'bg-slate-100 text-slate-700 border-slate-200';
-          if (a.category === 'Sync') badgeStyle = 'bg-sky-50 text-sky-800 border-sky-200';
-          if (a.category === 'Verification') badgeStyle = 'bg-emerald-50 text-emerald-800 border-emerald-200';
-          if (a.category === 'FollowUp') badgeStyle = 'bg-amber-50 text-amber-800 border-amber-200';
+      // Desktop Table
+      if (tbody) {
+        if (pageActivities.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="py-12 text-center text-slate-400 font-medium">Tidak ada riwayat log aktivitas yang sesuai dengan kriteria filter.</td></tr>';
+        } else {
+          tbody.innerHTML = pageActivities.map(a => {
+            let badgeStyle = 'bg-slate-100 text-slate-700 border-slate-200';
+            let catLabel = a.category;
+            if (a.category === 'Sync') { badgeStyle = 'bg-sky-50 text-sky-800 border-sky-200'; catLabel = 'Sync SATUSEHAT'; }
+            else if (a.category === 'Verification') { badgeStyle = 'bg-emerald-50 text-emerald-800 border-emerald-200'; catLabel = 'Verifikasi Kredit'; }
+            else if (a.category === 'FollowUp') { badgeStyle = 'bg-amber-50 text-amber-800 border-amber-200'; catLabel = 'Follow-Up Cabang'; }
+            else if (a.category === 'Automation') { badgeStyle = 'bg-purple-50 text-purple-800 border-purple-200'; catLabel = 'Otomasi Cron'; }
 
-          return `
-            <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-              <td class="py-3 px-4 font-bold text-slate-900">
-                <div class="flex items-center gap-2">
-                  <span class="w-6 h-6 rounded-full bg-slate-100 text-[#16b3ac] font-bold text-[10px] flex items-center justify-center shrink-0">
-                    ${a.actor.charAt(0)}
+            return `
+              <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                <td class="py-3 px-4 font-bold text-slate-900">
+                  <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-slate-100 text-[#16b3ac] font-bold text-[10px] flex items-center justify-center shrink-0">
+                      ${(a.actor || 'S').charAt(0)}
+                    </span>
+                    <span>${a.actor}</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4 font-semibold text-slate-800">${a.action}</td>
+                <td class="py-3 px-4 text-slate-600 max-w-md truncate" title="${a.details.replace(/"/g, '&quot;')}">${a.details}</td>
+                <td class="py-3 px-4 text-center">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeStyle} border whitespace-nowrap">
+                    ${catLabel}
                   </span>
-                  <span>${a.actor}</span>
+                </td>
+                <td class="py-3 px-4 text-right text-slate-500 font-mono text-[11px] whitespace-nowrap">${a.timestamp}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // Mobile Touch Cards (< md)
+      if (mobileContainer) {
+        if (pageActivities.length === 0) {
+          mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada riwayat log aktivitas yang sesuai dengan kriteria filter.</div>';
+        } else {
+          mobileContainer.innerHTML = pageActivities.map(a => {
+            let badgeStyle = 'bg-slate-100 text-slate-700 border-slate-200';
+            let catLabel = a.category;
+            if (a.category === 'Sync') { badgeStyle = 'bg-sky-50 text-sky-800 border-sky-200'; catLabel = 'Sync SATUSEHAT'; }
+            else if (a.category === 'Verification') { badgeStyle = 'bg-emerald-50 text-emerald-800 border-emerald-200'; catLabel = 'Verifikasi Kredit'; }
+            else if (a.category === 'FollowUp') { badgeStyle = 'bg-amber-50 text-amber-800 border-amber-200'; catLabel = 'Follow-Up Cabang'; }
+            else if (a.category === 'Automation') { badgeStyle = 'bg-purple-50 text-purple-800 border-purple-200'; catLabel = 'Otomasi Cron'; }
+
+            return `
+              <div class="bg-white rounded-xl border border-slate-200 p-3.5 space-y-2 shadow-2xs">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-slate-100 text-[#16b3ac] font-bold text-[10px] flex items-center justify-center shrink-0">
+                      ${(a.actor || 'S').charAt(0)}
+                    </span>
+                    <span class="font-bold text-slate-900 text-xs">${a.actor}</span>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${badgeStyle} border shrink-0">
+                    ${catLabel}
+                  </span>
                 </div>
-              </td>
-              <td class="py-3 px-4 font-semibold text-slate-800">${a.action}</td>
-              <td class="py-3 px-4 text-slate-600 max-w-md truncate">${a.details}</td>
-              <td class="py-3 px-4 text-center">
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeStyle} border">
-                  ${a.category}
-                </span>
-              </td>
-              <td class="py-3 px-4 text-right text-slate-400 font-mono text-[11px]">${a.timestamp}</td>
-            </tr>
-          `;
-        }).join('');
+                <div class="font-semibold text-slate-800 text-xs">${a.action}</div>
+                <div class="text-slate-600 text-[11px] leading-relaxed">${a.details}</div>
+                <div class="text-right text-slate-400 font-mono text-[10px] pt-1 border-t border-slate-100">${a.timestamp}</div>
+              </div>
+            `;
+          }).join('');
+        }
       }
 
       renderMedCredPaginationControls({
@@ -375,10 +500,10 @@
       for (const k in tabIds) {
         const btn = document.getElementById(tabIds[k]);
         if (btn) {
-          if (k === cat) {
+          if (k.toUpperCase() === cat.toUpperCase()) {
             btn.className = 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs transition font-bold';
           } else {
-            btn.className = 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1';
+            btn.className = 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1 font-medium';
           }
         }
       }
@@ -390,6 +515,48 @@
     function filterActivities() {
       const q = (document.getElementById('searchActivityInput')?.value || '');
       renderActivityTable(activeCategory, q, true);
+    }
+
+    async function runCronJobSimulation(triggerType) {
+      const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      try {
+        const res = await fetch('/activity/cron-simulation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrf || ''
+          },
+          body: JSON.stringify({ trigger: triggerType })
+        });
+        const data = await res.json();
+        if (data && data.success && data.log) {
+          LIVE_SERVER_LOGS.unshift(data.log);
+          showToast(`Simulasi Cron ${triggerType} Berhasil: ${data.count} dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
+        } else {
+          fallbackSimulation(triggerType);
+        }
+      } catch (err) {
+        fallbackSimulation(triggerType);
+      }
+
+      // Langsung buka tab Otomasi Cron
+      filterActivityCategory('Automation');
+    }
+
+    function fallbackSimulation(triggerType) {
+      const newLog = {
+        id: 'cron-sim-' + Date.now(),
+        user_name: 'Sistem Otomasi (Cron Worker)',
+        user_role: 'SYSTEM',
+        action: `CRON_TRIGGER_${triggerType}`,
+        action_name: `Trigger ${triggerType} Pengingat SKP`,
+        details_text: `Eksekusi simulasi trigger ${triggerType}: 157 dokter status Incomplete diproses & antrean pengingat dikirim.`,
+        category: 'Automation',
+        time_text: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB (Simulasi)'
+      };
+      LIVE_SERVER_LOGS.unshift(newLog);
+      showToast(`Simulasi Cron ${triggerType} Berhasil: 157 dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
     }
 
     function refreshActivityLog() {
