@@ -9447,18 +9447,18 @@ const INITIAL_CATEGORIES = [
   { id: 'cat-11', name: 'Penyuluhan Kesehatan Masyarakat', type: 'Pengabdian', eventsCount: 3 }
 ];
 
-// Master Users (3 Role Resmi: Super Admin, Verifikator, Admin Cabang)
+// Master Users (5 Role Resmi: Super Admin, Admin Pusat, Verifikator, Admin Cabang, User/Dokter)
 const INITIAL_USERS = [
   { id: 'usr-01', name: 'Rina Kartika', email: 'user@example.com', role: 'Verifikator', created: '18 Nov 2026' },
   { id: 'usr-02', name: 'Dimas Saputra', email: 'user2@example.com', role: 'Verifikator', created: '18 Nov 2026' },
-  { id: 'usr-03', name: 'Wahyu Setiawan', email: 'user3@example.com', role: 'Verifikator', created: '18 Nov 2026' },
+  { id: 'usr-03', name: 'Wahyu Setiawan', email: 'user3@example.com', role: 'Admin Pusat', created: '18 Nov 2026' },
   { id: 'usr-04', name: 'Melati Sihombing', email: 'user4@example.com', role: 'Admin Cabang', created: '18 Nov 2026' },
   { id: 'usr-05', name: 'Fikri Ramadhan', email: 'user5@example.com', role: 'Verifikator', created: '18 Nov 2026' },
   { id: 'usr-06', name: 'Ayu Lestari', email: 'user6@example.com', role: 'Admin Cabang', created: '18 Nov 2026' },
-  { id: 'usr-07', name: 'Bagus Pranoto', email: 'user7@example.com', role: 'Verifikator', created: '18 Nov 2026' },
-  { id: 'usr-08', name: 'Citra Maharani', email: 'user8@example.com', role: 'Admin Cabang', created: '18 Nov 2026' },
-  { id: 'usr-09', name: 'Dodi Firmansyah', email: 'user9@example.com', role: 'Super Admin', created: '18 Nov 2026' },
-  { id: 'usr-10', name: 'Eka Putri', email: 'user10@example.com', role: 'Verifikator', created: '18 Nov 2026' }
+  { id: 'usr-07', name: 'Bagus Pranoto', email: 'user7@example.com', role: 'Admin Pusat', created: '18 Nov 2026' },
+  { id: 'usr-08', name: 'dr. Cut Simatupang, Sp.OG', email: 'cut.simatupang@pogi.or.id', role: 'User/Dokter', created: '18 Nov 2026' },
+  { id: 'usr-09', name: 'Dodi Firmansyah', email: 'super@example.com', role: 'Super Admin', created: '18 Nov 2026' },
+  { id: 'usr-10', name: 'Eka Putri', email: 'user10@example.com', role: 'User/Dokter', created: '18 Nov 2026' }
 ];
 
 const INITIAL_ACTIVITIES = [
@@ -10283,14 +10283,16 @@ const PogiStore = {
         }
       }
     }
-    // Normalisasi role lama 'User' ke 3 role resmi (Super Admin, Verifikator, Admin Cabang)
-    const validRoles = ['Super Admin', 'Admin Cabang', 'Verifikator'];
+    // Normalisasi role ke 5 role resmi (Super Admin, Admin Pusat, Verifikator, Admin Cabang, User/Dokter)
+    const validRoles = ['Super Admin', 'Admin Pusat', 'Verifikator', 'Admin Cabang', 'User/Dokter', 'Dokter'];
     let changed = false;
     users = users.map((u, idx) => {
       if (!validRoles.includes(u.role)) {
         changed = true;
         if (idx === 8) u.role = 'Super Admin';
-        else if (idx % 2 === 1) u.role = 'Admin Cabang';
+        else if (idx === 2 || idx === 6) u.role = 'Admin Pusat';
+        else if (idx === 3 || idx === 5) u.role = 'Admin Cabang';
+        else if (idx === 7 || idx === 9) u.role = 'User/Dokter';
         else u.role = 'Verifikator';
       }
       return u;
@@ -10517,7 +10519,12 @@ const PogiStore = {
   },
 
   // -------------------------------------------------------------
-  // BAB 6.1 & 6.2 — ROLE-BASED ACCESS CONTROL (RBAC) 4 TINGKAT
+  // BAB 6.1 & 6.2 — ROLE-BASED ACCESS CONTROL (RBAC) 5 ROLE RESMI
+  // 1. Super Admin (Full-access)
+  // 2. Admin Pusat (Memantau setiap aktifitas dan performance dari verifikator)
+  // 3. Verifikator (Melakukan kesesuaian dokumen-dokumen, SKP, validasi & monitoring data dokter PJ)
+  // 4. Admin Cabang (Tugas verifikator untuk dokter wilayah cabang sendiri)
+  // 5. User/Dokter (Melihat progress SKP mereka sendiri)
   // -------------------------------------------------------------
   getCurrentUser() {
     if (this._currentUser) return this._currentUser;
@@ -10526,9 +10533,9 @@ const PogiStore = {
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          // Migrasi jika ada session role lama
           if (parsed.role === 'ADMIN_OPERASIONAL') parsed.role = 'VERIFIKATOR';
-          if (parsed.role === 'VIEWER_POGI') parsed.role = 'VERIFIKATOR';
+          if (parsed.role === 'VIEWER_POGI') parsed.role = 'ADMIN_PUSAT';
+          if (parsed.role === 'USER') parsed.role = 'DOKTER';
           this._currentUser = parsed;
           return this._currentUser;
         } catch (e) {}
@@ -10546,8 +10553,13 @@ const PogiStore = {
         r.role === user || 
         r.role === search || 
         r.roleLabel.toLowerCase() === user.toLowerCase() ||
+        (search === 'ADMIN_PUSAT' && r.role === 'ADMIN_PUSAT') ||
+        (search === 'VERIFIKATOR' && r.role === 'VERIFIKATOR') ||
+        (search === 'ADMIN_CABANG' && r.role === 'ADMIN_CABANG') ||
+        (search === 'SUPER_ADMIN' && r.role === 'SUPER_ADMIN') ||
+        ((search === 'DOKTER' || search === 'USER/DOKTER' || search === 'USER') && r.role === 'DOKTER') ||
         (search === 'ADMIN_OPERASIONAL' && r.role === 'VERIFIKATOR') ||
-        (search === 'VIEWER_POGI' && r.role === 'VERIFIKATOR')
+        (search === 'VIEWER_POGI' && r.role === 'ADMIN_PUSAT')
       );
       if (found) user = found;
     }
@@ -10563,8 +10575,8 @@ const PogiStore = {
       {
         role: 'SUPER_ADMIN',
         id: 'usr-super',
-        name: 'Super Admin',
-        displayName: 'Super Admin',
+        name: 'Dodi Firmansyah',
+        displayName: 'Dodi Firmansyah',
         email: 'super@example.com',
         roleLabel: 'Super Admin',
         shortRole: 'SUPER ADMIN',
@@ -10572,8 +10584,23 @@ const PogiStore = {
         avatar: 'SA',
         avatarBg: 'bg-purple-700 text-white',
         badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
-        description: 'Akses penuh nasional: kelola pengguna sistem, seluruh master data, verifikasi kredit, redistribusi beban, & konfigurasi',
+        description: 'Full-access: seluruh sistem, manajemen pengguna, master data, konfigurasi, dan verifikasi nasional',
         canWrite: true
+      },
+      {
+        role: 'ADMIN_PUSAT',
+        id: 'usr-admin-pusat',
+        name: 'Bagus Pranoto, M.Kes',
+        displayName: 'Bagus Pranoto',
+        email: 'admin.pusat@pogi.or.id',
+        roleLabel: 'Admin Pusat',
+        shortRole: 'ADMIN PUSAT',
+        branch: 'Nasional',
+        avatar: 'BP',
+        avatarBg: 'bg-indigo-700 text-white',
+        badgeClass: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+        description: 'Memantau setiap aktifitas dan performance dari tim verifikator (SLA, log audit, capaian nasional)',
+        canWrite: false
       },
       {
         role: 'VERIFIKATOR',
@@ -10587,14 +10614,14 @@ const PogiStore = {
         avatar: 'SR',
         avatarBg: 'bg-[#006948] text-white',
         badgeClass: 'bg-emerald-100 text-[#006948] border-emerald-200',
-        description: 'Akses review berkas: bertugas mengunggah & mereview dokumen bukti fisik SKP anggota (Pengesahan kredit diverifikasi oleh Admin Cabang)',
+        description: 'Melakukan kesesuaian dokumen-dokumen, validasi SKP, verifikasi kredit, dan monitoring data dokter yang mereka PJ',
         canWrite: true
       },
       {
         role: 'ADMIN_CABANG',
         id: 'usr-branch-jabar',
-        name: 'dr. Firman (Admin Cabang Jabar)',
-        displayName: 'dr. Firman',
+        name: 'dr. Firman, Sp.OG (Cabang Jabar)',
+        displayName: 'dr. Firman, Sp.OG',
         email: 'sekretariat.jabar@pogi.or.id',
         roleLabel: 'Admin Cabang',
         shortRole: 'ADMIN CABANG',
@@ -10602,8 +10629,24 @@ const PogiStore = {
         avatar: 'DF',
         avatarBg: 'bg-sky-700 text-white',
         badgeClass: 'bg-sky-100 text-sky-800 border-sky-200',
-        description: 'Akses wilayah cabang: memverifikasi & menyetujui pemenuhan SKP dokter di wilayahnya, pendaftaran dokter cabang, & unggah berkas fisik SKP',
+        description: 'Tugas verifikasi, validasi dokumen, dan SKP khusus dokter di wilayah cabang sendiri (Jawa Barat)',
         canWrite: true
+      },
+      {
+        role: 'DOKTER',
+        id: 'usr-dokter-cut',
+        name: 'dr. Cut Simatupang, Sp.OG',
+        displayName: 'dr. Cut Simatupang',
+        email: 'cut.simatupang@pogi.or.id',
+        roleLabel: 'User/Dokter',
+        shortRole: 'USER/DOKTER',
+        branch: 'Jawa Barat',
+        avatar: 'CS',
+        avatarBg: 'bg-teal-700 text-white',
+        badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+        doctorId: 'doc-001',
+        description: 'Melihat progress capaian 160 SKP sendiri, status STR/SIP, dan unggah berkas bukti mandiri',
+        canWrite: false
       }
     ];
   },
@@ -10614,8 +10657,22 @@ const PogiStore = {
     const role = (user.role || '').toUpperCase();
     if (role === 'SUPER_ADMIN' || role === 'SUPER ADMIN') return true;
 
-    if (role === 'ADMIN_CABANG' || role === 'ADMIN CABANG') {
-      // Admin Cabang: Memverifikasi & menyetujui SKP dokter di wilayahnya
+    if (role === 'ADMIN_PUSAT' || role === 'ADMIN PUSAT') {
+      // Admin Pusat: Memantau setiap aktifitas dan performance dari verifikator
+      const allowed = [
+        'VIEW_DASHBOARD',
+        'VIEW_DOCTORS',
+        'VIEW_PERFORMANCE',
+        'VIEW_ACTIVITY',
+        'VIEW_REPORTS',
+        'EXPORT_REPORT',
+        'VIEW_PROVINCES'
+      ];
+      return allowed.includes(action);
+    }
+
+    if (role === 'VERIFIKATOR' || role === 'ADMIN_OPERASIONAL') {
+      // Verifikator: Melakukan kesesuaian dokumen-dokumen, validasi SKP, verifikasi kredit, & monitoring dokter PJ
       const allowed = [
         'VIEW_DASHBOARD',
         'VIEW_DOCTORS',
@@ -10630,10 +10687,31 @@ const PogiStore = {
       return allowed.includes(action);
     }
 
-    if (role === 'VERIFIKATOR' || role === 'ADMIN_OPERASIONAL') {
-      // Verifikator: Mengunggah & mereview berkas (TIDAK menyetujui/memverifikasi kredit, tidak kelola user)
-      const forbidden = ['VERIFY_CREDITS', 'APPROVE_CREDITS', 'MANAGE_USERS', 'DELETE_DOCTOR'];
-      return !forbidden.includes(action);
+    if (role === 'ADMIN_CABANG' || role === 'ADMIN CABANG') {
+      // Admin Cabang: Tugas sama dengan verifikator tapi hanya dokter di wilayah cabang sendiri
+      const allowed = [
+        'VIEW_DASHBOARD',
+        'VIEW_DOCTORS',
+        'CREATE_DOCTOR',
+        'UPLOAD_DOC',
+        'VERIFY_CREDITS',
+        'APPROVE_CREDITS',
+        'SEND_REMINDER',
+        'VIEW_REPORTS',
+        'EXPORT_REPORT'
+      ];
+      return allowed.includes(action);
+    }
+
+    if (role === 'DOKTER' || role === 'USER/DOKTER' || role === 'USER') {
+      // User/Dokter: Melihat progress SKP mereka sendiri & unggah bukti
+      const allowed = [
+        'VIEW_DASHBOARD',
+        'VIEW_MY_SKP',
+        'UPLOAD_DOC',
+        'VIEW_REPORTS'
+      ];
+      return allowed.includes(action);
     }
 
     return false;
@@ -10644,13 +10722,14 @@ const PogiStore = {
     return r === 'SUPER_ADMIN' || r === 'SUPER ADMIN';
   },
 
+  isAdminPusat() {
+    const r = (this.getCurrentUser().role || '').toUpperCase();
+    return r === 'ADMIN_PUSAT' || r === 'ADMIN PUSAT';
+  },
+
   isVerifikator() {
     const r = (this.getCurrentUser().role || '').toUpperCase();
     return r === 'VERIFIKATOR' || r === 'ADMIN_OPERASIONAL';
-  },
-
-  isOperational() {
-    return this.isSuperAdmin() || this.isVerifikator();
   },
 
   isBranchAdmin() {
@@ -10658,18 +10737,42 @@ const PogiStore = {
     return r === 'ADMIN_CABANG' || r === 'ADMIN CABANG';
   },
 
+  isDoctor() {
+    const r = (this.getCurrentUser().role || '').toUpperCase();
+    return r === 'DOKTER' || r === 'USER/DOKTER' || r === 'USER';
+  },
+
+  isOperational() {
+    return this.isSuperAdmin() || this.isVerifikator() || this.isBranchAdmin();
+  },
+
   isViewer() {
-    return false;
+    return this.isAdminPusat();
   },
 
   getDoctorsForCurrentUser() {
     const user = this.getCurrentUser();
     const all = this.getDoctors();
-    const role = (user && user.role) ? user.role.toUpperCase() : '';
+    if (!user) return all;
+    const role = (user.role || '').toUpperCase();
+
+    // User/Dokter: Hanya melihat data dirinya sendiri
+    if (role === 'DOKTER' || role === 'USER/DOKTER' || role === 'USER') {
+      const docId = user.doctorId || 'doc-001';
+      let myDoc = all.filter(d => d.id === docId);
+      if (myDoc.length === 0 && user.email) {
+        myDoc = all.filter(d => d.email && d.email.toLowerCase() === user.email.toLowerCase());
+      }
+      return myDoc.length > 0 ? myDoc : [all[0]];
+    }
+
+    // Admin Cabang: Hanya melihat data dokter di cabang/provinsi mereka sendiri
     if ((role === 'ADMIN_CABANG' || role === 'ADMIN CABANG') && user.branch && user.branch !== 'Nasional') {
       const userBranch = user.branch.toLowerCase().trim();
       return all.filter(d => (d.province && d.province.toLowerCase().trim() === userBranch));
     }
+
+    // Super Admin, Admin Pusat, Verifikator: Akses nasional / dokter binaan
     return all;
   },
 

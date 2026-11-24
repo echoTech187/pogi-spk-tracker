@@ -1269,6 +1269,18 @@ Admin Data PP POGI & PT Energi Cipta
         if (headCount) {
           headCount.innerText = `${list.length} Terdaftar (Cabang ${currentUser.branch})`;
         }
+      } else if (currentUser && (currentUser.role === 'DOKTER' || currentUser.role === 'USER/DOKTER' || currentUser.role === 'USER')) {
+        const provFilter = document.getElementById('provinceFilter');
+        if (provFilter) provFilter.setAttribute('disabled', 'true');
+        const headCount = document.getElementById('headingTotalCount');
+        if (headCount) {
+          headCount.innerText = `1 Dokter (Portofolio Mandiri Saya)`;
+        }
+      } else if (currentUser && (currentUser.role === 'ADMIN_PUSAT' || currentUser.role === 'ADMIN PUSAT')) {
+        const headCount = document.getElementById('headingTotalCount');
+        if (headCount) {
+          headCount.innerText = `${list.length} Terdaftar (Mode Audit Nasional)`;
+        }
       }
 
       // Filter by Kuartal & Tahun (Periode)

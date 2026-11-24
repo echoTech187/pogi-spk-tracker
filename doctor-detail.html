@@ -1137,24 +1137,64 @@
         }
       }
 
-      // Update Action Buttons Container (Verifikasi Kredit / Status Terverifikasi / RBAC Mode)
-      // Admin Cabang memverifikasi kredit di wilayahnya; Verifikator hanya mengunggah & mereview berkas
+      // Update Action Buttons Container (Verifikasi Kredit / Status Terverifikasi / RBAC Mode 5 Role)
       const actionContainer = document.getElementById("doctorActionButtonsContainer");
       if (actionContainer) {
-        if (currentUser && (currentUser.role === "VERIFIKATOR" || currentUser.role === "Verifikator")) {
+        const rawRole = (currentUser && currentUser.role) ? currentUser.role.toUpperCase() : 'SUPER_ADMIN';
+        const pending = doc.pendingCredits || 0;
+        const pendingAmount = (pending > 0 ? pending : 4.5).toFixed(1);
+
+        if (rawRole === 'DOKTER' || rawRole === 'USER/DOKTER' || rawRole === 'USER') {
+          // 5. User/Dokter: Mode Mandiri — Unggah Berkas Bukti Mandiri
           actionContainer.innerHTML = `
-            <span class="px-3.5 py-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
-              <span class="material-symbols-outlined text-base text-amber-600">hourglass_top</span>
-              <span>Menunggu Verifikasi &amp; Persetujuan Admin Cabang</span>
+            <button type="button" onclick="openUploadDoctorDocModal()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="Unggah berkas bukti pemenuhan SKP untuk diverifikasi">
+              <span class="material-symbols-outlined text-base">upload_file</span>
+              <span>Unggah Berkas Bukti Mandiri</span>
+            </button>
+          `;
+        } else if (rawRole === 'ADMIN_PUSAT' || rawRole === 'ADMIN PUSAT') {
+          // 2. Admin Pusat: Memantau setiap aktifitas dan performance dari verifikator (Audit/Monitoring Mode)
+          actionContainer.innerHTML = `
+            <span class="px-3.5 py-2 rounded-xl bg-indigo-50 text-indigo-900 border border-indigo-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+              <span class="material-symbols-outlined text-base text-indigo-600">monitoring</span>
+              <span>Mode Monitoring Audit Pusat</span>
             </span>
           `;
+        } else if (rawRole === 'ADMIN_CABANG' || rawRole === 'ADMIN CABANG') {
+          // 4. Admin Cabang: Memverifikasi dokter wilayah cabang sendiri
+          const userBranch = (currentUser.branch || '').toLowerCase().trim();
+          const docBranch = (doc.province || '').toLowerCase().trim();
+          const isSameBranch = !userBranch || userBranch === 'nasional' || (docBranch && docBranch === userBranch);
+
+          if (!isSameBranch) {
+            actionContainer.innerHTML = `
+              <span class="px-3.5 py-2 rounded-xl bg-amber-50 text-amber-900 border border-amber-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs" title="Dokter terdaftar di ${doc.province}, Anda Admin Cabang ${currentUser.branch}">
+                <span class="material-symbols-outlined text-base text-amber-600">lock</span>
+                <span>Dokter Cabang ${doc.province} (Hanya Lihat)</span>
+              </span>
+            `;
+          } else if (pending > 0 || !isComplete) {
+            actionContainer.innerHTML = `
+              <button type="button" onclick="approveDoctorCredits()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer rbac-operational" title="Verifikasi dan setujui pemenuhan kredit SKP dokter cabang ${doc.province}">
+                <span class="material-symbols-outlined text-base">verified</span>
+                <span>Verifikasi Kredit (+${pendingAmount} SKP)</span>
+              </button>
+            `;
+          } else {
+            actionContainer.innerHTML = `
+              <div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#006948] font-extrabold text-xs flex items-center gap-1.5 shadow-2xs">
+                <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
+                <span>Seluruh Kredit Terverifikasi</span>
+              </div>
+            `;
+          }
         } else {
-          const pending = doc.pendingCredits || 0;
+          // 1. Super Admin & 3. Verifikator: Melakukan kesesuaian dokumen & verifikasi kredit dokter PJ / nasional
           if (pending > 0 || !isComplete) {
             actionContainer.innerHTML = `
-              <button type="button" onclick="approveDoctorCredits()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer rbac-operational" title="Klik untuk memvalidasi dan menyetujui pengajuan kredit pending dokter ini">
+              <button type="button" onclick="approveDoctorCredits()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer rbac-operational" title="Validasi kesesuaian dokumen & verifikasi kredit SKP dokter">
                 <span class="material-symbols-outlined text-base">verified</span>
-                <span>Verifikasi Kredit (+${(pending > 0 ? pending : 4.5).toFixed(1)} SKP)</span>
+                <span>Verifikasi Kredit (+${pendingAmount} SKP)</span>
               </button>
             `;
           } else {
