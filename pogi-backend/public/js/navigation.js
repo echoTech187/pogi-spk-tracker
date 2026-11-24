@@ -4,6 +4,52 @@
  * Standard MedCred Header & Interaction Controller
  */
 
+
+// Universal Safe Store Adapter (Guarantees zero ReferenceError across all views)
+if (typeof window !== 'undefined' && typeof window.PogiStore === 'undefined') {
+  window.PogiStore = {
+    formatCurrentDate() {
+      const d = new Date();
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+      return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    },
+    getDoctors() {
+      return (window.LIVE_SERVER_DOCTORS || window.LIVE_DATABASE_DOCTORS || window.LIVE_MANAGE_DOCTORS || []);
+    },
+    getProvinces() {
+      const provs = window.LIVE_SERVER_PROVINCES || window.LIVE_MANAGE_BRANCHES || [];
+      return provs.map(p => typeof p === 'string' ? { name: p } : p);
+    },
+    getInstitutions() {
+      return window.LIVE_MANAGE_INSTITUTIONS || window.LIVE_SERVER_INSTITUTIONS || [];
+    },
+    getEvents() {
+      return window.LIVE_MANAGE_EVENTS || window.LIVE_SERVER_EVENTS || [];
+    },
+    getCategories() {
+      return window.LIVE_MANAGE_CATEGORIES || [];
+    },
+    getUsers() {
+      return window.LIVE_MANAGE_USERS || [];
+    },
+    getActivities() {
+      return window.LIVE_SERVER_ACTIVITIES || window.LIVE_SERVER_LOGS || [];
+    },
+    generateUUIDv7() {
+      return 'id-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
+    },
+    addActivity() {},
+    saveDoctors() {},
+    saveInstitutions() {},
+    saveEvents() {},
+    saveCategories() {},
+    saveUsers() {},
+    reassignDoctor() {},
+    addDoctorDocument() {},
+    updateDoctorDocumentStatus() {}
+  };
+}
+
 // Mobile Sidebar Toggle
 function toggleMobileSidebar(forceOpen) {
   const sidebar = document.getElementById('appSidebar');

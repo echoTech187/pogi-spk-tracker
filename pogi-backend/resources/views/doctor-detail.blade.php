@@ -1687,7 +1687,9 @@
       })
       .catch(err => {
         // Fallback store
-        PogiStore.reassignDoctor(activeDoctor.id, newAdminName);
+        if (typeof PogiStore !== 'undefined' && typeof PogiStore.reassignDoctor === 'function') {
+          PogiStore.reassignDoctor(activeDoctor.id, newAdminName);
+        }
         activeDoctor.assignedTo = newAdminName;
         if (document.getElementById('doctorAssignedTo')) {
           document.getElementById('doctorAssignedTo').innerText = newAdminName;

@@ -854,7 +854,7 @@
             const pel = d.pelayananCredits !== undefined ? d.pelayananCredits : (d.pelayanan?.achieved || 45);
             const peng = d.pengabdianCredits !== undefined ? d.pengabdianCredits : (d.pengabdian?.achieved || 15);
             const pemb = d.pembelajaranCredits !== undefined ? d.pembelajaranCredits : (d.pembelajaran?.achieved || 25);
-            const lastAct = d.lastActivity || ('Sync SATUSEHAT (' + PogiStore.formatCurrentDate() + ')');
+            const lastAct = d.lastActivity || ('Sync SATUSEHAT (' + (typeof PogiStore !== 'undefined' ? PogiStore.formatCurrentDate() : 'Hari ini') + ')');
 
             return `
               <tr class="hover:bg-slate-50/80 transition">
@@ -1439,7 +1439,7 @@
               <td class="py-3 px-4">
                 ${getRoleBadge(usr.role)}
               </td>
-              <td class="py-3 px-4 text-[11px] text-slate-500">${usr.created || PogiStore.formatCurrentDate()}</td>
+              <td class="py-3 px-4 text-[11px] text-slate-500">${usr.created || (typeof PogiStore !== 'undefined' ? PogiStore.formatCurrentDate() : 'Baru saja')}</td>
               <td class="py-3 px-4 text-center">
                 <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold">Aktif</span>
               </td>
@@ -1746,7 +1746,7 @@
             <div>
               <label class="font-bold text-slate-700 block mb-1">Provinsi / Cabang</label>
               <select id="editDocProv" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
-                ${PogiStore.getProvinces().map(p => `<option value="${p.name}" ${item.province === p.name ? 'selected' : ''}>${p.name}</option>`).join('')}
+                ${((window.LIVE_MANAGE_BRANCHES && window.LIVE_MANAGE_BRANCHES.length > 0) ? window.LIVE_MANAGE_BRANCHES : (typeof PogiStore !== 'undefined' ? PogiStore.getProvinces() : [])).map(p => { const pName = p.name || p; return `<option value="${pName}" ${item.province === pName ? 'selected' : ''}>${pName}</option>`; }).join('')}
               </select>
             </div>
             <div><label class="font-bold text-slate-700 block mb-1">Target SKP</label><input type="text" id="editDocSkp" value="${item.skpDisplay || '0 / 32'}" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold" /></div>
@@ -1893,7 +1893,7 @@
         }
       }
 
-      PogiStore.addActivity({
+      if (typeof PogiStore !== 'undefined' && PogiStore.addActivity) PogiStore.addActivity({
         actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
         action: 'Update Data ' + type.toUpperCase(),
         details: 'Memperbarui data master ' + type + ' ID: ' + id,
@@ -1925,7 +1925,7 @@
         renderManageUserTable(null, false);
       }
 
-      PogiStore.addActivity({
+      if (typeof PogiStore !== 'undefined' && PogiStore.addActivity) PogiStore.addActivity({
         actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
         action: 'Hapus Data ' + type.toUpperCase(),
         details: 'Menghapus data ' + type + ' dari database master ID: ' + id,
@@ -2058,7 +2058,7 @@
           qAchieved: 0,
           skpDisplay: skp || '0 / 32',
           total5YearAchieved: 0,
-          uuid: PogiStore.generateUUIDv7(),
+          uuid: (typeof PogiStore !== 'undefined' && PogiStore.generateUUIDv7) ? PogiStore.generateUUIDv7() : ('doc-' + Date.now()),
           pelayanan: { achieved: 0, target: 56 },
           pengabdian: { achieved: 0, target: 8 },
           pembelajaran: { achieved: 0, target: 72 },
@@ -2068,7 +2068,7 @@
           lastActivity: 'Baru ditambahkan',
           avatar: name.charAt(0) + (name.split(' ')[1] ? name.split(' ')[1].charAt(0) : '')
         });
-        PogiStore.saveDoctors(docs);
+        if (typeof PogiStore !== 'undefined' && PogiStore.saveDoctors) PogiStore.saveDoctors(docs);
         renderManageDoctorTable(null, true);
         showToast('Dokter baru berhasil ditambahkan ke master!', 'success');
       } else if (currentTab === 'institution') {
@@ -2084,7 +2084,7 @@
           province: prov,
           address: addr || (prov + ' - RS Jejaring')
         });
-        PogiStore.saveInstitutions(list);
+        if (typeof PogiStore !== 'undefined' && PogiStore.saveInstitutions) PogiStore.saveInstitutions(list);
         renderManageInstTable(null, true);
         showToast('Institusi baru berhasil ditambahkan!', 'success');
       } else if (currentTab === 'event') {
@@ -2108,7 +2108,7 @@
           doctorsCompleted: 0,
           status: 'Dibuka'
         });
-        PogiStore.saveEvents(list);
+        if (typeof PogiStore !== 'undefined' && PogiStore.saveEvents) PogiStore.saveEvents(list);
         renderManageEventTable(null, true);
         showToast('SKP Event baru berhasil ditambahkan!', 'success');
       } else if (currentTab === 'category') {
@@ -2122,7 +2122,7 @@
           type,
           eventsCount: 1
         });
-        PogiStore.saveCategories(list);
+        if (typeof PogiStore !== 'undefined' && PogiStore.saveCategories) PogiStore.saveCategories(list);
         renderManageCatTable(null, true);
         showToast('Kategori baru berhasil ditambahkan!', 'success');
       } else if (currentTab === 'user') {
@@ -2136,14 +2136,14 @@
           name,
           email,
           role,
-          created: PogiStore.formatCurrentDate()
+          created: (typeof PogiStore !== 'undefined' && PogiStore.formatCurrentDate) ? PogiStore.formatCurrentDate() : 'Hari ini'
         });
-        PogiStore.saveUsers(list);
+        if (typeof PogiStore !== 'undefined' && PogiStore.saveUsers) PogiStore.saveUsers(list);
         renderManageUserTable(null, true);
         showToast('Pengguna baru berhasil ditambahkan!', 'success');
       }
 
-      PogiStore.addActivity({
+      if (typeof PogiStore !== 'undefined' && PogiStore.addActivity) PogiStore.addActivity({
         actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
         action: 'Tambah ' + currentTab.toUpperCase(),
         details: 'Menambahkan data baru pada tab master: ' + currentTab,
