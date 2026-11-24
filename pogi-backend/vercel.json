@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/doctors", "destination": "/doctors.html" },
+    { "source": "/events", "destination": "/events.html" },
+    { "source": "/activity", "destination": "/activity.html" },
+    { "source": "/provinces", "destination": "/provinces.html" },
+    { "source": "/reports", "destination": "/reports.html" },
+    { "source": "/admin-performance", "destination": "/admin-performance.html" },
+    { "source": "/manage", "destination": "/manage.html" },
+    { "source": "/doctor-detail", "destination": "/doctor-detail.html" }
+  ]
+}
