@@ -61,6 +61,15 @@
   <!-- Global Application Modals (Outside Main Stacking Context for Full Viewport Overlay) -->
   @yield('modals')
 
+  <script>
+    window.AUTH_USER = {!! json_encode([
+      'id' => Auth::id() ?? 'auth-user',
+      'name' => Auth::user()?->name ?? 'Pengguna',
+      'email' => Auth::user()?->email ?? '',
+      'role' => Auth::user()?->role ?? 'SUPER_ADMIN',
+      'branch' => Auth::user()?->branch ?? 'Pusat'
+    ]) !!};
+  </script>
   <!-- Core Scripts -->
   <script src="{{ asset('js/navigation.js') }}"></script>
   @yield('scripts')

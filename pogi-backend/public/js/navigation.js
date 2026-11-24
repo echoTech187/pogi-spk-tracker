@@ -6,48 +6,78 @@
 
 
 // Universal Safe Store Adapter (Guarantees zero ReferenceError across all views)
-if (typeof window !== 'undefined' && typeof window.PogiStore === 'undefined') {
-  window.PogiStore = {
-    formatCurrentDate() {
-      const d = new Date();
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-      return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-    },
-    getDoctors() {
-      return (window.LIVE_SERVER_DOCTORS || window.LIVE_DATABASE_DOCTORS || window.LIVE_MANAGE_DOCTORS || []);
-    },
-    getProvinces() {
-      const provs = window.LIVE_SERVER_PROVINCES || window.LIVE_MANAGE_BRANCHES || [];
-      return provs.map(p => typeof p === 'string' ? { name: p } : p);
-    },
-    getInstitutions() {
-      return window.LIVE_MANAGE_INSTITUTIONS || window.LIVE_SERVER_INSTITUTIONS || [];
-    },
-    getEvents() {
-      return window.LIVE_MANAGE_EVENTS || window.LIVE_SERVER_EVENTS || [];
-    },
-    getCategories() {
-      return window.LIVE_MANAGE_CATEGORIES || [];
-    },
-    getUsers() {
-      return window.LIVE_MANAGE_USERS || [];
-    },
-    getActivities() {
-      return window.LIVE_SERVER_ACTIVITIES || window.LIVE_SERVER_LOGS || [];
-    },
-    generateUUIDv7() {
-      return 'id-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
-    },
-    addActivity() {},
-    saveDoctors() {},
-    saveInstitutions() {},
-    saveEvents() {},
-    saveCategories() {},
-    saveUsers() {},
-    reassignDoctor() {},
-    addDoctorDocument() {},
-    updateDoctorDocumentStatus() {}
+if (typeof window !== 'undefined') {
+  if (typeof window.PogiStore === 'undefined') {
+    window.PogiStore = {};
+  }
+  
+  window.PogiStore._currentUser = null;
+  window.PogiStore.getCurrentUser = function() {
+    if (this._currentUser) return this._currentUser;
+    if (typeof window !== 'undefined') {
+      if (window.AUTH_USER) return (this._currentUser = window.AUTH_USER);
+      if (window.CURRENT_USER) return (this._currentUser = window.CURRENT_USER);
+    }
+    return {
+      id: 'auth-user',
+      name: 'Pengguna',
+      email: 'user@example.com',
+      role: 'SUPER_ADMIN',
+      branch: 'Pusat'
+    };
   };
+  window.PogiStore.getAllRoles = function() {
+    return [
+      { role: 'SUPER_ADMIN', roleLabel: 'Super Admin', branch: 'Pusat' },
+      { role: 'ADMIN_PUSAT', roleLabel: 'Admin Pusat', branch: 'Pusat' },
+      { role: 'ADMIN_POGI', roleLabel: 'Admin POGI', branch: 'Pusat' },
+      { role: 'ADMIN_CABANG', roleLabel: 'Admin Cabang', branch: 'DKI Jakarta' },
+      { role: 'DOKTER', roleLabel: 'User/Dokter', branch: 'DKI Jakarta' }
+    ];
+  };
+  window.PogiStore.setCurrentUser = function(u) {
+    this._currentUser = typeof u === 'string' ? { id: 'user-' + u.toLowerCase(), name: u, role: u, branch: 'Pusat' } : u;
+    if (typeof window !== 'undefined') window.AUTH_USER = this._currentUser;
+  };
+  window.PogiStore.formatCurrentDate = function() {
+    const d = new Date();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  };
+  window.PogiStore.getDoctors = function() {
+    return (window.LIVE_SERVER_DOCTORS || window.LIVE_DATABASE_DOCTORS || window.LIVE_MANAGE_DOCTORS || []);
+  };
+  window.PogiStore.getProvinces = function() {
+    const provs = window.LIVE_SERVER_PROVINCES || window.LIVE_MANAGE_BRANCHES || [];
+    return provs.map(p => typeof p === 'string' ? { name: p } : p);
+  };
+  window.PogiStore.getInstitutions = function() {
+    return window.LIVE_MANAGE_INSTITUTIONS || window.LIVE_SERVER_INSTITUTIONS || [];
+  };
+  window.PogiStore.getEvents = function() {
+    return window.LIVE_MANAGE_EVENTS || window.LIVE_SERVER_EVENTS || [];
+  };
+  window.PogiStore.getCategories = function() {
+    return window.LIVE_MANAGE_CATEGORIES || [];
+  };
+  window.PogiStore.getUsers = function() {
+    return window.LIVE_MANAGE_USERS || [];
+  };
+  window.PogiStore.getActivities = function() {
+    return window.LIVE_SERVER_ACTIVITIES || window.LIVE_SERVER_LOGS || [];
+  };
+  window.PogiStore.generateUUIDv7 = function() {
+    return 'id-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
+  };
+  window.PogiStore.addActivity = window.PogiStore.addActivity || function() {};
+  window.PogiStore.saveDoctors = window.PogiStore.saveDoctors || function() {};
+  window.PogiStore.saveInstitutions = window.PogiStore.saveInstitutions || function() {};
+  window.PogiStore.saveEvents = window.PogiStore.saveEvents || function() {};
+  window.PogiStore.saveCategories = window.PogiStore.saveCategories || function() {};
+  window.PogiStore.saveUsers = window.PogiStore.saveUsers || function() {};
+  window.PogiStore.reassignDoctor = window.PogiStore.reassignDoctor || function() {};
+  window.PogiStore.addDoctorDocument = window.PogiStore.addDoctorDocument || function() {};
+  window.PogiStore.updateDoctorDocumentStatus = window.PogiStore.updateDoctorDocumentStatus || function() {};
 }
 
 // Mobile Sidebar Toggle
@@ -517,10 +547,21 @@ document.addEventListener('DOMContentLoaded', () => {
 // 5. User/Dokter (Melihat progress SKP mereka sendiri)
 // -------------------------------------------------------------
 function switchUserRole(roleKey) {
-  if (typeof PogiStore === 'undefined') return;
-  const roles = PogiStore.getAllRoles();
+  const roles = (typeof PogiStore !== 'undefined' && typeof PogiStore.getAllRoles === 'function')
+    ? PogiStore.getAllRoles()
+    : [
+        { role: 'SUPER_ADMIN', roleLabel: 'Super Admin', branch: 'Pusat' },
+        { role: 'ADMIN_PUSAT', roleLabel: 'Admin Pusat', branch: 'Pusat' },
+        { role: 'ADMIN_POGI', roleLabel: 'Admin POGI', branch: 'Pusat' },
+        { role: 'ADMIN_CABANG', roleLabel: 'Admin Cabang', branch: 'DKI Jakarta' },
+        { role: 'DOKTER', roleLabel: 'User/Dokter', branch: 'DKI Jakarta' }
+      ];
   const target = roles.find(r => r.role === roleKey) || roles[0];
-  PogiStore.setCurrentUser(target);
+  if (typeof PogiStore !== 'undefined' && typeof PogiStore.setCurrentUser === 'function') {
+    PogiStore.setCurrentUser(target);
+  } else if (typeof window !== 'undefined') {
+    window.AUTH_USER = target;
+  }
   showToast('Peran beralih ke: ' + target.roleLabel, 'info');
 
   const currentPath = window.location.pathname.toLowerCase();
@@ -545,8 +586,12 @@ function switchUserRole(roleKey) {
 }
 
 function applyRbacEnforcement() {
-  if (typeof PogiStore === 'undefined') return;
-  const user = PogiStore.getCurrentUser();
+  let user = null;
+  if (typeof PogiStore !== 'undefined' && typeof PogiStore.getCurrentUser === 'function') {
+    user = PogiStore.getCurrentUser();
+  } else if (typeof window !== 'undefined' && window.AUTH_USER) {
+    user = window.AUTH_USER;
+  }
   if (!user) return;
 
   const rawRole = (user.role || '').toUpperCase();
