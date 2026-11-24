@@ -10283,11 +10283,17 @@ const PogiStore = {
         }
       }
     }
-    // Normalisasi role ke 5 role resmi (Super Admin, Admin Pusat, Verifikator, Admin Cabang, User/Dokter)
-    const validRoles = ['Super Admin', 'Admin Pusat', 'Admin POGI', 'Admin Cabang', 'User/Dokter', 'Dokter', 'Verifikator'];
+    // Normalisasi role ke 5 role resmi (Super Admin, Admin Pusat, Admin POGI, Admin Cabang, User/Dokter)
+    const validRoles = ['Super Admin', 'Admin Pusat', 'Admin POGI', 'Admin Cabang', 'User/Dokter'];
     let changed = false;
     users = users.map((u, idx) => {
-      if (!validRoles.includes(u.role)) {
+      if (u.role === 'Verifikator' || u.role === 'Admin Operasional') {
+        u.role = 'Admin POGI';
+        changed = true;
+      } else if (u.role === 'Dokter' || u.role === 'User') {
+        u.role = 'User/Dokter';
+        changed = true;
+      } else if (!validRoles.includes(u.role)) {
         changed = true;
         if (idx === 8) u.role = 'Super Admin';
         else if (idx === 2 || idx === 6) u.role = 'Admin Pusat';
@@ -10367,12 +10373,12 @@ const PogiStore = {
   getAdminPerformanceMetrics() {
     const doctors = this.getDoctors();
     const adminRoster = [
-      { id: 'adm-01', name: 'Siti Rahma', displayName: 'Siti Rahma, S.Farm', email: 'sekretariat.pusat@pogi.or.id', role: 'Lead Verifikator Tim Data Pusat', avatar: 'SR', avatarBg: 'bg-[#006948] text-white', avgSla: 9.4, approvalRate: 99.4, rejections: 1, waBlast: 48 },
+      { id: 'adm-01', name: 'Siti Rahma', displayName: 'Siti Rahma, S.Farm', email: 'sekretariat.pusat@pogi.or.id', role: 'Lead Admin POGI Tim Data Pusat', avatar: 'SR', avatarBg: 'bg-[#006948] text-white', avgSla: 9.4, approvalRate: 99.4, rejections: 1, waBlast: 48 },
       { id: 'adm-02', name: 'Dewi Lestari', displayName: 'Dewi Lestari', email: 'dewi.lestari@pogi.or.id', role: 'Senior Admin Data Wilayah Barat', avatar: 'DL', avatarBg: 'bg-emerald-600 text-white', avgSla: 12.1, approvalRate: 98.8, rejections: 2, waBlast: 41 },
       { id: 'adm-03', name: 'Wahyu Setiawan', displayName: 'Wahyu Setiawan', email: 'wahyu.setiawan@pogi.or.id', role: 'Admin Sinkronisasi Kemenkes', avatar: 'WS', avatarBg: 'bg-teal-600 text-white', avgSla: 14.5, approvalRate: 98.2, rejections: 3, waBlast: 36 },
-      { id: 'adm-04', name: 'Melati Sihombing', displayName: 'Melati Sihombing', email: 'melati.s@pogi.or.id', role: 'Verifikator Berkas Wilayah Tengah', avatar: 'MS', avatarBg: 'bg-sky-700 text-white', avgSla: 17.8, approvalRate: 97.5, rejections: 4, waBlast: 31 },
+      { id: 'adm-04', name: 'Melati Sihombing', displayName: 'Melati Sihombing', email: 'melati.s@pogi.or.id', role: 'Admin POGI Wilayah Tengah', avatar: 'MS', avatarBg: 'bg-sky-700 text-white', avgSla: 17.8, approvalRate: 97.5, rejections: 4, waBlast: 31 },
       { id: 'adm-05', name: 'Rina Kartika', displayName: 'Rina Kartika', email: 'rina.kartika@pogi.or.id', role: 'Admin Koordinasi Cabang Daerah', avatar: 'RK', avatarBg: 'bg-indigo-600 text-white', avgSla: 20.4, approvalRate: 96.9, rejections: 5, waBlast: 25 },
-      { id: 'adm-06', name: 'Dimas Saputra', displayName: 'Dimas Saputra', email: 'dimas.saputra@pogi.or.id', role: 'Asisten Verifikator & Helpdesk LMS', avatar: 'DS', avatarBg: 'bg-slate-600 text-white', avgSla: 15.2, approvalRate: 98.5, rejections: 2, waBlast: 18 },
+      { id: 'adm-06', name: 'Dimas Saputra', displayName: 'Dimas Saputra', email: 'dimas.saputra@pogi.or.id', role: 'Asisten Admin POGI & Helpdesk LMS', avatar: 'DS', avatarBg: 'bg-slate-600 text-white', avgSla: 15.2, approvalRate: 98.5, rejections: 2, waBlast: 18 },
       { id: 'adm-07', name: 'Fikri Ramadhan', displayName: 'Fikri Ramadhan', email: 'fikri.ramadhan@pogi.or.id', role: 'Staf Operasional Berkas Cloud', avatar: 'FR', avatarBg: 'bg-amber-700 text-white', avgSla: 16.0, approvalRate: 97.8, rejections: 3, waBlast: 15 }
     ];
 

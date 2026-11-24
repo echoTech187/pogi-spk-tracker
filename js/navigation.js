@@ -631,7 +631,7 @@ function applyRbacEnforcement() {
           </div>
           <h2 class="text-lg font-black text-slate-900">Akses Pengaturan Terbatas (RBAC)</h2>
           <p class="text-xs text-slate-600 leading-relaxed">
-            Modul <strong>Pengaturan Data (Manage)</strong> hanya dapat diakses oleh Administrator &amp; Verifikator POGI. Sebagai dokter, Anda dapat mengakses portofolio SKP Anda secara mandiri.
+            Modul <strong>Pengaturan Data (Manage)</strong> hanya dapat diakses oleh Administrator &amp; Admin POGI. Sebagai dokter, Anda dapat mengakses portofolio SKP Anda secara mandiri.
           </p>
           <div class="pt-2">
             <a href="doctor-detail.html?id=doc-001" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#006948] text-white text-xs font-bold hover:bg-[#005439] transition">
