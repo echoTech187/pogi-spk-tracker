@@ -12,6 +12,12 @@
       default => 'Pengurus'
   };
   $headerInitials = collect(explode(' ', $headerName))->filter()->map(fn($part) => strtoupper(substr($part, 0, 1)))->take(2)->implode('') ?: 'SA';
+
+  $notifPendingCount = \Illuminate\Support\Facades\DB::table('doctors')->where('status', 'INCOMPLETE')->count();
+  $latestIncomplete = \Illuminate\Support\Facades\DB::table('doctors')->where('status', 'INCOMPLETE')->latest('updated_at')->first();
+  $notifTime = $latestIncomplete && $latestIncomplete->updated_at 
+      ? \Carbon\Carbon::parse($latestIncomplete->updated_at)->diffForHumans() 
+      : 'Baru saja';
 @endphp
 
 <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200/90 shrink-0 w-full print:hidden">
@@ -50,7 +56,7 @@
           <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
             <div class="font-bold text-slate-900 flex items-center gap-1.5">
               <span>Pemberitahuan Sistem</span>
-              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-extrabold">3 Baru</span>
+              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-extrabold">{{ $notifPendingCount }} Perlu FU</span>
             </div>
             <button type="button" onclick="markAllNotificationsAsRead()" class="text-[11px] text-[#006948] hover:underline font-bold cursor-pointer">
               Tandai Dibaca
@@ -63,8 +69,8 @@
               </div>
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
-                <div class="text-[11px] text-slate-500 mt-0.5">64 Dokter Obgyn memiliki pending credits triwulan Q4 2026 yang belum diverifikasi.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">15 menit yang lalu</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">{{ $notifPendingCount }} Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">{{ $notifTime }}</div>
               </div>
             </div>
           </div>

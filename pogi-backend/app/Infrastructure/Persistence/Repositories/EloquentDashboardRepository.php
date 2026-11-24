@@ -45,7 +45,11 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
                 AVG(CASE WHEN target_total_credits > 0 THEN (achieved_total_credits / target_total_credits) * 100 ELSE 0 END) as avg_progress,
                 AVG(CASE WHEN target_pelayanan_credits > 0 THEN (achieved_pelayanan_credits / target_pelayanan_credits) * 100 ELSE 0 END) as avg_pelayanan,
                 AVG(CASE WHEN target_pengabdian_credits > 0 THEN (achieved_pengabdian_credits / target_pengabdian_credits) * 100 ELSE 0 END) as avg_pengabdian,
-                AVG(CASE WHEN target_pembelajaran_credits > 0 THEN (achieved_pembelajaran_credits / target_pembelajaran_credits) * 100 ELSE 0 END) as avg_pembelajaran
+                AVG(CASE WHEN target_pembelajaran_credits > 0 THEN (achieved_pembelajaran_credits / target_pembelajaran_credits) * 100 ELSE 0 END) as avg_pembelajaran,
+                AVG(target_pelayanan_credits) as target_pelayanan,
+                AVG(target_pengabdian_credits) as target_pengabdian,
+                AVG(target_pembelajaran_credits) as target_pembelajaran,
+                AVG(target_total_credits) as target_total
             ')
             ->first();
 
@@ -54,6 +58,10 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
         $avgPengabdianPct = round((float) ($periodAggregates->avg_pengabdian ?? 0), 1);
         $avgPembelajaranPct = round((float) ($periodAggregates->avg_pembelajaran ?? 0), 1);
         $avgAccumulationPct = round(($avgPelayananPct + $avgPengabdianPct + $avgPembelajaranPct) / 3, 1);
+        $targetPelayanan = round((float) ($periodAggregates->target_pelayanan ?? 56.0), 1);
+        $targetPengabdian = round((float) ($periodAggregates->target_pengabdian ?? 8.0), 1);
+        $targetPembelajaran = round((float) ($periodAggregates->target_pembelajaran ?? 72.0), 1);
+        $targetTotal = round((float) ($periodAggregates->target_total ?? 160.0), 1);
 
         // Province Stats for Interactive Map & Ranking
         $provinceRows = DB::table('provinces')
@@ -147,6 +155,10 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
             activeScope: $activeScope,
             activeScopeLabel: $activeScopeLabel,
             isFromLiveDatabase: true,
+            targetPelayanan: $targetPelayanan,
+            targetPengabdian: $targetPengabdian,
+            targetPembelajaran: $targetPembelajaran,
+            targetTotal: $targetTotal,
         );
     }
 

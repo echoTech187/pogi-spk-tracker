@@ -1102,7 +1102,7 @@ Admin Data PP POGI & PT Energi Cipta
     const exportDoctorsCsv = exportDoctorsPdf;
 
     function openDoctorDetail(docId) {
-      window.location.href = 'doctor-detail.html?id=' + encodeURIComponent(docId);
+      window.location.href = '/doctor-detail?id=' + encodeURIComponent(docId);
     }
 
     function openDoctorDetailModal(docId) {
@@ -1133,7 +1133,7 @@ Admin Data PP POGI & PT Energi Cipta
 
     function openDoctorRepositoryPage() {
       if (activeDoctorId) {
-        window.location.href = 'doctor-detail.html?id=' + encodeURIComponent(activeDoctorId) + '&tab=repository';
+        window.location.href = '/doctor-detail?id=' + encodeURIComponent(activeDoctorId) + '&tab=repository';
       }
     }
 

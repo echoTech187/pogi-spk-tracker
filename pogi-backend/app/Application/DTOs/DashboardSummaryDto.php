@@ -31,6 +31,10 @@ readonly class DashboardSummaryDto
         public string $activeScope = 'all',
         public string $activeScopeLabel = 'Semua Wilayah Nasional (38 Provinsi)',
         public bool $isFromLiveDatabase = true,
+        public float $targetPelayanan = 56.0,
+        public float $targetPengabdian = 8.0,
+        public float $targetPembelajaran = 72.0,
+        public float $targetTotal = 160.0,
     ) {}
 
     public function completePercentage(): int
@@ -66,6 +70,10 @@ readonly class DashboardSummaryDto
             'activeScope' => $this->activeScope,
             'activeScopeLabel' => $this->activeScopeLabel,
             'isFromLiveDatabase' => $this->isFromLiveDatabase,
+            'targetPelayanan' => $this->targetPelayanan,
+            'targetPengabdian' => $this->targetPengabdian,
+            'targetPembelajaran' => $this->targetPembelajaran,
+            'targetTotal' => $this->targetTotal,
         ];
     }
 }

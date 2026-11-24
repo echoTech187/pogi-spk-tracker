@@ -50,7 +50,7 @@
             <div class="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
               <div id="metricAvgProgressBar" class="bg-[#006948] h-2 rounded-full" style="width: {{ min(100, $summary->avgProgressPct) }}%"></div>
             </div>
-            <div class="text-[10px] text-slate-500 mt-1">Target Kuartal: 8.0 SKP / dokter</div>
+            <div class="text-[10px] text-slate-500 mt-1">Target Kuartal: {{ number_format($summary->targetTotal / 20, 1) }} SKP / dokter</div>
           </div>
 
           <!-- Complete -->
@@ -86,7 +86,7 @@
         <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
             <div>
-              <h2 class="text-base font-extrabold text-slate-900">Standarisasi 3 Subbidang SKP POGI (Total 160 SKP / 5 Tahun)</h2>
+              <h2 class="text-base font-extrabold text-slate-900">Standarisasi 3 Subbidang SKP POGI (Total {{ (int) $summary->targetTotal }} SKP / 5 Tahun)</h2>
               <p class="text-xs text-slate-500">Kewajiban pemenuhan kredit dokter Obgyn harus proporsional di seluruh 3 subbidang wajib.</p>
             </div>
             <span class="text-xs font-bold text-[#006948] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
@@ -102,7 +102,7 @@
                   <span class="material-symbols-outlined text-sky-600 text-lg">medical_services</span>
                   <span class="font-extrabold text-xs text-slate-900">1. Pelayanan</span>
                 </div>
-                <span class="text-[11px] font-bold text-sky-800 bg-sky-100 px-2 py-0.5 rounded">Min 80 SKP</span>
+                <span class="text-[11px] font-bold text-sky-800 bg-sky-100 px-2 py-0.5 rounded">Min {{ (int) $summary->targetPelayanan }} SKP</span>
               </div>
               <div class="text-xl font-black text-slate-900">{{ number_format($summary->avgPelayananPct, 1) }}% <span class="text-xs font-normal text-slate-500">(rata-rata)</span></div>
               <div class="w-full bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
@@ -118,7 +118,7 @@
                   <span class="material-symbols-outlined text-amber-600 text-lg">volunteer_activism</span>
                   <span class="font-extrabold text-xs text-slate-900">2. Pengabdian</span>
                 </div>
-                <span class="text-[11px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded">Min 30 SKP</span>
+                <span class="text-[11px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded">Min {{ (int) $summary->targetPengabdian }} SKP</span>
               </div>
               <div class="text-xl font-black text-slate-900">{{ number_format($summary->avgPengabdianPct, 1) }}% <span class="text-xs font-normal text-slate-500">(rata-rata)</span></div>
               <div class="w-full bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
@@ -134,7 +134,7 @@
                   <span class="material-symbols-outlined text-emerald-600 text-lg">school</span>
                   <span class="font-extrabold text-xs text-slate-900">3. Pembelajaran</span>
                 </div>
-                <span class="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Min 50 SKP</span>
+                <span class="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Min {{ (int) $summary->targetPembelajaran }} SKP</span>
               </div>
               <div class="text-xl font-black text-slate-900">{{ number_format($summary->avgPembelajaranPct, 1) }}% <span class="text-xs font-normal text-slate-500">(rata-rata)</span></div>
               <div class="w-full bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
@@ -288,7 +288,37 @@
                 Top provinces
               </div>
               <div id="topProvincesList" class="space-y-1.5 text-xs font-medium">
-                <!-- Rendered dynamically -->
+                @forelse($summary->topProvinces as $item)
+                  @php
+                    $rate = $item['completionRate'] ?? 0;
+                    $dotColor = 'bg-[#dc2626]';
+                    $badgeColor = 'bg-red-50 text-red-700 border-red-200';
+                    if ($rate >= 85) {
+                      $dotColor = 'bg-[#eab308]';
+                      $badgeColor = 'bg-amber-50 text-amber-800 border-amber-200';
+                    } elseif ($rate >= 50) {
+                      $dotColor = 'bg-[#16a34a]';
+                      $badgeColor = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+                    }
+                  @endphp
+                  <div class="flex items-center justify-between py-1.5 px-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-200"
+                       onmouseenter="highlightMapProvince('{{ addslashes($item['name']) }}')"
+                       onmouseleave="resetMapProvince('{{ addslashes($item['name']) }}')"
+                       onclick="window.location.href='{{ url('/doctors') }}?province={{ urlencode($item['name']) }}'">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="w-2.5 h-2.5 rounded-full {{ $dotColor }} shrink-0 shadow-2xs"></span>
+                      <span class="font-bold text-slate-800 truncate text-xs">{{ $item['name'] }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="text-[10px] text-slate-400 font-semibold">{{ $item['doctors'] }} Dokter</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold border {{ $badgeColor }}">
+                        {{ number_format($rate, 0) }}%
+                      </span>
+                    </div>
+                  </div>
+                @empty
+                  <div class="text-xs text-slate-400 py-2">Belum ada data cabang provinsi.</div>
+                @endforelse
               </div>
             </div>
           </div>
@@ -308,7 +338,22 @@
           </div>
 
           <div id="recentActivityList" class="space-y-2.5">
-            <!-- Rendered by pogi_state -->
+            @forelse($summary->recentActivities as $act)
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-100 text-[#006948] flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-base">task_alt</span>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="font-bold text-slate-900">{{ $act['action'] }} &bull; <span class="text-slate-500 font-normal">{{ $act['actor'] }}</span></div>
+                    <div class="text-[11px] text-slate-600 truncate mt-0.5">{{ $act['details'] }}</div>
+                  </div>
+                </div>
+                <div class="text-[10px] text-slate-400 font-medium shrink-0">{{ $act['timestamp'] }}</div>
+              </div>
+            @empty
+              <div class="p-3 text-center text-xs text-slate-400">Belum ada aktivitas verifikasi tercatat.</div>
+            @endforelse
           </div>
         </div>
 
@@ -334,10 +379,13 @@
         <div>
           <label class="font-bold text-slate-700 block mb-1">Target Penerima Follow-Up:</label>
           <select id="fuTarget" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold">
-            <option value="all_incomplete">Semua 158 Dokter Incomplete (Nasional)</option>
-            <option value="lowest_5">5 Cabang Kepatuhan Terendah (Bengkulu, NTT, Jambi, Lampung, Papua)</option>
-            <option value="jabar">Khusus Cabang Jawa Barat (9 Dokter)</option>
-            <option value="jatim">Khusus Cabang Jawa Timur (5 Dokter)</option>
+            <option value="all_incomplete">Semua {{ $summary->incompleteCount }} Dokter Incomplete ({{ $summary->activeScopeLabel }})</option>
+            @if(count($summary->lowestProvinces) > 0)
+              <option value="lowest_5">5 Cabang Kepatuhan Terendah ({{ collect($summary->lowestProvinces)->pluck('name')->implode(', ') }})</option>
+            @endif
+            @foreach(collect($summary->topProvinces)->take(4) as $tp)
+              <option value="{{ \Illuminate\Support\Str::slug($tp['name']) }}">Khusus Cabang {{ $tp['name'] }} ({{ $tp['doctors'] }} Dokter Terdata)</option>
+            @endforeach
           </select>
         </div>
 
@@ -398,11 +446,13 @@
     });
 
     function initRecentActivities() {
+      const container = document.getElementById('recentActivityList');
+      if (!container || container.children.length > 0) return; // Already rendered server-side
+
       const acts = (POGI_SERVER_DATA && POGI_SERVER_DATA.recentActivities && POGI_SERVER_DATA.recentActivities.length)
         ? POGI_SERVER_DATA.recentActivities.slice(0, 3)
-        : PogiStore.getActivities().slice(0, 3);
-      const container = document.getElementById('recentActivityList');
-      if (container) {
+        : [];
+      if (acts.length > 0) {
         container.innerHTML = acts.map(a => `
           <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 text-xs">
             <div class="flex items-center gap-2.5 min-w-0">
@@ -421,36 +471,31 @@
     }
 
     function initTopProvincesList() {
-      const pogiProvinces = (typeof PogiStore !== 'undefined' && PogiStore.getProvinces) 
-        ? PogiStore.getProvinces() 
-        : [];
+      const container = document.getElementById('topProvincesList');
+      if (!container || container.children.length > 0) return; // Already rendered server-side
+
       const topList = (POGI_SERVER_DATA && POGI_SERVER_DATA.topProvinces && POGI_SERVER_DATA.topProvinces.length)
         ? POGI_SERVER_DATA.topProvinces
-        : [...pogiProvinces].sort((a, b) => b.doctors - a.doctors).slice(0, 8);
-      const container = document.getElementById('topProvincesList');
-      if (!container) return;
+        : [];
 
       container.innerHTML = topList.map(item => {
         const rate = item.completionRate || 0;
         let dotColor = 'bg-[#dc2626]';
         let badgeColor = 'bg-red-50 text-red-700 border-red-200';
-        let statusLabel = 'Sangat Kurang';
 
         if (rate >= 85) {
           dotColor = 'bg-[#eab308]';
           badgeColor = 'bg-amber-50 text-amber-800 border-amber-200';
-          statusLabel = 'Terpenuhi';
         } else if (rate >= 50) {
           dotColor = 'bg-[#16a34a]';
           badgeColor = 'bg-emerald-50 text-emerald-800 border-emerald-200';
-          statusLabel = 'Hampir Memenuhi';
         }
 
         return `
           <div class="flex items-center justify-between py-1.5 px-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-200"
                onmouseenter="highlightMapProvince('${item.name}')"
                onmouseleave="resetMapProvince('${item.name}')"
-               onclick="window.location.href='doctors.html?province=${encodeURIComponent(item.name)}'">
+               onclick="window.location.href='{{ url('/doctors') }}?province=${encodeURIComponent(item.name)}'">
             <div class="flex items-center gap-2 min-w-0">
               <span class="w-2.5 h-2.5 rounded-full ${dotColor} shrink-0 shadow-2xs"></span>
               <span class="font-bold text-slate-800 truncate text-xs">${item.name}</span>
@@ -484,14 +529,17 @@
 
       const pogiProvinces = (POGI_SERVER_DATA && POGI_SERVER_DATA.provincesData && POGI_SERVER_DATA.provincesData.length)
         ? POGI_SERVER_DATA.provincesData
-        : PogiStore.getProvinces();
+        : [];
 
-      function getProvinceStats(provName) {
-        if (!provName) return null;
+      function getProvinceStats(featureProps) {
+        if (!featureProps) return null;
+        const pId = String(featureProps.id || featureProps.KODE_PROV || '');
+        const provName = featureProps.PROVINSI || featureProps.name || '';
         const norm = provName.toLowerCase().replace(/^(provinsi|daerah khusus ibukota|daerah istimewa)\s+/i, '').trim();
         return pogiProvinces.find(p => {
-          const pNorm = p.name.toLowerCase().replace(/^(provinsi|daerah khusus ibukota|daerah istimewa)\s+/i, '').trim();
-          return pNorm === norm || p.name.toLowerCase().includes(norm) || norm.includes(p.name.toLowerCase());
+          if (pId && String(p.id) === pId) return true;
+          const pNorm = (p.name || '').toLowerCase().replace(/^(provinsi|daerah khusus ibukota|daerah istimewa)\s+/i, '').trim();
+          return pNorm === norm || (p.name && p.name.toLowerCase().includes(norm)) || (norm && norm.includes((p.name || '').toLowerCase()));
         });
       }
 
@@ -505,8 +553,7 @@
 
       geoJsonLayer = L.geoJSON(INDONESIA_38_GEOJSON, {
         style: function(feature) {
-          const provName = feature.properties.PROVINSI || feature.properties.name || '';
-          const stat = getProvinceStats(provName);
+          const stat = getProvinceStats(feature.properties);
           const fillColor = getProvinceColor(stat);
           return {
             fillColor: fillColor,
@@ -518,7 +565,7 @@
         },
         onEachFeature: function(feature, layer) {
           const provName = feature.properties.PROVINSI || feature.properties.name || '';
-          const stat = getProvinceStats(provName);
+          const stat = getProvinceStats(feature.properties);
           provinceLayerMap[provName.toLowerCase()] = layer;
 
           const docText = stat ? `${stat.doctors} Dokter Obgyn` : '0 Dokter Terdata';
@@ -556,7 +603,7 @@
               geoJsonLayer.resetStyle(e.target);
             },
             click: function() {
-              window.location.href = 'provinces.html';
+              window.location.href = '{{ url('/provinces') }}';
             }
           });
         }
@@ -605,12 +652,14 @@
 
     function sendFollowUpAction() {
       const target = document.getElementById('fuTarget').selectedOptions[0].text;
-      PogiStore.addActivity({
-        actor: 'Siti Rahma (Admin Data Pusat)',
-        action: 'Kirim Notifikasi FU Massal',
-        details: 'Notifikasi pengingat kelengkapan SKP terkirim ke target: ' + target,
-        category: 'FollowUp'
-      });
+      if (typeof PogiStore !== 'undefined') {
+        PogiStore.addActivity({
+          actor: '{{ Auth::user()?->full_name ?? "Admin" }} ({{ Auth::user()?->role ?? "Pusat" }})',
+          action: 'Kirim Notifikasi FU Massal',
+          details: 'Notifikasi pengingat kelengkapan SKP terkirim ke target: ' + target,
+          category: 'FollowUp'
+        });
+      }
       closeFollowUpModal();
       showToast('Pesan Follow-Up Berhasil Dikirimkan ke ' + target, 'success');
     }
@@ -618,13 +667,15 @@
     function syncSatuSehat() {
       showToast('Menghubungkan ke API Plataran Sehat...', 'info');
       setTimeout(() => {
-        PogiStore.addActivity({
-          actor: 'System Integration',
-          action: 'Sinkronisasi SATUSEHAT',
-          details: 'Berhasil menyinkronkan 12 data kredit logbook dokter terbaru.',
-          category: 'Sync'
-        });
-        showToast('Sinkronisasi Sukses: 12 Kredit SKP Baru Diperbarui!', 'success');
+        if (typeof PogiStore !== 'undefined') {
+          PogiStore.addActivity({
+            actor: '{{ Auth::user()?->full_name ?? "System" }}',
+            action: 'Sinkronisasi SATUSEHAT',
+            details: 'Berhasil menyinkronkan data kredit logbook dokter terbaru.',
+            category: 'Sync'
+          });
+        }
+        showToast('Sinkronisasi Sukses: Kredit SKP Baru Diperbarui!', 'success');
       }, 1200);
     }
 
