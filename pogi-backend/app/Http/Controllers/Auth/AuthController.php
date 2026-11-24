@@ -113,33 +113,4 @@ class AuthController extends Controller
 
         return redirect()->route('login')->with('info', 'Anda telah berhasil keluar dari sistem POGI SKP Tracker.');
     }
-
-    /**
-     * Beralih konteks peran aktif secara cepat (Fitur Evaluasi & Uji RBAC)
-     */
-    public function switchRole(Request $request)
-    {
-        // Hanya diizinkan untuk lingkungan lokal/testing atau pengguna yang sudah terautentikasi sebagai SUPER_ADMIN
-        if (!app()->environment('local', 'testing') && (!Auth::check() || !Auth::user()->isSuperAdmin())) {
-            abort(403, 'Akses ditolak: Fitur peralihan peran hanya dapat diakses oleh Super Administrator.');
-        }
-
-        $targetRole = strtoupper($request->input('role', 'SUPER_ADMIN'));
-        
-        $user = User::where('role', $targetRole)->first();
-
-        if (!$user) {
-            return redirect()->back()->withErrors(['error' => 'Pengguna dengan peran ' . $targetRole . ' tidak ditemukan dalam basis data.']);
-        }
-
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        if ($user->isDoctor()) {
-            return redirect()->route('doctors.show', ['id' => 'doc-001'])
-                ->with('info', 'Beralih ke konteks: User / Dokter Spesialis Obgyn');
-        }
-
-        return redirect()->back()->with('info', 'Beralih ke konteks: ' . $targetRole);
-    }
 }
