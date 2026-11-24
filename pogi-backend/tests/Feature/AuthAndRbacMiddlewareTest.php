@@ -121,6 +121,17 @@ class AuthAndRbacMiddlewareTest extends TestCase
         $this->assertAuthenticated();
     }
 
+    public function test_unknown_email_cannot_login(): void
+    {
+        $response = $this->post('/login', [
+            'email'    => 'ekosuesanto25@gmail.com',
+            'password' => 'AnyPassword123!',
+        ]);
+
+        $response->assertSessionHasErrors('email');
+        $this->assertGuest();
+    }
+
     public function test_authenticated_user_can_logout(): void
     {
         $superAdmin = $this->makeUser('SUPER_ADMIN');
