@@ -16,48 +16,11 @@
 
 <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200/90 shrink-0 w-full print:hidden">
   <div class="h-14 sm:h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
-    <!-- Left: Mobile menu & Scope Selector -->
+    <!-- Left: Mobile menu button -->
     <div class="flex items-center gap-2 sm:gap-3 min-w-0 shrink-0">
-      <button type="button" onclick="toggleMobileSidebar(true)" class="lg:hidden p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition shrink-0" aria-label="Buka Menu">
+      <button type="button" onclick="toggleMobileSidebar(true)" class="lg:hidden p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition shrink-0 cursor-pointer" aria-label="Buka Menu">
         <span class="material-symbols-outlined text-2xl">menu</span>
       </button>
-
-      <!-- Scope Selector (38 Provinsi / Cabang) -->
-      <div class="relative">
-        <button type="button" id="headerOrgScopeBtn" onclick="toggleOrgScopeDropdown()" class="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 transition border border-slate-200 rounded-xl px-3 py-1.5 cursor-pointer max-w-[170px] sm:max-w-[240px]">
-          <span class="material-symbols-outlined text-[#006948] text-base shrink-0">public</span>
-          <span id="selectedOrgScopeLabel" class="text-xs font-bold text-slate-800 truncate">{{ isset($summary) ? $summary->activeScopeLabel : 'Semua Wilayah Nasional (38 Provinsi)' }}</span>
-          <span class="material-symbols-outlined text-sm text-slate-400 shrink-0">expand_more</span>
-        </button>
-        <div id="orgScopeDropdown" class="hidden absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 text-xs max-h-80 overflow-y-auto">
-          <div class="px-3.5 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cakupan Pantauan</div>
-          @if(isset($summary) && !empty($summary->scopeOptions))
-            @foreach($summary->scopeOptions as $opt)
-              <button type="button" onclick="selectOrgScope('{{ $opt['id'] }}', '{{ $opt['name'] }}')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-                <span class="truncate">{{ $opt['name'] }}</span>
-                <span class="px-2 py-0.5 rounded-full {{ $opt['id'] === 'all' ? 'bg-emerald-100 text-[#006948]' : 'bg-sky-100 text-sky-800' }} text-[10px] font-bold shrink-0 ml-2">{{ $opt['count'] }} Dokter</span>
-              </button>
-            @endforeach
-          @else
-            <button type="button" onclick="selectOrgScope('all', 'Semua Wilayah Nasional (38 Provinsi)')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-              <span>Seluruh Indonesia</span>
-              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-bold">200 Dokter</span>
-            </button>
-            <button type="button" onclick="selectOrgScope('dki', 'POGI Cabang DKI Jakarta')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-              <span>POGI Cabang DKI Jakarta</span>
-              <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">22 Dokter</span>
-            </button>
-            <button type="button" onclick="selectOrgScope('jabar', 'POGI Cabang Jawa Barat')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-              <span>POGI Cabang Jawa Barat</span>
-              <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
-            </button>
-            <button type="button" onclick="selectOrgScope('jatim', 'POGI Cabang Jawa Timur')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-              <span>POGI Cabang Jawa Timur</span>
-              <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
-            </button>
-          @endif
-        </div>
-      </div>
     </div>
 
     <!-- Center: Global Search Input -->

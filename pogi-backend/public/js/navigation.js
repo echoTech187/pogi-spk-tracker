@@ -848,33 +848,7 @@ function initRbacRoleSwitcher() {
   if (typeof PogiStore === 'undefined') return;
   const user = PogiStore.getCurrentUser();
 
-  // 1. Add interactive role switcher directly in top sticky header
-  const userBtn = document.getElementById('topUserBtn');
-  if (userBtn && !document.getElementById('headerRbacPill')) {
-    const pill = document.createElement('div');
-    pill.id = 'headerRbacPill';
-    pill.className = 'hidden sm:flex items-center gap-1.5 py-1 px-2.5 rounded-xl border border-slate-200/90 bg-slate-50 hover:bg-white text-xs font-bold text-slate-700 shadow-2xs transition';
-    pill.title = 'Ubah Peran Pengguna Aktif (5 Role Resmi)';
-    pill.innerHTML = `
-      <span class="material-symbols-outlined text-[16px] text-[#006948]">shield_person</span>
-      <select id="topHeaderRoleSelect" onchange="switchUserRole(this.value)" class="bg-transparent text-xs font-bold text-slate-800 outline-none cursor-pointer">
-        <option value="SUPER_ADMIN">&#x1F451; Super Admin</option>
-        <option value="ADMIN_PUSAT">&#x1F3DB;&#xFE0F; Admin Pusat</option>
-        <option value="ADMIN_POGI">&#x26A1; Admin POGI</option>
-        <option value="ADMIN_CABANG">&#x1F3E2; Admin Cabang</option>
-        <option value="DOKTER">&#x1FA7A; User/Dokter</option>
-      </select>
-    `;
-    const userBtnWrapper = userBtn.closest('.relative') || userBtn.parentElement;
-    const flexContainer = userBtnWrapper ? userBtnWrapper.parentElement : null;
-    if (flexContainer && flexContainer.contains(userBtnWrapper)) {
-      flexContainer.insertBefore(pill, userBtnWrapper);
-    } else if (userBtn.parentElement) {
-      userBtn.parentElement.insertBefore(pill, userBtn);
-    }
-  }
-
-  // 2. Add switcher inside dropdown as secondary
+  // Switcher inside dropdown as secondary
   const userDd = document.getElementById('topUserDropdown');
   if (userDd && !document.getElementById('headerRoleSwitcher')) {
     const switcherDiv = document.createElement('div');
