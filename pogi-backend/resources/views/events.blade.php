@@ -239,7 +239,7 @@
       tabs.forEach(t => {
         const btn = document.getElementById(t.id);
         if (!btn) return;
-        if (type === t.key) {
+        if (type.toUpperCase() === t.key.toUpperCase()) {
           btn.className = 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs transition font-bold';
         } else {
           btn.className = 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1 font-medium';
@@ -284,7 +284,7 @@
       const mobileContainer = document.getElementById('eventsMobileCards');
       if (!tbody && !mobileContainer) return;
 
-      const filtered = activeFilter === 'ALL' ? events : events.filter(e => e.type === activeFilter);
+      const filtered = activeFilter === 'ALL' ? events : events.filter(e => (e.type || '').toUpperCase() === activeFilter.toUpperCase());
       currentFilteredEvents = filtered;
       eventPagination.total = filtered.length;
 
@@ -303,9 +303,19 @@
         // Desktop Table Rows
         if (tbody) {
           tbody.innerHTML = pageEvents.map(e => {
+            const typeUpper = (e.type || '').toUpperCase();
             let badgeColor = 'bg-sky-100 text-sky-800 border-sky-200';
-            if (e.type === 'Pembelajaran') badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
-            if (e.type === 'Pengabdian') badgeColor = 'bg-amber-100 text-amber-800 border-amber-200';
+            let typeLabel = 'Pelayanan';
+            if (typeUpper === 'PEMBELAJARAN') {
+              badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+              typeLabel = 'Pembelajaran';
+            } else if (typeUpper === 'PENGABDIAN') {
+              badgeColor = 'bg-amber-100 text-amber-800 border-amber-200';
+              typeLabel = 'Pengabdian';
+            } else {
+              badgeColor = 'bg-sky-100 text-sky-800 border-sky-200';
+              typeLabel = 'Pelayanan';
+            }
             const typeBadge = e.typeBadge || badgeColor;
 
             const eventTitle = e.title || e.name || 'Kegiatan Ilmiah & Pelayanan POGI';
@@ -325,7 +335,7 @@
                 </td>
                 <td class="py-3.5 px-4">
                   <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${typeBadge} border">
-                    ${e.type}
+                    ${typeLabel}
                   </span>
                 </td>
                 <td class="py-3.5 px-4 text-xs font-semibold text-slate-600">
@@ -361,9 +371,19 @@
         // Mobile Cards (< md)
         if (mobileContainer) {
           mobileContainer.innerHTML = pageEvents.map(e => {
+            const typeUpper = (e.type || '').toUpperCase();
             let badgeColor = 'bg-sky-100 text-sky-800 border-sky-200';
-            if (e.type === 'Pembelajaran') badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
-            if (e.type === 'Pengabdian') badgeColor = 'bg-amber-100 text-amber-800 border-amber-200';
+            let typeLabel = 'Pelayanan';
+            if (typeUpper === 'PEMBELAJARAN') {
+              badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+              typeLabel = 'Pembelajaran';
+            } else if (typeUpper === 'PENGABDIAN') {
+              badgeColor = 'bg-amber-100 text-amber-800 border-amber-200';
+              typeLabel = 'Pengabdian';
+            } else {
+              badgeColor = 'bg-sky-100 text-sky-800 border-sky-200';
+              typeLabel = 'Pelayanan';
+            }
             const typeBadge = e.typeBadge || badgeColor;
 
             const eventTitle = e.title || e.name || 'Kegiatan Ilmiah & Pelayanan POGI';
@@ -375,7 +395,7 @@
               <div class="bg-white rounded-xl border border-slate-200 p-4 space-y-3 shadow-2xs">
                 <div class="flex items-center justify-between">
                   <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${typeBadge} border">
-                    ${e.type}
+                    ${typeLabel}
                   </span>
                   <span class="px-2.5 py-1 rounded-lg bg-[#16b3ac] text-white font-black text-xs">
                     ${creditsVal} SKP

@@ -25,7 +25,7 @@ class EventController extends Controller
             ->get();
 
         $events = $rawEvents->map(function ($e) {
-            $domain = $e->category_domain ?: 'Pembelajaran';
+            $domain = ucfirst(strtolower($e->category_domain ?: 'Pembelajaran'));
             return [
                 'id' => (string) $e->id,
                 'title' => $e->title,
