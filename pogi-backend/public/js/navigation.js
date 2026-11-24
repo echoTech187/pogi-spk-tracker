@@ -156,7 +156,7 @@ function handleGlobalTopSearch(query) {
   let html = `
     <div class="px-3.5 py-1.5 border-b border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
       <span>Hasil Pencarian (${matches.length})</span>
-      <span class="text-[#006948] font-semibold">Enter untuk cari penuh</span>
+      <span class="text-[#16b3ac] font-semibold">Enter untuk cari penuh</span>
     </div>
     <div class="divide-y divide-slate-100">
   `;
@@ -166,14 +166,14 @@ function handleGlobalTopSearch(query) {
     const isComplete = (d.status === 'Complete' || d.q4Credits >= 8.0);
     html += `
       <div onclick="selectGlobalSearchResult('${d.id}')" class="p-3 hover:bg-slate-50 transition cursor-pointer flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-[#006948] font-black text-xs flex items-center justify-center shrink-0">
+        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0">
           ${initials}
         </div>
         <div class="min-w-0 flex-1">
           <div class="font-bold text-slate-900 text-xs truncate">${d.name}</div>
           <div class="text-[10px] text-slate-400 font-mono mt-0.5">${d.pogiId} &bull; ${d.province}</div>
         </div>
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold ${isComplete ? 'bg-emerald-50 text-[#006948] border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'} border shrink-0">
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold ${isComplete ? 'bg-emerald-50 text-[#16b3ac] border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'} border shrink-0">
           ${isComplete ? 'Complete' : 'Incomplete'}
         </span>
       </div>
@@ -183,7 +183,7 @@ function handleGlobalTopSearch(query) {
   html += `
     </div>
     <div class="px-3.5 pt-2 border-t border-slate-100 text-center">
-      <a href="doctors.html?search=${encodeURIComponent(query)}" class="text-[#006948] hover:underline font-bold text-[11px]">
+      <a href="doctors.html?search=${encodeURIComponent(query)}" class="text-[#16b3ac] hover:underline font-bold text-[11px]">
         Lihat semua dokter di Direktori &rarr;
       </a>
     </div>
@@ -244,7 +244,7 @@ function openGlobalQrModal() {
       <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-slate-100 transform transition-all scale-100">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div class="flex items-center gap-2 text-left">
-            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#006948] flex items-center justify-center">
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#16b3ac] flex items-center justify-center">
               <span class="material-symbols-outlined text-lg">qr_code_2</span>
             </div>
             <div>
@@ -261,36 +261,36 @@ function openGlobalQrModal() {
           <!-- Visual SVG QR Code -->
           <div class="w-44 h-44 bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-center relative">
             <svg class="w-full h-full text-slate-900" viewBox="0 0 100 100" fill="currentColor">
-              <rect x="0" y="0" width="30" height="30" rx="3" fill="#006948" />
+              <rect x="0" y="0" width="30" height="30" rx="3" fill="#16b3ac" />
               <rect x="5" y="5" width="20" height="20" rx="2" fill="#fff" />
-              <rect x="10" y="10" width="10" height="10" rx="1" fill="#006948" />
-              <rect x="70" y="0" width="30" height="30" rx="3" fill="#006948" />
+              <rect x="10" y="10" width="10" height="10" rx="1" fill="#16b3ac" />
+              <rect x="70" y="0" width="30" height="30" rx="3" fill="#16b3ac" />
               <rect x="75" y="5" width="20" height="20" rx="2" fill="#fff" />
-              <rect x="80" y="10" width="10" height="10" rx="1" fill="#006948" />
-              <rect x="0" y="70" width="30" height="30" rx="3" fill="#006948" />
+              <rect x="80" y="10" width="10" height="10" rx="1" fill="#16b3ac" />
+              <rect x="0" y="70" width="30" height="30" rx="3" fill="#16b3ac" />
               <rect x="5" y="75" width="20" height="20" rx="2" fill="#fff" />
-              <rect x="10" y="80" width="10" height="10" rx="1" fill="#006948" />
-              <rect x="36" y="8" width="6" height="6" rx="1" fill="#006948" />
-              <rect x="48" y="8" width="6" height="6" rx="1" fill="#006948" />
-              <rect x="40" y="20" width="8" height="8" rx="1" fill="#006948" />
-              <rect x="55" y="20" width="6" height="6" rx="1" fill="#006948" />
-              <rect x="8" y="40" width="8" height="8" rx="1" fill="#006948" />
-              <rect x="22" y="42" width="6" height="6" rx="1" fill="#006948" />
-              <rect x="36" y="38" width="10" height="10" rx="2" fill="#006948" />
-              <rect x="52" y="36" width="8" height="8" rx="1" fill="#006948" />
-              <rect x="68" y="42" width="6" height="6" rx="1" fill="#006948" />
-              <rect x="82" y="38" width="8" height="8" rx="1" fill="#006948" />
-              <rect x="38" y="56" width="6" height="6" rx="1" fill="#006948" />
-              <rect x="50" y="54" width="8" height="8" rx="1" fill="#006948" />
-              <rect x="64" y="58" width="6" height="6" rx="1" fill="#006948" />
-              <rect x="80" y="56" width="8" height="8" rx="1" fill="#006948" />
-              <rect x="38" y="72" width="10" height="10" rx="2" fill="#006948" />
-              <rect x="54" y="74" width="6" height="6" rx="1" fill="#006948" />
-              <rect x="68" y="70" width="8" height="8" rx="1" fill="#006948" />
-              <rect x="84" y="76" width="6" height="6" rx="1" fill="#006948" />
-              <rect x="42" y="88" width="8" height="8" rx="1" fill="#006948" />
-              <rect x="58" y="86" width="6" height="6" rx="1" fill="#006948" />
-              <rect x="74" y="88" width="8" height="8" rx="1" fill="#006948" />
+              <rect x="10" y="80" width="10" height="10" rx="1" fill="#16b3ac" />
+              <rect x="36" y="8" width="6" height="6" rx="1" fill="#16b3ac" />
+              <rect x="48" y="8" width="6" height="6" rx="1" fill="#16b3ac" />
+              <rect x="40" y="20" width="8" height="8" rx="1" fill="#16b3ac" />
+              <rect x="55" y="20" width="6" height="6" rx="1" fill="#16b3ac" />
+              <rect x="8" y="40" width="8" height="8" rx="1" fill="#16b3ac" />
+              <rect x="22" y="42" width="6" height="6" rx="1" fill="#16b3ac" />
+              <rect x="36" y="38" width="10" height="10" rx="2" fill="#16b3ac" />
+              <rect x="52" y="36" width="8" height="8" rx="1" fill="#16b3ac" />
+              <rect x="68" y="42" width="6" height="6" rx="1" fill="#16b3ac" />
+              <rect x="82" y="38" width="8" height="8" rx="1" fill="#16b3ac" />
+              <rect x="38" y="56" width="6" height="6" rx="1" fill="#16b3ac" />
+              <rect x="50" y="54" width="8" height="8" rx="1" fill="#16b3ac" />
+              <rect x="64" y="58" width="6" height="6" rx="1" fill="#16b3ac" />
+              <rect x="80" y="56" width="8" height="8" rx="1" fill="#16b3ac" />
+              <rect x="38" y="72" width="10" height="10" rx="2" fill="#16b3ac" />
+              <rect x="54" y="74" width="6" height="6" rx="1" fill="#16b3ac" />
+              <rect x="68" y="70" width="8" height="8" rx="1" fill="#16b3ac" />
+              <rect x="84" y="76" width="6" height="6" rx="1" fill="#16b3ac" />
+              <rect x="42" y="88" width="8" height="8" rx="1" fill="#16b3ac" />
+              <rect x="58" y="86" width="6" height="6" rx="1" fill="#16b3ac" />
+              <rect x="74" y="88" width="8" height="8" rx="1" fill="#16b3ac" />
             </svg>
             <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div class="w-8 h-8 rounded-lg bg-white p-0.5 shadow-md flex items-center justify-center">
@@ -304,7 +304,7 @@ function openGlobalQrModal() {
         </div>
 
         <div class="space-y-2 text-xs">
-          <button type="button" onclick="copyDoctorQrLink()" class="w-full py-2.5 px-4 rounded-xl bg-[#006948] hover:bg-[#005439] text-white font-extrabold shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+          <button type="button" onclick="copyDoctorQrLink()" class="w-full py-2.5 px-4 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
             <span class="material-symbols-outlined text-base">content_copy</span>
             <span>Salin Tautan Akses Dokter</span>
           </button>
@@ -349,7 +349,7 @@ function showToast(message, type = 'success') {
 
   const toast = document.createElement('div');
   const icon = type === 'success' ? 'check_circle' : type === 'warning' ? 'warning' : 'info';
-  const bg = type === 'success' ? 'bg-[#006948] text-white' : type === 'warning' ? 'bg-amber-600 text-white' : 'bg-slate-900 text-white';
+  const bg = type === 'success' ? 'bg-[#16b3ac] text-white' : type === 'warning' ? 'bg-amber-600 text-white' : 'bg-slate-900 text-white';
 
   toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl ${bg} text-xs font-semibold transition-all duration-300 transform translate-y-4 opacity-0`;
   toast.innerHTML = `
@@ -535,13 +535,13 @@ function applyRbacEnforcement() {
       const avatarEl = profileCard.querySelector('.rounded-full') || profileCard.querySelector('div');
       if (avatarEl) {
         avatarEl.innerText = user.avatar || (roleKey === 'SUPER_ADMIN' ? 'SA' : (roleKey === 'ADMIN_PUSAT' ? 'BP' : (roleKey === 'ADMIN_CABANG' ? 'DF' : (roleKey === 'DOKTER' ? 'CS' : 'AP'))));
-        avatarEl.className = 'w-9 h-9 rounded-full ' + (user.avatarBg || (roleKey === 'SUPER_ADMIN' ? 'bg-purple-700 text-white' : (roleKey === 'ADMIN_PUSAT' ? 'bg-indigo-700 text-white' : (roleKey === 'ADMIN_CABANG' ? 'bg-sky-700 text-white' : (roleKey === 'DOKTER' ? 'bg-teal-700 text-white' : 'bg-[#006948] text-white'))))) + ' font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs';
+        avatarEl.className = 'w-9 h-9 rounded-full ' + (user.avatarBg || (roleKey === 'SUPER_ADMIN' ? 'bg-purple-700 text-white' : (roleKey === 'ADMIN_PUSAT' ? 'bg-indigo-700 text-white' : (roleKey === 'ADMIN_CABANG' ? 'bg-sky-700 text-white' : (roleKey === 'DOKTER' ? 'bg-teal-700 text-white' : 'bg-[#16b3ac] text-white'))))) + ' font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs';
       }
       const textContainer = profileCard.querySelector('.min-w-0');
       if (textContainer && textContainer.children.length >= 2) {
         textContainer.children[0].innerText = user.name || user.displayName || 'Pengguna';
         textContainer.children[1].innerText = user.shortRole || user.roleLabel || roleKey;
-        const roleColorClass = roleKey === 'SUPER_ADMIN' ? 'text-purple-700' : (roleKey === 'ADMIN_PUSAT' ? 'text-indigo-700' : (roleKey === 'ADMIN_CABANG' ? 'text-sky-700' : (roleKey === 'DOKTER' ? 'text-teal-700' : 'text-[#006948]')));
+        const roleColorClass = roleKey === 'SUPER_ADMIN' ? 'text-purple-700' : (roleKey === 'ADMIN_PUSAT' ? 'text-indigo-700' : (roleKey === 'ADMIN_CABANG' ? 'text-sky-700' : (roleKey === 'DOKTER' ? 'text-teal-700' : 'text-[#16b3ac]')));
         textContainer.children[1].className = 'text-[9px] font-bold ' + roleColorClass + ' uppercase tracking-wider truncate';
       }
     }
@@ -577,7 +577,7 @@ function applyRbacEnforcement() {
     const topAv = topUserBtn.querySelector('div');
     if (topAv) {
       topAv.innerText = user.avatar || (roleKey === 'SUPER_ADMIN' ? 'SA' : (roleKey === 'ADMIN_PUSAT' ? 'BP' : (roleKey === 'ADMIN_CABANG' ? 'DF' : (roleKey === 'DOKTER' ? 'CS' : 'AP'))));
-      topAv.className = 'w-7 h-7 rounded-lg ' + (user.avatarBg || (roleKey === 'SUPER_ADMIN' ? 'bg-purple-700 text-white' : (roleKey === 'ADMIN_PUSAT' ? 'bg-indigo-700 text-white' : (roleKey === 'ADMIN_CABANG' ? 'bg-sky-700 text-white' : (roleKey === 'DOKTER' ? 'bg-teal-700 text-white' : 'bg-[#006948] text-white'))))) + ' font-extrabold text-[11px] flex items-center justify-center shadow-2xs';
+      topAv.className = 'w-7 h-7 rounded-lg ' + (user.avatarBg || (roleKey === 'SUPER_ADMIN' ? 'bg-purple-700 text-white' : (roleKey === 'ADMIN_PUSAT' ? 'bg-indigo-700 text-white' : (roleKey === 'ADMIN_CABANG' ? 'bg-sky-700 text-white' : (roleKey === 'DOKTER' ? 'bg-teal-700 text-white' : 'bg-[#16b3ac] text-white'))))) + ' font-extrabold text-[11px] flex items-center justify-center shadow-2xs';
     }
   }
 
@@ -619,7 +619,7 @@ function applyRbacEnforcement() {
             Modul <strong>Admin Performance &amp; SLA Tracker</strong> adalah instrumen evaluasi nasional untuk <strong>Admin Pusat</strong> dan <strong>Super Admin</strong> guna memantau performa serta kecepatan verifikasi tim Admin POGI.
           </p>
           <div class="pt-2">
-            <a href="dashboard.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#006948] text-white text-xs font-bold hover:bg-[#005439] transition">
+            <a href="dashboard.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#16b3ac] text-white text-xs font-bold hover:bg-[#129993] transition">
               <span class="material-symbols-outlined text-sm">dashboard</span>
               <span>Kembali ke Dashboard</span>
             </a>
@@ -644,7 +644,7 @@ function applyRbacEnforcement() {
             Modul <strong>Pengaturan Data (Manage)</strong> hanya dapat diakses oleh Administrator &amp; Admin POGI. Sebagai dokter, Anda dapat mengakses portofolio SKP Anda secara mandiri.
           </p>
           <div class="pt-2">
-            <a href="doctor-detail.html?id=doc-001" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#006948] text-white text-xs font-bold hover:bg-[#005439] transition">
+            <a href="doctor-detail.html?id=doc-001" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#16b3ac] text-white text-xs font-bold hover:bg-[#129993] transition">
               <span class="material-symbols-outlined text-sm">person</span>
               <span>Ke Profil SKP Saya</span>
             </a>
@@ -716,13 +716,13 @@ function applyRbacEnforcement() {
       banner.id = 'rbacNoticeBanner';
       safeInsertBanner(banner);
     }
-    banner.className = 'w-full bg-emerald-50 border-b border-emerald-200 py-2 px-4 text-xs font-bold text-[#006948] flex items-center justify-between shrink-0 z-30';
+    banner.className = 'w-full bg-emerald-50 border-b border-emerald-200 py-2 px-4 text-xs font-bold text-[#16b3ac] flex items-center justify-between shrink-0 z-30';
     banner.innerHTML = `
       <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-base text-[#006948]">verified_user</span>
+        <span class="material-symbols-outlined text-base text-[#16b3ac]">verified_user</span>
         <span>Mode Akses: <strong>Admin POGI (Siti Rahma, S.Farm)</strong> — Melakukan kesesuaian dokumen, validasi SKP, verifikasi kredit, &amp; monitoring dokter PJ.</span>
       </div>
-      <span class="px-2.5 py-0.5 rounded-full bg-emerald-200 text-[#006948] text-xs font-black uppercase">Admin POGI</span>
+      <span class="px-2.5 py-0.5 rounded-full bg-emerald-200 text-[#16b3ac] text-xs font-black uppercase">Admin POGI</span>
     `;
     banner.classList.remove('hidden');
 

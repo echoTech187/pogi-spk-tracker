@@ -28,7 +28,7 @@
         <!-- MedCred Standard Heading Banner -->
         <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div class="space-y-1.5">
-            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-black uppercase tracking-wider">
+            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
               <span>MONITORING 38 WILAYAH PROVINSI</span>
             </div>
             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
@@ -41,13 +41,15 @@
           </div>
           <div class="flex items-center gap-2.5 shrink-0">
             <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer bg-slate-50 hover:bg-slate-100 px-3 py-2 rounded-xl border border-slate-200 transition">
-              <input id="hideZeroDoctors" type="checkbox" onchange="toggleZeroDoctors()" class="rounded text-[#006948] focus:ring-[#006948]" />
+              <input id="hideZeroDoctors" type="checkbox" onchange="toggleZeroDoctors()" class="rounded text-[#16b3ac] focus:ring-[#16b3ac]" />
               <span class="text-[11px]">Sembunyikan 0 Dokter</span>
             </label>
+            @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
             <button type="button" onclick="triggerMassFollowUp()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
               <span class="material-symbols-outlined text-base">emergency</span>
               <span>FU Cabang Kritis</span>
             </button>
+            @endif
           </div>
         </div>
 
@@ -135,7 +137,7 @@
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#006948] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
             ${p}
           </button>
         `;
@@ -240,13 +242,13 @@
       } else {
         tbody.innerHTML = pageProvinces.map((p, idx) => {
           let statusBadge = '';
-          let barColor = 'bg-[#006948]';
+          let barColor = 'bg-[#16b3ac]';
 
           if (p.completionRate >= 85) {
             statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">Terpenuhi (Aman)</span>';
             barColor = 'bg-[#eab308]';
           } else if (p.completionRate >= 50) {
-            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-[#006948] border border-emerald-200">Hampir Memenuhi</span>';
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-[#16b3ac] border border-emerald-200">Hampir Memenuhi</span>';
             barColor = 'bg-[#16a34a]';
           } else {
             statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 border border-red-200">Sangat Kurang (&lt;50%)</span>';
@@ -274,7 +276,7 @@
               </td>
               <td class="py-3 px-4 text-center">${statusBadge}</td>
               <td class="py-3 px-4 text-center">
-                <button type="button" onclick="notifySingleProvince('${p.name}', ${p.incomplete})" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#006948] font-bold text-xs transition inline-flex items-center gap-1">
+                <button type="button" onclick="notifySingleProvince('${p.name}', ${p.incomplete})" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition inline-flex items-center gap-1">
                   <span class="material-symbols-outlined text-xs">send</span>
                   <span>FU Cabang (${p.incomplete})</span>
                 </button>

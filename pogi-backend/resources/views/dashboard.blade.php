@@ -4,7 +4,7 @@
 
 @section('content')
         <!-- Welcome Banner -->
-        <div class="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#012f22] via-[#005238] to-[#012319] text-white shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#0a4c49] via-[#0e6864] to-[#052625] text-white shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div class="space-y-1">
             <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/10 text-emerald-300 text-[11px] font-bold border border-white/10">
               <span class="material-symbols-outlined text-xs">verified</span> Standardisasi Mandatori 160 SKP / 5 Tahun
@@ -42,13 +42,13 @@
           <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
             <div class="flex items-center justify-between text-slate-500 mb-2">
               <span class="text-xs font-bold uppercase tracking-wider">Average Progress Q4</span>
-              <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#006948] flex items-center justify-center">
+              <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#16b3ac] flex items-center justify-center">
                 <span class="material-symbols-outlined text-lg">trending_up</span>
               </div>
             </div>
             <div id="metricAvgProgress" class="text-2xl sm:text-3xl font-black text-emerald-800">{{ $summary->avgProgressPct }}%</div>
             <div class="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
-              <div id="metricAvgProgressBar" class="bg-[#006948] h-2 rounded-full" style="width: {{ min(100, $summary->avgProgressPct) }}%"></div>
+              <div id="metricAvgProgressBar" class="bg-[#16b3ac] h-2 rounded-full" style="width: {{ min(100, $summary->avgProgressPct) }}%"></div>
             </div>
             <div class="text-[10px] text-slate-500 mt-1">Target Kuartal: {{ number_format($summary->targetTotal / 20, 1) }} SKP / dokter</div>
           </div>
@@ -89,7 +89,7 @@
               <h2 class="text-base font-extrabold text-slate-900">Standarisasi 3 Subbidang SKP POGI (Total {{ (int) $summary->targetTotal }} SKP / 5 Tahun)</h2>
               <p class="text-xs text-slate-500">Kewajiban pemenuhan kredit dokter Obgyn harus proporsional di seluruh 3 subbidang wajib.</p>
             </div>
-            <span class="text-xs font-bold text-[#006948] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <span class="text-xs font-bold text-[#16b3ac] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
               Rata-rata Akumulasi: {{ number_format($summary->avgAccumulationPct, 1) }}%
             </span>
           </div>
@@ -198,7 +198,7 @@
             <!-- Right Column: Highest -->
             <div class="space-y-4">
               <div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 pb-1">
-                <span class="material-symbols-outlined text-base text-[#006948]">trending_up</span>
+                <span class="material-symbols-outlined text-base text-[#16b3ac]">trending_up</span>
                 <span class="font-bold text-slate-600">Highest</span>
               </div>
 
@@ -212,7 +212,7 @@
                     </div>
                   </div>
                   <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                    <div class="bg-[#006948] h-1.5 rounded-full" style="width: {{ min(100, $prov['pct']) }}%"></div>
+                    <div class="bg-[#16b3ac] h-1.5 rounded-full" style="width: {{ min(100, $prov['pct']) }}%"></div>
                   </div>
                 </div>
               @endforeach
@@ -221,7 +221,7 @@
 
           <!-- Card Footer Link -->
           <div class="flex justify-end pt-3 border-t border-slate-100">
-            <a href="/provinces" class="inline-flex items-center gap-1 text-xs font-extrabold text-slate-700 hover:text-[#006948] transition">
+            <a href="/provinces" class="inline-flex items-center gap-1 text-xs font-extrabold text-slate-700 hover:text-[#16b3ac] transition">
               <span>View all provinces</span>
               <span class="material-symbols-outlined text-sm">chevron_right</span>
             </a>
@@ -233,12 +233,12 @@
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-[#006948] text-xl">map</span>
+                <span class="material-symbols-outlined text-[#16b3ac] text-xl">map</span>
                 <h2 class="text-base font-extrabold text-slate-900">Doctors by province</h2>
               </div>
               <p id="mapSubTitle" class="text-xs text-slate-500 mt-0.5">{{ $summary->totalDoctors }} doctors in 38 provinces.</p>
             </div>
-            <a href="/provinces" class="text-xs font-bold text-[#006948] hover:underline flex items-center gap-1">
+            <a href="/provinces" class="text-xs font-bold text-[#16b3ac] hover:underline flex items-center gap-1">
               <span>Monitoring 38 Cabang</span>
               <span class="material-symbols-outlined text-sm">open_in_new</span>
             </a>
@@ -329,19 +329,19 @@
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-                <span class="material-symbols-outlined text-[#006948] text-lg">update</span>
+                <span class="material-symbols-outlined text-[#16b3ac] text-lg">update</span>
                 Aktivitas Verifikasi &amp; Pengelolaan Data Terbaru
               </h3>
               <p class="text-[11px] text-slate-500">Pencatatan real-time verifikasi kredit oleh tim data pusat &amp; cabang</p>
             </div>
-            <a href="/activity" class="text-xs font-bold text-[#006948] hover:underline">Semua Log Aktivitas &rarr;</a>
+            <a href="/activity" class="text-xs font-bold text-[#16b3ac] hover:underline">Semua Log Aktivitas &rarr;</a>
           </div>
 
           <div id="recentActivityList" class="space-y-2.5">
             @forelse($summary->recentActivities as $act)
               <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 text-xs">
                 <div class="flex items-center gap-2.5 min-w-0">
-                  <div class="w-8 h-8 rounded-lg bg-emerald-100 text-[#006948] flex items-center justify-center shrink-0">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
                     <span class="material-symbols-outlined text-base">task_alt</span>
                   </div>
                   <div class="min-w-0">
@@ -362,7 +362,7 @@
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#006948] flex items-center justify-center">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center">
             <span class="material-symbols-outlined text-2xl">forward_to_inbox</span>
           </div>
           <div>
@@ -393,11 +393,11 @@
           <label class="font-bold text-slate-700 block mb-1">Kanal Pengiriman Notifikasi:</label>
           <div class="grid grid-cols-2 gap-2">
             <label class="p-2.5 rounded-xl border border-emerald-300 bg-emerald-50/50 flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked class="rounded text-[#006948]" />
+              <input type="checkbox" checked class="rounded text-[#16b3ac]" />
               <span class="font-bold text-slate-800">WhatsApp Gateway</span>
             </label>
             <label class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked class="rounded text-[#006948]" />
+              <input type="checkbox" checked class="rounded text-[#16b3ac]" />
               <span class="font-bold text-slate-800">Email Resmi Cabang</span>
             </label>
           </div>
@@ -411,7 +411,7 @@
 
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
         <button type="button" onclick="closeFollowUpModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Batal</button>
-        <button type="button" onclick="sendFollowUpAction()" class="px-4 py-2.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1.5 rbac-operational">
+        <button type="button" onclick="sendFollowUpAction()" class="px-4 py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1.5 rbac-operational">
           <span class="material-symbols-outlined text-sm">send</span>
           <span>Kirimkan Notifikasi FU Sekarang</span>
         </button>
@@ -456,7 +456,7 @@
         container.innerHTML = acts.map(a => `
           <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 text-xs">
             <div class="flex items-center gap-2.5 min-w-0">
-              <div class="w-8 h-8 rounded-lg bg-emerald-100 text-[#006948] flex items-center justify-center shrink-0">
+              <div class="w-8 h-8 rounded-lg bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
                 <span class="material-symbols-outlined text-base">task_alt</span>
               </div>
               <div class="min-w-0">
@@ -596,7 +596,7 @@
           layer.on({
             mouseover: function(e) {
               const l = e.target;
-              l.setStyle({ weight: 2.5, color: '#006948', fillOpacity: 1 });
+              l.setStyle({ weight: 2.5, color: '#16b3ac', fillOpacity: 1 });
               l.bringToFront();
             },
             mouseout: function(e) {
@@ -619,7 +619,7 @@
       for (const k in provinceLayerMap) {
         if (k.includes(key) || key.includes(k)) {
           const layer = provinceLayerMap[k];
-          layer.setStyle({ weight: 3, color: '#006948', fillOpacity: 1 });
+          layer.setStyle({ weight: 3, color: '#16b3ac', fillOpacity: 1 });
           layer.bringToFront();
         }
       }

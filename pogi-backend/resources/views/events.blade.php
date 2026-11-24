@@ -28,7 +28,7 @@
         <!-- MedCred Standard Heading Banner -->
         <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div class="space-y-1.5">
-            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-black uppercase tracking-wider">
+            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
               <span>KATALOG RESMI TERAKREDITASI</span>
             </div>
             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
@@ -39,12 +39,14 @@
               Daftar kegiatan ilmiah, simposium, workshop, dan pelayanan klinis ber-SKP yang telah terverifikasi Kemenkes Plataran Sehat terintegrasi PP POGI.
             </p>
           </div>
+          @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
           <div class="flex items-center gap-2.5 shrink-0">
-            <button type="button" onclick="openAddEventModal()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-write">
+            <button type="button" onclick="openAddEventModal()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-write">
               <span class="material-symbols-outlined text-base">add_circle</span>
               <span>Tambah Event SKP</span>
             </button>
           </div>
+          @endif
         </div>
 
         <!-- Filter Subbidang Tabs -->
@@ -89,7 +91,7 @@
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3 shrink-0">
         <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#006948] flex items-center justify-center font-bold">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold">
             <span class="material-symbols-outlined text-xl">groups</span>
           </div>
           <div>
@@ -124,7 +126,7 @@
           <span class="material-symbols-outlined text-sm">download</span>
           <span>Ekspor Absensi Peserta</span>
         </button>
-        <button type="button" onclick="closeEventParticipants()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold transition">
+        <button type="button" onclick="closeEventParticipants()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition">
           Tutup
         </button>
       </div>
@@ -175,7 +177,7 @@
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#006948] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
             ${p}
           </button>
         `;
@@ -314,7 +316,7 @@
                       ${e.id}
                     </span>
                   </div>
-                  <span class="px-2.5 py-1 rounded-lg bg-[#006948] text-white font-black text-xs shadow-2xs">
+                  <span class="px-2.5 py-1 rounded-lg bg-[#16b3ac] text-white font-black text-xs shadow-2xs">
                     ${creditsVal} SKP
                   </span>
                 </div>
@@ -341,7 +343,7 @@
                   <div class="text-[10px] text-slate-400">Peserta Tuntas:</div>
                   <div class="font-black text-slate-900 text-xs mt-0.5">${docCount}</div>
                 </div>
-                <button type="button" onclick="openEventParticipants('${e.id}', '${eventTitle.replace(/'/g, "\\'")}', '${creditsVal}')" class="px-3 py-1.5 rounded-xl border border-slate-200 hover:border-[#006948] hover:bg-emerald-50 text-slate-700 hover:text-[#006948] font-bold text-xs transition">
+                <button type="button" onclick="openEventParticipants('${e.id}', '${eventTitle.replace(/'/g, "\\'")}', '${creditsVal}')" class="px-3 py-1.5 rounded-xl border border-slate-200 hover:border-[#16b3ac] hover:bg-emerald-50 text-slate-700 hover:text-[#16b3ac] font-bold text-xs transition">
                   Lihat Peserta
                 </button>
               </div>
@@ -388,7 +390,7 @@
           <td class="py-2.5 px-3 text-center">
             <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">Tuntas Hadir</span>
           </td>
-          <td class="py-2.5 px-3 text-center font-black text-[#006948]">+${credits} SKP</td>
+          <td class="py-2.5 px-3 text-center font-black text-[#16b3ac]">+${credits} SKP</td>
         </tr>
       `).join('');
 

@@ -28,7 +28,7 @@
         <!-- MedCred Standard Heading Banner -->
         <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div class="space-y-1.5">
-            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-black uppercase tracking-wider">
+            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
               <span>PUSAT PENGELOLAAN MASTER DATA</span>
             </div>
             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
@@ -139,8 +139,8 @@
             <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
               <div>Menampilkan <span id="manageDoctorCounter" class="font-bold text-slate-900">0</span> dokter dari total pangkalan data</div>
               <div class="flex items-center gap-3">
-                <button type="button" onclick="resetManageDoctorFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+                <button type="button" onclick="resetManageDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
                   <span class="material-symbols-outlined text-sm">person_add</span>
                   <span>Tambah Dokter</span>
                 </button>
@@ -263,8 +263,8 @@
             <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
               <div>Menampilkan <span id="manageInstCounter" class="font-bold text-slate-900">0</span> faskes jejaring</div>
               <div class="flex items-center gap-3">
-                <button type="button" onclick="resetManageInstFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+                <button type="button" onclick="resetManageInstFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
                   <span class="material-symbols-outlined text-sm">domain_add</span>
                   <span>Tambah Institusi</span>
                 </button>
@@ -341,8 +341,8 @@
             <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
               <div>Menampilkan <span id="manageEventCounter" class="font-bold text-slate-900">0</span> event SKP terdaftar</div>
               <div class="flex items-center gap-3">
-                <button type="button" onclick="resetManageEventFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+                <button type="button" onclick="resetManageEventFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
                   <span class="material-symbols-outlined text-sm">add_circle</span>
                   <span>Tambah Event SKP</span>
                 </button>
@@ -417,8 +417,8 @@
             <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
               <div>Menampilkan <span id="manageCatCounter" class="font-bold text-slate-900">0</span> kategori terverifikasi</div>
               <div class="flex items-center gap-3">
-                <button type="button" onclick="resetManageCatFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+                <button type="button" onclick="resetManageCatFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
                   <span class="material-symbols-outlined text-sm">category</span>
                   <span>Tambah Kategori</span>
                 </button>
@@ -494,8 +494,8 @@
             <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
               <div>Menampilkan <span id="manageUserCounter" class="font-bold text-slate-900">0</span> akun pengelola</div>
               <div class="flex items-center gap-3">
-                <button type="button" onclick="resetManageUserFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+                <button type="button" onclick="resetManageUserFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
                   <span class="material-symbols-outlined text-sm">manage_accounts</span>
                   <span>Tambah Pengguna</span>
                 </button>
@@ -566,7 +566,7 @@
         </div>
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
           <button type="button" onclick="closeManageAddModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold">Batal</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-[#006948] text-white font-extrabold shadow-sm">Simpan</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] text-white font-extrabold shadow-sm">Simpan</button>
         </div>
       </form>
     </div>
@@ -605,7 +605,7 @@
         </div>
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
           <button type="button" onclick="closeManageEditModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold">Batal</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-[#006948] text-white font-extrabold shadow-sm">Simpan Perubahan</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] text-white font-extrabold shadow-sm">Simpan Perubahan</button>
         </div>
       </form>
     </div>
@@ -661,7 +661,7 @@
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#006948] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
             ${p}
           </button>
         `;
@@ -765,7 +765,7 @@
             topBtn.className = 'py-2 px-3.5 rounded-xl bg-white text-slate-900 shadow-xs transition flex items-center gap-1.5 font-bold';
           }
           if (sideBtn) {
-            sideBtn.className = 'nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition bg-[#006948] text-white shadow-xs';
+            sideBtn.className = 'nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition bg-[#16b3ac] text-white shadow-xs';
           }
         } else {
           if (pane) pane.classList.add('hidden');
@@ -880,7 +880,7 @@
               <tr class="hover:bg-slate-50/80 transition">
                 <td class="py-3 px-4">
                   <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-[#006948] font-black text-xs flex items-center justify-center shrink-0">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0">
                       ${initials}
                     </div>
                     <div class="min-w-0">
@@ -899,7 +899,7 @@
                     <span class="${percent >= 100 ? 'text-emerald-700' : 'text-amber-600'}">${percent}%</span>
                   </div>
                   <div class="w-28 bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                    <div class="${percent >= 100 ? 'bg-[#006948]' : 'bg-amber-500'} h-1.5 rounded-full" style="width: ${percent}%"></div>
+                    <div class="${percent >= 100 ? 'bg-[#16b3ac]' : 'bg-amber-500'} h-1.5 rounded-full" style="width: ${percent}%"></div>
                   </div>
                   <div class="text-[9px] text-slate-400 mt-1">Total 5 Thn: ${total5Year}/160 SKP</div>
                 </td>
@@ -930,7 +930,7 @@
                 <td class="py-3 px-4 text-[11px] text-slate-500">${lastAct}</td>
                 <td class="py-3 px-4 text-center">
                   <div class="flex items-center justify-center gap-1.5">
-                    <button type="button" onclick="openManageDetailModal('doctor', '${d.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#006948] font-bold text-xs transition">
+                    <button type="button" onclick="openManageDetailModal('doctor', '${d.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition">
                       Rincian
                     </button>
                     <button type="button" onclick="openRowActions(event, 'doctor', '${d.id}')" class="p-1.5 text-slate-400 hover:text-slate-800 rounded-lg hover:bg-slate-100 font-black">
@@ -955,7 +955,7 @@
               <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
                 <div class="flex items-start justify-between gap-2">
                   <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-[#006948] font-black text-xs flex items-center justify-center shrink-0">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0">
                       ${initials}
                     </div>
                     <div class="min-w-0">
@@ -963,7 +963,7 @@
                       <div class="text-[10px] text-slate-400 font-mono">${d.pogiId} &bull; ${d.nik}</div>
                     </div>
                   </div>
-                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${isComplete ? 'bg-emerald-50 text-[#006948] border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'} border shrink-0">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${isComplete ? 'bg-emerald-50 text-[#16b3ac] border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'} border shrink-0">
                     ${isComplete ? 'Complete' : 'Incomplete'}
                   </span>
                 </div>
@@ -972,7 +972,7 @@
                   <div class="flex justify-between"><span class="text-slate-400 text-[10px]">RS:</span> <span class="font-medium text-slate-700 text-[11px] truncate max-w-[200px]">${hospital}</span></div>
                 </div>
                 <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                  <button type="button" onclick="openManageDetailModal('doctor', '${d.id}')" class="flex-1 py-1 px-2.5 rounded-lg bg-emerald-50 text-[#006948] text-xs font-bold transition flex items-center justify-center gap-1">
+                  <button type="button" onclick="openManageDetailModal('doctor', '${d.id}')" class="flex-1 py-1 px-2.5 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
                     <span>Rincian</span>
                   </button>
                   <button type="button" onclick="openManageEditModal('doctor', '${d.id}')" class="py-1 px-2.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
@@ -1055,7 +1055,7 @@
             <tr class="hover:bg-slate-50/80 transition">
               <td class="py-3 px-4">
                 <div class="flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200 text-[#006948] font-black text-xs flex items-center justify-center shrink-0">
+                  <div class="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0">
                     <span class="material-symbols-outlined text-sm">local_hospital</span>
                   </div>
                   <div>
@@ -1069,7 +1069,7 @@
               </td>
               <td class="py-3 px-4 text-xs font-semibold text-slate-800">${inst.province}</td>
               <td class="py-3 px-4 text-center">
-                <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-[#006948] font-bold text-xs border border-emerald-200">${inst.doctorsCount || 0} Dokter</span>
+                <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-[#16b3ac] font-bold text-xs border border-emerald-200">${inst.doctorsCount || 0} Dokter</span>
               </td>
               <td class="py-3 px-4 text-center">
                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${inst.status === 'Aktif' || inst.status === 'Aktif Bekerjasama' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-slate-100 text-slate-700 border-slate-200'} border">
@@ -1080,7 +1080,7 @@
               <td class="py-3 px-4 text-[11px] text-slate-500">${inst.lastActivity || 'Sync SATUSEHAT'}</td>
               <td class="py-3 px-4 text-center">
                 <div class="flex items-center justify-center gap-1.5">
-                  <button type="button" onclick="openManageDetailModal('institution', '${inst.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#006948] font-bold text-xs transition">Rincian</button>
+                  <button type="button" onclick="openManageDetailModal('institution', '${inst.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition">Rincian</button>
                   <button type="button" onclick="openRowActions(event, 'institution', '${inst.id}')" class="p-1.5 text-slate-400 hover:text-slate-800 rounded-lg hover:bg-slate-100 font-black">&bull;&bull;&bull;</button>
                 </div>
               </td>
@@ -1094,7 +1094,7 @@
             <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
               <div class="flex items-start justify-between gap-2">
                 <div class="flex items-center gap-2 min-w-0">
-                  <div class="w-8 h-8 rounded-lg bg-emerald-50 text-[#006948] flex items-center justify-center shrink-0">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-50 text-[#16b3ac] flex items-center justify-center shrink-0">
                     <span class="material-symbols-outlined text-sm">local_hospital</span>
                   </div>
                   <div class="min-w-0">
@@ -1102,10 +1102,10 @@
                     <div class="text-[10px] text-slate-400 font-mono">${inst.province} &bull; ${inst.type || 'RS'}</div>
                   </div>
                 </div>
-                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-[#006948] font-bold text-[10px] border border-emerald-200 shrink-0">${inst.doctorsCount || 0} Dokter</span>
+                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-[#16b3ac] font-bold text-[10px] border border-emerald-200 shrink-0">${inst.doctorsCount || 0} Dokter</span>
               </div>
               <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                <button type="button" onclick="openManageDetailModal('institution', '${inst.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#006948] text-xs font-bold transition flex items-center justify-center gap-1">
+                <button type="button" onclick="openManageDetailModal('institution', '${inst.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
                   <span>Rincian</span>
                   <span class="material-symbols-outlined text-xs">arrow_forward</span>
                 </button>
@@ -1202,7 +1202,7 @@
                 </td>
                 <td class="py-3 px-4 text-xs font-semibold text-slate-700">${eventCategory}</td>
                 <td class="py-3 px-4 text-center">
-                  <span class="px-2.5 py-1 rounded-lg bg-[#006948] text-white font-black text-xs shadow-2xs">${creditsVal} SKP</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-[#16b3ac] text-white font-black text-xs shadow-2xs">${creditsVal} SKP</span>
                 </td>
                 <td class="py-3 px-4 text-center text-xs font-semibold text-slate-800">${docCount}</td>
                 <td class="py-3 px-4 text-center">
@@ -1213,7 +1213,7 @@
                 </td>
                 <td class="py-3 px-4 text-center">
                   <div class="flex items-center justify-center gap-1.5">
-                    <button type="button" onclick="openManageDetailModal('event', '${e.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#006948] font-bold text-xs transition">Rincian</button>
+                    <button type="button" onclick="openManageDetailModal('event', '${e.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition">Rincian</button>
                     <button type="button" onclick="openRowActions(event, 'event', '${e.id}')" class="p-1.5 text-slate-400 hover:text-slate-800 rounded-lg hover:bg-slate-100 font-black">&bull;&bull;&bull;</button>
                   </div>
                 </td>
@@ -1233,17 +1233,17 @@
               <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
                 <div class="flex items-start justify-between gap-2">
                   <div class="min-w-0">
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#006948] border border-emerald-200">${e.type}</span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#16b3ac] border border-emerald-200">${e.type}</span>
                     <div class="font-bold text-slate-900 text-xs mt-1.5 leading-snug line-clamp-2">${eventTitle}</div>
                   </div>
-                  <span class="px-2 py-1 rounded-lg bg-[#006948] text-white font-black text-xs shrink-0">${creditsVal} SKP</span>
+                  <span class="px-2 py-1 rounded-lg bg-[#16b3ac] text-white font-black text-xs shrink-0">${creditsVal} SKP</span>
                 </div>
                 <div class="text-[11px] text-slate-500 flex justify-between pt-1 border-t border-slate-100">
                   <span>${e.date || 'Q4 2026'}</span>
                   <span class="font-bold text-slate-800">${docCount}</span>
                 </div>
                 <div class="pt-1.5 flex items-center justify-between gap-2">
-                  <button type="button" onclick="openManageDetailModal('event', '${e.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#006948] text-xs font-bold transition flex items-center justify-center gap-1">
+                  <button type="button" onclick="openManageDetailModal('event', '${e.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
                     <span>Rincian</span>
                     <span class="material-symbols-outlined text-xs">arrow_forward</span>
                   </button>
@@ -1332,14 +1332,14 @@
                 <td class="py-3 px-4">
                   <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeColor} border">${cat.type}</span>
                 </td>
-                <td class="py-3 px-4 text-xs font-black text-[#006948]">${cat.standardSkp || '1 - 2 SKP'}</td>
+                <td class="py-3 px-4 text-xs font-black text-[#16b3ac]">${cat.standardSkp || '1 - 2 SKP'}</td>
                 <td class="py-3 px-4 text-xs text-slate-600 max-w-xs truncate">${cat.description || '-'}</td>
                 <td class="py-3 px-4 text-center">
                   <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold">Aktif</span>
                 </td>
                 <td class="py-3 px-4 text-center">
                   <div class="flex items-center justify-center gap-1.5">
-                    <button type="button" onclick="openManageDetailModal('category', '${cat.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#006948] font-bold text-xs transition">Rincian</button>
+                    <button type="button" onclick="openManageDetailModal('category', '${cat.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition">Rincian</button>
                     <button type="button" onclick="openRowActions(event, 'category', '${cat.id}')" class="p-1.5 text-slate-400 hover:text-slate-800 rounded-lg hover:bg-slate-100 font-black">&bull;&bull;&bull;</button>
                   </div>
                 </td>
@@ -1357,11 +1357,11 @@
                   <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">${cat.type}</span>
                   <div class="font-bold text-slate-900 text-xs mt-1">${cat.name}</div>
                 </div>
-                <span class="font-black text-xs text-[#006948]">${cat.standardSkp || '1 - 2 SKP'}</span>
+                <span class="font-black text-xs text-[#16b3ac]">${cat.standardSkp || '1 - 2 SKP'}</span>
               </div>
               <div class="text-[11px] text-slate-500">${cat.description || '-'}</div>
               <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                <button type="button" onclick="openManageDetailModal('category', '${cat.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#006948] text-xs font-bold transition flex items-center justify-center gap-1">
+                <button type="button" onclick="openManageDetailModal('category', '${cat.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
                   <span>Rincian</span>
                   <span class="material-symbols-outlined text-xs">arrow_forward</span>
                 </button>
@@ -1435,7 +1435,7 @@
         const getRoleBadge = (role) => {
           if (role === 'Super Admin') return '<span class="px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-extrabold text-[10px]">Super Admin</span>';
           if (role === 'Admin Pusat') return '<span class="px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 font-extrabold text-[10px]">Admin Pusat</span>';
-          if (role === 'Admin POGI' || role === 'Verifikator') return '<span class="px-2.5 py-1 rounded-md bg-emerald-50 text-[#006948] border border-emerald-200 font-extrabold text-[10px]">Admin POGI</span>';
+          if (role === 'Admin POGI' || role === 'Verifikator') return '<span class="px-2.5 py-1 rounded-md bg-emerald-50 text-[#16b3ac] border border-emerald-200 font-extrabold text-[10px]">Admin POGI</span>';
           if (role === 'Admin Cabang') return '<span class="px-2.5 py-1 rounded-md bg-sky-50 text-sky-700 border border-sky-200 font-extrabold text-[10px]">Admin Cabang</span>';
           return '<span class="px-2.5 py-1 rounded-md bg-teal-50 text-teal-700 border border-teal-200 font-extrabold text-[10px]">User/Dokter</span>';
         };
@@ -1446,7 +1446,7 @@
             <tr class="hover:bg-slate-50/80 transition">
               <td class="py-3 px-4">
                 <div class="flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-[#006948] font-black text-xs flex items-center justify-center shrink-0">
+                  <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0">
                     ${(usr.name || 'US').substring(0, 2).toUpperCase()}
                   </div>
                   <div>
@@ -1465,7 +1465,7 @@
               </td>
               <td class="py-3 px-4 text-center">
                 <div class="flex items-center justify-center gap-1.5">
-                  <button type="button" onclick="openManageDetailModal('user', '${usr.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#006948] font-bold text-xs transition">Rincian</button>
+                  <button type="button" onclick="openManageDetailModal('user', '${usr.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition">Rincian</button>
                   <button type="button" onclick="openRowActions(event, 'user', '${usr.id}')" class="p-1.5 text-slate-400 hover:text-slate-800 rounded-lg hover:bg-slate-100 font-black">&bull;&bull;&bull;</button>
                 </div>
               </td>
@@ -1479,7 +1479,7 @@
             <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
               <div class="flex items-start justify-between gap-2">
                 <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-full bg-emerald-50 text-[#006948] font-black text-xs flex items-center justify-center shrink-0">
+                  <div class="w-8 h-8 rounded-full bg-emerald-50 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0">
                     ${(usr.name || 'US').substring(0, 2).toUpperCase()}
                   </div>
                   <div>
@@ -1490,7 +1490,7 @@
                 ${getRoleBadge(usr.role)}
               </div>
               <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                <button type="button" onclick="openManageDetailModal('user', '${usr.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#006948] text-xs font-bold transition flex items-center justify-center gap-1">
+                <button type="button" onclick="openManageDetailModal('user', '${usr.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
                   <span>Rincian</span>
                   <span class="material-symbols-outlined text-xs">arrow_forward</span>
                 </button>
@@ -1603,7 +1603,7 @@
             </div>
             <div class="p-2.5 bg-white border border-slate-200 rounded-xl">
               <div class="text-[10px] text-slate-400 font-bold uppercase">Target SKP Tahunan</div>
-              <div class="font-black text-[#006948] mt-0.5 text-sm">${item.skpDisplay || (item.qAchieved + ' / ' + item.qTarget)}</div>
+              <div class="font-black text-[#16b3ac] mt-0.5 text-sm">${item.skpDisplay || (item.qAchieved + ' / ' + item.qTarget)}</div>
             </div>
             <div class="p-2.5 bg-white border border-slate-200 rounded-xl">
               <div class="text-[10px] text-slate-400 font-bold uppercase">Status SIP / STR</div>
@@ -1653,7 +1653,7 @@
             <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between">
               <div>
                 <div class="text-[10px] text-emerald-800 font-bold uppercase">Dokter Obgyn Bekerja</div>
-                <div class="font-black text-[#006948] text-lg mt-0.5">${item.doctors} Dokter Spesialis</div>
+                <div class="font-black text-[#16b3ac] text-lg mt-0.5">${item.doctors} Dokter Spesialis</div>
               </div>
               <span class="material-symbols-outlined text-3xl text-emerald-700">domain</span>
             </div>
@@ -1677,7 +1677,7 @@
               </div>
               <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
                 <div class="text-[10px] text-slate-400 font-bold uppercase">Bobot Kredit</div>
-                <div class="font-black text-[#006948] mt-0.5 text-sm">${item.creditsDisplay || item.credits} SKP</div>
+                <div class="font-black text-[#16b3ac] mt-0.5 text-sm">${item.creditsDisplay || item.credits} SKP</div>
               </div>
               <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
                 <div class="text-[10px] text-slate-400 font-bold uppercase">Jadwal Tanggal</div>
@@ -1707,7 +1707,7 @@
               </div>
               <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
                 <div class="text-[10px] text-slate-400 font-bold uppercase">Jumlah Event Terhubung</div>
-                <div class="font-black text-[#006948] mt-0.5 text-sm">${item.eventsCount} Event</div>
+                <div class="font-black text-[#16b3ac] mt-0.5 text-sm">${item.eventsCount} Event</div>
               </div>
             </div>
           </div>

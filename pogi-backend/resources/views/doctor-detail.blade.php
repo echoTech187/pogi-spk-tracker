@@ -139,7 +139,7 @@
         <div class="flex items-center justify-between gap-3">
           <a href="/doctors"
             class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs">
-            <span class="material-symbols-outlined text-sm text-[#006948]">arrow_back</span>
+            <span class="material-symbols-outlined text-sm text-[#16b3ac]">arrow_back</span>
             <span>Kembali </span>
           </a>
           <div class="text-[11px] text-slate-500 font-medium">
@@ -152,15 +152,15 @@
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-slate-100 pb-5">
             <div class="flex items-center gap-4 min-w-0">
               <div id="doctorAvatar"
-                class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#006948] text-white font-black text-2xl flex items-center justify-center shrink-0 shadow-xs ring-4 ring-emerald-50">
+                class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#16b3ac] text-white font-black text-2xl flex items-center justify-center shrink-0 shadow-xs ring-4 ring-emerald-50">
                 CS
               </div>
               <div class="min-w-0">
                 <div class="flex items-center gap-2 flex-wrap mb-1">
                   <span id="doctorPogiId"
-                    class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-[#006948] border border-emerald-200 font-mono text-xs font-black">#POGI-2026-1001</span>
+                    class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-[#16b3ac] border border-emerald-200 font-mono text-xs font-black">#POGI-2026-1001</span>
                   <span id="doctorStatusBadge"
-                    class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-50 text-[#006948] border border-emerald-200 flex items-center gap-1">
+                    class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-50 text-[#16b3ac] border border-emerald-200 flex items-center gap-1">
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                     <span>Complete</span>
                   </span>
@@ -170,7 +170,7 @@
                     <span>PIC:</span>
                     <span id="doctorAssignedTo" class="font-bold text-sky-950">Anna</span>
                     @if(Auth::user()?->role === 'SUPER_ADMIN')
-                    <button type="button" onclick="openChangePicModal()" class="ml-1 text-[11px] text-[#006948] hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5" title="Ubah PIC Admin Pendamping">
+                    <button type="button" onclick="openChangePicModal()" class="ml-1 text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5" title="Ubah PIC Admin Pendamping">
                       <span class="material-symbols-outlined text-[12px]">swap_horiz</span> Ganti PIC
                     </button>
                     @endif
@@ -186,7 +186,7 @@
             <!-- Action Buttons -->
             <div id="doctorActionButtonsContainer" class="flex items-center gap-2.5 flex-wrap shrink-0">
               <button type="button" onclick="approveDoctorCredits()"
-                class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+                class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
                 <span class="material-symbols-outlined text-base">verified</span>
                 <span>Verifikasi Kredit (+4.5 SKP)</span>
               </button>
@@ -214,7 +214,7 @@
               <div class="text-[10px] text-slate-400 font-bold uppercase">RS Jejaring Praktik</div>
               <div id="doctorHospital" class="font-extrabold text-slate-900 mt-1 truncate">RSUPN Dr. Cipto Mangunkusumo
               </div>
-              <div class="text-[10px] text-[#006948] font-semibold mt-0.5">SIP Terbit Aktif</div>
+              <div class="text-[10px] text-[#16b3ac] font-semibold mt-0.5">SIP Terbit Aktif</div>
             </div>
             <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100 flex flex-col justify-between col-span-2 sm:col-span-1">
               <div>
@@ -225,7 +225,7 @@
                 </div>
               </div>
               @if(Auth::user()?->role === 'SUPER_ADMIN')
-              <button type="button" onclick="openChangePicModal()" class="mt-2 text-left text-[11px] text-[#006948] font-bold hover:underline inline-flex items-center gap-1">
+              <button type="button" onclick="openChangePicModal()" class="mt-2 text-left text-[11px] text-[#16b3ac] font-bold hover:underline inline-flex items-center gap-1">
                 <span class="material-symbols-outlined text-[13px]">swap_horiz</span> Alihkan PIC
               </button>
               @endif
@@ -236,7 +236,7 @@
           <div
             class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-xl bg-emerald-100 text-[#006948] flex items-center justify-center shrink-0">
+              <div class="w-9 h-9 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
                 <span class="material-symbols-outlined text-lg">cloud_sync</span>
               </div>
               <div>
@@ -245,7 +245,7 @@
                 </div>
                 <div class="text-[11px] text-slate-500 mt-0.5">
                   Folder Cloud Anggota: <code id="metaVaultPath"
-                    class="font-mono text-[#006948] font-bold">cloud-storage://pogi-skp-vault/doc-001/</code>
+                    class="font-mono text-[#16b3ac] font-bold">cloud-storage://pogi-skp-vault/doc-001/</code>
                 </div>
               </div>
             </div>
@@ -273,7 +273,7 @@
                 <h2 class="text-base font-black text-slate-900">Pemenuhan Subbidang SKP Mandatori (160 SKP / 5 Tahun)
                 </h2>
                 <span
-                  class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#006948] border border-emerald-200">KMK
+                  class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#16b3ac] border border-emerald-200">KMK
                   1561/2024 &amp; 1111/2026</span>
               </div>
               <p class="text-xs text-slate-500">Standar resmi Kemenkes: Pelayanan 35% (56 SKP), Pengabdian 5% (8 SKP),
@@ -281,7 +281,7 @@
             </div>
             <div class="text-left sm:text-right shrink-0">
               <span class="text-xs font-bold text-slate-400">Target Kuartal (Q4):</span>
-              <strong id="doctorQ4TargetText" class="text-xs font-black text-[#006948] ml-1">8.0 SKP / Dokter</strong>
+              <strong id="doctorQ4TargetText" class="text-xs font-black text-[#16b3ac] ml-1">8.0 SKP / Dokter</strong>
             </div>
           </div>
 
@@ -423,7 +423,7 @@
                 <span class="material-symbols-outlined text-sm">cloud_done</span>
                 <span>2. Repositori Cloud (Object Storage)</span>
                 <span id="tabBadgeDocCount"
-                  class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-[#006948] font-black">5</span>
+                  class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-[#16b3ac] font-black">5</span>
               </button>
               <button type="button" onclick="switchDetailTab('detector')" id="tab-btn-detector"
                 class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
@@ -472,7 +472,7 @@
                 <div class="flex items-center gap-2">
                   <span class="font-extrabold text-slate-900">Folder Object Storage Cloud Anggota:</span>
                   <span
-                    class="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-100 text-[#006948] font-bold border border-emerald-200"
+                    class="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-100 text-[#16b3ac] font-bold border border-emerald-200"
                     id="repoVaultBadge">pogi-skp-vault/doc-001/</span>
                 </div>
                 <p class="text-[11px] text-slate-500">
@@ -480,13 +480,15 @@
                   disinkronkan manual ke portal Kemenkes.
                 </p>
               </div>
+              @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
               <div class="flex items-center gap-2 shrink-0">
                 <button type="button" onclick="openUploadDoctorDocModal()"
-                  class="px-3.5 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write">
+                  class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write">
                   <span class="material-symbols-outlined text-base">upload_file</span>
                   <span>Unggah Berkas Baru</span>
                 </button>
               </div>
+              @endif
             </div>
 
             <!-- Tabel Dokumen Object Storage -->
@@ -556,7 +558,7 @@
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[#006948] text-xl">cloud_upload</span>
+          <span class="material-symbols-outlined text-[#16b3ac] text-xl">cloud_upload</span>
           <h3 class="font-black text-slate-900 text-sm">Unggah Berkas ke Object Storage Cloud Internal</h3>
         </div>
         <button type="button" onclick="closeUploadDoctorDocModal()" class="text-slate-400 hover:text-slate-600 p-1">
@@ -589,7 +591,7 @@
             </label>
             <div class="relative">
               <input type="number" step="0.5" min="0" max="50" id="newDocSkpValue" placeholder="contoh: 4.5"
-                class="w-full pl-3 pr-12 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-[#006948] focus:outline-none focus:ring-1 focus:ring-emerald-700 font-mono" />
+                class="w-full pl-3 pr-12 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-[#16b3ac] focus:outline-none focus:ring-1 focus:ring-emerald-700 font-mono" />
               <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-extrabold text-slate-400">SKP</span>
             </div>
           </div>
@@ -638,7 +640,7 @@
         <button type="button" onclick="closeUploadDoctorDocModal()"
           class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Batal</button>
         <button type="button" onclick="submitNewDoctorDocument()"
-          class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs">
+          class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs">
           <span class="material-symbols-outlined text-sm">cloud_done</span>
           <span>Simpan ke Cloud Internal</span>
         </button>
@@ -692,7 +694,7 @@
 
         <!-- Download Button -->
         <button type="button" onclick="downloadCurrentPreviewDoc()" title="Unduh Berkas PDF Resmi"
-          class="px-3.5 py-1.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
+          class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
           <span class="material-symbols-outlined text-base">download</span>
           <span class="hidden sm:inline">Unduh PDF</span>
         </button>
@@ -754,7 +756,7 @@
 
       <div class="space-y-1.5 text-xs">
         <label class="block font-bold text-slate-700">Pilih PIC Admin Baru</label>
-        <select id="modalChangePicSelect" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]">
+        <select id="modalChangePicSelect" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
           @php
             $adminPogiList = \Illuminate\Support\Facades\DB::table('users')->where('role', 'ADMIN_POGI')->orderBy('full_name')->get();
           @endphp
@@ -767,7 +769,7 @@
 
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
         <button type="button" onclick="closeChangePicModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition">Batal</button>
-        <button type="button" onclick="submitChangePic()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
+        <button type="button" onclick="submitChangePic()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
           <span class="material-symbols-outlined text-sm">check</span>
           <span>Simpan &amp; Alihkan</span>
         </button>
@@ -782,7 +784,7 @@
       class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-emerald-100 space-y-4 animate-in fade-in zoom-in-95 duration-200">
       <div class="flex items-center gap-3">
         <div
-          class="w-12 h-12 rounded-2xl bg-emerald-100 text-[#006948] flex items-center justify-center shrink-0 shadow-xs">
+          class="w-12 h-12 rounded-2xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-xs">
           <span class="material-symbols-outlined text-2xl">verified</span>
         </div>
         <div>
@@ -799,7 +801,7 @@
         <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
           <span class="text-slate-600">Kredit Disetujui:</span>
           <span id="modalVerifAddedCredit"
-            class="font-black text-[#006948] bg-white px-2 py-0.5 rounded-lg border border-emerald-200">+4.5 SKP
+            class="font-black text-[#16b3ac] bg-white px-2 py-0.5 rounded-lg border border-emerald-200">+4.5 SKP
             (Pembelajaran)</span>
         </div>
         <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
@@ -820,7 +822,7 @@
         </div>
         <div class="flex items-center justify-between">
           <span class="text-slate-600">Sinkronisasi Cloud &amp; Audit:</span>
-          <span class="font-bold text-[#006948] flex items-center gap-1">
+          <span class="font-bold text-[#16b3ac] flex items-center gap-1">
             <span class="material-symbols-outlined text-sm">cloud_done</span> Tersinkron (DONE)
           </span>
         </div>
@@ -833,7 +835,7 @@
 
       <div class="flex items-center justify-end gap-2 pt-2">
         <button type="button" onclick="closeDoctorVerificationModal()"
-          class="w-full py-2.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-black transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
+          class="w-full py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-black transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
           <span class="material-symbols-outlined text-base">check</span>
           <span>Selesai &amp; Tutup</span>
         </button>
@@ -1014,7 +1016,7 @@
       const statusBadge = document.getElementById('doctorStatusBadge');
       if (statusBadge) {
         if (isComplete) {
-          statusBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-50 text-[#006948] border border-emerald-200 flex items-center gap-1';
+          statusBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-50 text-[#16b3ac] border border-emerald-200 flex items-center gap-1';
           statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Complete</span>';
         } else {
           statusBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1';
@@ -1032,7 +1034,7 @@
         if (rawRole === 'DOKTER' || rawRole === 'USER/DOKTER' || rawRole === 'USER') {
           // 5. User/Dokter: Mode Mandiri — Unggah Berkas Bukti Mandiri
           actionContainer.innerHTML = `
-            <button type="button" onclick="openUploadDoctorDocModal()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="Unggah berkas bukti pemenuhan SKP untuk diverifikasi">
+            <button type="button" onclick="openUploadDoctorDocModal()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="Unggah berkas bukti pemenuhan SKP untuk diverifikasi">
               <span class="material-symbols-outlined text-base">upload_file</span>
               <span>Unggah Berkas Bukti Mandiri</span>
             </button>
@@ -1060,14 +1062,14 @@
             `;
           } else if (pending > 0 || !isComplete) {
             actionContainer.innerHTML = `
-              <button type="button" onclick="approveDoctorCredits()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer rbac-operational" title="Verifikasi dan setujui pemenuhan kredit SKP dokter cabang ${doc.province}">
+              <button type="button" onclick="approveDoctorCredits()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer rbac-operational" title="Verifikasi dan setujui pemenuhan kredit SKP dokter cabang ${doc.province}">
                 <span class="material-symbols-outlined text-base">verified</span>
                 <span>Verifikasi Kredit (+${pendingAmount} SKP)</span>
               </button>
             `;
           } else {
             actionContainer.innerHTML = `
-              <div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#006948] font-extrabold text-xs flex items-center gap-1.5 shadow-2xs">
+              <div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#16b3ac] font-extrabold text-xs flex items-center gap-1.5 shadow-2xs">
                 <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
                 <span>Seluruh Kredit Terverifikasi</span>
               </div>
@@ -1077,14 +1079,14 @@
           // 1. Super Admin & 3. Admin POGI: Melakukan kesesuaian dokumen & verifikasi kredit dokter PJ / nasional
           if (pending > 0 || !isComplete) {
             actionContainer.innerHTML = `
-              <button type="button" onclick="approveDoctorCredits()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer rbac-operational" title="Validasi kesesuaian dokumen & verifikasi kredit SKP dokter">
+              <button type="button" onclick="approveDoctorCredits()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer rbac-operational" title="Validasi kesesuaian dokumen & verifikasi kredit SKP dokter">
                 <span class="material-symbols-outlined text-base">verified</span>
                 <span>Verifikasi Kredit (+${pendingAmount} SKP)</span>
               </button>
             `;
           } else {
             actionContainer.innerHTML = `
-              <div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#006948] font-extrabold text-xs flex items-center gap-1.5 shadow-2xs">
+              <div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#16b3ac] font-extrabold text-xs flex items-center gap-1.5 shadow-2xs">
                 <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
                 <span>Seluruh Kredit Terverifikasi</span>
               </div>
@@ -1216,7 +1218,7 @@
         if (detector.missingCount > 0) {
           missingCountBadge.className = 'ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-800 font-black';
         } else {
-          missingCountBadge.className = 'ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-[#006948] font-black';
+          missingCountBadge.className = 'ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-[#16b3ac] font-black';
         }
       }
 
@@ -1258,7 +1260,7 @@
 
           let skpBadge = '';
           if (typeof f.skpValue !== 'undefined' && Number(f.skpValue) > 0) {
-            skpBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-[#006948] font-mono border border-emerald-200">+${f.skpValue} SKP</span>`;
+            skpBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-[#16b3ac] font-mono border border-emerald-200">+${f.skpValue} SKP</span>`;
           } else if (f.category === 'Administrasi') {
             skpBadge = `<span class="text-[10px] text-slate-400 font-medium">— (Non-SKP)</span>`;
           } else {
@@ -1350,7 +1352,7 @@
           alertBox.className = 'p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 text-xs space-y-1';
           alertBox.innerHTML = `
             <div class="flex items-center gap-2.5">
-              <span class="material-symbols-outlined text-[#006948] text-xl">verified_user</span>
+              <span class="material-symbols-outlined text-[#16b3ac] text-xl">verified_user</span>
               <div>
                 <h4 class="font-extrabold text-emerald-950 text-sm">Seluruh Dokumen Lengkap &amp; Terverifikasi</h4>
                 <p class="text-emerald-800 text-xs mt-0.5">
@@ -1376,7 +1378,7 @@
               <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${m.statusBadgeClass}">${m.status}</span></td>
               <td class="py-3 px-3 text-slate-600 max-w-xs truncate">${m.reason}</td>
               <td class="py-3 px-3 text-center">
-                <button type="button" onclick="openUploadDoctorDocModal()" class="px-2.5 py-1 rounded bg-[#006948] hover:bg-[#005439] text-white font-bold text-[11px] transition inline-flex items-center gap-1 shadow-2xs rbac-write">
+                <button type="button" onclick="openUploadDoctorDocModal()" class="px-2.5 py-1 rounded bg-[#16b3ac] hover:bg-[#129993] text-white font-bold text-[11px] transition inline-flex items-center gap-1 shadow-2xs rbac-write">
                   <span class="material-symbols-outlined text-xs">upload</span> Unggah Berkas
                 </button>
               </td>
@@ -1423,11 +1425,11 @@
           container.className = 'p-4 rounded-xl border-2 border-dashed border-emerald-500 bg-emerald-50/70 text-center transition cursor-pointer space-y-1';
         }
         if (icon) {
-          icon.className = 'material-symbols-outlined text-3xl text-[#006948]';
+          icon.className = 'material-symbols-outlined text-3xl text-[#16b3ac]';
           icon.innerText = 'task';
         }
         if (title) {
-          title.className = 'text-[11px] font-black text-[#006948] flex items-center justify-center gap-1';
+          title.className = 'text-[11px] font-black text-[#16b3ac] flex items-center justify-center gap-1';
           title.innerHTML = `<span>File Terpilih: <strong>${file.name}</strong></span>`;
         }
         if (subtitle) {
@@ -1661,7 +1663,7 @@
            <h2 class="text-sm sm:text-base font-black text-slate-900 tracking-tight leading-tight uppercase">KONSIL KEDOKTERAN INDONESIA (KKI)</h2>
            <div class="text-[10px] text-slate-500 font-mono">REGISTRASI RESMI TENAGA MEDIS SPESIALIS INDONESIA</div>`
         : `<div class="text-[11px] font-bold tracking-widest text-slate-700 uppercase">PEMERINTAH PROVINSI / DAERAH TINGKAT II</div>
-           <h2 class="text-sm sm:text-base font-black text-[#006948] tracking-tight leading-tight uppercase">DINAS KESEHATAN &amp; DPMPTSP</h2>
+           <h2 class="text-sm sm:text-base font-black text-[#16b3ac] tracking-tight leading-tight uppercase">DINAS KESEHATAN &amp; DPMPTSP</h2>
            <div class="text-[10px] text-slate-600 font-semibold">UNIT PELAYANAN PERIZINAN PRAKTIK MEDIS TERPADU</div>`;
 
       return `
@@ -1684,7 +1686,7 @@
             <div class="text-[9px] text-slate-400 mt-1">Terverifikasi Melalui Pangkalan Data SATUSEHAT SDMK Kemenkes RI</div>
           </div>
           <div class="w-16 h-16 shrink-0 flex items-center justify-center p-1 border border-slate-200 rounded-xl bg-slate-50">
-            <svg class="w-12 h-12 text-[#006948]" viewBox="0 0 100 100" fill="currentColor">
+            <svg class="w-12 h-12 text-[#16b3ac]" viewBox="0 0 100 100" fill="currentColor">
               <rect x="0" y="0" width="32" height="32"/>
               <rect x="6" y="6" width="20" height="20" fill="#fff"/>
               <rect x="10" y="10" width="12" height="12"/>
@@ -1745,7 +1747,7 @@
               </div>
               <div class="grid grid-cols-3 gap-1 border-b border-slate-200 pb-1.5">
                 <span class="text-slate-500">Keahlian / Profesi</span>
-                <span class="col-span-2 font-bold text-[#006948]">Spesialis Obstetri dan Ginekologi (Sp.OG)</span>
+                <span class="col-span-2 font-bold text-[#16b3ac]">Spesialis Obstetri dan Ginekologi (Sp.OG)</span>
               </div>
               <div class="grid grid-cols-3 gap-1 border-b border-slate-200 pb-1.5">
                 <span class="text-slate-500">Fasilitas Praktik (RS)</span>
@@ -1841,7 +1843,7 @@
             <div class="text-[9px] text-slate-400">Akreditasi Paripurna Kemenkes RI &bull; Terintegrasi Rekam Medis Elektronik (RME)</div>
           </div>
           <div class="w-14 h-14 shrink-0 flex items-center justify-center p-1 bg-slate-50 border border-slate-200 rounded-xl">
-            <span class="material-symbols-outlined text-[#006948] text-3xl">verified</span>
+            <span class="material-symbols-outlined text-[#16b3ac] text-3xl">verified</span>
           </div>
         </div>
         <div class="border-t border-slate-900 -mt-2 mb-3"></div>
@@ -1851,7 +1853,7 @@
           <h1 class="text-base sm:text-lg font-black text-slate-900 tracking-tight uppercase leading-snug">
             REKAPITULASI BUKU LOG (LOGBOOK) TINDAKAN KLINIS SPESIALISTIK OBGYN
           </h1>
-          <p class="text-xs text-[#006948] font-bold">
+          <p class="text-xs text-[#16b3ac] font-bold">
             Portofolio Pelayanan Mandatori Triwulan IV (Q4) Tahun 2026 &bull; Standar KMK HK.01.07/MENKES/1561/2024
           </p>
         </div>
@@ -1988,11 +1990,11 @@
     function buildWorkshopCertTemplate(filename, category, doc) {
       return `
         <!-- Certificate Ornate Double Border -->
-        <div class="p-6 border-4 border-double border-[#006948] rounded-xl relative font-sans space-y-5 bg-gradient-to-b from-amber-50/20 via-white to-emerald-50/20">
+        <div class="p-6 border-4 border-double border-[#16b3ac] rounded-xl relative font-sans space-y-5 bg-gradient-to-b from-amber-50/20 via-white to-emerald-50/20">
           
           <!-- Watermark -->
           <div class="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.035] overflow-hidden select-none">
-            <div class="text-7xl font-black font-sans uppercase -rotate-45 tracking-widest text-[#006948]">
+            <div class="text-7xl font-black font-sans uppercase -rotate-45 tracking-widest text-[#16b3ac]">
               SERTIFIKAT RESMI &bull; P2KB POGI
             </div>
           </div>
@@ -2003,7 +2005,7 @@
               <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
             </div>
             <div class="text-[11px] font-extrabold tracking-widest text-slate-700 uppercase">PENGURUS BESAR PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA (PP POGI)</div>
-            <div class="text-[10px] font-bold text-[#006948] uppercase tracking-wider">KOLEGIUM OBSTETRI DAN GINEKOLOGI INDONESIA</div>
+            <div class="text-[10px] font-bold text-[#16b3ac] uppercase tracking-wider">KOLEGIUM OBSTETRI DAN GINEKOLOGI INDONESIA</div>
             <div class="text-[9px] text-slate-500 font-mono">Terakreditasi Kementerian Kesehatan RI - Plataran Sehat ID: EVT-USG-2026-081</div>
           </div>
 
@@ -2017,7 +2019,7 @@
           <!-- Given to Section -->
           <div class="text-center space-y-2 py-2">
             <div class="text-xs text-slate-500 italic">Diberikan secara terhormat kepada:</div>
-            <div class="text-xl sm:text-2xl font-black font-serif text-[#006948] tracking-tight underline decoration-amber-400 decoration-2 underline-offset-8">
+            <div class="text-xl sm:text-2xl font-black font-serif text-[#16b3ac] tracking-tight underline decoration-amber-400 decoration-2 underline-offset-8">
               ${doc.name}
             </div>
             <div class="text-xs font-mono text-slate-600 pt-1">NPA POGI: ${doc.pogiId} &bull; No. STR: ${doc.strNumber || '31.1.1.100.2.21.084291'}</div>
@@ -2053,17 +2055,17 @@
             <div class="flex flex-col items-center justify-center">
               <div class="w-16 h-16 p-1 bg-white border border-slate-300 rounded-lg shadow-2xs">
                 <svg class="w-full h-full text-slate-800" viewBox="0 0 100 100" fill="currentColor">
-                  <rect x="0" y="0" width="30" height="30" fill="#006948"/>
+                  <rect x="0" y="0" width="30" height="30" fill="#16b3ac"/>
                   <rect x="6" y="6" width="18" height="18" fill="#fff"/>
-                  <rect x="10" y="10" width="10" height="10" fill="#006948"/>
-                  <rect x="70" y="0" width="30" height="30" fill="#006948"/>
+                  <rect x="10" y="10" width="10" height="10" fill="#16b3ac"/>
+                  <rect x="70" y="0" width="30" height="30" fill="#16b3ac"/>
                   <rect x="76" y="6" width="18" height="18" fill="#fff"/>
-                  <rect x="80" y="10" width="10" height="10" fill="#006948"/>
-                  <rect x="0" y="70" width="30" height="30" fill="#006948"/>
+                  <rect x="80" y="10" width="10" height="10" fill="#16b3ac"/>
+                  <rect x="0" y="70" width="30" height="30" fill="#16b3ac"/>
                   <rect x="6" y="76" width="18" height="18" fill="#fff"/>
-                  <rect x="10" y="80" width="10" height="10" fill="#006948"/>
-                  <rect x="36" y="15" width="28" height="10" fill="#006948"/>
-                  <rect x="36" y="35" width="28" height="30" fill="#006948"/>
+                  <rect x="10" y="80" width="10" height="10" fill="#16b3ac"/>
+                  <rect x="36" y="15" width="28" height="10" fill="#16b3ac"/>
+                  <rect x="36" y="35" width="28" height="30" fill="#16b3ac"/>
                 </svg>
               </div>
               <div class="text-[8px] font-mono text-slate-400 mt-1">Scan Plataran Sehat</div>
@@ -2085,7 +2087,7 @@
       return `
         <!-- Watermark -->
         <div class="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.035] overflow-hidden select-none">
-          <div class="text-7xl font-black font-sans uppercase -rotate-45 tracking-widest text-[#006948]">
+          <div class="text-7xl font-black font-sans uppercase -rotate-45 tracking-widest text-[#16b3ac]">
             PENGABDIAN MASYARAKAT &bull; POGI CABANG
           </div>
         </div>
@@ -2097,7 +2099,7 @@
           </div>
           <div class="flex-1 text-center">
             <div class="text-[10px] font-bold tracking-widest text-slate-500 uppercase">PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA (POGI)</div>
-            <h2 class="text-base sm:text-lg font-black text-[#006948] uppercase tracking-tight leading-tight">PENGURUS CABANG ${doc.province.toUpperCase()}</h2>
+            <h2 class="text-base sm:text-lg font-black text-[#16b3ac] uppercase tracking-tight leading-tight">PENGURUS CABANG ${doc.province.toUpperCase()}</h2>
             <div class="text-[10px] text-slate-600 font-semibold">POKJA PENGABDIAN MASYARAKAT &amp; ONKOLOGI GINEKOLOGI KOMUNITAS</div>
             <div class="text-[9px] text-slate-400">Sekretariat POGI Cabang ${doc.province} &bull; Email: cabang.${(doc.province || 'daerah').toLowerCase().replace(/\s+/g, '')}@pogi.or.id</div>
           </div>
@@ -2173,7 +2175,7 @@
           <div class="mt-3">
             <div class="text-[11px] font-bold text-slate-700 mb-1.5 flex items-center justify-between">
               <span>Bukti Dokumentasi Kegiatan Lapangan (Terverifikasi):</span>
-              <span class="text-[9px] font-mono text-[#006948]">Status: Lampiran Lengkap</span>
+              <span class="text-[9px] font-mono text-[#16b3ac]">Status: Lampiran Lengkap</span>
             </div>
             <div class="grid grid-cols-3 gap-2">
               <div class="h-20 bg-slate-100 rounded-lg border border-slate-200 flex flex-col items-center justify-center p-1 text-center">
@@ -2256,7 +2258,7 @@
             <div class="text-[9px] text-slate-400">Pusat Rujukan Regional Pelayanan Obstetri Neonatal Emergensi Komprehensif (PONEK)</div>
           </div>
           <div class="w-14 h-14 shrink-0 flex items-center justify-center p-1 bg-slate-50 border border-slate-200 rounded-xl">
-            <span class="material-symbols-outlined text-[#006948] text-3xl">task</span>
+            <span class="material-symbols-outlined text-[#16b3ac] text-3xl">task</span>
           </div>
         </div>
         <div class="border-t border-slate-900 -mt-2 mb-4"></div>
@@ -2291,7 +2293,7 @@
             <span class="col-span-2 font-semibold text-slate-800">Dokter Spesialis Obstetri dan Ginekologi (DPJP)</span>
 
             <span class="text-slate-500">Unit Tugas</span>
-            <span class="col-span-2 font-bold text-[#006948]">Instalasi Gawat Darurat (IGD) PONEK &amp; Kamar Bedah Cito</span>
+            <span class="col-span-2 font-bold text-[#16b3ac]">Instalasi Gawat Darurat (IGD) PONEK &amp; Kamar Bedah Cito</span>
 
             <span class="text-slate-500">Periode Penugasan</span>
             <span class="col-span-2 font-mono text-slate-700">Triwulan IV (Oktober – Desember 2026) &bull; On-Call 24 Jam</span>
@@ -2349,12 +2351,12 @@
           </div>
           <div class="flex-1 text-center">
             <div class="text-[10px] font-bold tracking-widest text-slate-500 uppercase">PENGURUS BESAR PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA</div>
-            <h2 class="text-base sm:text-lg font-black text-[#006948] uppercase tracking-tight leading-tight">PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA (POGI)</h2>
+            <h2 class="text-base sm:text-lg font-black text-[#16b3ac] uppercase tracking-tight leading-tight">PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA (POGI)</h2>
             <div class="text-[10px] text-slate-600 font-medium">INDONESIAN SOCIETY OF OBSTETRICS AND GYNECOLOGY</div>
             <div class="text-[9px] text-slate-400">Kompleks Perkantoran PP POGI, Jl. Kramat Sentiong No. 49, Jakarta Pusat 10450</div>
           </div>
           <div class="w-14 h-14 shrink-0 flex items-center justify-center border border-slate-200 rounded-xl bg-slate-50">
-            <span class="material-symbols-outlined text-[#006948] text-3xl">verified_user</span>
+            <span class="material-symbols-outlined text-[#16b3ac] text-3xl">verified_user</span>
           </div>
         </div>
         <div class="border-t border-slate-900 -mt-2 mb-4"></div>

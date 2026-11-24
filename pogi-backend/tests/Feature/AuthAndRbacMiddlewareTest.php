@@ -193,4 +193,33 @@ class AuthAndRbacMiddlewareTest extends TestCase
             ->post('/switch-role', ['role' => 'SUPER_ADMIN'])
             ->assertStatus(403);
     }
+
+    public function test_admin_cabang_cannot_access_doctor_outside_their_branch(): void
+    {
+        // Branch 1 user
+        $branchId1 = (string) Str::uuid();
+        $adminCabang = $this->makeUser('ADMIN_CABANG', $branchId1);
+
+        // Find a doctor in database that has a different branch_id or create query
+        $otherDoctor = \Illuminate\Support\Facades\DB::table('doctors')
+            ->whereNotNull('branch_id')
+            ->where('branch_id', '!=', $branchId1)
+            ->first();
+
+        if ($otherDoctor) {
+            $response = $this->actingAs($adminCabang)
+                ->get('/doctor-detail?id=' . $otherDoctor->id);
+
+            $response->assertStatus(403);
+        }
+    }
+
+    public function test_brand_color_is_teal_16b3ac_in_css(): void
+    {
+        $cssPath = public_path('css/style.css');
+        $this->assertFileExists($cssPath);
+        $cssContent = file_get_contents($cssPath);
+        $this->assertStringContainsString('#16b3ac', $cssContent);
+        $this->assertStringNotContainsString('#006948', $cssContent);
+    }
 }

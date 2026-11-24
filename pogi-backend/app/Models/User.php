@@ -176,4 +176,28 @@ class User extends Authenticatable
 
         return false;
     }
+
+    /**
+     * Wewenang eksklusif mengubah PIC pengelola dokter (Hanya Super Admin)
+     */
+    public function canReassignPic(): bool
+    {
+        return $this->isSuperAdmin();
+    }
+
+    /**
+     * Wewenang melakukan penginputan & update data operasional
+     */
+    public function canEditData(): bool
+    {
+        return $this->isSuperAdmin() || $this->isAdminPogi();
+    }
+
+    /**
+     * Apakah peran ini murni pemantau tanpa hak mutasi data (Hanya Cek Saja)
+     */
+    public function isReadOnly(): bool
+    {
+        return $this->isAdminCabang() || $this->isAdminPusat() || $this->isDoctor();
+    }
 }

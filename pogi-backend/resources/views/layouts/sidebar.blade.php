@@ -6,7 +6,7 @@
         <img src="{{ asset('logo.png') }}" alt="Logo POGI" class="w-full h-full object-contain">
       </div>
       <div class="min-w-0">
-        <div class="font-black text-sm tracking-tight text-[#006948] leading-none">POGI SKP TRACKER</div>
+        <div class="font-black text-sm tracking-tight text-[#16b3ac] leading-none">POGI SKP TRACKER</div>
         <div class="text-[9px] text-slate-500 font-bold leading-tight mt-1 truncate">PP POGI &bull; Standar 160 SKP</div>
       </div>
     </a>
@@ -17,47 +17,53 @@
 
   <!-- Navigation Menu -->
   <div class="px-3 py-4 flex-1 overflow-y-auto space-y-6">
+    @php
+      $currentRole = Auth::user()?->role ?? 'SUPER_ADMIN';
+    @endphp
+
     <div>
       <div class="px-3 mb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
         MONITORING NASIONAL
       </div>
       <nav class="space-y-1">
-        <a href="{{ url('/dashboard') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition {{ Request::is('dashboard') || Request::is('/') ? 'bg-[#006948] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+        <a href="{{ url('/dashboard') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition {{ Request::is('dashboard') || Request::is('/') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">dashboard</span>
           <span>Dashboard</span>
         </a>
-        <a href="{{ url('/doctors') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('doctors*') ? 'bg-[#006948] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+        <a href="{{ url('/doctors') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('doctors*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">stethoscope</span>
           <span>Doctors</span>
         </a>
-        <a href="{{ url('/provinces') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('provinces*') ? 'bg-[#006948] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+        <a href="{{ url('/provinces') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('provinces*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">map</span>
           <span>Provinces</span>
         </a>
-        <a href="{{ url('/events') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('events*') ? 'bg-[#006948] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+        <a href="{{ url('/events') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('events*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">event</span>
           <span>Events</span>
         </a>
-        <a href="{{ url('/activity') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('activity*') ? 'bg-[#006948] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT']))
+        <a href="{{ url('/activity') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('activity*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">history</span>
           <span>Activity Log</span>
         </a>
-        <a href="{{ url('/reports') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('reports*') ? 'bg-[#006948] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+        @endif
+        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT', 'ADMIN_CABANG']))
+        <a href="{{ url('/reports') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('reports*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">bar_chart</span>
           <span>Report</span>
         </a>
-        <a href="{{ url('/admin-performance') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('admin-performance*') ? 'bg-[#006948] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+        @endif
+        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT', 'ADMIN_POGI']))
+        <a href="{{ url('/admin-performance') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('admin-performance*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">speed</span>
           <span>Admin Performance</span>
         </a>
+        @endif
       </nav>
     </div>
 
-    @php
-      $currentRole = Auth::user()?->role ?? 'SUPER_ADMIN';
-    @endphp
-
-    @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_POGI']))
+    @if($currentRole === 'SUPER_ADMIN')
     <div>
       <div class="px-3 mb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
         PENGATURAN DATA (MANAGE)

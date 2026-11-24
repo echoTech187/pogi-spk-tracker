@@ -74,7 +74,7 @@ class AdminPerformanceController extends Controller
             $tierBadgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
             if ($overallScore >= 85) {
                 $tier = 'Top Performer 🌟';
-                $tierBadgeClass = 'bg-emerald-100 text-[#006948] border-emerald-300';
+                $tierBadgeClass = 'bg-emerald-100 text-[#16b3ac] border-emerald-300';
             } elseif ($overallScore < 75) {
                 $tier = 'Needs Attention ⚠️';
                 $tierBadgeClass = 'bg-amber-50 text-amber-800 border-amber-200';

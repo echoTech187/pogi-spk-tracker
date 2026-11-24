@@ -15,6 +15,7 @@ Sistem ini menjembatani pengumpulan berkas sertifikat dan logbook klinis, penyim
 
 * **Dashboard Eksekutif & Pemetaan 38 Provinsi**:
   * KPI ringkasan nasional: total dokter terpantau, rasio kepatuhan (*Complete* vs *Incomplete*), rata-rata SKP berjalan, dan persentase kepatuhan nasional.
+  * **Tema Brand Teal Modern (`#16b3ac`)**: Warna default sistem menggunakan palet Teal Turquoise `#16b3ac` (Hover: `#129993`, Tint: `#e8f8f7`, Gradient: `#0a4c49` s.d. `#052625`) sesuai arahan identitas visual klien.
   * **Peta Interaktif Kepatuhan 38 Provinsi**: Visualisasi status wilayah berbasis kode warna baku:
     - **Kuning (`#EAB308`) — Terpenuhi / Aman**: Capaian wilayah $\ge 85\%$.
     - **Hijau (`#16A34A`) — Hampir Memenuhi / Waspada**: Capaian wilayah $50\% \le \text{Capaian} < 85\%$.

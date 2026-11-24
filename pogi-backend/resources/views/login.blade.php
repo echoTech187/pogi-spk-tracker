@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-[#021d15]">
+<html lang="id" class="h-full bg-[#031f1e]">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,11 +11,11 @@
   <!-- Core Styles -->
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="h-full bg-[#021d15] text-slate-800 antialiased font-sans">
-  <div class="flex min-h-[100dvh] w-full flex-col lg:flex-row bg-[#021d15] overflow-x-hidden">
+<body class="h-full bg-[#031f1e] text-slate-800 antialiased font-sans">
+  <div class="flex min-h-[100dvh] w-full flex-col lg:flex-row bg-[#031f1e] overflow-x-hidden">
 
     <!-- Mobile Top Brand Bar (< lg) -->
-    <div class="lg:hidden bg-gradient-to-r from-[#022b1f] via-[#004d34] to-[#01140f] px-5 py-4 border-b border-emerald-800/40 flex items-center justify-between text-white">
+    <div class="lg:hidden bg-gradient-to-r from-[#0a4c49] via-[#0e6864] to-[#052625] px-5 py-4 border-b border-emerald-800/40 flex items-center justify-between text-white">
       <div class="flex items-center gap-3 min-w-0">
         <div class="w-10 h-10 rounded-xl p-1 flex items-center justify-center shadow-md shadow-emerald-500/30 shrink-0">
           <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
@@ -32,8 +32,8 @@
     <div class="order-1 lg:order-2 lg:w-1/2 bg-white flex flex-col justify-center px-5 py-8 sm:p-12 lg:p-16">
       <div class="max-w-md w-full mx-auto space-y-6">
         <div>
-          <div class="text-[11px] font-bold text-[#006948] uppercase tracking-wider flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-[#006948] inline-block animate-pulse"></span>
+          <div class="text-[11px] font-bold text-[#16b3ac] uppercase tracking-wider flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[#16b3ac] inline-block animate-pulse"></span>
             PORTAL MONITORING PUSAT &amp; CABANG POGI
           </div>
           <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1.5 tracking-tight">Masuk Sistem SKP POGI</h2>
@@ -61,7 +61,7 @@
             </div>
           @endif
           @if (session('info'))
-            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-[#006948] flex items-center gap-1.5 font-semibold">
+            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-[#16b3ac] flex items-center gap-1.5 font-semibold">
               <span class="material-symbols-outlined text-sm">info</span>
               <span>{{ session('info') }}</span>
             </div>
@@ -71,30 +71,30 @@
             <label class="block text-xs font-bold text-slate-700 mb-1.5">ID Pengurus / Email Resmi POGI</label>
             <div class="relative">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">person</span>
-              <input id="inputEmail" name="email" type="text" required placeholder="Contoh: nama@pogi.or.id" value="{{ old('email') }}" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006948] focus:bg-white transition" />
+              <input id="inputEmail" name="email" type="text" required placeholder="Contoh: nama@pogi.or.id" value="{{ old('email') }}" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#16b3ac] focus:bg-white transition" />
             </div>
           </div>
 
           <div>
             <div class="flex items-center justify-between mb-1.5">
               <label class="text-xs font-bold text-slate-700">Kata Sandi</label>
-              <a href="javascript:void(0)" onclick="alert('Silakan hubungi Sekretariat Pengurus Pusat POGI untuk bantuan reset akun.')" class="text-[11px] text-[#006948] font-semibold hover:underline">Bantuan Akses?</a>
+              <a href="javascript:void(0)" onclick="alert('Silakan hubungi Sekretariat Pengurus Pusat POGI untuk bantuan reset akun.')" class="text-[11px] text-[#16b3ac] font-semibold hover:underline">Bantuan Akses?</a>
             </div>
             <div class="relative">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">lock</span>
-              <input id="inputPassword" name="password" type="password" required placeholder="Masukkan kata sandi akun" class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006948] focus:bg-white transition" />
+              <input id="inputPassword" name="password" type="password" required placeholder="Masukkan kata sandi akun" class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#16b3ac] focus:bg-white transition" />
               <button type="button" onclick="togglePassVisibility()" class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-base cursor-pointer">visibility</button>
             </div>
           </div>
 
           <div class="flex items-center justify-between text-xs pt-1">
             <label class="flex items-center gap-2 cursor-pointer text-slate-600 font-medium select-none">
-              <input type="checkbox" name="remember" checked class="w-4 h-4 rounded text-[#006948] focus:ring-[#006948] border-slate-300" />
+              <input type="checkbox" name="remember" checked class="w-4 h-4 rounded text-[#16b3ac] focus:ring-[#16b3ac] border-slate-300" />
               <span>Ingat sesi pengurus di perangkat ini</span>
             </label>
           </div>
 
-          <button type="submit" class="w-full py-3 px-4 bg-[#006948] hover:bg-[#005439] text-white font-extrabold text-sm rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+          <button type="submit" class="w-full py-3 px-4 bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-sm rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
             <span>Masuk ke Konsol SKP POGI</span>
             <span class="material-symbols-outlined text-base">arrow_forward</span>
           </button>
@@ -107,8 +107,8 @@
       </div>
     </div>
 
-    <!-- Branding & Info Side (Desktop Kiri: Dark Emerald Signature) -->
-    <div class="order-2 lg:order-1 lg:w-1/2 bg-gradient-to-br from-[#012218] via-[#004d34] to-[#011710] p-8 lg:p-14 text-white flex flex-col justify-between relative overflow-hidden">
+    <!-- Branding & Info Side (Desktop Kiri: Dark Teal Signature) -->
+    <div class="order-2 lg:order-1 lg:w-1/2 bg-gradient-to-br from-[#052625] via-[#0e6864] to-[#031817] p-8 lg:p-14 text-white flex flex-col justify-between relative overflow-hidden">
       <!-- Glow & Vector Ornaments -->
       <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
       <div class="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-teal-500/10 blur-3xl pointer-events-none"></div>

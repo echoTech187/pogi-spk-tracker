@@ -40,8 +40,8 @@
                 IMPRUVE.ID &bull; MONTHLY REPORT ONE POGI
               </span>
               <span
-                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-extrabold">
-                <span class="w-1.5 h-1.5 rounded-full bg-[#006948]"></span> Cutoff: Setiap Tgl 1 per Bulan
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span> Cutoff: Setiap Tgl 1 per Bulan
               </span>
             </div>
             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
@@ -69,8 +69,8 @@
                   <span class="material-symbols-outlined text-base">chevron_left</span>
                 </button>
                 <button type="button" onclick="toggleMonthPickerModal(true)"
-                  class="px-3.5 py-2 font-bold text-slate-800 hover:text-[#006948] hover:bg-emerald-50/50 transition flex items-center gap-1.5 select-none whitespace-nowrap cursor-pointer">
-                  <span class="material-symbols-outlined text-sm text-[#006948]">calendar_month</span>
+                  class="px-3.5 py-2 font-bold text-slate-800 hover:text-[#16b3ac] hover:bg-emerald-50/50 transition flex items-center gap-1.5 select-none whitespace-nowrap cursor-pointer">
+                  <span class="material-symbols-outlined text-sm text-[#16b3ac]">calendar_month</span>
                   <span id="currentMonthLabel">November 2026</span>
                   <span class="material-symbols-outlined text-xs text-slate-400">expand_more</span>
                 </button>
@@ -121,7 +121,7 @@
             <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
               <div class="flex items-center justify-between text-slate-500 mb-2">
                 <span class="text-xs font-bold uppercase tracking-wider">Realization</span>
-                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#006948] flex items-center justify-center">
+                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#16b3ac] flex items-center justify-center">
                   <span class="material-symbols-outlined text-lg">trending_up</span>
                 </div>
               </div>
@@ -242,7 +242,7 @@
                 </div>
                 <span
                   class="text-[10px] text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full font-bold border border-emerald-200">
-                  <span class="w-1.5 h-1.5 rounded-full bg-[#006948] inline-block mr-1"></span>Status Realtime
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac] inline-block mr-1"></span>Status Realtime
                 </span>
               </div>
               <div class="h-72 relative">
@@ -268,7 +268,7 @@
       class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden animate-scale-in">
       <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
         <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[#006948] text-xl">calendar_month</span>
+          <span class="material-symbols-outlined text-[#16b3ac] text-xl">calendar_month</span>
           <h3 class="font-black text-sm text-slate-900">Pilih Bulan Laporan (Flashback)</h3>
         </div>
         <button type="button" onclick="toggleMonthPickerModal(false)"
@@ -286,29 +286,29 @@
         <!-- 4x3 Grid Bulan (Persis Format BPJS) -->
         <div class="grid grid-cols-4 gap-2.5 text-xs font-bold">
           <button type="button" onclick="selectMonth(0)" id="mbtn-0"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Jan</button>
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Jan</button>
           <button type="button" onclick="selectMonth(1)" id="mbtn-1"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Feb</button>
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Feb</button>
           <button type="button" onclick="selectMonth(2)" id="mbtn-2"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Mar</button>
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Mar</button>
           <button type="button" onclick="selectMonth(3)" id="mbtn-3"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Apr</button>
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Apr</button>
           <button type="button" onclick="selectMonth(4)" id="mbtn-4"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Mei</button>
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Mei</button>
           <button type="button" onclick="selectMonth(5)" id="mbtn-5"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Jun</button>
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Jun</button>
           <button type="button" onclick="selectMonth(6)" id="mbtn-6"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Jul</button>
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Jul</button>
           <button type="button" onclick="selectMonth(7)" id="mbtn-7"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Agu</button>
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Agu</button>
           <button type="button" onclick="selectMonth(8)" id="mbtn-8"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Sep</button>
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Sep</button>
           <button type="button" onclick="selectMonth(9)" id="mbtn-9"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Okt</button>
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Okt</button>
           <button type="button" onclick="selectMonth(10)" id="mbtn-10"
-            class="py-3 rounded-2xl bg-[#006948] text-white font-extrabold shadow-sm transition cursor-pointer text-center">Nov</button>
+            class="py-3 rounded-2xl bg-[#16b3ac] text-white font-extrabold shadow-sm transition cursor-pointer text-center">Nov</button>
           <button type="button" onclick="selectMonth(11)" id="mbtn-11"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center">Des</button>
+            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Des</button>
         </div>
 
         <div class="pt-2 text-[11px] text-slate-500 border-t border-slate-100 flex items-center justify-between">
@@ -373,7 +373,7 @@
                     <td class="py-3.5 px-4 text-slate-600 font-medium">1 {{ $s->period_month }} {{ $s->period_year }}</td>
                     <td class="py-3.5 px-4 text-slate-600 font-mono">{{ \Carbon\Carbon::parse($s->cutoff_timestamp ?? $s->created_at)->format('d M Y, H:i') }} WIB</td>
                     <td class="py-3.5 px-4 text-center">
-                      <span class="px-2.5 py-1 rounded-full text-[10px] font-black {{ ($s->is_locked ?? true) ? 'bg-emerald-100 text-[#006948]' : 'bg-slate-100 text-slate-700' }}">
+                      <span class="px-2.5 py-1 rounded-full text-[10px] font-black {{ ($s->is_locked ?? true) ? 'bg-emerald-100 text-[#16b3ac]' : 'bg-slate-100 text-slate-700' }}">
                         {{ ($s->is_locked ?? true) ? 'Tersedia (Resmi)' : 'Draft' }}
                       </span>
                     </td>
@@ -382,7 +382,7 @@
                         <button type="button" onclick="printOnePogiMonthlyReportPdf('{{ $s->period_month }}/{{ $s->period_year }}')"
                           title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
                           class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                          <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
                           <span>Lap. Bulanan</span>
                         </button>
                         <button type="button" onclick="printOfficialSkpReportPdf('{{ $s->period_month }}/{{ $s->period_year }}')"
@@ -403,13 +403,13 @@
                   <td class="py-3.5 px-4 text-slate-600 font-medium">1 November 2026</td>
                   <td class="py-3.5 px-4 text-slate-600 font-mono">20 Nov 2026, 09:14 WIB</td>
                   <td class="py-3.5 px-4 text-center">
-                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-[#006948]">Tersedia (Resmi)</span>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-[#16b3ac]">Tersedia (Resmi)</span>
                   </td>
                   <td class="py-3.5 px-4 text-right">
                     <div class="inline-flex items-center gap-2">
                       <button type="button" onclick="printOnePogiMonthlyReportPdf('November 2026')"
                         class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                        <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                        <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
                         <span>Lap. Bulanan</span>
                       </button>
                     </div>
@@ -430,7 +430,7 @@
                     <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
                       title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
                       class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                      <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
                       <span>Lap. Bulanan</span>
                     </button>
                     <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
@@ -455,7 +455,7 @@
                     <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
                       title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
                       class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                      <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
                       <span>Lap. Bulanan</span>
                     </button>
                     <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
@@ -480,7 +480,7 @@
                     <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
                       title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
                       class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                      <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
                       <span>Lap. Bulanan</span>
                     </button>
                     <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
@@ -500,7 +500,7 @@
       <div
         class="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
         <div class="flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-sm text-[#006948]">verified</span>
+          <span class="material-symbols-outlined text-sm text-[#16b3ac]">verified</span>
           <span>Sistem Penyimpanan Terpadu Impruve.Id &bull; Cutoff tgl 1</span>
         </div>
         <button type="button" onclick="openArchiveModal(false)"
@@ -602,9 +602,9 @@
         const btn = document.getElementById('mbtn-' + i);
         if (btn) {
           if (i === idx) {
-            btn.className = 'py-3 rounded-2xl bg-[#006948] text-white font-extrabold shadow-sm transition cursor-pointer text-center';
+            btn.className = 'py-3 rounded-2xl bg-[#16b3ac] text-white font-extrabold shadow-sm transition cursor-pointer text-center';
           } else {
-            btn.className = 'py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#006948] transition cursor-pointer text-center';
+            btn.className = 'py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center';
           }
         }
       }
@@ -634,8 +634,8 @@
             {
               label: 'Realization',
               data: monthlyData.map(d => d.real),
-              backgroundColor: '#006948',
-              hoverBackgroundColor: '#005439',
+              backgroundColor: '#16b3ac',
+              hoverBackgroundColor: '#129993',
               borderRadius: 4
             },
             {
@@ -666,7 +666,7 @@
         data: {
           labels: ['Pengabdian', 'Pelayanan', 'Pembelajaran'],
           datasets: [
-            { label: 'Realization', data: [27, 416, 21.5], backgroundColor: ['#d97706', '#0284c7', '#006948'], borderRadius: 4 },
+            { label: 'Realization', data: [27, 416, 21.5], backgroundColor: ['#d97706', '#0284c7', '#16b3ac'], borderRadius: 4 },
             { label: 'Target', data: [26.83, 281.75, 120.75], backgroundColor: '#cbd5e1', borderRadius: 4 }
           ]
         },
@@ -690,7 +690,7 @@
           labels: ['Pelayanan', 'Pengabdian', 'Pembelajaran'],
           datasets: [{
             data: [416, 27, 21.5],
-            backgroundColor: ['#0284c7', '#d97706', '#006948'],
+            backgroundColor: ['#0284c7', '#d97706', '#16b3ac'],
             borderWidth: 2,
             borderColor: '#ffffff'
           }]
@@ -712,7 +712,7 @@
         data: {
           labels: ['Pengabdian', 'Pelayanan', 'Pembelajaran'],
           datasets: [
-            { label: 'Done', data: [27, 416, 21.5], backgroundColor: '#006948', stack: 'status' },
+            { label: 'Done', data: [27, 416, 21.5], backgroundColor: '#16b3ac', stack: 'status' },
             { label: 'Not submitted', data: [11, 204, 8.5], backgroundColor: '#94a3b8', stack: 'status' },
             { label: 'Submitted', data: [24.5, 499, 28.5], backgroundColor: '#0ea5e9', stack: 'status' },
             { label: 'Rejected', data: [4, 59, 5.5], backgroundColor: '#ef4444', stack: 'status' }

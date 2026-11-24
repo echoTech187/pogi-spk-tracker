@@ -111,6 +111,14 @@ $$\text{Capaian Provinsi (\%)} = \left( \frac{\sum \text{SKP Terverifikasi Selur
 * **Hijau (`#16A34A`) — Hampir Memenuhi / Waspada**: Capaian wilayah **$50\% \le \text{Capaian} < 85\%$**. Memerlukan pemantauan berkala.
 * **Merah (`#DC2626`) — Sangat Kurang / Kritis**: Capaian wilayah **$< 50\%$**. Memerlukan intervensi langsung dan pemberitahuan massal ke pengurus cabang setempat.
 
+### Tema Brand & Palet Warna Default Sistem (Teal Standard):
+Sesuai arahan klien, palet warna baku utama sistem POGI SKP Tracker menggunakan standar Teal / Turquoise Cyan:
+* **Warna Utama Default (*Primary Brand*)**: `#16b3ac` (Teal / Turquoise Cyan)
+* **Warna Interaksi Hover / Aktif (*Hover / Focus*)**: `#129993`
+* **Warna Aksen Gelap (*Dark Slate-Teal Gradient*)**: `#0a4c49` hingga `#052625`
+* **Warna Latar Terang / Tint (*Light Tint Background*)**: `#e8f8f7`
+* **Warna Aksen Emas (*POGI Gold Accent*)**: `#c29b38`
+
 ---
 
 ## 6. Logika Kinerja & SLA Admin POGI (Verifikator)

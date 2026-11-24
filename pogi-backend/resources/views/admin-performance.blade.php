@@ -9,7 +9,7 @@
   <!-- Core Styles -->
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    .kpi-gradient-1 { background: linear-gradient(135deg, #022b1f 0%, #004d34 100%); }
+    .kpi-gradient-1 { background: linear-gradient(135deg, #0a4c49 0%, #0e6864 100%); }
     .pulse-amber { animation: pulseAmber 2s infinite; }
     @keyframes pulseAmber {
       0%, 100% { opacity: 1; }
@@ -35,7 +35,7 @@
         <!-- Hero Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
           <div>
-            <div class="flex items-center gap-2 text-xs font-bold text-[#006948] uppercase tracking-wider">
+            <div class="flex items-center gap-2 text-xs font-bold text-[#16b3ac] uppercase tracking-wider">
               <span class="material-symbols-outlined text-sm">speed</span>
               <span>STANDAR OPERASIONAL B2B ENERGI CIPTA &bull; KEMENKES MANUAL-ASSISTED SYNC</span>
             </div>
@@ -53,7 +53,7 @@
               <span>Redistribusi Beban Dokter</span>
             </button>
             @endif
-            <button type="button" onclick="exportKpiReport()" class="px-3.5 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs">
+            <button type="button" onclick="exportKpiReport()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs">
               <span class="material-symbols-outlined text-sm">download</span>
               <span>Ekspor Rekap KPI</span>
             </button>
@@ -73,7 +73,7 @@
               <span class="text-xs text-slate-400 font-medium">/ 24 Jam</span>
             </div>
             <div class="mt-2 flex items-center gap-1.5">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-[#006948] border border-emerald-200">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-[#16b3ac] border border-emerald-200">
                 &check; On-Track SLA (-37%)
               </span>
               <span class="text-[11px] text-slate-400">Target &lt; 24 Jam</span>
@@ -87,11 +87,11 @@
               <span class="material-symbols-outlined text-emerald-600 text-xl">verified</span>
             </div>
             <div class="flex items-baseline gap-2">
-              <span id="kpiTeamApproval" class="text-3xl font-black text-[#006948] font-mono">{{ $summary['avgTeamApproval'] ?? 98.2 }}%</span>
+              <span id="kpiTeamApproval" class="text-3xl font-black text-[#16b3ac] font-mono">{{ $summary['avgTeamApproval'] ?? 98.2 }}%</span>
               <span class="text-xs text-slate-400 font-medium">Approval</span>
             </div>
             <div class="mt-2 flex items-center gap-1.5">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-[#006948] border border-emerald-200">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-[#16b3ac] border border-emerald-200">
                 Sangat Teliti
               </span>
               <span class="text-[11px] text-slate-400">Rejection rate &lt; 2%</span>
@@ -165,7 +165,7 @@
               <div class="mt-4 p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
                 <div class="flex items-center justify-between text-xs">
                   <span class="font-bold text-slate-700">Rekomendasi Kapasitas:</span>
-                  <span class="font-black text-[#006948] font-mono">35 - 40 Dokter / Admin</span>
+                  <span class="font-black text-[#16b3ac] font-mono">35 - 40 Dokter / Admin</span>
                 </div>
                 <div class="text-[11px] text-slate-500 leading-relaxed">
                   Beban di atas 42 dokter berisiko menurunkan kecepatan verifikasi menjelang tanggal 1 (*cutoff* bulanan).
@@ -179,7 +179,7 @@
             </div>
 
             @if(Auth::user()?->role === 'SUPER_ADMIN')
-            <button type="button" onclick="openWorkloadRebalanceModal()" class="w-full mt-4 py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#006948] text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-200 rbac-operational">
+            <button type="button" onclick="openWorkloadRebalanceModal()" class="w-full mt-4 py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-200 rbac-operational">
               <span class="material-symbols-outlined text-sm">tune</span>
               <span>Buka Tool Seimbangkan Beban (Rebalancer)</span>
             </button>
@@ -238,7 +238,7 @@
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3 shrink-0">
         <div class="flex items-center gap-3">
-          <div id="modalAdminAvatar" class="w-10 h-10 rounded-2xl bg-[#006948] text-white flex items-center justify-center font-black text-sm">
+          <div id="modalAdminAvatar" class="w-10 h-10 rounded-2xl bg-[#16b3ac] text-white flex items-center justify-center font-black text-sm">
             SR
           </div>
           <div>
@@ -260,7 +260,7 @@
           </div>
           <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-center">
             <div class="text-[10px] text-emerald-700 font-bold uppercase">Rata-Rata SLA</div>
-            <div id="modalAdminSla" class="text-lg font-black text-[#006948] mt-0.5 font-mono">9.4 Jam</div>
+            <div id="modalAdminSla" class="text-lg font-black text-[#16b3ac] mt-0.5 font-mono">9.4 Jam</div>
           </div>
           <div class="p-3 rounded-xl bg-sky-50 border border-sky-100 text-center">
             <div class="text-[10px] text-sky-700 font-bold uppercase">Skor KPI</div>
@@ -301,7 +301,7 @@
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[#006948] text-xl">balance</span>
+          <span class="material-symbols-outlined text-[#16b3ac] text-xl">balance</span>
           <h3 class="font-black text-slate-900 text-sm">Redistribusi Beban Kerja Dokter Binaan</h3>
         </div>
         <button type="button" onclick="closeWorkloadRebalanceModal()" class="text-slate-400 hover:text-slate-600 p-1">
@@ -331,7 +331,7 @@
 
       <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
         <button type="button" onclick="closeWorkloadRebalanceModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Batal</button>
-        <button type="button" onclick="submitRebalance()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs">
+        <button type="button" onclick="submitRebalance()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs">
           <span class="material-symbols-outlined text-sm">check</span>
           <span>Simpan &amp; Alihkan Dokter</span>
         </button>
@@ -467,7 +467,7 @@
               ${a.processedDocs} <span class="text-[10px] text-slate-400">Berkas</span>
             </td>
             <td class="py-3 px-3 text-center">
-              <span class="font-mono font-black text-[#006948] text-xs">${a.avgSla} Jam</span>
+              <span class="font-mono font-black text-[#16b3ac] text-xs">${a.avgSla} Jam</span>
               <div class="text-[10px] text-emerald-600 font-bold">&check; Target &lt; 24 Jam</div>
             </td>
             <td class="py-3 px-3 text-center">
@@ -491,7 +491,7 @@
                   <span>Rincian</span>
                 </button>
                 ${IS_SUPER_ADMIN ? `
-                <button type="button" onclick="openWorkloadRebalanceModal('${a.name}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#006948] font-bold text-[11px] transition flex items-center gap-1 border border-emerald-200 rbac-operational">
+                <button type="button" onclick="openWorkloadRebalanceModal('${a.name}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-[11px] transition flex items-center gap-1 border border-emerald-200 rbac-operational">
                   <span class="material-symbols-outlined text-xs">tune</span>
                   <span>Alihkan</span>
                 </button>
@@ -538,12 +538,12 @@
       } else {
         docListCont.innerHTML = doctors.map(d => {
           const statusBadge = d.status === 'Complete'
-            ? `<span class="px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-100 text-[#006948]">Complete</span>`
+            ? `<span class="px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-100 text-[#16b3ac]">Complete</span>`
             : `<span class="px-2 py-0.2 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700">Incomplete</span>`;
           return `
             <div class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition text-xs">
               <div>
-                <a href="/doctor-detail?id=${d.id}" class="font-bold text-slate-900 hover:text-[#006948] hover:underline">${d.name}</a>
+                <a href="/doctor-detail?id=${d.id}" class="font-bold text-slate-900 hover:text-[#16b3ac] hover:underline">${d.name}</a>
                 <div class="text-[10px] text-slate-400 font-mono">STR: ${d.strNumber} &bull; ${d.hospital}</div>
               </div>
               <div class="flex items-center gap-2">
@@ -563,7 +563,7 @@
 
       actCont.innerHTML = sampleActs.map(act => `
         <div class="flex items-start gap-2 text-xs py-1">
-          <span class="material-symbols-outlined text-xs text-[#006948] mt-0.5">check_circle</span>
+          <span class="material-symbols-outlined text-xs text-[#16b3ac] mt-0.5">check_circle</span>
           <div class="min-w-0 flex-1">
             <div class="font-bold text-slate-800">${act.action}</div>
             <div class="text-[11px] text-slate-600">${act.details}</div>

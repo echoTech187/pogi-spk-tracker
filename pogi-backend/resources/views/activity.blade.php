@@ -28,7 +28,7 @@
         <!-- MedCred Standard Heading Banner -->
         <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div class="space-y-1.5">
-            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-black uppercase tracking-wider">
+            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
               <span>LOG OPERASIONAL &amp; AUDIT TRAIL</span>
             </div>
             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
@@ -40,7 +40,7 @@
             </p>
           </div>
           <div class="flex items-center gap-2.5 shrink-0">
-            <button type="button" onclick="refreshActivityLog()" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
+            <button type="button" onclick="refreshActivityLog()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
               <span class="material-symbols-outlined text-base" id="refreshIcon">refresh</span>
               <span>Segarkan Log</span>
             </button>
@@ -66,7 +66,7 @@
           </div>
           <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
             <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aksi Kredensial &amp; PIC</div>
-            <div class="text-2xl font-black text-[#006948] mt-1">{{ $metrics['security_actions'] ?? 10 }}</div>
+            <div class="text-2xl font-black text-[#16b3ac] mt-1">{{ $metrics['security_actions'] ?? 10 }}</div>
             <div class="text-[10px] text-emerald-800 font-bold mt-0.5">Audit Security</div>
           </div>
           <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs col-span-2 sm:col-span-1">
@@ -232,7 +232,7 @@
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#006948] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
             ${p}
           </button>
         `;
@@ -355,7 +355,7 @@
             <tr class="hover:bg-slate-50 transition border-b border-slate-100">
               <td class="py-3 px-4 font-bold text-slate-900">
                 <div class="flex items-center gap-2">
-                  <span class="w-6 h-6 rounded-full bg-slate-100 text-[#006948] font-bold text-[10px] flex items-center justify-center shrink-0">
+                  <span class="w-6 h-6 rounded-full bg-slate-100 text-[#16b3ac] font-bold text-[10px] flex items-center justify-center shrink-0">
                     ${a.actor.charAt(0)}
                   </span>
                   <span>${a.actor}</span>

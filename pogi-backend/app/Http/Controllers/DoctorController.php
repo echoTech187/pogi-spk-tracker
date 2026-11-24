@@ -233,8 +233,8 @@ class DoctorController extends Controller
 
         $doctorRow = $doctorQuery->first();
         if (!$doctorRow) {
-            // Ambil dokter pertama jika ID tidak ditemukan
-            $doctorRow = DB::table('doctors')
+            // Ambil dokter pertama jika ID tidak ditemukan (dengan filter cabang jika Admin Cabang)
+            $fallbackQuery = DB::table('doctors')
                 ->leftJoin('pogi_branches', 'doctors.branch_id', '=', 'pogi_branches.id')
                 ->leftJoin('provinces', 'doctors.province_id', '=', 'provinces.id')
                 ->leftJoin('institutions', 'doctors.primary_institution_id', '=', 'institutions.id')
@@ -250,8 +250,20 @@ class DoctorController extends Controller
                     'pic.email as assigned_pic_email',
                     'pic.phone_number as assigned_pic_phone'
                 )
-                ->whereNull('doctors.deleted_at')
-                ->first();
+                ->whereNull('doctors.deleted_at');
+
+            if ($user && $user->isAdminCabang() && $user->branch_id) {
+                $fallbackQuery->where('doctors.branch_id', $user->branch_id);
+            }
+
+            $doctorRow = $fallbackQuery->first();
+        }
+
+        // Isolasi multi-tenant ketat untuk ADMIN_CABANG
+        if ($user && $user->isAdminCabang()) {
+            if ($doctorRow && $doctorRow->branch_id !== $user->branch_id) {
+                abort(403, 'Akses ditolak: Anda hanya berwenang memantau dokter di wilayah cabang Anda sendiri.');
+            }
         }
 
         // Active SKP Period

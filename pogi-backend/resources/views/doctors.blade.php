@@ -35,16 +35,18 @@
               Direktori kredensialing aktif, pemantauan pengurusan perizinan instansi &amp; akses pemenuhan kredit 160 SKP (Pelayanan, Pengabdian, Pembelajaran) terintegrasi SATUSEHAT.
             </p>
           </div>
+          @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
           <div class="flex items-center gap-2 shrink-0 flex-wrap">
             <button type="button" onclick="openWaBlastModal()" id="btnWaBlastMassal" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational">
               <span class="material-symbols-outlined text-base">campaign</span>
               <span>Kirim WA Blast Massal</span>
             </button>
-            <button type="button" onclick="openAddDoctorModal()" id="btnAddDoctor" class="px-4 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational">
+            <button type="button" onclick="openAddDoctorModal()" id="btnAddDoctor" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational">
               <span class="material-symbols-outlined text-base">person_add</span>
               <span>Daftarkan Dokter Baru</span>
             </button>
           </div>
+          @endif
         </div>
 
         <!-- Filter & Search Toolbar (Sesuai Screenshot Klien) -->
@@ -55,7 +57,7 @@
               <label class="block font-bold text-slate-700 mb-1">Cari Dokter / No POGI / STR</label>
               <div class="relative">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">search</span>
-                <input id="searchDoctorInput" onkeyup="applyDoctorFilters()" type="text" placeholder="Ketik nama atau STR..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]" />
+                <input id="searchDoctorInput" onkeyup="applyDoctorFilters()" type="text" placeholder="Ketik nama atau STR..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
               </div>
             </div>
 
@@ -110,20 +112,30 @@
             <!-- Provinsi Filter (38 Cabang POGI) -->
             <div>
               <label class="block font-bold text-slate-700 mb-1">Cabang POGI / Provinsi</label>
-              <select id="provinceFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                <option value="ALL">Semua Provinsi (38 Cabang)</option>
-                @if(!empty($provinces))
-                  @foreach($provinces as $p)
-                    <option value="{{ $p->name }}">{{ $p->name }}</option>
-                  @endforeach
-                @endif
-              </select>
+              @if(Auth::user()?->isAdminCabang())
+                @php
+                  $userBranch = \Illuminate\Support\Facades\DB::table('pogi_branches')->where('id', Auth::user()?->branch_id)->first();
+                  $userProvince = $userBranch ? \Illuminate\Support\Facades\DB::table('provinces')->where('id', $userBranch->province_id)->first() : null;
+                @endphp
+                <select id="provinceFilter" disabled class="w-full py-2 px-3 bg-slate-100 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 cursor-not-allowed">
+                  <option value="{{ $userProvince?->name ?? 'Cabang Anda' }}">{{ $userBranch?->branch_name ?? 'Cabang Wilayah Anda' }} (Terkunci)</option>
+                </select>
+              @else
+                <select id="provinceFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+                  <option value="ALL">Semua Provinsi (38 Cabang)</option>
+                  @if(!empty($provinces))
+                    @foreach($provinces as $p)
+                      <option value="{{ $p->name }}">{{ $p->name }}</option>
+                    @endforeach
+                  @endif
+                </select>
+              @endif
             </div>
           </div>
 
           <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
             <div>Menampilkan <span id="doctorFilteredCount" class="font-bold text-slate-900">10</span> dokter dari total <span id="doctorTotalFilteredCount" class="font-bold text-slate-900">200</span> anggota</div>
-            <button type="button" onclick="resetDoctorFilters()" class="text-[#006948] font-bold hover:underline">Reset Filter</button>
+            <button type="button" onclick="resetDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
           </div>
         </div>
 
@@ -167,7 +179,7 @@
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-5 responsive-modal-body overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-3">
-          <div id="modalAvatar" class="w-12 h-12 rounded-2xl bg-[#006948] text-white font-extrabold text-base flex items-center justify-center shrink-0">
+          <div id="modalAvatar" class="w-12 h-12 rounded-2xl bg-[#16b3ac] text-white font-extrabold text-base flex items-center justify-center shrink-0">
             AP
           </div>
           <div>
@@ -208,11 +220,11 @@
         <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1.5">
           <div class="flex items-center justify-between font-bold text-slate-900">
             <span>Sertifikat Workshop Hands-on USG Fetomaternal (POGI Jaya)</span>
-            <span class="text-[#006948] font-black">+4.5 SKP (Pembelajaran)</span>
+            <span class="text-[#16b3ac] font-black">+4.5 SKP (Pembelajaran)</span>
           </div>
           <div class="text-[11px] text-slate-500">Nomor Registrasi: CERT-POGI-2026-9921 &bull; Tanggal: 14 Nov 2026</div>
           <div class="flex items-center gap-2 pt-1">
-            <button type="button" onclick="openCertificatePreviewModal()" class="text-[11px] text-[#006948] font-bold hover:underline flex items-center gap-1">
+            <button type="button" onclick="openCertificatePreviewModal()" class="text-[11px] text-[#16b3ac] font-bold hover:underline flex items-center gap-1">
               <span class="material-symbols-outlined text-xs">visibility</span> Lihat Berkas PDF
             </button>
             <span class="text-slate-300">&bull;</span>
@@ -225,7 +237,7 @@
 
       <!-- Tindak Lanjut Follow-Up -->
       <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 text-xs space-y-2">
-        <div class="font-bold text-[#006948]">Kirim Pengingat Langsung ke Dokter / RS:</div>
+        <div class="font-bold text-[#16b3ac]">Kirim Pengingat Langsung ke Dokter / RS:</div>
         <div class="flex items-center gap-2">
           <button type="button" onclick="sendDoctorReminder('wa')" class="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] transition flex items-center gap-1">
             <span class="material-symbols-outlined text-xs">chat</span> Hubungi via WhatsApp
@@ -237,7 +249,7 @@
       </div>
 
       <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
-        <button type="button" onclick="openDoctorRepositoryPage()" class="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#006948] text-xs font-bold transition flex items-center gap-1.5 border border-emerald-200">
+        <button type="button" onclick="openDoctorRepositoryPage()" class="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] text-xs font-bold transition flex items-center gap-1.5 border border-emerald-200">
           <span class="material-symbols-outlined text-sm">cloud_done</span>
           <span>Buka Repositori Dokumen (Object Storage)</span>
         </button>
@@ -263,7 +275,7 @@
           <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
         </div>
         <div>
-          <div class="text-[10px] uppercase font-black tracking-widest text-[#006948]">PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA</div>
+          <div class="text-[10px] uppercase font-black tracking-widest text-[#16b3ac]">PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA</div>
           <h4 class="font-black text-sm text-slate-900 mt-1">SERTIFIKAT AKREDITASI ILMIAH</h4>
           <p class="text-xs text-slate-600 mt-0.5">Diberikan atas partisipasi aktif dalam: <strong>Workshop Hands-on USG Fetomaternal</strong></p>
         </div>
@@ -276,7 +288,7 @@
       </div>
       <div class="flex items-center justify-end gap-2 pt-2">
         <button type="button" onclick="closeCertificatePreviewModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Tutup</button>
-        <button type="button" onclick="showToast('Mengunduh salinan resmi berkas PDF...', 'success'); closeCertificatePreviewModal();" class="px-4 py-2 rounded-xl bg-[#006948] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs">
+        <button type="button" onclick="showToast('Mengunduh salinan resmi berkas PDF...', 'success'); closeCertificatePreviewModal();" class="px-4 py-2 rounded-xl bg-[#16b3ac] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs">
           <span class="material-symbols-outlined text-sm">download</span>
           <span>Unduh Berkas PDF</span>
         </button>
@@ -289,7 +301,7 @@
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[#006948] text-xl">person_add</span>
+          <span class="material-symbols-outlined text-[#16b3ac] text-xl">person_add</span>
           <h3 class="font-black text-slate-900 text-sm">Add Doctor</h3>
         </div>
         <button type="button" onclick="closeAddDoctorModal()" class="text-slate-400 hover:text-slate-600 p-1">
@@ -305,26 +317,26 @@
           <!-- Name -->
           <div>
             <label class="block font-bold text-slate-700 mb-1">Name</label>
-            <input id="newDocName" type="text" required placeholder="dr. Budi Santoso, Sp.PD" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]" />
+            <input id="newDocName" type="text" required placeholder="dr. Budi Santoso, Sp.PD" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
           </div>
 
           <!-- STR -->
           <div>
             <label class="block font-bold text-slate-700 mb-1">STR</label>
-            <input id="newDocStr" type="text" required placeholder="32.73.100.2.21.0883" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]" />
+            <input id="newDocStr" type="text" required placeholder="32.73.100.2.21.0883" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
           </div>
 
           <!-- Phone -->
           <div>
             <label class="block font-bold text-slate-700 mb-1">Phone</label>
-            <input id="newDocPhone" type="text" required placeholder="08123456789" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]" />
+            <input id="newDocPhone" type="text" required placeholder="08123456789" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
             <p class="text-[11px] text-slate-400 mt-1">Numbers starting with 0 are saved as +62.</p>
           </div>
 
           <!-- Province -->
           <div>
             <label class="block font-bold text-slate-700 mb-1">Province</label>
-            <select id="newDocProv" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]">
+            <select id="newDocProv" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
               <option value="">Select province</option>
             </select>
           </div>
@@ -332,7 +344,7 @@
           <!-- Institution -->
           <div>
             <label class="block font-bold text-slate-700 mb-1">Institution</label>
-            <select id="newDocInst" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]">
+            <select id="newDocInst" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
               <option value="">Select institution</option>
             </select>
           </div>
@@ -340,7 +352,7 @@
           <!-- Assigned PIC Admin -->
           <div>
             <label class="block font-bold text-slate-700 mb-1">PIC Admin / Dokter Binaan</label>
-            <select id="newDocAssignedTo" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]">
+            <select id="newDocAssignedTo" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
               <option value="Siti Rahma">Siti Rahma (Lead Admin POGI Tim Data Pusat)</option>
               <option value="Dewi Lestari">Dewi Lestari (Admin POGI DKI &amp; Banten)</option>
               <option value="Wahyu Setiawan">Wahyu Setiawan (Admin POGI Jawa Barat)</option>
@@ -356,14 +368,14 @@
             <div>
               <label class="block font-bold text-slate-700 mb-1">Period start</label>
               <div class="relative">
-                <input id="newDocPeriodStart" type="text" required value="1 Jan 2026" placeholder="1 Jan 2026" class="w-full pl-8 pr-2.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]" />
+                <input id="newDocPeriodStart" type="text" required value="1 Jan 2026" placeholder="1 Jan 2026" class="w-full pl-8 pr-2.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
                 <span class="material-symbols-outlined text-slate-400 text-base absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
               </div>
             </div>
             <div>
               <label class="block font-bold text-slate-700 mb-1">Period end</label>
               <div class="relative">
-                <input id="newDocPeriodEnd" type="text" required value="31 Des 2030" placeholder="31 Des 2030" class="w-full pl-8 pr-2.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]" />
+                <input id="newDocPeriodEnd" type="text" required value="31 Des 2030" placeholder="31 Des 2030" class="w-full pl-8 pr-2.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
                 <span class="material-symbols-outlined text-slate-400 text-base absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
               </div>
             </div>
@@ -379,19 +391,19 @@
 
           <div>
             <label class="block font-bold text-slate-700 mb-1">Username</label>
-            <input id="newDocLmsUsername" type="text" placeholder="super@example.com" class="w-full p-2.5 bg-sky-50/70 border border-sky-100 rounded-xl text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]" />
+            <input id="newDocLmsUsername" type="text" placeholder="super@example.com" class="w-full p-2.5 bg-sky-50/70 border border-sky-100 rounded-xl text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
           </div>
 
           <div>
             <label class="block font-bold text-slate-700 mb-1">Password</label>
-            <input id="newDocLmsPassword" type="password" placeholder="••••••••" class="w-full p-2.5 bg-sky-50/70 border border-sky-100 rounded-xl text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]" />
+            <input id="newDocLmsPassword" type="password" placeholder="••••••••" class="w-full p-2.5 bg-sky-50/70 border border-sky-100 rounded-xl text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
           </div>
         </div>
 
         <!-- Modal Footer Actions -->
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
           <button type="button" onclick="closeAddDoctorModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition">Batal</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer">
             <span class="material-symbols-outlined text-base">person_add</span>
             <span>Add doctor</span>
           </button>
@@ -405,7 +417,7 @@
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#006948] flex items-center justify-center shrink-0">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#16b3ac] flex items-center justify-center shrink-0">
             <span class="material-symbols-outlined text-2xl">campaign</span>
           </div>
           <div>
@@ -424,7 +436,7 @@
         <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-3">
           <div class="flex items-center justify-between">
             <label class="font-extrabold text-slate-800">1. Tentukan Sasaran Penerima Blast</label>
-            <span id="blastRecipientCountBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#006948] font-black text-[11px]">
+            <span id="blastRecipientCountBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] font-black text-[11px]">
               158 Dokter Terpilih
             </span>
           </div>
@@ -437,7 +449,7 @@
             <option value="all">Semua Dokter Terdaftar (200 Dokter)</option>
           </select>
           <div class="text-[11px] text-slate-500 flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-sm text-[#006948]">shield</span>
+            <span class="material-symbols-outlined text-sm text-[#16b3ac]">shield</span>
             <span>Nomor WhatsApp terenkripsi at-rest dan diverifikasi sesuai data registrasi keanggotaan POGI.</span>
           </div>
         </div>
@@ -446,8 +458,8 @@
         <div class="space-y-2">
           <label class="font-extrabold text-slate-800">2. Pilih Templat Pesan WhatsApp Resmi</label>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <button type="button" onclick="selectBlastTemplate('H7')" id="btnTplH7" class="p-3 rounded-xl border-2 border-[#006948] bg-emerald-50 text-left font-bold text-slate-800 transition">
-              <div class="text-[#006948] text-xs">Pengingat H-7</div>
+            <button type="button" onclick="selectBlastTemplate('H7')" id="btnTplH7" class="p-3 rounded-xl border-2 border-[#16b3ac] bg-emerald-50 text-left font-bold text-slate-800 transition">
+              <div class="text-[#16b3ac] text-xs">Pengingat H-7</div>
               <div class="text-[10px] text-slate-500 font-normal mt-0.5">Rutin 7 hari menjelang cutoff tgl 1</div>
             </button>
             <button type="button" onclick="selectBlastTemplate('H2')" id="btnTplH2" class="p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-left font-bold text-slate-800 transition">
@@ -469,7 +481,7 @@
           </div>
           <div class="p-4 rounded-2xl bg-[#efeae2] border border-[#d1d7db] shadow-inner font-sans">
             <div class="bg-white rounded-2xl p-3.5 shadow-sm max-w-lg border border-slate-200/60 space-y-2 text-slate-800 text-[11px] leading-relaxed relative">
-              <div class="font-bold text-[#006948] flex items-center gap-1.5 border-b border-slate-100 pb-1.5">
+              <div class="font-bold text-[#16b3ac] flex items-center gap-1.5 border-b border-slate-100 pb-1.5">
                 <span class="material-symbols-outlined text-sm">verified</span>
                 <span>POGI SKP TRACKER (NOTIFIKASI RESMI ENERGI CIPTA)</span>
               </div>
@@ -495,7 +507,7 @@ Admin Data PP POGI & PT Energi Cipta
 
         <!-- Anti-Ban Rate Limiting Alert -->
         <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-start gap-2.5">
-          <span class="material-symbols-outlined text-[#006948] text-base shrink-0 mt-0.5">speed</span>
+          <span class="material-symbols-outlined text-[#16b3ac] text-base shrink-0 mt-0.5">speed</span>
           <div class="text-[11px] text-emerald-900 leading-snug">
             <strong>Proteksi Anti-Ban &amp; Rate Limiting (Bab 3.2.C):</strong> Pesan akan dikirim melalui <em>Message Queue</em> dengan penundaan acak (*jitter*) 1.5 - 3.0 detik antar pesan untuk melindungi reputasi nomor WhatsApp resmi Energi Cipta.
           </div>
@@ -503,7 +515,7 @@ Admin Data PP POGI & PT Energi Cipta
 
         <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
           <button type="button" onclick="closeWaBlastModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">Batal</button>
-          <button type="button" onclick="startWaBlastQueue()" class="px-5 py-2.5 rounded-xl bg-[#006948] hover:bg-[#005439] text-white font-extrabold shadow-md transition flex items-center gap-1.5 rbac-operational">
+          <button type="button" onclick="startWaBlastQueue()" class="px-5 py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold shadow-md transition flex items-center gap-1.5 rbac-operational">
             <span class="material-symbols-outlined text-base">send</span>
             <span>Mulai Kirim Blast (Message Queue)</span>
           </button>
@@ -594,7 +606,7 @@ Admin Data PP POGI & PT Energi Cipta
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#006948] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
             ${p}
           </button>
         `;
@@ -1355,7 +1367,7 @@ Admin Data PP POGI & PT Energi Cipta
 
       const activeBtn = document.getElementById(`btnTpl${tpl}`);
       if (activeBtn) {
-        activeBtn.className = 'p-3 rounded-xl border-2 border-[#006948] bg-emerald-50 text-left font-bold text-slate-800 transition shadow-2xs';
+        activeBtn.className = 'p-3 rounded-xl border-2 border-[#16b3ac] bg-emerald-50 text-left font-bold text-slate-800 transition shadow-2xs';
       }
       renderBlastPreview();
     }
@@ -1440,7 +1452,7 @@ Pengurus Pusat POGI & Tim Teknologi Energi Cipta`;
         if (currentIdx >= total) {
           document.getElementById('queueStatusText').innerText = 'Pengiriman WA Blast Selesai 100%';
           document.getElementById('btnFinishQueue').removeAttribute('disabled');
-          document.getElementById('btnFinishQueue').className = 'px-5 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white font-extrabold shadow-sm transition cursor-pointer';
+          document.getElementById('btnFinishQueue').className = 'px-5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold shadow-sm transition cursor-pointer';
           showToast(`WA Blast Massal berhasil dikirim ke ${total} dokter via Message Queue!`, 'success');
           return;
         }
@@ -1461,7 +1473,7 @@ Pengurus Pusat POGI & Tim Teknologi Energi Cipta`;
           </div>
           <div class="flex items-center gap-2 shrink-0">
             <span class="text-[9px] text-slate-400 font-mono">Jitter +${jitter}s</span>
-            <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] font-bold text-[9px] flex items-center gap-1">
+            <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] font-bold text-[9px] flex items-center gap-1">
               <span class="material-symbols-outlined text-[10px]">check</span> Terkirim
             </span>
           </div>

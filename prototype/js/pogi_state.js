@@ -10373,7 +10373,7 @@ const PogiStore = {
   getAdminPerformanceMetrics() {
     const doctors = this.getDoctors();
     const adminRoster = [
-      { id: 'adm-01', name: 'Siti Rahma', displayName: 'Siti Rahma, S.Farm', email: 'sekretariat.pusat@pogi.or.id', role: 'Lead Admin POGI Tim Data Pusat', avatar: 'SR', avatarBg: 'bg-[#006948] text-white', avgSla: 9.4, approvalRate: 99.4, rejections: 1, waBlast: 48 },
+      { id: 'adm-01', name: 'Siti Rahma', displayName: 'Siti Rahma, S.Farm', email: 'sekretariat.pusat@pogi.or.id', role: 'Lead Admin POGI Tim Data Pusat', avatar: 'SR', avatarBg: 'bg-[#16b3ac] text-white', avgSla: 9.4, approvalRate: 99.4, rejections: 1, waBlast: 48 },
       { id: 'adm-02', name: 'Dewi Lestari', displayName: 'Dewi Lestari', email: 'dewi.lestari@pogi.or.id', role: 'Senior Admin Data Wilayah Barat', avatar: 'DL', avatarBg: 'bg-emerald-600 text-white', avgSla: 12.1, approvalRate: 98.8, rejections: 2, waBlast: 41 },
       { id: 'adm-03', name: 'Wahyu Setiawan', displayName: 'Wahyu Setiawan', email: 'wahyu.setiawan@pogi.or.id', role: 'Admin Sinkronisasi Kemenkes', avatar: 'WS', avatarBg: 'bg-teal-600 text-white', avgSla: 14.5, approvalRate: 98.2, rejections: 3, waBlast: 36 },
       { id: 'adm-04', name: 'Melati Sihombing', displayName: 'Melati Sihombing', email: 'melati.s@pogi.or.id', role: 'Admin POGI Wilayah Tengah', avatar: 'MS', avatarBg: 'bg-sky-700 text-white', avgSla: 17.8, approvalRate: 97.5, rejections: 4, waBlast: 31 },
@@ -10617,8 +10617,8 @@ const PogiStore = {
         shortRole: 'ADMIN POGI',
         branch: 'Nasional',
         avatar: 'AP',
-        avatarBg: 'bg-[#006948] text-white',
-        badgeClass: 'bg-emerald-100 text-[#006948] border-emerald-200',
+        avatarBg: 'bg-[#16b3ac] text-white',
+        badgeClass: 'bg-emerald-100 text-[#16b3ac] border-emerald-200',
         description: 'Melakukan kesesuaian dokumen-dokumen, validasi SKP, verifikasi kredit, dan monitoring data dokter yang mereka PJ',
         canWrite: true
       },

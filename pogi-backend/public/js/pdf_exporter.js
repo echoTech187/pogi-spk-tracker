@@ -55,7 +55,7 @@ const PogiPdfExporter = {
       justify-content: space-between;
       gap: 16px;
       padding-bottom: 8px;
-      border-bottom: 3px double #006948;
+      border-bottom: 3px double #16b3ac;
       margin-bottom: 12px;
     }
     .kop-logo-box {
@@ -79,7 +79,7 @@ const PogiPdfExporter = {
       margin: 0;
       font-size: 11pt;
       font-weight: 900;
-      color: #006948;
+      color: #16b3ac;
       letter-spacing: 0.5px;
       text-transform: uppercase;
     }
@@ -124,7 +124,7 @@ const PogiPdfExporter = {
     .report-heading-bar {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-left: 4px solid #006948;
+      border-left: 4px solid #16b3ac;
       border-radius: 6px;
       padding: 8px 12px;
       margin-bottom: 12px;
@@ -204,13 +204,13 @@ const PogiPdfExporter = {
       page-break-inside: avoid;
     }
     table.data-table th {
-      background-color: #006948;
+      background-color: #16b3ac;
       color: #ffffff;
       font-weight: 800;
       text-transform: uppercase;
       font-size: 7pt;
       padding: 6px 5px;
-      border: 1px solid #005439;
+      border: 1px solid #129993;
       text-align: left;
     }
     table.data-table td {
@@ -278,8 +278,8 @@ const PogiPdfExporter = {
       margin-top: 1px;
     }
     .stamp-badge {
-      border: 1px dashed #006948;
-      color: #006948;
+      border: 1px dashed #16b3ac;
+      color: #16b3ac;
       font-size: 6.5pt;
       font-weight: 800;
       padding: 2px 6px;
@@ -540,7 +540,7 @@ function exportEventsPdf() {
     `<strong>${e.name || e.title || '-'}</strong>`,
     e.category || '-',
     e.type || '-',
-    `<span style="color:#006948; font-weight:800;">${e.creditsDisplay || e.credits} SKP</span>`,
+    `<span style="color:#16b3ac; font-weight:800;">${e.creditsDisplay || e.credits} SKP</span>`,
     e.date || '-',
     e.doctors || '-',
     `<span class="badge badge-complete">&#10003; ${e.status || 'Dibuka'}</span>`
@@ -593,7 +593,7 @@ function exportEventParticipantsPdf() {
     d.province || '-',
     d.hospital || '-',
     '<span class="badge badge-complete">&#10003; Tuntas Hadir</span>',
-    '<strong style="color:#006948;">+1.5 SKP Terverifikasi</strong>'
+    '<strong style="color:#16b3ac;">+1.5 SKP Terverifikasi</strong>'
   ]);
 
   PogiPdfExporter.printDocument({

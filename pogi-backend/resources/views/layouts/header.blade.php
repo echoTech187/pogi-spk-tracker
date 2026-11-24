@@ -33,7 +33,7 @@
     <div class="relative flex-1 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-2 sm:mx-4">
       <div class="relative flex items-center">
         <span class="material-symbols-outlined absolute left-3 text-slate-400 text-lg pointer-events-none">search</span>
-        <input type="text" id="topGlobalSearchInput" oninput="handleGlobalTopSearch(this.value)" onkeydown="handleGlobalSearchKeydown(event)" placeholder="Cari dokter, nomor STR, SIP, atau ..." class="w-full pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-[#006948] rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none transition shadow-2xs">
+        <input type="text" id="topGlobalSearchInput" oninput="handleGlobalTopSearch(this.value)" onkeydown="handleGlobalSearchKeydown(event)" placeholder="Cari dokter, nomor STR, SIP, atau ..." class="w-full pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-[#16b3ac] rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none transition shadow-2xs">
         <button type="button" id="clearTopSearchBtn" onclick="clearGlobalTopSearch()" class="hidden absolute right-2.5 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer">
           <span class="material-symbols-outlined text-sm">close</span>
         </button>
@@ -48,7 +48,7 @@
       <!-- Akses Kemenkes SatuSehat Action Button -->
       <a href="{{ route('kemenkes.launch') }}" target="_blank"
         onclick="if(typeof showToast === 'function') showToast('Membuka Portal Kemenkes SDMK & mencatat sesi kerja...', 'info');"
-        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#006948] border border-emerald-200/80 font-bold text-xs transition shadow-2xs"
+        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200/80 font-bold text-xs transition shadow-2xs"
         title="Buka SatuSehat SDMK Kemenkes (Tercatat otomatis ke riwayat kerja & log kinerja admin)">
         <span class="material-symbols-outlined text-base text-emerald-700">health_and_safety</span>
         <span class="hidden md:inline">Portal Kemenkes</span>
@@ -65,9 +65,9 @@
           <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
             <div class="font-bold text-slate-900 flex items-center gap-1.5">
               <span>Pemberitahuan Sistem</span>
-              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-extrabold">{{ $notifPendingCount }} Perlu FU</span>
+              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">{{ $notifPendingCount }} Perlu FU</span>
             </div>
-            <button type="button" onclick="markAllNotificationsAsRead()" class="text-[11px] text-[#006948] hover:underline font-bold cursor-pointer">
+            <button type="button" onclick="markAllNotificationsAsRead()" class="text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer">
               Tandai Dibaca
             </button>
           </div>
@@ -83,47 +83,55 @@
               </div>
             </div>
           </div>
+          @if(in_array($headerRole, ['SUPER_ADMIN', 'ADMIN_PUSAT']))
           <div class="px-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
-            <a href="{{ url('/activity') }}" class="text-slate-600 hover:text-[#006948] font-bold flex items-center gap-1 transition">
+            <a href="{{ url('/activity') }}" class="text-slate-600 hover:text-[#16b3ac] font-bold flex items-center gap-1 transition">
               <span>Buka Log Aktivitas Lengkap</span>
               <span class="material-symbols-outlined text-xs">arrow_forward</span>
             </a>
           </div>
+          @endif
         </div>
       </div>
 
       <!-- User Avatar Profile Circle -->
       <div class="relative">
-        <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#006948] hover:bg-[#005439] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna">
+        <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#16b3ac] hover:bg-[#129993] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna">
           <span id="headerUserInitials">{{ $headerInitials }}</span>
         </button>
         <!-- User Profile Dropdown Menu -->
         <div id="topUserDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
           <div class="px-4 py-2 border-b border-slate-100 flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-[#006948] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs" id="headerDropdownAvatar">
+            <div class="w-10 h-10 rounded-full bg-[#16b3ac] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs" id="headerDropdownAvatar">
               {{ $headerInitials }}
             </div>
             <div class="min-w-0">
               <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">{{ $headerName }}</div>
               <div class="text-[10px] text-slate-500 truncate" id="headerDropdownRole">{{ $headerRoleLabel }}</div>
-              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#006948] border border-emerald-200 text-[9px] font-bold mt-1">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#16b3ac] border border-emerald-200 text-[9px] font-bold mt-1">
                 <span class="w-1 h-1 rounded-full bg-emerald-600"></span> Online
               </span>
             </div>
           </div>
           <div class="py-1">
+            @if($headerRole === 'SUPER_ADMIN')
             <a href="{{ url('/manage') }}" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
               <span class="material-symbols-outlined text-base text-slate-400">admin_panel_settings</span>
               <span>Pengelolaan Master Data</span>
             </a>
+            @endif
+            @if(in_array($headerRole, ['SUPER_ADMIN', 'ADMIN_PUSAT']))
             <a href="{{ url('/activity') }}" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
               <span class="material-symbols-outlined text-base text-slate-400">history</span>
               <span>Jejak Audit &amp; Log Aktivitas</span>
             </a>
+            @endif
+            @if(in_array($headerRole, ['SUPER_ADMIN', 'ADMIN_PUSAT', 'ADMIN_CABANG']))
             <a href="{{ url('/reports') }}" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
               <span class="material-symbols-outlined text-base text-slate-400">description</span>
               <span>Laporan Bulanan SKP</span>
             </a>
+            @endif
           </div>
           <div class="pt-1 border-t border-slate-100 px-2">
             <button type="button" onclick="performLogout()" class="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 rounded-xl font-bold flex items-center gap-2 transition cursor-pointer">

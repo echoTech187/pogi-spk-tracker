@@ -35,7 +35,7 @@
     </div>
 
     <div class="pt-2 flex flex-col sm:flex-row gap-2.5">
-      <a href="{{ url('/dashboard') }}" class="flex-1 py-2.5 px-4 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-bold transition text-center shadow-sm">
+      <a href="{{ url('/dashboard') }}" class="flex-1 py-2.5 px-4 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition text-center shadow-sm">
         Kembali ke Dashboard
       </a>
       <a href="{{ url('/login') }}" class="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition text-center">
