@@ -3,6 +3,7 @@ const path = require('path');
 
 const backendDir = path.resolve(__dirname, '..');
 const rootDir = path.resolve(backendDir, '..');
+const prototypeDir = path.join(rootDir, 'prototype');
 const distDir = path.join(backendDir, 'dist');
 const publicDir = path.join(backendDir, 'public');
 
@@ -45,7 +46,18 @@ if (fs.existsSync(publicDir)) {
   }
 }
 
-// 2. Copy root HTML pages and assets to dist
+// 2. Also ensure prototype css/js/assets are synced to dist if present
+if (fs.existsSync(prototypeDir)) {
+  ['assets', 'css', 'js'].forEach(dirName => {
+    const pSub = path.join(prototypeDir, dirName);
+    const dSub = path.join(distDir, dirName);
+    if (fs.existsSync(pSub)) {
+      copyDirSync(pSub, dSub);
+    }
+  });
+}
+
+// 3. Copy HTML pages (checks prototype/ first, then rootDir)
 const htmlFiles = [
   'index.html',
   'dashboard.html',
@@ -60,9 +72,12 @@ const htmlFiles = [
 ];
 
 for (const file of htmlFiles) {
-  const rootFilePath = path.join(rootDir, file);
-  if (fs.existsSync(rootFilePath)) {
-    fs.copyFileSync(rootFilePath, path.join(distDir, file));
+  const protoPath = path.join(prototypeDir, file);
+  const rootPath = path.join(rootDir, file);
+  if (fs.existsSync(protoPath)) {
+    fs.copyFileSync(protoPath, path.join(distDir, file));
+  } else if (fs.existsSync(rootPath)) {
+    fs.copyFileSync(rootPath, path.join(distDir, file));
   }
 }
 
