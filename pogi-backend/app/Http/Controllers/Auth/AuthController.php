@@ -108,6 +108,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
+        $request->session()->forget(['mock_user_role', 'mock_user_name', 'mock_user_email', 'mock_user_branch_id']);
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

@@ -371,10 +371,15 @@ function showToast(message, type = 'success') {
   }, 4000);
 }
 
-// Logout Confirmation
+// Logout Confirmation & Secure Session Invalidation
 function performLogout() {
   if (confirm('Apakah Anda yakin ingin keluar dari Konsol POGI SKP Tracker?')) {
-    window.location.href = 'index.html';
+    try {
+      localStorage.removeItem('pogi_current_user');
+      sessionStorage.clear();
+    } catch (e) {}
+
+    window.location.href = '/logout';
   }
 }
 

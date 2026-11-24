@@ -131,4 +131,15 @@ class AuthAndRbacMiddlewareTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_authenticated_user_can_logout_via_get(): void
+    {
+        $superAdmin = $this->makeUser('SUPER_ADMIN');
+
+        $this->actingAs($superAdmin)
+            ->get('/logout')
+            ->assertRedirect('/login');
+
+        $this->assertGuest();
+    }
 }
