@@ -305,14 +305,14 @@ Pindahkan seluruh markup prototype HTML ke folder `resources/views/`:
 
 ---
 
-## 6. Kredensial Uji Coba Bawaan Sistem (Development)
+## 6. Akun Resmi di Basis Data MySQL untuk Pengujian
 
-Untuk kebutuhan pengujian, seeder menyediakan 12 akun pengguna mewakili 5 role resmi:
+Untuk kebutuhan pengujian, sistem menyediakan akun terdaftar resmi pada basis data MySQL dengan hash kata sandi Bcrypt terverifikasi mewakili 5 peran resmi sistem:
 
-| Peran | Nama Akun | Email Login | Password Default |
-|:---|:---|:---|:---|
-| **Super Admin** | Dodi Firmansyah | `super@example.com` | `pogiSecurePasswordHash2026` |
-| **Admin Pusat** | Bagus Pranoto, M.Kes | `admin.pusat@pogi.or.id` | `pogiSecurePasswordHash2026` |
-| **Admin POGI** | Siti Rahma, S.Farm | `sekretariat.pusat@pogi.or.id` | `pogiSecurePasswordHash2026` |
-| **Admin Cabang** | dr. Firman, Sp.OG (Jabar) | `sekretariat.jabar@pogi.or.id` | `pogiSecurePasswordHash2026` |
-| **User / Dokter** | dr. Cut Simatupang, Sp.OG | `cut.simatupang@pogi.or.id` | `pogiSecurePasswordHash2026` |
+| Peran Resmi | ID / Email Resmi | Kata Sandi | Tujuan Akses |
+| :--- | :--- | :--- | :--- |
+| **Super Admin** | `super@example.com` | `Super2026!Master` | Akses penuh seluruh modul & master data |
+| **Pengurus Pusat** | `admin.pusat@pogi.or.id` | `AdminPusat2026!` | Monitoring nasional, SLA & performa cabang |
+| **Admin POGI** | `sekretariat.pusat@pogi.or.id` | `POGI2026!Nasional` | Verifikasi SKP & kegiatan (tanpa modul performa) |
+| **Admin Cabang (Jabar)** | `sekretariat.jabar@pogi.or.id` | `POGIJabar2026!` | Monitoring terbatas cabang Jawa Barat |
+| **Dokter Sp.OG** | `cut.simatupang@pogi.or.id` | `DokterCut2026!` | Akses mandiri portofolio & capaian SKP dokter |
