@@ -1,195 +1,168 @@
-<!DOCTYPE html>
-<html lang="id" class="h-full bg-[#f4f7f6]">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POGI SKP Tracker - Log Aktivitas &amp; Audit Tim Data</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Core Styles -->
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
-  <!-- Mobile Backdrop Overlay -->
-  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
+@extends('layouts.app')
 
-  <div class="flex h-screen overflow-hidden">
-    <!-- APP SIDEBAR -->
-    @include('layouts.sidebar')
+@section('title', 'POGI SKP Tracker - Dashboard Pemantauan SKP Nasional')
+@section('content')
+  <!-- Main Body -->
+  <main class="flex-1 overflow-y-auto space-y-6 page-fade-in">
 
-    <!-- MAIN CONSOLE WRAPPER -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-      <!-- Top Sticky Header -->
-      @include('layouts.header')
+    <!-- MedCred Standard Heading Banner -->
+    <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="space-y-1.5">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
+          <span>LOG OPERASIONAL &amp; AUDIT TRAIL</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <span>Log Aktivitas &amp; Jejak Audit Operasional</span>
+          <span class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(Waktu Nyata)</span>
+        </h1>
+        <p class="text-xs text-slate-500 max-w-2xl leading-relaxed">
+          Rekaman jejak audit waktu nyata (real-time) setiap aktivitas input, pembaruan status, verifikasi kredit SKP, dan sinkronisasi SATUSEHAT terenkripsi.
+        </p>
+      </div>
+      <div class="flex items-center gap-2.5 shrink-0">
+        <button type="button" onclick="refreshActivityLog()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-base" id="refreshIcon">refresh</span>
+          <span>Segarkan Log</span>
+        </button>
+      </div>
+    </div>
 
-      <!-- Main Body -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-5 page-fade-in">
+    <!-- 5 Metric Cards Sesuai Screenshot Asli Klien (09.12.05) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active users</div>
+        <div class="text-2xl font-black text-slate-900 mt-1">{{ $metrics['unique_users'] ?? 14 }}</div>
+        <div class="text-[10px] text-emerald-700 font-bold mt-0.5">Admin &bull; Terdaftar</div>
+      </div>
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Audit Logs</div>
+        <div class="text-2xl font-black text-slate-900 mt-1">{{ $metrics['total_logs'] ?? 14 }}</div>
+        <div class="text-[10px] text-slate-500 mt-0.5">Jejak Permanen</div>
+      </div>
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aktivitas Hari Ini</div>
+        <div class="text-2xl font-black text-sky-700 mt-1">{{ $metrics['today_actions'] ?? 14 }}</div>
+        <div class="text-[10px] text-sky-800 font-bold mt-0.5">Real-Time Sync</div>
+      </div>
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aksi Kredensial &amp; PIC</div>
+        <div class="text-2xl font-black text-[#16b3ac] mt-1">{{ $metrics['security_actions'] ?? 10 }}</div>
+        <div class="text-[10px] text-emerald-800 font-bold mt-0.5">Audit Security</div>
+      </div>
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs col-span-2 sm:col-span-1">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Enkripsi</div>
+        <div class="text-2xl font-black text-purple-700 mt-1">AES-256</div>
+        <div class="text-[10px] text-purple-800 font-bold mt-0.5">UU PDP No. 27/2022</div>
+      </div>
+    </div>
 
-        <!-- MedCred Standard Heading Banner -->
-        <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div class="space-y-1.5">
-            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
-              <span>LOG OPERASIONAL &amp; AUDIT TRAIL</span>
+    <!-- MESIN OTOMASI PENGINGAT (CRON JOB SCHEDULER H-7 & H-2 - RULES.md BAB 3.2.A) -->
+    <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-900/90 to-teal-900 text-white shadow-xl space-y-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-emerald-300 shrink-0">
+            <span class="material-symbols-outlined text-2xl">schedule_send</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 class="font-black text-sm text-white">Mesin Otomasi Pengingat &amp; Cron Job Scheduler</h3>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-black uppercase flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Worker Aktif
+              </span>
             </div>
-            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              <span>Log Aktivitas &amp; Jejak Audit Operasional</span>
-              <span class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(Waktu Nyata)</span>
-            </h1>
-            <p class="text-xs text-slate-500 max-w-2xl leading-relaxed">
-              Rekaman jejak audit waktu nyata (real-time) setiap aktivitas input, pembaruan status, verifikasi kredit SKP, dan sinkronisasi SATUSEHAT terenkripsi.
+            <p class="text-xs text-emerald-100/70 mt-0.5">
+              Eksekusi otomatis tugas terjadwal H-7 &amp; H-2 sebelum Cutoff 1 Des 2026 (00:00 WIB) sesuai regulasi RULES.md Bab 3.2.A
             </p>
           </div>
-          <div class="flex items-center gap-2.5 shrink-0">
-            <button type="button" onclick="refreshActivityLog()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-base" id="refreshIcon">refresh</span>
-              <span>Segarkan Log</span>
-            </button>
-          </div>
         </div>
-
-        <!-- 5 Metric Cards Sesuai Screenshot Asli Klien (09.12.05) -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active users</div>
-            <div class="text-2xl font-black text-slate-900 mt-1">{{ $metrics['unique_users'] ?? 14 }}</div>
-            <div class="text-[10px] text-emerald-700 font-bold mt-0.5">Admin &bull; Terdaftar</div>
-          </div>
-          <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Audit Logs</div>
-            <div class="text-2xl font-black text-slate-900 mt-1">{{ $metrics['total_logs'] ?? 14 }}</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">Jejak Permanen</div>
-          </div>
-          <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aktivitas Hari Ini</div>
-            <div class="text-2xl font-black text-sky-700 mt-1">{{ $metrics['today_actions'] ?? 14 }}</div>
-            <div class="text-[10px] text-sky-800 font-bold mt-0.5">Real-Time Sync</div>
-          </div>
-          <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aksi Kredensial &amp; PIC</div>
-            <div class="text-2xl font-black text-[#16b3ac] mt-1">{{ $metrics['security_actions'] ?? 10 }}</div>
-            <div class="text-[10px] text-emerald-800 font-bold mt-0.5">Audit Security</div>
-          </div>
-          <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs col-span-2 sm:col-span-1">
-            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Enkripsi</div>
-            <div class="text-2xl font-black text-purple-700 mt-1">AES-256</div>
-            <div class="text-[10px] text-purple-800 font-bold mt-0.5">UU PDP No. 27/2022</div>
-          </div>
+        <div class="flex items-center gap-2 shrink-0 flex-wrap">
+          <button type="button" onclick="refreshActivityLog()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-sm text-emerald-300">refresh</span>
+            <span>Segarkan Log</span>
+          </button>
         </div>
+      </div>
 
-        <!-- MESIN OTOMASI PENGINGAT (CRON JOB SCHEDULER H-7 & H-2 - RULES.md BAB 3.2.A) -->
-        <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-900/90 to-teal-900 text-white shadow-xl space-y-4">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-emerald-300 shrink-0">
-                <span class="material-symbols-outlined text-2xl">schedule_send</span>
-              </div>
-              <div>
-                <div class="flex items-center gap-2 flex-wrap">
-                  <h3 class="font-black text-sm text-white">Mesin Otomasi Pengingat &amp; Cron Job Scheduler</h3>
-                  <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-black uppercase flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Worker Aktif
-                  </span>
-                </div>
-                <p class="text-xs text-emerald-100/70 mt-0.5">
-                  Eksekusi otomatis tugas terjadwal H-7 &amp; H-2 sebelum Cutoff 1 Des 2026 (00:00 WIB) sesuai regulasi RULES.md Bab 3.2.A
-                </p>
-              </div>
-            </div>
-            <div class="flex items-center gap-2 shrink-0 flex-wrap">
-              <button type="button" onclick="runCronJobSimulation('H-7')" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
-                <span class="material-symbols-outlined text-sm text-emerald-300">play_circle</span>
-                <span>Simulasi Trigger H-7</span>
-              </button>
-              <button type="button" onclick="runCronJobSimulation('H-2')" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
-                <span class="material-symbols-outlined text-sm text-amber-300">warning</span>
-                <span>Simulasi Trigger H-2</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Schedule & Status Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10 text-xs">
-            <div class="p-3 rounded-xl bg-white/5 border border-white/10">
-              <div class="text-[10px] text-emerald-200/60 font-bold uppercase tracking-wider">Jadwal Cutoff Bulanan</div>
-              <div class="text-sm font-black text-white mt-0.5">01 Des 2026 &bull; 00:00 WIB</div>
-              <div class="text-[10px] text-emerald-100/60 mt-0.5">Kunci data &amp; arsip laporan bulanan</div>
-            </div>
-            <div class="p-3 rounded-xl bg-white/5 border border-white/10">
-              <div class="text-[10px] text-emerald-200/60 font-bold uppercase tracking-wider">Next Trigger: Pengingat Rutin H-7</div>
-              <div class="text-sm font-black text-emerald-300 mt-0.5">24 Nov 2026 &bull; 00:00 WIB</div>
-              <div class="text-[10px] text-emerald-100/60 mt-0.5">Sasaran: 158 Dokter Incomplete (Nasional)</div>
-            </div>
-            <div class="p-3 rounded-xl bg-white/5 border border-white/10">
-              <div class="text-[10px] text-amber-200/60 font-bold uppercase tracking-wider">Next Trigger: Deadline Kritis H-2</div>
-              <div class="text-sm font-black text-amber-300 mt-0.5">29 Nov 2026 &bull; 00:00 WIB</div>
-              <div class="text-[10px] text-amber-100/60 mt-0.5">Eskalasi final sisa kekurangan kredit</div>
-            </div>
-          </div>
+      <!-- Schedule & Status Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10 text-xs">
+        <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+          <div class="text-[10px] text-emerald-200/60 font-bold uppercase tracking-wider">Jadwal Cutoff Bulanan</div>
+          <div class="text-sm font-black text-white mt-0.5">01 Des 2026 &bull; 00:00 WIB</div>
+          <div class="text-[10px] text-emerald-100/60 mt-0.5">Kunci data &amp; arsip laporan bulanan</div>
         </div>
-
-        <!-- Tabel Log Aktivitas -->
-        <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div class="flex flex-wrap gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600" id="activityCategoryFilterTabs">
-              <button type="button" onclick="filterActivityCategory('ALL')" id="tab-act-all" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs transition">Semua Log</button>
-              <button type="button" onclick="filterActivityCategory('Sync')" id="tab-act-sync" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
-                <span class="w-2 h-2 rounded-full bg-sky-500"></span> Sync SATUSEHAT
-              </button>
-              <button type="button" onclick="filterActivityCategory('Verification')" id="tab-act-verif" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
-                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Verifikasi Kredit
-              </button>
-              <button type="button" onclick="filterActivityCategory('FollowUp')" id="tab-act-fu" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
-                <span class="w-2 h-2 rounded-full bg-amber-500"></span> Follow-Up Cabang
-              </button>
-              <button type="button" onclick="filterActivityCategory('Automation')" id="tab-act-auto" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
-                <span class="w-2 h-2 rounded-full bg-purple-500"></span> Otomasi Cron
-              </button>
-            </div>
-
-            <div class="w-full sm:w-72 relative">
-              <span class="material-symbols-outlined text-slate-400 text-lg absolute left-3 top-2.5">search</span>
-              <input type="text" id="searchActivityInput" onkeyup="filterActivities()" placeholder="Cari aksi, pengguna, atau rincian..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700 font-medium" />
-            </div>
-          </div>
+        <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+          <div class="text-[10px] text-emerald-200/60 font-bold uppercase tracking-wider">Next Trigger: Pengingat Rutin H-7</div>
+          <div class="text-sm font-black text-emerald-300 mt-0.5">24 Nov 2026 &bull; 00:00 WIB</div>
+          <div class="text-[10px] text-emerald-100/60 mt-0.5">Sasaran: 158 Dokter Incomplete (Nasional)</div>
         </div>
-
-        <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
-          <div class="p-4 border-b border-slate-100 flex items-center justify-between gap-3">
-            <h3 class="font-extrabold text-sm text-slate-900">Riwayat Transaksi &amp; Verifikasi Kredit SKP</h3>
-            <span id="activityLogCounter" class="text-xs text-slate-400 font-medium">Dicatat otomatis oleh sistem</span>
-          </div>
-
-          <div class="hidden md:block overflow-x-auto">
-            <table class="w-full text-left text-xs whitespace-nowrap">
-              <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
-                <tr>
-                  <th class="py-3 px-4">Pengguna / Aktor</th>
-                  <th class="py-3 px-4">Aksi Dilakukan</th>
-                  <th class="py-3 px-4">Rincian Perubahan Data</th>
-                  <th class="py-3 px-4 text-center">Kategori</th>
-                  <th class="py-3 px-4 text-right">Waktu</th>
-                </tr>
-              </thead>
-              <tbody id="activityTableBody" class="divide-y divide-slate-100 font-medium">
-                <!-- Rendered dynamically -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Mobile Touch Cards (< md) -->
-          <div id="activityMobileCards" class="md:hidden divide-y divide-slate-100 p-2 sm:p-3 space-y-3">
-            <!-- Rendered dynamically for mobile -->
-          </div>
-
-          <!-- Interactive MedCred Pagination Footer -->
-          <div id="activityTablePagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
+        <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+          <div class="text-[10px] text-amber-200/60 font-bold uppercase tracking-wider">Next Trigger: Deadline Kritis H-2</div>
+          <div class="text-sm font-black text-amber-300 mt-0.5">29 Nov 2026 &bull; 00:00 WIB</div>
+          <div class="text-[10px] text-amber-100/60 mt-0.5">Eskalasi final sisa kekurangan kredit</div>
         </div>
-      </main>
+      </div>
     </div>
-  </div>
 
-  <script src="/js/pogi_state.js"></script>
-  <script src="/js/navigation.js"></script>
+    <!-- Tabel Log Aktivitas -->
+    <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600" id="activityCategoryFilterTabs">
+          <button type="button" onclick="filterActivityCategory('ALL')" id="tab-act-all" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs transition">Semua Log</button>
+          <button type="button" onclick="filterActivityCategory('Sync')" id="tab-act-sync" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-sky-500"></span> Sync SATUSEHAT
+          </button>
+          <button type="button" onclick="filterActivityCategory('Verification')" id="tab-act-verif" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Verifikasi Kredit
+          </button>
+          <button type="button" onclick="filterActivityCategory('FollowUp')" id="tab-act-fu" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Follow-Up Cabang
+          </button>
+          <button type="button" onclick="filterActivityCategory('Automation')" id="tab-act-auto" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-purple-500"></span> Otomasi Cron
+          </button>
+        </div>
+
+        <div class="w-full sm:w-72 relative">
+          <span class="material-symbols-outlined text-slate-400 text-lg absolute left-3 top-2.5">search</span>
+          <input type="text" id="searchActivityInput" onkeyup="filterActivities()" placeholder="Cari aksi, pengguna, atau rincian..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700 font-medium" />
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+      <div class="p-4 border-b border-slate-100 flex items-center justify-between gap-3">
+        <h3 class="font-extrabold text-sm text-slate-900">Riwayat Transaksi &amp; Verifikasi Kredit SKP</h3>
+        <span id="activityLogCounter" class="text-xs text-slate-400 font-medium">Dicatat otomatis oleh sistem</span>
+      </div>
+
+      <div class="hidden md:block overflow-x-auto">
+        <table class="w-full text-left text-xs whitespace-nowrap">
+          <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+            <tr>
+              <th class="py-3 px-4">Pengguna / Aktor</th>
+              <th class="py-3 px-4">Aksi Dilakukan</th>
+              <th class="py-3 px-4">Rincian Perubahan Data</th>
+              <th class="py-3 px-4 text-center">Kategori</th>
+              <th class="py-3 px-4 text-right">Waktu</th>
+            </tr>
+          </thead>
+          <tbody id="activityTableBody" class="divide-y divide-slate-100 font-medium">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Touch Cards (< md) -->
+      <div id="activityMobileCards" class="md:hidden divide-y divide-slate-100 p-2 sm:p-3 space-y-3">
+        <!-- Rendered dynamically for mobile -->
+      </div>
+
+      <!-- Interactive MedCred Pagination Footer -->
+      <div id="activityTablePagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
+    </div>
+  </main>
+
+
   <script src="/js/pdf_exporter.js"></script>
   <script>
     
@@ -414,23 +387,9 @@
       renderActivityTable(activeCategory, q, true);
     }
 
-    function runCronJobSimulation(triggerType) {
-      if (typeof PogiStore === 'undefined') return;
-      const res = PogiStore.runCronTrigger(triggerType);
-      showToast(`Simulasi Cron ${triggerType} Berhasil: ${res.recipientsCount} dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
-      filterActivityCategory('Automation');
-    }
-
     function filterActivities() {
       const q = (document.getElementById('searchActivityInput')?.value || '');
       renderActivityTable(activeCategory, q, true);
-    }
-
-    function runCronJobSimulation(triggerType) {
-      if (typeof PogiStore === 'undefined') return;
-      const res = PogiStore.runCronTrigger(triggerType);
-      showToast(`Simulasi Cron ${triggerType} Berhasil: ${res.recipientsCount} dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
-      filterActivityCategory('Automation');
     }
 
     function refreshActivityLog() {
@@ -450,5 +409,4 @@
     }
     const exportActivityCSV = exportActivityPdf;
   </script>
-</body>
-</html>
+@endsection

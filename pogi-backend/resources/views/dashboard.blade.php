@@ -168,15 +168,9 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6">
             <!-- Left Column: Lowest -->
             <div class="space-y-4">
-              <div class="flex items-center justify-between text-xs font-bold text-slate-500 pb-1">
-                <div class="flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-base text-slate-400">trending_down</span>
-                  <span class="font-bold text-slate-600">Lowest</span>
-                </div>
-                <button type="button" onclick="openFollowUpModal('lowest')" class="text-[11px] text-red-600 hover:text-red-700 font-bold flex items-center gap-1 hover:underline rbac-operational">
-                  <span class="material-symbols-outlined text-xs">notifications_active</span>
-                  <span>Follow-Up 5 Terendah</span>
-                </button>
+              <div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 pb-1">
+                <span class="material-symbols-outlined text-base text-slate-400">trending_down</span>
+                <span class="font-bold text-slate-600">Lowest</span>
               </div>
 
               @foreach($summary->lowestProvinces as $prov)
@@ -357,67 +351,6 @@
           </div>
         </div>
 
-  <!-- Modal Follow-Up Massal -->
-  <div id="fuModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center">
-            <span class="material-symbols-outlined text-2xl">forward_to_inbox</span>
-          </div>
-          <div>
-            <h3 class="font-black text-slate-900 text-base">Kirim Follow-Up (FU) Pemenuhan SKP</h3>
-            <p class="text-xs text-slate-500">Notifikasi otomatis ke Rumah Sakit Jejaring &amp; Admin Cabang POGI</p>
-          </div>
-        </div>
-        <button onclick="closeFollowUpModal()" class="text-slate-400 hover:text-slate-600 p-1">
-          <span class="material-symbols-outlined text-xl">close</span>
-        </button>
-      </div>
-
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="font-bold text-slate-700 block mb-1">Target Penerima Follow-Up:</label>
-          <select id="fuTarget" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold">
-            <option value="all_incomplete">Semua {{ $summary->incompleteCount }} Dokter Incomplete ({{ $summary->activeScopeLabel }})</option>
-            @if(count($summary->lowestProvinces) > 0)
-              <option value="lowest_5">5 Cabang Kepatuhan Terendah ({{ collect($summary->lowestProvinces)->pluck('name')->implode(', ') }})</option>
-            @endif
-            @foreach(collect($summary->topProvinces)->take(4) as $tp)
-              <option value="{{ \Illuminate\Support\Str::slug($tp['name']) }}">Khusus Cabang {{ $tp['name'] }} ({{ $tp['doctors'] }} Dokter Terdata)</option>
-            @endforeach
-          </select>
-        </div>
-
-        <div>
-          <label class="font-bold text-slate-700 block mb-1">Kanal Pengiriman Notifikasi:</label>
-          <div class="grid grid-cols-2 gap-2">
-            <label class="p-2.5 rounded-xl border border-emerald-300 bg-emerald-50/50 flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked class="rounded text-[#16b3ac]" />
-              <span class="font-bold text-slate-800">WhatsApp Gateway</span>
-            </label>
-            <label class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked class="rounded text-[#16b3ac]" />
-              <span class="font-bold text-slate-800">Email Resmi Cabang</span>
-            </label>
-          </div>
-        </div>
-
-        <div>
-          <label class="font-bold text-slate-700 block mb-1">Pesan Pengingat Standar POGI:</label>
-          <textarea rows="3" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 text-xs">Yth. Pengurus Cabang POGI & Direksi RS Jejaring. Berdasarkan pemantauan Q4 2026, mohon bantu kelengkapan pengajuan logbook Pelayanan, Pengabdian, dan Pembelajaran dokter Obgyn agar memenuhi standar 160 SKP.</textarea>
-        </div>
-      </div>
-
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button type="button" onclick="closeFollowUpModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Batal</button>
-        <button type="button" onclick="sendFollowUpAction()" class="px-4 py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1.5 rbac-operational">
-          <span class="material-symbols-outlined text-sm">send</span>
-          <span>Kirimkan Notifikasi FU Sekarang</span>
-        </button>
-      </div>
-    </div>
-  </div>
 @endsection
 
 @section('scripts')
@@ -633,50 +566,6 @@
           geoJsonLayer.resetStyle(provinceLayerMap[k]);
         }
       }
-    }
-
-    function openFollowUpModal(mode) {
-      const m = document.getElementById('fuModal');
-      if (m) {
-        m.classList.remove('hidden');
-        if (mode === 'lowest') {
-          document.getElementById('fuTarget').value = 'lowest_5';
-        }
-      }
-    }
-
-    function closeFollowUpModal() {
-      const m = document.getElementById('fuModal');
-      if (m) m.classList.add('hidden');
-    }
-
-    function sendFollowUpAction() {
-      const target = document.getElementById('fuTarget').selectedOptions[0].text;
-      if (typeof PogiStore !== 'undefined') {
-        PogiStore.addActivity({
-          actor: '{{ Auth::user()?->full_name ?? "Admin" }} ({{ Auth::user()?->role ?? "Pusat" }})',
-          action: 'Kirim Notifikasi FU Massal',
-          details: 'Notifikasi pengingat kelengkapan SKP terkirim ke target: ' + target,
-          category: 'FollowUp'
-        });
-      }
-      closeFollowUpModal();
-      showToast('Pesan Follow-Up Berhasil Dikirimkan ke ' + target, 'success');
-    }
-
-    function syncSatuSehat() {
-      showToast('Menghubungkan ke API Plataran Sehat...', 'info');
-      setTimeout(() => {
-        if (typeof PogiStore !== 'undefined') {
-          PogiStore.addActivity({
-            actor: '{{ Auth::user()?->full_name ?? "System" }}',
-            action: 'Sinkronisasi SATUSEHAT',
-            details: 'Berhasil menyinkronkan data kredit logbook dokter terbaru.',
-            category: 'Sync'
-          });
-        }
-        showToast('Sinkronisasi Sukses: Kredit SKP Baru Diperbarui!', 'success');
-      }, 1200);
     }
 
     function launchKemenkesPortal(doctorId, doctorName) {

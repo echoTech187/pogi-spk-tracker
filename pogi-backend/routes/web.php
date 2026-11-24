@@ -42,6 +42,9 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard')
         ->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
+    Route::post('/dashboard/send-follow-up', [DashboardController::class, 'sendFollowUp'])
+        ->name('dashboard.followup')
+        ->middleware('role:SUPER_ADMIN,ADMIN_POGI');
 
     // 2.2 Sesi Kemenkes Tracker (Auto-Log Aktivitas Kinerja Admin ke DB)
     Route::post('/kemenkes/track-access', [KemenkesController::class, 'trackAccess'])

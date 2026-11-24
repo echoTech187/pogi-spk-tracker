@@ -1,237 +1,207 @@
-<!DOCTYPE html>
-<html lang="id" class="h-full bg-[#f4f7f6]">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POGI SKP Tracker - Admin Performance &amp; SLA Tracker</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Core Styles -->
-  <link rel="stylesheet" href="/css/style.css">
-  <style>
-    .kpi-gradient-1 { background: linear-gradient(135deg, #0a4c49 0%, #0e6864 100%); }
-    .pulse-amber { animation: pulseAmber 2s infinite; }
-    @keyframes pulseAmber {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-  </style>
-</head>
-<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
-  <!-- Mobile Backdrop Overlay -->
-  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
+@extends('layouts.app')
 
-  <div class="flex h-screen overflow-hidden">
-    <!-- APP SIDEBAR -->
-    @include('layouts.sidebar')
-
-    <!-- MAIN CONTENT WRAPPER -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
-      <!-- TOPBAR -->
-      @include('layouts.header')
-
-      <!-- PAGE CONTENT BODY -->
-      <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
-        <!-- Hero Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
-          <div>
-            <div class="flex items-center gap-2 text-xs font-bold text-[#16b3ac] uppercase tracking-wider">
-              <span class="material-symbols-outlined text-sm">speed</span>
-              <span>STANDAR OPERASIONAL B2B ENERGI CIPTA &bull; KEMENKES MANUAL-ASSISTED SYNC</span>
-            </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Admin Performance &amp; SLA Tracker</h1>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl leading-relaxed">
-              Pemantauan terpusat kecepatan SLA verifikasi berkas (&le; 24 jam), rasio akurasi persetujuan Kemenkes, produktivitas tim data, dan penyeimbang beban kerja (*workload balancing*).
-            </p>
-          </div>
-
-          <!-- Quick Action Buttons -->
-          <div class="flex items-center gap-2 shrink-0">
-            @if(Auth::user()?->role === 'SUPER_ADMIN')
-            <button type="button" onclick="openWorkloadRebalanceModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs rbac-operational">
-              <span class="material-symbols-outlined text-sm text-emerald-400">balance</span>
-              <span>Redistribusi Beban Dokter</span>
-            </button>
-            @endif
-            <button type="button" onclick="exportKpiReport()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs">
-              <span class="material-symbols-outlined text-sm">download</span>
-              <span>Ekspor Rekap KPI</span>
-            </button>
-          </div>
+@section('title', 'POGI SKP Tracker - Dashboard Pemantauan SKP Nasional')
+@section('content')
+  <!-- PAGE CONTENT BODY -->
+  <main class="flex-1 space-y-6 max-w-7xl w-full mx-auto">
+    <!-- Hero Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+      <div>
+        <div class="flex items-center gap-2 text-xs font-bold text-[#16b3ac] uppercase tracking-wider">
+          <span class="material-symbols-outlined text-sm">speed</span>
+          <span>STANDAR OPERASIONAL B2B ENERGI CIPTA &bull; KEMENKES MANUAL-ASSISTED SYNC</span>
         </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Admin Performance &amp; SLA Tracker</h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl leading-relaxed">
+          Pemantauan terpusat kecepatan SLA verifikasi berkas (&le; 24 jam), rasio akurasi persetujuan Kemenkes, produktivitas tim data, dan penyeimbang beban kerja (*workload balancing*).
+        </p>
+      </div>
 
-        <!-- 4 Executive Summary KPI Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Card 1: SLA Speed -->
-          <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs relative overflow-hidden">
-            <div class="flex items-center justify-between text-slate-400 mb-2">
-              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Rata-Rata SLA Tim</span>
-              <span class="material-symbols-outlined text-sky-600 text-xl">timer</span>
-            </div>
-            <div class="flex items-baseline gap-2">
-              <span id="kpiTeamSla" class="text-3xl font-black text-slate-900 font-mono">{{ $summary['avgTeamSla'] ?? 11.5 }} Jam</span>
-              <span class="text-xs text-slate-400 font-medium">/ 24 Jam</span>
-            </div>
-            <div class="mt-2 flex items-center gap-1.5">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-[#16b3ac] border border-emerald-200">
-                &check; On-Track SLA (-37%)
-              </span>
-              <span class="text-[11px] text-slate-400">Target &lt; 24 Jam</span>
-            </div>
-          </div>
-
-          <!-- Card 2: Approval Rate -->
-          <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs relative overflow-hidden">
-            <div class="flex items-center justify-between text-slate-400 mb-2">
-              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Akurasi Lolos Kemenkes</span>
-              <span class="material-symbols-outlined text-emerald-600 text-xl">verified</span>
-            </div>
-            <div class="flex items-baseline gap-2">
-              <span id="kpiTeamApproval" class="text-3xl font-black text-[#16b3ac] font-mono">{{ $summary['avgTeamApproval'] ?? 98.2 }}%</span>
-              <span class="text-xs text-slate-400 font-medium">Approval</span>
-            </div>
-            <div class="mt-2 flex items-center gap-1.5">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-[#16b3ac] border border-emerald-200">
-                Sangat Teliti
-              </span>
-              <span class="text-[11px] text-slate-400">Rejection rate &lt; 2%</span>
-            </div>
-          </div>
-
-          <!-- Card 3: Total Throughput Docs -->
-          <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs relative overflow-hidden">
-            <div class="flex items-center justify-between text-slate-400 mb-2">
-              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Berkas Diverifikasi</span>
-              <span class="material-symbols-outlined text-indigo-600 text-xl">task_alt</span>
-            </div>
-            <div class="flex items-baseline gap-2">
-              <span id="kpiTeamProcessed" class="text-3xl font-black text-slate-900 font-mono">1,628</span>
-              <span class="text-xs text-slate-400 font-medium">Dokumen</span>
-            </div>
-            <div class="mt-2 flex items-center gap-1.5">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                +18% Bulan Ini
-              </span>
-              <span class="text-[11px] text-slate-400">Siklus Q4 2026</span>
-            </div>
-          </div>
-
-          <!-- Card 4: Member Compliance -->
-          <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs relative overflow-hidden">
-            <div class="flex items-center justify-between text-slate-400 mb-2">
-              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Dokter Capai Target Q4</span>
-              <span class="material-symbols-outlined text-amber-600 text-xl">medical_services</span>
-            </div>
-            <div class="flex items-baseline gap-2">
-              <span id="kpiTeamComplete" class="text-3xl font-black text-slate-900 font-mono">42 / 200</span>
-              <span id="kpiTeamRate" class="text-xs text-slate-500 font-bold font-mono">(21%)</span>
-            </div>
-            <div class="mt-2 flex items-center gap-1.5">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200">
-                Proses Verifikasi
-              </span>
-              <span class="text-[11px] text-slate-400">Target &ge; 8.0 SKP</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 2: Visual Comparison Panels (SLA Benchmarking & Workload Balance) -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- SLA Benchmarking Bar Chart Panel (2 Cols) -->
-          <div class="lg:col-span-2 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs space-y-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="font-extrabold text-sm sm:text-base text-slate-900">Perbandingan Kecepatan SLA Pemrosesan per Admin</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Batas waktu maksimal SLA adalah 24 jam. Semakin rendah bar, semakin cepat admin merespons berkas.</p>
-              </div>
-              <span class="px-2.5 py-1 rounded-full text-[11px] font-black bg-slate-100 text-slate-700 font-mono">Limit: 24.0 Jam</span>
-            </div>
-
-            <!-- Dynamic SLA Horizontal Bar List -->
-            <div id="slaBarContainer" class="space-y-3 pt-2">
-              <!-- Rendered via JS -->
-            </div>
-          </div>
-
-          <!-- Workload Balance & Capacity Health (1 Col) -->
-          <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs space-y-4 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-1">
-                <h3 class="font-extrabold text-sm sm:text-base text-slate-900">Kapasitas &amp; Beban Kerja</h3>
-                <span class="material-symbols-outlined text-amber-600 text-lg">pie_chart</span>
-              </div>
-              <p class="text-xs text-slate-500">Distribusi 200 dokter binaan ke dalam tim admin operasional.</p>
-
-              <div class="mt-4 p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-bold text-slate-700">Rekomendasi Kapasitas:</span>
-                  <span class="font-black text-[#16b3ac] font-mono">35 - 40 Dokter / Admin</span>
-                </div>
-                <div class="text-[11px] text-slate-500 leading-relaxed">
-                  Beban di atas 42 dokter berisiko menurunkan kecepatan verifikasi menjelang tanggal 1 (*cutoff* bulanan).
-                </div>
-              </div>
-
-              <!-- Mini Capacity Roster -->
-              <div id="workloadMiniList" class="mt-4 space-y-2.5">
-                <!-- Rendered via JS -->
-              </div>
-            </div>
-
-            @if(Auth::user()?->role === 'SUPER_ADMIN')
-            <button type="button" onclick="openWorkloadRebalanceModal()" class="w-full mt-4 py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-200 rbac-operational">
-              <span class="material-symbols-outlined text-sm">tune</span>
-              <span>Buka Tool Seimbangkan Beban (Rebalancer)</span>
-            </button>
-            @endif
-          </div>
-        </div>
-
-        <!-- Section 3: Leaderboard & Performance Evaluation Table -->
-        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden space-y-4 p-5 sm:p-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h3 class="font-extrabold text-base text-slate-900">Leaderboard Evaluasi Kinerja Personil Admin</h3>
-              <p class="text-xs text-slate-500 mt-0.5">Penilaian tertimbang berdasarkan Kecepatan SLA (35%), Akurasi Kemenkes (30%), Volume Berkas (20%), dan Kepatuhan Dokter (15%).</p>
-            </div>
-
-            <!-- Table Filters -->
-            <div class="flex items-center gap-2">
-              <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="Cari admin..." class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700 w-44">
-              <select id="adminTierFilter" onchange="filterAdminTable()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700">
-                <option value="ALL">Semua Tier Kinerja</option>
-                <option value="Top Performer">Top Performer 🌟</option>
-                <option value="Good Performer">Good Performer ✅</option>
-                <option value="Needs Attention">Needs Attention ⚠️</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Table Wrapper -->
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs whitespace-nowrap">
-              <thead class="bg-slate-50 border-y border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
-                <tr>
-                  <th class="py-3 px-3.5 text-center">Peringkat</th>
-                  <th class="py-3 px-3">Personil Admin</th>
-                  <th class="py-3 px-3 text-center">Dokter Binaan</th>
-                  <th class="py-3 px-3 text-center">Berkas Diproses</th>
-                  <th class="py-3 px-3 text-center">Rata-Rata SLA</th>
-                  <th class="py-3 px-3 text-center">Akurasi Kemenkes</th>
-                  <th class="py-3 px-3 text-center">Dokter Complete</th>
-                  <th class="py-3 px-3 text-center">Skor Kinerja</th>
-                  <th class="py-3 px-3 text-center">Aksi Manajemen</th>
-                </tr>
-              </thead>
-              <tbody id="adminLeaderboardBody" class="divide-y divide-slate-100 font-medium">
-                <!-- Rendered dynamically via JS -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-2 shrink-0">
+        @if(Auth::user()?->role === 'SUPER_ADMIN')
+        <button type="button" onclick="openWorkloadRebalanceModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs rbac-operational">
+          <span class="material-symbols-outlined text-sm text-emerald-400">balance</span>
+          <span>Redistribusi Beban Dokter</span>
+        </button>
+        @endif
+        <button type="button" onclick="exportKpiReport()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs">
+          <span class="material-symbols-outlined text-sm">download</span>
+          <span>Ekspor Rekap KPI</span>
+        </button>
+      </div>
     </div>
-  </div>
+
+    <!-- 4 Executive Summary KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Card 1: SLA Speed -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs relative overflow-hidden">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Rata-Rata SLA Tim</span>
+          <span class="material-symbols-outlined text-sky-600 text-xl">timer</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span id="kpiTeamSla" class="text-3xl font-black text-slate-900 font-mono">{{ $summary['avgTeamSla'] ?? 11.5 }} Jam</span>
+          <span class="text-xs text-slate-400 font-medium">/ 24 Jam</span>
+        </div>
+        <div class="mt-2 flex items-center gap-1.5">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-[#16b3ac] border border-emerald-200">
+            &check; On-Track SLA (-37%)
+          </span>
+          <span class="text-[11px] text-slate-400">Target &lt; 24 Jam</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Approval Rate -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs relative overflow-hidden">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Akurasi Lolos Kemenkes</span>
+          <span class="material-symbols-outlined text-emerald-600 text-xl">verified</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span id="kpiTeamApproval" class="text-3xl font-black text-[#16b3ac] font-mono">{{ $summary['avgTeamApproval'] ?? 98.2 }}%</span>
+          <span class="text-xs text-slate-400 font-medium">Approval</span>
+        </div>
+        <div class="mt-2 flex items-center gap-1.5">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-[#16b3ac] border border-emerald-200">
+            Sangat Teliti
+          </span>
+          <span class="text-[11px] text-slate-400">Rejection rate &lt; 2%</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Total Throughput Docs -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs relative overflow-hidden">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Berkas Diverifikasi</span>
+          <span class="material-symbols-outlined text-indigo-600 text-xl">task_alt</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span id="kpiTeamProcessed" class="text-3xl font-black text-slate-900 font-mono">1,628</span>
+          <span class="text-xs text-slate-400 font-medium">Dokumen</span>
+        </div>
+        <div class="mt-2 flex items-center gap-1.5">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">
+            +18% Bulan Ini
+          </span>
+          <span class="text-[11px] text-slate-400">Siklus Q4 2026</span>
+        </div>
+      </div>
+
+      <!-- Card 4: Member Compliance -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs relative overflow-hidden">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Dokter Capai Target Q4</span>
+          <span class="material-symbols-outlined text-amber-600 text-xl">medical_services</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span id="kpiTeamComplete" class="text-3xl font-black text-slate-900 font-mono">42 / 200</span>
+          <span id="kpiTeamRate" class="text-xs text-slate-500 font-bold font-mono">(21%)</span>
+        </div>
+        <div class="mt-2 flex items-center gap-1.5">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200">
+            Proses Verifikasi
+          </span>
+          <span class="text-[11px] text-slate-400">Target &ge; 8.0 SKP</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Visual Comparison Panels (SLA Benchmarking & Workload Balance) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- SLA Benchmarking Bar Chart Panel (2 Cols) -->
+      <div class="lg:col-span-2 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-extrabold text-sm sm:text-base text-slate-900">Perbandingan Kecepatan SLA Pemrosesan per Admin</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Batas waktu maksimal SLA adalah 24 jam. Semakin rendah bar, semakin cepat admin merespons berkas.</p>
+          </div>
+          <span class="px-2.5 py-1 rounded-full text-[11px] font-black bg-slate-100 text-slate-700 font-mono">Limit: 24.0 Jam</span>
+        </div>
+
+        <!-- Dynamic SLA Horizontal Bar List -->
+        <div id="slaBarContainer" class="space-y-3 pt-2">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Workload Balance & Capacity Health (1 Col) -->
+      <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs space-y-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="font-extrabold text-sm sm:text-base text-slate-900">Kapasitas &amp; Beban Kerja</h3>
+            <span class="material-symbols-outlined text-amber-600 text-lg">pie_chart</span>
+          </div>
+          <p class="text-xs text-slate-500">Distribusi 200 dokter binaan ke dalam tim admin operasional.</p>
+
+          <div class="mt-4 p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-700">Rekomendasi Kapasitas:</span>
+              <span class="font-black text-[#16b3ac] font-mono">35 - 40 Dokter / Admin</span>
+            </div>
+            <div class="text-[11px] text-slate-500 leading-relaxed">
+              Beban di atas 42 dokter berisiko menurunkan kecepatan verifikasi menjelang tanggal 1 (*cutoff* bulanan).
+            </div>
+          </div>
+
+          <!-- Mini Capacity Roster -->
+          <div id="workloadMiniList" class="mt-4 space-y-2.5">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        @if(Auth::user()?->role === 'SUPER_ADMIN')
+        <button type="button" onclick="openWorkloadRebalanceModal()" class="w-full mt-4 py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-200 rbac-operational">
+          <span class="material-symbols-outlined text-sm">tune</span>
+          <span>Buka Tool Seimbangkan Beban (Rebalancer)</span>
+        </button>
+        @endif
+      </div>
+    </div>
+
+    <!-- Section 3: Leaderboard & Performance Evaluation Table -->
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden space-y-4 p-5 sm:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 class="font-extrabold text-base text-slate-900">Leaderboard Evaluasi Kinerja Personil Admin</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Penilaian tertimbang berdasarkan Kecepatan SLA (35%), Akurasi Kemenkes (30%), Volume Berkas (20%), dan Kepatuhan Dokter (15%).</p>
+        </div>
+
+        <!-- Table Filters -->
+        <div class="flex items-center gap-2">
+          <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="Cari admin..." class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700 w-44">
+          <select id="adminTierFilter" onchange="filterAdminTable()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700">
+            <option value="ALL">Semua Tier Kinerja</option>
+            <option value="Top Performer">Top Performer 🌟</option>
+            <option value="Good Performer">Good Performer ✅</option>
+            <option value="Needs Attention">Needs Attention ⚠️</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Table Wrapper -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs whitespace-nowrap">
+          <thead class="bg-slate-50 border-y border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
+            <tr>
+              <th class="py-3 px-3.5 text-center">Peringkat</th>
+              <th class="py-3 px-3">Personil Admin</th>
+              <th class="py-3 px-3 text-center">Dokter Binaan</th>
+              <th class="py-3 px-3 text-center">Berkas Diproses</th>
+              <th class="py-3 px-3 text-center">Rata-Rata SLA</th>
+              <th class="py-3 px-3 text-center">Akurasi Kemenkes</th>
+              <th class="py-3 px-3 text-center">Dokter Complete</th>
+              <th class="py-3 px-3 text-center">Skor Kinerja</th>
+              <th class="py-3 px-3 text-center">Aksi Manajemen</th>
+            </tr>
+          </thead>
+          <tbody id="adminLeaderboardBody" class="divide-y divide-slate-100 font-medium">
+            <!-- Rendered dynamically via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
 
   <!-- MODAL 1: Detail Kinerja & Log Aktivitas Admin (Drill-Down Modal) -->
   <div id="adminDetailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
@@ -338,7 +308,6 @@
       </div>
     </div>
   </div>
-
   <!-- Shared Scripts -->
   <script>
     const IS_SUPER_ADMIN = @json(Auth::user()?->role === 'SUPER_ADMIN');
@@ -636,5 +605,5 @@
       }, 1000);
     }
   </script>
-</body>
-</html>
+
+@endsection

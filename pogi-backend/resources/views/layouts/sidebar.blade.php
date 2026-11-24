@@ -26,10 +26,16 @@
         MONITORING NASIONAL
       </div>
       <nav class="space-y-1">
-        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT', 'ADMIN_POGI', 'ADMIN_CABANG']))
+        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_POGI']))
         <a href="{{ url('/dashboard') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition {{ Request::is('dashboard') || Request::is('/') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">dashboard</span>
           <span>Dashboard</span>
+        </a>
+        @endif
+        @if(in_array($currentRole, ['SUPER_ADMIN']))
+        <a href="{{ url('/admin-performance') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('admin-performance*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+          <span class="material-symbols-outlined text-[19px]">speed</span>
+          <span>Admin Performance</span>
         </a>
         @endif
         @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT', 'ADMIN_CABANG', 'ADMIN_POGI']))
@@ -38,7 +44,7 @@
           <span>Doctors</span>
         </a>
         @endif
-        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT', 'ADMIN_POGI', 'ADMIN_CABANG']))
+        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_POGI']))
         <a href="{{ url('/provinces') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('provinces*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">map</span>
           <span>Provinces</span>
@@ -48,24 +54,19 @@
           <span>Events</span>
         </a>
         @endif
-        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT']))
+        @if(in_array($currentRole, ['SUPER_ADMIN']))
         <a href="{{ url('/activity') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('activity*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">history</span>
           <span>Activity Log</span>
         </a>
         @endif
-        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT', 'ADMIN_CABANG']))
+        @if(in_array($currentRole, ['SUPER_ADMIN']))
         <a href="{{ url('/reports') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('reports*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
           <span class="material-symbols-outlined text-[19px]">bar_chart</span>
           <span>Report</span>
         </a>
         @endif
-        @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_PUSAT', 'ADMIN_POGI']))
-        <a href="{{ url('/admin-performance') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ Request::is('admin-performance*') ? 'bg-[#16b3ac] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
-          <span class="material-symbols-outlined text-[19px]">speed</span>
-          <span>Admin Performance</span>
-        </a>
-        @endif
+        
       </nav>
     </div>
 

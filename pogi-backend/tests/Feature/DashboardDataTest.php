@@ -98,4 +98,29 @@ class DashboardDataTest extends TestCase
         $summary = $repo->getDashboardSummary();
         $this->assertInstanceOf(DashboardSummaryDto::class, $summary);
     }
+
+    public function test_super_admin_can_send_follow_up_to_database_queue(): void
+    {
+        $user = new User([
+            'id' => (string) \Illuminate\Support\Str::uuid(),
+            'role' => SystemRole::SUPER_ADMIN,
+            'full_name' => 'Super Admin Test',
+            'email' => 'super@example.com',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($user)->postJson('/dashboard/send-follow-up', [
+            'target' => 'lowest_5',
+            'channels' => ['whatsapp'],
+            'message' => 'Pengingat kelengkapan 160 SKP resmi POGI.'
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+        ]);
+        $this->assertDatabaseHas('wa_blast_campaigns', [
+            'template_type' => 'FOLLOW_UP_REMINDER'
+        ]);
+    }
 }

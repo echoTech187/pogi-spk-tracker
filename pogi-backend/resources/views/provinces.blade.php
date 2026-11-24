@@ -44,12 +44,6 @@
               <input id="hideZeroDoctors" type="checkbox" onchange="toggleZeroDoctors()" class="rounded text-[#16b3ac] focus:ring-[#16b3ac]" />
               <span class="text-[11px]">Sembunyikan 0 Dokter</span>
             </label>
-            @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
-            <button type="button" onclick="triggerMassFollowUp()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-base">emergency</span>
-              <span>FU Cabang Kritis</span>
-            </button>
-            @endif
           </div>
         </div>
 
@@ -72,7 +66,7 @@
                   <th class="py-3 px-4 text-center">Incomplete</th>
                   <th class="py-3 px-4 w-48">Progress Kepatuhan</th>
                   <th class="py-3 px-4 text-center">Status</th>
-                  <th class="py-3 px-4 text-center">Aksi Follow-Up</th>
+                  <th class="py-3 px-4 text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody id="provincesTableBody" class="divide-y divide-slate-100 font-medium">
@@ -276,10 +270,10 @@
               </td>
               <td class="py-3 px-4 text-center">${statusBadge}</td>
               <td class="py-3 px-4 text-center">
-                <button type="button" onclick="notifySingleProvince('${p.name}', ${p.incomplete})" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition inline-flex items-center gap-1">
-                  <span class="material-symbols-outlined text-xs">send</span>
-                  <span>FU Cabang (${p.incomplete})</span>
-                </button>
+                <a href="/doctors?search=${encodeURIComponent(p.name)}" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition inline-flex items-center gap-1">
+                  <span class="material-symbols-outlined text-xs">group</span>
+                  <span>Lihat Dokter (${p.doctors})</span>
+                </a>
               </td>
             </tr>
           `;
@@ -310,30 +304,6 @@
     function toggleZeroDoctors() {
       filterProvinces();
     }
-
-    function notifySingleProvince(name, count) {
-      if (count === 0) {
-        showToast('Seluruh dokter di ' + name + ' telah tuntas memenuhi target SKP (Complete)!', 'info');
-        return;
-      }
-      showToast('Pesan pengingat tindak lanjut berhasil dikirimkan ke Sekretariat POGI Cabang ' + name + ' untuk ' + count + ' dokter.', 'success');
-      PogiStore.addActivity({
-        actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
-        action: 'Kirim FU Cabang Daerah',
-        details: 'Notifikasi FU terkirim ke Sekretariat POGI Cabang ' + name + ' (' + count + ' dokter belum tuntas)',
-        category: 'FollowUp'
-      });
-    }
-
-    function notifyAllLowProvinces() {
-      showToast('Notifikasi darurat terkirim ke seluruh Sekretariat Cabang dengan kepatuhan <50%!', 'warning');
-      PogiStore.addActivity({
-        actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
-        action: 'Kirim FU Massal Kritis',
-        details: 'Pengiriman surat teguran pemenuhan 160 SKP ke seluruh cabang kategori Kritis.',
-        category: 'FollowUp'
-      });
-    }
   
     function exportProvincesPdf() {
       if (typeof window.PogiPdfExporter !== 'undefined') {
@@ -341,11 +311,6 @@
       }
     }
     const exportProvincesCSV = exportProvincesPdf;
-
-    function triggerMassFollowUp() {
-      showToast('Notifikasi tindak lanjut (FU) massal berhasil dikirim ke pengurus cabang kritis!', 'warning');
-    }
-  
 </script>
 </body>
 </html>

@@ -2681,27 +2681,6 @@
           });
         }
 
-        // Sinkronisasi PogiStore jika tersedia
-        if (typeof PogiStore !== 'undefined') {
-          const docs = PogiStore.getDoctors();
-          const doc = docs.find(d => d.id === activeDoctor.id);
-          if (doc) {
-            doc.pendingCredits = 0;
-            doc.pembelajaranCredits = newPemb;
-            doc.status = newStatus;
-            doc.q4Credits = activeDoctor.q4Credits;
-            PogiStore.saveDoctors(docs);
-          }
-          if (typeof PogiStore.addActivity === 'function') {
-            PogiStore.addActivity({
-              actor: 'Admin POGI',
-              action: 'Verifikasi Kredit SKP',
-              details: `Menyetujui +${addedCredit.toFixed(1)} SKP Pembelajaran untuk ${activeDoctor.name}. Status dokter kini ${newStatus}.`,
-              category: 'Verification'
-            });
-          }
-        }
-
         // Re-render UI (Detail Dokter, Tabel Logbook, & Repositori Cloud)
         renderDoctorDetails(activeDoctor);
         renderDoctorActivities(activeDoctor.id);
