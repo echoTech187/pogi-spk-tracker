@@ -1,6 +1,6 @@
 const fs = require('fs');
 const crypto = require('crypto');
-const { PogiStore, INITIAL_PROVINCES } = require('./js/pogi_state.js');
+const { PogiStore, INITIAL_PROVINCES } = require('../js/pogi_state.js');
 
 function escapeSql(str) {
   if (str === null || str === undefined) return 'NULL';
@@ -11,6 +11,24 @@ function pad(num, size) {
   let s = num + '';
   while (s.length < size) s = '0' + s;
   return s;
+}
+
+// RFC 9562 Compliant UUIDv7 Generator
+// Format: xxxxxxxx-xxxx-7xxx-yxxx-xxxxxxxxxxxx
+// - 48-bit Unix timestamp in milliseconds
+// - 4-bit Version = 0x7
+// - 12-bit Entity domain counter
+// - 2-bit Variant = 10xx (0x8)
+// - 62-bit Monotonic sequence counter
+function makeUUIDv7(entityTypeInt, seqInt, timeOffsetMs = 0) {
+  const ts = BigInt(1732432200000 + timeOffsetMs);
+  const tsHex = ts.toString(16).padStart(12, '0');
+  const timeHigh = tsHex.slice(0, 8);
+  const timeMid = tsHex.slice(8, 12);
+  const verRandA = '7' + (entityTypeInt & 0x0fff).toString(16).padStart(3, '0');
+  const varRandB = '8' + ((seqInt >> 12) & 0x0fff).toString(16).padStart(3, '0');
+  const nodeHex = (BigInt(seqInt) & 0xffffffffffffn).toString(16).padStart(12, '0');
+  return `${timeHigh}-${timeMid}-${verRandA}-${varRandB}-${nodeHex}`;
 }
 
 const PROVINCE_MAP = {
@@ -57,7 +75,7 @@ const PROVINCE_MAP = {
 let sql = `-- ============================================================================
 -- POGI SKP TRACKER (MedCred) — PRODUCTION DATABASE SEEDER (seeds.sql)
 -- Perkumpulan Obstetri dan Ginekologi Indonesia (POGI) x PT Energi Cipta
--- Zero-Error Execution Guarantee & Referential Integrity Ensured
+-- Zero-Error Execution Guarantee & RFC 9562 Compliant UUIDv7 Primary Keys
 -- ============================================================================
 
 -- Disable triggers and foreign key checks during bulk loading for zero-error execution
@@ -70,7 +88,7 @@ BEGIN;
 -- ----------------------------------------------------------------------------
 `;
 
-// 1. Provinces
+// 1. Provinces & Branches
 const provSqlRows = [];
 const branchSqlRows = [];
 const provNameToId = {};
@@ -81,7 +99,7 @@ INITIAL_PROVINCES.forEach((p, idx) => {
   provNameToId[p.name.toLowerCase()] = meta.id;
   provSqlRows.push(`(${escapeSql(meta.id)}, ${escapeSql(p.name)}, ${escapeSql(meta.island)}, ${meta.lat}, ${meta.lng}, NOW())`);
 
-  const branchUuid = `c0000000-0000-4000-8000-${pad(meta.id, 12)}`;
+  const branchUuid = makeUUIDv7(1, parseInt(meta.id, 10));
   provIdToBranchUuid[meta.id] = branchUuid;
   const branchCode = 'POGI-' + meta.id;
   const branchName = 'POGI Cabang ' + p.name;
@@ -123,7 +141,7 @@ const instMap = new Map();
 rawInstList.forEach((inst, idx) => {
   const pId = provNameToId[(inst.province || '').toLowerCase()] || '32';
   const bUuid = provIdToBranchUuid[pId];
-  const uuid = `d0000000-0000-4000-8000-${pad(idx + 1, 12)}`;
+  const uuid = makeUUIDv7(2, idx + 1);
   instMap.set(inst.name.toLowerCase().trim(), {
     id: uuid,
     name: inst.name.trim(),
@@ -142,7 +160,7 @@ docs.forEach(d => {
   if (hName && !instMap.has(hName.toLowerCase())) {
     const pId = provNameToId[(d.province || '').toLowerCase()] || '31';
     const bUuid = provIdToBranchUuid[pId];
-    const uuid = `d0000000-0000-4000-8000-${pad(instCounter++, 12)}`;
+    const uuid = makeUUIDv7(2, instCounter++);
     instMap.set(hName.toLowerCase(), {
       id: uuid,
       name: hName,
@@ -173,21 +191,21 @@ ON CONFLICT (id) DO UPDATE SET
 
 // Seed Users
 const jabarBranchUuid = provIdToBranchUuid['32'];
-const defaultPassHash = '$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHQ$pogiSecurePasswordHash2026'; // Standard Argon2id placeholder
+const defaultPassHash = '$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHQ$pogiSecurePasswordHash2026';
 
 const SEED_USERS = [
-  { id: 'a0000000-0000-4000-8000-000000000001', name: 'Dodi Firmansyah', email: 'super@example.com', role: 'SUPER_ADMIN', branch: null },
-  { id: 'a0000000-0000-4000-8000-000000000002', name: 'Bagus Pranoto, M.Kes', email: 'admin.pusat@pogi.or.id', role: 'ADMIN_PUSAT', branch: null },
-  { id: 'a0000000-0000-4000-8000-000000000003', name: 'Siti Rahma, S.Farm', email: 'sekretariat.pusat@pogi.or.id', role: 'ADMIN_POGI', branch: null },
-  { id: 'a0000000-0000-4000-8000-000000000004', name: 'dr. Firman, Sp.OG', email: 'sekretariat.jabar@pogi.or.id', role: 'ADMIN_CABANG', branch: jabarBranchUuid },
-  { id: 'a0000000-0000-4000-8000-000000000005', name: 'dr. Cut Simatupang, Sp.OG', email: 'cut.simatupang@pogi.or.id', role: 'DOKTER', branch: jabarBranchUuid },
-  { id: 'a0000000-0000-4000-8000-000000000006', name: 'Rina Kartika', email: 'user@example.com', role: 'ADMIN_POGI', branch: null },
-  { id: 'a0000000-0000-4000-8000-000000000007', name: 'Dimas Saputra', email: 'user2@example.com', role: 'ADMIN_POGI', branch: null },
-  { id: 'a0000000-0000-4000-8000-000000000008', name: 'Wahyu Setiawan', email: 'user3@example.com', role: 'ADMIN_PUSAT', branch: null },
-  { id: 'a0000000-0000-4000-8000-000000000009', name: 'Melati Sihombing', email: 'user4@example.com', role: 'ADMIN_CABANG', branch: jabarBranchUuid },
-  { id: 'a0000000-0000-4000-8000-000000000010', name: 'Fikri Ramadhan', email: 'user5@example.com', role: 'ADMIN_POGI', branch: null },
-  { id: 'a0000000-0000-4000-8000-000000000011', name: 'Ayu Lestari', email: 'user6@example.com', role: 'ADMIN_CABANG', branch: jabarBranchUuid },
-  { id: 'a0000000-0000-4000-8000-000000000012', name: 'Dewi Lestari', email: 'dewi.lestari@pogi.or.id', role: 'ADMIN_POGI', branch: null }
+  { id: makeUUIDv7(3, 1), name: 'Dodi Firmansyah', email: 'super@example.com', role: 'SUPER_ADMIN', branch: null },
+  { id: makeUUIDv7(3, 2), name: 'Bagus Pranoto, M.Kes', email: 'admin.pusat@pogi.or.id', role: 'ADMIN_PUSAT', branch: null },
+  { id: makeUUIDv7(3, 3), name: 'Siti Rahma, S.Farm', email: 'sekretariat.pusat@pogi.or.id', role: 'ADMIN_POGI', branch: null },
+  { id: makeUUIDv7(3, 4), name: 'dr. Firman, Sp.OG', email: 'sekretariat.jabar@pogi.or.id', role: 'ADMIN_CABANG', branch: jabarBranchUuid },
+  { id: makeUUIDv7(3, 5), name: 'dr. Cut Simatupang, Sp.OG', email: 'cut.simatupang@pogi.or.id', role: 'DOKTER', branch: jabarBranchUuid },
+  { id: makeUUIDv7(3, 6), name: 'Rina Kartika', email: 'user@example.com', role: 'ADMIN_POGI', branch: null },
+  { id: makeUUIDv7(3, 7), name: 'Dimas Saputra', email: 'user2@example.com', role: 'ADMIN_POGI', branch: null },
+  { id: makeUUIDv7(3, 8), name: 'Wahyu Setiawan', email: 'user3@example.com', role: 'ADMIN_PUSAT', branch: null },
+  { id: makeUUIDv7(3, 9), name: 'Melati Sihombing', email: 'user4@example.com', role: 'ADMIN_CABANG', branch: jabarBranchUuid },
+  { id: makeUUIDv7(3, 10), name: 'Fikri Ramadhan', email: 'user5@example.com', role: 'ADMIN_POGI', branch: null },
+  { id: makeUUIDv7(3, 11), name: 'Ayu Lestari', email: 'user6@example.com', role: 'ADMIN_CABANG', branch: jabarBranchUuid },
+  { id: makeUUIDv7(3, 12), name: 'Dewi Lestari', email: 'dewi.lestari@pogi.or.id', role: 'ADMIN_POGI', branch: null }
 ];
 
 const userSqlRows = SEED_USERS.map((u, i) => {
@@ -213,7 +231,7 @@ const catSqlRows = [];
 const catNameToUuid = {};
 
 rawCategories.forEach((cat, idx) => {
-  const uuid = `e0000000-0000-4000-8000-${pad(idx + 1, 12)}`;
+  const uuid = makeUUIDv7(4, idx + 1);
   catNameToUuid[cat.name.toLowerCase()] = uuid;
   let domain = 'PEMBELAJARAN';
   if (cat.type === 'Pelayanan') domain = 'PELAYANAN';
@@ -227,20 +245,23 @@ VALUES\n` + catSqlRows.join(',\n') + `
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
   domain = EXCLUDED.domain;
-
--- SKP Events
 `;
 
+// SKP Events
 const rawEvents = PogiStore.getEvents();
 const eventSqlRows = [];
 const eventIdToUuid = {};
 
 rawEvents.forEach((ev, idx) => {
-  const uuid = `f0000000-0000-4000-8000-${pad(idx + 1, 12)}`;
+  const uuid = makeUUIDv7(5, idx + 1);
   eventIdToUuid[ev.id] = uuid;
-  const catUuid = catNameToUuid[(ev.category || '').toLowerCase()] || catSqlRows[0].match(/'(e0000000-[^']+)'/)[1];
+  const catUuid = catNameToUuid[(ev.category || '').toLowerCase()] || catSqlRows[0].match(/'([^']+)'/)[1];
   const credits = typeof ev.credits === 'number' ? ev.credits : 1.5;
-  eventSqlRows.push(`('${uuid}', '${catUuid}', ${escapeSql(ev.name || ev.title)}, ${escapeSql('PP POGI & Kolegium Obgyn')}, '2026-12-19', ${credits.toFixed(2)}, ${escapeSql('KMK-AKRED-2026-' + (idx + 101))}, ${escapeSql('PS-COURSE-' + (idx + 501))}, NOW())`);
+  const evTitle = escapeSql(ev.name || ev.title);
+  const evOrg = escapeSql('PP POGI & Kolegium Obgyn');
+  const evAkred = escapeSql('KMK-AKRED-2026-' + (idx + 101));
+  const evPs = escapeSql('PS-COURSE-' + (idx + 501));
+  eventSqlRows.push(`('${uuid}', '${catUuid}', ${evTitle}, ${evOrg}, '2026-12-19', ${credits.toFixed(2)}, ${evAkred}, ${evPs}, NOW())`);
 });
 
 sql += `INSERT INTO skp_events (id, category_id, title, organizer, event_date, credit_value, kemenkes_accreditation_number, plataran_sehat_course_id, created_at)
@@ -256,14 +277,14 @@ ON CONFLICT (id) DO UPDATE SET
 
 // Helper PIC lookup
 const picNameToUserUuid = {
-  'siti rahma': 'a0000000-0000-4000-8000-000000000003',
-  'rina kartika': 'a0000000-0000-4000-8000-000000000006',
-  'dimas saputra': 'a0000000-0000-4000-8000-000000000007',
-  'wahyu setiawan': 'a0000000-0000-4000-8000-000000000008',
-  'melati sihombing': 'a0000000-0000-4000-8000-000000000009',
-  'fikri ramadhan': 'a0000000-0000-4000-8000-000000000010',
-  'ayu lestari': 'a0000000-0000-4000-8000-000000000011',
-  'dewi lestari': 'a0000000-0000-4000-8000-000000000012'
+  'siti rahma': SEED_USERS[2].id,
+  'rina kartika': SEED_USERS[5].id,
+  'dimas saputra': SEED_USERS[6].id,
+  'wahyu setiawan': SEED_USERS[7].id,
+  'melati sihombing': SEED_USERS[8].id,
+  'fikri ramadhan': SEED_USERS[9].id,
+  'ayu lestari': SEED_USERS[10].id,
+  'dewi lestari': SEED_USERS[11].id
 };
 
 const doctorSqlRows = [];
@@ -273,8 +294,8 @@ const docFileSqlRows = [];
 
 docs.forEach((d, idx) => {
   const docNum = idx + 1;
-  const docUuid = `10000000-0000-4000-8000-${pad(docNum, 12)}`;
-  const periodUuid = `20000000-0000-4000-8000-${pad(docNum, 12)}`;
+  const docUuid = makeUUIDv7(6, docNum);
+  const periodUuid = makeUUIDv7(7, docNum);
 
   // Province & branch
   const provId = provNameToId[(d.province || '').toLowerCase()] || '31';
@@ -287,10 +308,10 @@ docs.forEach((d, idx) => {
 
   // PIC User
   const picKey = (d.assignedTo || '').toLowerCase().trim();
-  const picUuid = picNameToUserUuid[picKey] || 'a0000000-0000-4000-8000-000000000003';
+  const picUuid = picNameToUserUuid[picKey] || SEED_USERS[2].id;
 
   // Doctor User Link for doc-001 (dr. Cut Simatupang)
-  const userLink = (docNum === 1 || d.name.toLowerCase().includes('cut')) ? "'a0000000-0000-4000-8000-000000000005'" : 'NULL';
+  const userLink = (docNum === 1 || d.name.toLowerCase().includes('cut')) ? `'${SEED_USERS[4].id}'` : 'NULL';
 
   // NIK hash & fake encrypted bytea
   const nikStr = d.nik || ('32731' + pad(docNum, 11));
@@ -321,27 +342,27 @@ docs.forEach((d, idx) => {
   periodSqlRows.push(`('${periodUuid}', '${docUuid}', 1, '2022-03-01', '${sipExpiry}', 160.00, 72.00, 56.00, 8.00, 24.00, ${pembAch.toFixed(2)}, ${pelAch.toFixed(2)}, ${pengAch.toFixed(2)}, ${totalAch.toFixed(2)}, TRUE, ${d.status === 'Complete' ? 'TRUE' : 'FALSE'}, NOW(), NOW())`);
 
   // Seed 3 verified SKP entries per doctor
-  const entryUuid1 = `30000000-0000-4000-8000-${pad((docNum - 1) * 4 + 1, 12)}`;
-  const entryUuid2 = `30000000-0000-4000-8000-${pad((docNum - 1) * 4 + 2, 12)}`;
-  const entryUuid3 = `30000000-0000-4000-8000-${pad((docNum - 1) * 4 + 3, 12)}`;
+  const entryUuid1 = makeUUIDv7(8, (docNum - 1) * 4 + 1);
+  const entryUuid2 = makeUUIDv7(8, (docNum - 1) * 4 + 2);
+  const entryUuid3 = makeUUIDv7(8, (docNum - 1) * 4 + 3);
 
-  const catUuidPemb = catNameToUuid['workshop usg fetomaternal terakreditasi'] || 'e0000000-0000-4000-8000-000000000005';
-  const catUuidPel = catNameToUuid['operasi sesar / sectio caesarea'] || 'e0000000-0000-4000-8000-000000000002';
-  const catUuidPeng = catNameToUuid['bakti sosial'] || 'e0000000-0000-4000-8000-000000000010';
+  const catUuidPemb = catNameToUuid['workshop usg fetomaternal terakreditasi'] || catSqlRows[0].match(/'([^']+)'/)[1];
+  const catUuidPel = catNameToUuid['operasi sesar / sectio caesarea'] || catSqlRows[1].match(/'([^']+)'/)[1];
+  const catUuidPeng = catNameToUuid['bakti sosial'] || catSqlRows[2].match(/'([^']+)'/)[1];
 
-  skpEntrySqlRows.push(`('${entryUuid1}', '${docUuid}', '${periodUuid}', 'f0000000-0000-4000-8000-000000000001', '${catUuidPemb}', 'PEMBELAJARAN', 'Partisipasi Simposium & Workshop Maternal', '2026-10-15', ${pembAch.toFixed(2)}, 'DONE', '${picUuid}', NOW() - interval '5 days', NULL, 'KEMENKES-REF-01', NOW(), NOW())`);
+  skpEntrySqlRows.push(`('${entryUuid1}', '${docUuid}', '${periodUuid}', '${rawEvents[0] ? eventIdToUuid[rawEvents[0].id] : 'NULL'}', '${catUuidPemb}', 'PEMBELAJARAN', 'Partisipasi Simposium & Workshop Maternal', '2026-10-15', ${pembAch.toFixed(2)}, 'DONE', '${picUuid}', NOW() - interval '5 days', NULL, 'KEMENKES-REF-01', NOW(), NOW())`);
   skpEntrySqlRows.push(`('${entryUuid2}', '${docUuid}', '${periodUuid}', NULL, '${catUuidPel}', 'PELAYANAN', 'Logbook Tindakan & Pelayanan Klinis Pasien Obgyn', '2026-11-01', ${pelAch.toFixed(2)}, 'DONE', '${picUuid}', NOW() - interval '4 days', NULL, 'KEMENKES-REF-02', NOW(), NOW())`);
   skpEntrySqlRows.push(`('${entryUuid3}', '${docUuid}', '${periodUuid}', NULL, '${catUuidPeng}', 'PENGABDIAN', 'Bakti Sosial & Penyuluhan Deteksi Dini Kanker Serviks', '2026-11-10', ${pengAch.toFixed(2)}, 'DONE', '${picUuid}', NOW() - interval '3 days', NULL, 'KEMENKES-REF-03', NOW(), NOW())`);
 
   // If pending credits exist, create pending entry
   const pending = typeof d.pendingCredits === 'number' ? d.pendingCredits : 0;
   if (pending > 0) {
-    const entryUuid4 = `30000000-0000-4000-8000-${pad((docNum - 1) * 4 + 4, 12)}`;
+    const entryUuid4 = makeUUIDv7(8, (docNum - 1) * 4 + 4);
     skpEntrySqlRows.push(`('${entryUuid4}', '${docUuid}', '${periodUuid}', NULL, '${catUuidPemb}', 'PEMBELAJARAN', 'Pengajuan Verifikasi Bukti Fisik Webinar Obgyn', '2026-11-18', ${pending.toFixed(2)}, 'NOT_SUBMITTED', NULL, NULL, NULL, NULL, NOW(), NOW())`);
   }
 
   // Seed 1 Vault Document per doctor
-  const docFileUuid = `40000000-0000-4000-8000-${pad(docNum, 12)}`;
+  const docFileUuid = makeUUIDv7(9, docNum);
   const s3Key = `pogi-medcred-vault/doctors/${d.id}/sertifikat/sertifikat_workshop_usg_${pad(docNum, 3)}.pdf`;
   const sha256 = crypto.createHash('sha256').update(docFileUuid).digest('hex');
   docFileSqlRows.push(`('${docFileUuid}', '${docUuid}', '${entryUuid1}', 'SERTIFIKAT_PEMBELAJARAN', 'Sertifikat_Workshop_Maternal.pdf', 2485760, 'application/pdf', 'pogi-medcred-vault', '${s3Key}', '${sha256}', TRUE, '${picUuid}', NOW(), '${picUuid}', NOW(), NULL)`);
@@ -385,8 +406,8 @@ ON CONFLICT (id) DO UPDATE SET
 -- ----------------------------------------------------------------------------
 INSERT INTO monthly_cutoff_snapshots (id, period_year, period_month, cutoff_timestamp, total_doctors_monitored, total_complete_doctors, total_incomplete_doctors, total_skp_verified, total_skp_pending, pdf_storage_key, pdf_sha256, pdf_file_size_bytes, is_locked, generated_by_user_id, created_at)
 VALUES
-('50000000-0000-4000-8000-000000000001', 2026, 11, '2026-11-01 00:00:00+07', 200, 68, 132, 18450.00, 342.50, 'pogi-medcred-vault/reports/monthly_report_pogi_2026_11.pdf', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 4521400, TRUE, 'a0000000-0000-4000-8000-000000000001', NOW() - interval '23 days'),
-('50000000-0000-4000-8000-000000000002', 2026, 10, '2026-10-01 00:00:00+07', 200, 52, 148, 16210.00, 480.00, 'pogi-medcred-vault/reports/monthly_report_pogi_2026_10.pdf', 'c2b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b812', 4381900, TRUE, 'a0000000-0000-4000-8000-000000000001', NOW() - interval '54 days')
+('${makeUUIDv7(10, 1)}', 2026, 11, '2026-11-01 00:00:00+07', 200, 68, 132, 18450.00, 342.50, 'pogi-medcred-vault/reports/monthly_report_pogi_2026_11.pdf', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 4521400, TRUE, '${SEED_USERS[0].id}', NOW() - interval '23 days'),
+('${makeUUIDv7(10, 2)}', 2026, 10, '2026-10-01 00:00:00+07', 200, 52, 148, 16210.00, 480.00, 'pogi-medcred-vault/reports/monthly_report_pogi_2026_10.pdf', 'c2b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b812', 4381900, TRUE, '${SEED_USERS[0].id}', NOW() - interval '54 days')
 ON CONFLICT (period_year, period_month) DO UPDATE SET
   total_complete_doctors = EXCLUDED.total_complete_doctors,
   total_incomplete_doctors = EXCLUDED.total_incomplete_doctors;
@@ -396,13 +417,13 @@ ON CONFLICT (period_year, period_month) DO UPDATE SET
 -- ----------------------------------------------------------------------------
 INSERT INTO wa_blast_campaigns (id, title, trigger_type, template_type, message_template, target_filters, total_recipients, successful_sends, failed_sends, created_by_user_id, created_at)
 VALUES
-('60000000-0000-4000-8000-000000000001', 'Peringatan H-7 Cutoff Bulanan 1 Desember 2026', 'CRON_H_MINUS_7', 'CUTOFF_H7', 'Yth. Dr. {name}, mengingatkan cutoff SKP bulanan POGI tersisa 7 hari lagi. Mohon segera melengkapi kekurangan target kuartal Anda.', '{"status": "INCOMPLETE"}', 28, 28, 0, 'a0000000-0000-4000-8000-000000000003', NOW() - interval '2 days')
+('${makeUUIDv7(11, 1)}', 'Peringatan H-7 Cutoff Bulanan 1 Desember 2026', 'CRON_H_MINUS_7', 'CUTOFF_H7', 'Yth. Dr. {name}, mengingatkan cutoff SKP bulanan POGI tersisa 7 hari lagi. Mohon segera melengkapi kekurangan target kuartal Anda.', '{"status": "INCOMPLETE"}', 28, 28, 0, '${SEED_USERS[2].id}', NOW() - interval '2 days')
 ON CONFLICT (id) DO UPDATE SET
   total_recipients = EXCLUDED.total_recipients;
 
 INSERT INTO wa_message_queue (id, campaign_id, doctor_id, recipient_phone, recipient_name, message_body, status, retry_count, jitter_ms, scheduled_at, sent_at, failure_reason, created_at)
 VALUES
-('70000000-0000-4000-8000-000000000001', '60000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', '+6285223876894', 'Nurul Anggraini', 'Yth. Dr. Nurul Anggraini, Sp.OG, mengingatkan cutoff SKP bulanan POGI tersisa 7 hari lagi.', 'SENT', 0, 1850, NOW() - interval '2 days', NOW() - interval '2 days', NULL, NOW() - interval '2 days')
+('${makeUUIDv7(12, 1)}', '${makeUUIDv7(11, 1)}', '${doctorSqlRows[0].match(/'([^']+)'/)[1]}', '+6285223876894', 'Nurul Anggraini', 'Yth. Dr. Nurul Anggraini, Sp.OG, mengingatkan cutoff SKP bulanan POGI tersisa 7 hari lagi.', 'SENT', 0, 1850, NOW() - interval '2 days', NOW() - interval '2 days', NULL, NOW() - interval '2 days')
 ON CONFLICT (id) DO NOTHING;
 
 -- ----------------------------------------------------------------------------
@@ -410,12 +431,12 @@ ON CONFLICT (id) DO NOTHING;
 -- ----------------------------------------------------------------------------
 INSERT INTO audit_logs (id, user_id, action, entity_name, entity_id, old_values, new_values, ip_address, user_agent, created_at)
 VALUES
-('80000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000003', 'APPROVE_CREDITS', 'skp_entries', '30000000-0000-4000-8000-000000000001', '{"status": "NOT_SUBMITTED"}', '{"status": "DONE", "credits": 28.0}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', NOW() - interval '1 hour')
+('${makeUUIDv7(13, 1)}', '${SEED_USERS[2].id}', 'APPROVE_CREDITS', 'skp_entries', '${makeUUIDv7(8, 1)}', '{"status": "NOT_SUBMITTED"}', '{"status": "DONE", "credits": 28.0}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', NOW() - interval '1 hour')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO verifier_performance_logs (id, verifier_user_id, doctor_id, skp_entry_id, document_id, action_type, turnaround_time_seconds, created_at)
 VALUES
-('90000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000001', '40000000-0000-4000-8000-000000000001', 'VERIFIED', 180, NOW() - interval '1 hour')
+('${makeUUIDv7(14, 1)}', '${SEED_USERS[2].id}', '${doctorSqlRows[0].match(/'([^']+)'/)[1]}', '${makeUUIDv7(8, 1)}', '${makeUUIDv7(9, 1)}', 'VERIFIED', 180, NOW() - interval '1 hour')
 ON CONFLICT (id) DO NOTHING;
 
 COMMIT;
@@ -432,7 +453,8 @@ REFRESH MATERIALIZED VIEW mv_province_compliance_summary;
 `;
 
 fs.writeFileSync('seeds.sql', sql, 'utf8');
-console.log('Successfully generated seeds.sql!');
+fs.writeFileSync('database/seeds.sql', sql, 'utf8');
+console.log('Successfully generated seeds.sql and database/seeds.sql!');
 console.log('Total file size:', sql.length, 'bytes');
 console.log('Provinces seeded:', provSqlRows.length);
 console.log('Branches seeded:', branchSqlRows.length);
