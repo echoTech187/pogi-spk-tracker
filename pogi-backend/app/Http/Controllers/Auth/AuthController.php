@@ -16,12 +16,16 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            if ($user->isDoctor()) {
-                return redirect()->route('doctors.show', ['id' => 'doc-001']);
+        try {
+            if (Auth::check()) {
+                $user = Auth::user();
+                if ($user && $user->isDoctor()) {
+                    return redirect()->route('doctors.show', ['id' => 'doc-001']);
+                }
+                return redirect()->route('dashboard');
             }
-            return redirect()->route('dashboard');
+        } catch (\Throwable $e) {
+            session()->flush();
         }
 
         return view('login');
