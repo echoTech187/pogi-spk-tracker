@@ -29,7 +29,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
           <div class="space-y-1">
             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Daftar Dokter &amp; Tenaga Kesehatan (<span id="headingTotalCount">200 Terdaftar</span>)
+              Daftar Dokter &amp; Tenaga Kesehatan (<span id="headingTotalCount">{{ $metrics['total'] ?? count($doctors ?? []) }} Terdaftar</span>)
             </h1>
             <p class="text-xs text-slate-500 leading-relaxed max-w-3xl">
               Direktori kredensialing aktif, pemantauan pengurusan perizinan instansi &amp; akses pemenuhan kredit 160 SKP (Pelayanan, Pengabdian, Pembelajaran) terintegrasi SATUSEHAT.
@@ -99,6 +99,11 @@
               <label class="block font-bold text-slate-700 mb-1">Institusi / RS Jejaring</label>
               <select id="institutionFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
                 <option value="ALL">Semua RS Jejaring</option>
+                @if(!empty($institutions))
+                  @foreach($institutions as $inst)
+                    <option value="{{ $inst->name }}">{{ $inst->name }}</option>
+                  @endforeach
+                @endif
               </select>
             </div>
 
@@ -107,44 +112,11 @@
               <label class="block font-bold text-slate-700 mb-1">Cabang POGI / Provinsi</label>
               <select id="provinceFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
                 <option value="ALL">Semua Provinsi (38 Cabang)</option>
-                <option value="Aceh">Aceh</option>
-                <option value="Bali">Bali</option>
-                <option value="Banten">Banten</option>
-                <option value="Bengkulu">Bengkulu</option>
-                <option value="DI Yogyakarta">DI Yogyakarta</option>
-                <option value="DKI Jakarta">DKI Jakarta</option>
-                <option value="Gorontalo">Gorontalo</option>
-                <option value="Jambi">Jambi</option>
-                <option value="Jawa Barat">Jawa Barat</option>
-                <option value="Jawa Tengah">Jawa Tengah</option>
-                <option value="Jawa Timur">Jawa Timur</option>
-                <option value="Kalimantan Barat">Kalimantan Barat</option>
-                <option value="Kalimantan Selatan">Kalimantan Selatan</option>
-                <option value="Kalimantan Tengah">Kalimantan Tengah</option>
-                <option value="Kalimantan Timur">Kalimantan Timur</option>
-                <option value="Kalimantan Utara">Kalimantan Utara</option>
-                <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
-                <option value="Kepulauan Riau">Kepulauan Riau</option>
-                <option value="Lampung">Lampung</option>
-                <option value="Maluku">Maluku</option>
-                <option value="Maluku Utara">Maluku Utara</option>
-                <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
-                <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
-                <option value="Papua">Papua</option>
-                <option value="Papua Barat">Papua Barat</option>
-                <option value="Papua Barat Daya">Papua Barat Daya</option>
-                <option value="Papua Pegunungan">Papua Pegunungan</option>
-                <option value="Papua Selatan">Papua Selatan</option>
-                <option value="Papua Tengah">Papua Tengah</option>
-                <option value="Riau">Riau</option>
-                <option value="Sulawesi Barat">Sulawesi Barat</option>
-                <option value="Sulawesi Selatan">Sulawesi Selatan</option>
-                <option value="Sulawesi Tengah">Sulawesi Tengah</option>
-                <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
-                <option value="Sulawesi Utara">Sulawesi Utara</option>
-                <option value="Sumatera Barat">Sumatera Barat</option>
-                <option value="Sumatera Selatan">Sumatera Selatan</option>
-                <option value="Sumatera Utara">Sumatera Utara</option>
+                @if(!empty($provinces))
+                  @foreach($provinces as $p)
+                    <option value="{{ $p->name }}">{{ $p->name }}</option>
+                  @endforeach
+                @endif
               </select>
             </div>
           </div>
@@ -670,15 +642,19 @@ Admin Data PP POGI & PT Energi Cipta
     }
 
 
+    const LIVE_DATABASE_DOCTORS = @json($doctors ?? []);
     let activeDoctorId = null;
-    let doctorPagination = { page: 1, limit: 10, total: 200 };
+    let doctorPagination = { page: 1, limit: 10, total: LIVE_DATABASE_DOCTORS.length || 200 };
     let currentFilteredDoctors = null;
     let currentPipelineFilter = 'all';
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Initialize full dataset
-      const allDoctors = PogiStore.getDoctors();
-      populateInstitutionFilter(allDoctors);
+      // Inisialisasi dataset dokter langsung dari basis data live
+      const allDoctors = LIVE_DATABASE_DOCTORS.length > 0 ? LIVE_DATABASE_DOCTORS : ((typeof PogiStore !== 'undefined') ? PogiStore.getDoctors() : []);
+      const instSelect = document.getElementById('institutionFilter');
+      if (instSelect && instSelect.options.length <= 1) {
+        populateInstitutionFilter(allDoctors);
+      }
       applyDoctorFilters();
     });
 
@@ -1001,9 +977,11 @@ Admin Data PP POGI & PT Energi Cipta
         activePeriod = `${qVal} ${yVal}`;
       }
 
-      let list = (typeof PogiStore !== 'undefined' && PogiStore.getDoctorsForCurrentUser)
-        ? PogiStore.getDoctorsForCurrentUser()
-        : PogiStore.getDoctors();
+      let list = (typeof LIVE_DATABASE_DOCTORS !== 'undefined' && LIVE_DATABASE_DOCTORS.length > 0)
+        ? [...LIVE_DATABASE_DOCTORS]
+        : ((typeof PogiStore !== 'undefined' && PogiStore.getDoctorsForCurrentUser)
+            ? PogiStore.getDoctorsForCurrentUser()
+            : (typeof PogiStore !== 'undefined' ? PogiStore.getDoctors() : []));
 
       const currentUser = (typeof PogiStore !== 'undefined') ? PogiStore.getCurrentUser() : null;
       if (currentUser && currentUser.role === 'ADMIN_CABANG' && currentUser.branch && currentUser.branch !== 'Nasional') {

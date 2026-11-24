@@ -615,6 +615,13 @@
   <script src="/js/navigation.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
+    window.LIVE_MANAGE_DOCTORS = @json($doctors ?? []);
+    window.LIVE_MANAGE_INSTITUTIONS = @json($institutions ?? []);
+    window.LIVE_MANAGE_EVENTS = @json($events ?? []);
+    window.LIVE_MANAGE_CATEGORIES = @json($categories ?? []);
+    window.LIVE_MANAGE_USERS = @json($users ?? []);
+    window.LIVE_MANAGE_BRANCHES = @json($branches ?? []);
+
     // MedCred Standard Pagination Component
     function renderMedCredPaginationControls({ containerId, currentPage, totalPages, totalItems, startIdx, endIdx, itemLabel, onPageChangeFn, onLimitChangeFn, currentLimit, limits = [10, 25, 50] }) {
       const el = document.getElementById(containerId);
@@ -807,11 +814,11 @@
     }
 
     function getDefaultListForTab(tab) {
-      if (tab === 'doctor') return PogiStore.getDoctors();
-      if (tab === 'institution') return PogiStore.getInstitutions();
-      if (tab === 'event') return PogiStore.getEvents();
-      if (tab === 'category') return PogiStore.getCategories();
-      if (tab === 'user') return PogiStore.getUsers();
+      if (tab === 'doctor') return (window.LIVE_MANAGE_DOCTORS && window.LIVE_MANAGE_DOCTORS.length > 0) ? window.LIVE_MANAGE_DOCTORS : PogiStore.getDoctors();
+      if (tab === 'institution') return (window.LIVE_MANAGE_INSTITUTIONS && window.LIVE_MANAGE_INSTITUTIONS.length > 0) ? window.LIVE_MANAGE_INSTITUTIONS : PogiStore.getInstitutions();
+      if (tab === 'event') return (window.LIVE_MANAGE_EVENTS && window.LIVE_MANAGE_EVENTS.length > 0) ? window.LIVE_MANAGE_EVENTS : PogiStore.getEvents();
+      if (tab === 'category') return (window.LIVE_MANAGE_CATEGORIES && window.LIVE_MANAGE_CATEGORIES.length > 0) ? window.LIVE_MANAGE_CATEGORIES : PogiStore.getCategories();
+      if (tab === 'user') return (window.LIVE_MANAGE_USERS && window.LIVE_MANAGE_USERS.length > 0) ? window.LIVE_MANAGE_USERS : PogiStore.getUsers();
       return [];
     }
 
@@ -828,7 +835,7 @@
     // ==========================================
     function renderManageDoctorTable(filteredList, resetPage = true) {
       if (resetPage) managePagination.doctor.page = 1;
-      const allDoctors = filteredList || PogiStore.getDoctors();
+      const allDoctors = filteredList || getDefaultListForTab('doctor');
       currentFilteredCache.doctor = allDoctors;
       managePagination.doctor.total = allDoctors.length;
 
@@ -1020,7 +1027,7 @@
     // ==========================================
     function renderManageInstTable(filteredList, resetPage = true) {
       if (resetPage) managePagination.institution.page = 1;
-      const allInst = filteredList || PogiStore.getInstitutions();
+      const allInst = filteredList || getDefaultListForTab('institution');
       currentFilteredCache.institution = allInst;
       managePagination.institution.total = allInst.length;
 
@@ -1148,7 +1155,7 @@
     // ==========================================
     function renderManageEventTable(filteredList, resetPage = true) {
       if (resetPage) managePagination.event.page = 1;
-      const allEvents = filteredList || PogiStore.getEvents();
+      const allEvents = filteredList || getDefaultListForTab('event');
       currentFilteredCache.event = allEvents;
       managePagination.event.total = allEvents.length;
 
@@ -1287,7 +1294,7 @@
     // ==========================================
     function renderManageCatTable(filteredList, resetPage = true) {
       if (resetPage) managePagination.category.page = 1;
-      const allCats = filteredList || PogiStore.getCategories();
+      const allCats = filteredList || getDefaultListForTab('category');
       currentFilteredCache.category = allCats;
       managePagination.category.total = allCats.length;
 
@@ -1403,7 +1410,7 @@
     // ==========================================
     function renderManageUserTable(filteredList, resetPage = true) {
       if (resetPage) managePagination.user.page = 1;
-      const allUsers = filteredList || PogiStore.getUsers();
+      const allUsers = filteredList || getDefaultListForTab('user');
       currentFilteredCache.user = allUsers;
       managePagination.user.total = allUsers.length;
 

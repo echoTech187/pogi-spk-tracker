@@ -1,9 +1,15 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\AdminPerformanceController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\KemenkesController;
+use App\Http\Controllers\ManageController;
+use App\Http\Controllers\ProvinceController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -59,31 +65,31 @@ Route::middleware(['auth', 'active'])->group(function () {
         ->middleware('role:SUPER_ADMIN');
 
     // 2.6 Peta Provinsi & Katalog Events
-    Route::get('/provinces', function () {
-        return view('provinces');
-    })->name('provinces')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
+    Route::get('/provinces', [ProvinceController::class, 'index'])
+        ->name('provinces')
+        ->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
 
-    Route::get('/events', function () {
-        return view('events');
-    })->name('events')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
+    Route::get('/events', [EventController::class, 'index'])
+        ->name('events')
+        ->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
 
     // 2.7 Laporan Bulanan (Super Admin, POGI Pusat, Admin Cabang)
-    Route::get('/reports', function () {
-        return view('reports');
-    })->name('reports')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_CABANG');
+    Route::get('/reports', [ReportController::class, 'index'])
+        ->name('reports')
+        ->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_CABANG');
 
     // 2.8 Monitoring SLA & Performa Admin (Super Admin, POGI Pusat, Admin POGI)
-    Route::get('/admin-performance', function () {
-        return view('admin-performance');
-    })->name('admin-performance')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI');
+    Route::get('/admin-performance', [AdminPerformanceController::class, 'index'])
+        ->name('admin-performance')
+        ->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI');
 
     // 2.9 Log Aktivitas & Jejak Audit (Super Admin & POGI Pusat)
-    Route::get('/activity', function () {
-        return view('activity');
-    })->name('activity')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT');
+    Route::get('/activity', [ActivityController::class, 'index'])
+        ->name('activity')
+        ->middleware('role:SUPER_ADMIN,ADMIN_PUSAT');
 
     // 2.10 Pengaturan Master Data (Eksklusif SUPER_ADMIN - RULES.md Bab 7)
-    Route::get('/manage', function () {
-        return view('manage');
-    })->name('manage')->middleware('role:SUPER_ADMIN');
+    Route::get('/manage', [ManageController::class, 'index'])
+        ->name('manage')
+        ->middleware('role:SUPER_ADMIN');
 });

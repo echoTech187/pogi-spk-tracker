@@ -51,28 +51,28 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
             <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active users</div>
-            <div class="text-2xl font-black text-slate-900 mt-1">18</div>
-            <div class="text-[10px] text-emerald-700 font-bold mt-0.5">Admin &bull; Online</div>
+            <div class="text-2xl font-black text-slate-900 mt-1">{{ $metrics['unique_users'] ?? 14 }}</div>
+            <div class="text-[10px] text-emerald-700 font-bold mt-0.5">Admin &bull; Terdaftar</div>
           </div>
           <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Doctor views</div>
-            <div class="text-2xl font-black text-slate-900 mt-1">412</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">23 Nov 2026</div>
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Audit Logs</div>
+            <div class="text-2xl font-black text-slate-900 mt-1">{{ $metrics['total_logs'] ?? 14 }}</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Jejak Permanen</div>
           </div>
           <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">SATUSEHAT opens</div>
-            <div class="text-2xl font-black text-sky-700 mt-1">89</div>
-            <div class="text-[10px] text-sky-800 font-bold mt-0.5">Integrasi API</div>
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aktivitas Hari Ini</div>
+            <div class="text-2xl font-black text-sky-700 mt-1">{{ $metrics['today_actions'] ?? 14 }}</div>
+            <div class="text-[10px] text-sky-800 font-bold mt-0.5">Real-Time Sync</div>
           </div>
           <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Entries added</div>
-            <div class="text-2xl font-black text-[#006948] mt-1">46</div>
-            <div class="text-[10px] text-emerald-800 font-bold mt-0.5">Kredit logbook</div>
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aksi Kredensial &amp; PIC</div>
+            <div class="text-2xl font-black text-[#006948] mt-1">{{ $metrics['security_actions'] ?? 10 }}</div>
+            <div class="text-[10px] text-emerald-800 font-bold mt-0.5">Audit Security</div>
           </div>
           <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs col-span-2 sm:col-span-1">
-            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Submitted</div>
-            <div class="text-2xl font-black text-purple-700 mt-1">38</div>
-            <div class="text-[10px] text-purple-800 font-bold mt-0.5">Verifikasi berkas</div>
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Enkripsi</div>
+            <div class="text-2xl font-black text-purple-700 mt-1">AES-256</div>
+            <div class="text-[10px] text-purple-800 font-bold mt-0.5">UU PDP No. 27/2022</div>
           </div>
         </div>
 
@@ -280,8 +280,9 @@
     }
 
 
+    const LIVE_SERVER_LOGS = @json($logs ?? []);
     let activeCategory = 'ALL';
-    let activityPagination = { page: 1, limit: 10, total: 0 };
+    let activityPagination = { page: 1, limit: 10, total: LIVE_SERVER_LOGS.length || 0 };
     let currentFilteredActivities = null;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -289,7 +290,7 @@
     });
 
     function changeActivityPage(p) {
-      const list = currentFilteredActivities || PogiStore.getActivities();
+      const list = currentFilteredActivities || (LIVE_SERVER_LOGS.length > 0 ? LIVE_SERVER_LOGS : PogiStore.getActivities());
       const totalPages = Math.max(1, Math.ceil(list.length / activityPagination.limit));
       if (p < 1) p = 1;
       if (p > totalPages) p = totalPages;
@@ -305,7 +306,16 @@
 
     function renderActivityTable(filterCategory = activeCategory, searchQuery = '', resetPage = true) {
       if (resetPage) activityPagination.page = 1;
-      const activities = PogiStore.getActivities();
+      const activities = (LIVE_SERVER_LOGS && LIVE_SERVER_LOGS.length > 0)
+        ? LIVE_SERVER_LOGS.map(l => ({
+            actor: l.user_name || 'System Auto',
+            role: l.user_role || 'ADMIN',
+            action: l.action || 'Sesi Kerja',
+            details: l.new_values ? (typeof l.new_values === 'string' ? l.new_values : JSON.stringify(l.new_values)) : (l.entity_name ? `Entitas: ${l.entity_name} (${l.entity_id})` : '-'),
+            category: l.action && l.action.includes('KEMENKES') ? 'Kemenkes' : (l.action && l.action.includes('PIC') ? 'Admin' : 'Operasional'),
+            time: l.created_at ? new Date(l.created_at).toLocaleString('id-ID') : 'Baru saja'
+          }))
+        : ((typeof PogiStore !== 'undefined') ? PogiStore.getActivities() : []);
       const tbody = document.getElementById('activityTableBody');
       if (!tbody) return;
 

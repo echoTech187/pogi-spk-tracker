@@ -69,7 +69,7 @@
               <span class="material-symbols-outlined text-sky-600 text-xl">timer</span>
             </div>
             <div class="flex items-baseline gap-2">
-              <span id="kpiTeamSla" class="text-3xl font-black text-slate-900 font-mono">15.1 Jam</span>
+              <span id="kpiTeamSla" class="text-3xl font-black text-slate-900 font-mono">{{ $summary['avgTeamSla'] ?? 11.5 }} Jam</span>
               <span class="text-xs text-slate-400 font-medium">/ 24 Jam</span>
             </div>
             <div class="mt-2 flex items-center gap-1.5">
@@ -87,7 +87,7 @@
               <span class="material-symbols-outlined text-emerald-600 text-xl">verified</span>
             </div>
             <div class="flex items-baseline gap-2">
-              <span id="kpiTeamApproval" class="text-3xl font-black text-[#006948] font-mono">98.2%</span>
+              <span id="kpiTeamApproval" class="text-3xl font-black text-[#006948] font-mono">{{ $summary['avgTeamApproval'] ?? 98.2 }}%</span>
               <span class="text-xs text-slate-400 font-medium">Approval</span>
             </div>
             <div class="mt-2 flex items-center gap-1.5">
@@ -344,6 +344,8 @@
   <script src="/js/navigation.js"></script>
   <script>
     const IS_SUPER_ADMIN = @json(Auth::user()?->role === 'SUPER_ADMIN');
+    const LIVE_SERVER_ADMINS = @json($admins ?? []);
+    const LIVE_SERVER_SUMMARY = @json($summary ?? null);
     let performanceData = null;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -351,7 +353,14 @@
     });
 
     function loadPerformanceData() {
-      performanceData = PogiStore.getAdminPerformanceMetrics();
+      if (LIVE_SERVER_ADMINS && LIVE_SERVER_ADMINS.length > 0 && LIVE_SERVER_SUMMARY) {
+        performanceData = {
+          summary: LIVE_SERVER_SUMMARY,
+          admins: LIVE_SERVER_ADMINS
+        };
+      } else {
+        performanceData = (typeof PogiStore !== 'undefined') ? PogiStore.getAdminPerformanceMetrics() : { summary: {}, admins: [] };
+      }
       renderExecutiveCards(performanceData.summary);
       renderSlaBars(performanceData.admins);
       renderWorkloadMiniList(performanceData.admins);

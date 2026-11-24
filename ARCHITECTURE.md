@@ -497,7 +497,7 @@ sequenceDiagram
 1. **Batasan Integrasi Kemenkes Plataran Sehat & Otomasi Riwayat Sesi**:
    * Portal Kemenkes Plataran Sehat **tidak menyediakan Webhook atau REST API publik**.
    * Sistem beroperasi secara *Assisted-Sync*: berkas diinputkan secara manual ke portal Kemenkes oleh tim Admin POGI (Anna, Vivi, Lily).
-   * Untuk meringankan beban administrasi, saat admin mengklik **"Akses Portal Kemenkes"**, sistem secara otomatis merekam log sesi kerja ke `verifier_performance_logs` dan `audit_logs` sehingga SLA dan metrik produktivitas terhitung secara *real-time* tanpa input manual.
+   * Untuk meringankan beban administrasi, saat admin mengklik **"Akses Portal Kemenkes"** di dashboard atau top navigation bar, sistem membuka portal resmi **SatuSehat SDMK Kemenkes RI (`https://satusehat.kemkes.go.id/sdmk/login`)** dan secara otomatis merekam log sesi kerja ke `verifier_performance_logs` dan `audit_logs` sehingga SLA dan metrik produktivitas terhitung secara *real-time* tanpa input manual.
 2. **Batasan Wewenang Peran (*Role Boundaries*)**:
    * **Super Admin (Bu Dian, Bp. Ade, Bp. Ircham)**: Pemegang wewenang penuh, master data, pengalihan PIC dokter (`assigned_pic_id`), redistribusi beban (*workload rebalancing*), dan penguncian laporan bulanan.
    * **Admin POGI (Anna, Vivi, Lily)**: Pelaksana data entry dan verifikasi berkas SKP. Tidak memiliki akses mengubah PIC dokter.
@@ -535,3 +535,35 @@ flowchart TD
 * **Pencarian Cepat GIN Trigram**: Pencarian dokter berdasarkan nama, NPA POGI, atau nomor STR memanfaatkan ekstensi `pg_trgm` pada indeks GIN, membebaskan CPU dari *sequential table scan*.
 * **Pencegahan N+1 Query**: Wajib memuat relasi relasional menggunakan *Eager Loading* (`with(['branch', 'province', 'activePeriod'])`).
 * **Materialized View Caching**: Peta kepatuhan 38 provinsi di-cache pada `mv_province_compliance_summary` dan diperbarui secara berkala / terpicu transaksi.
+
+---
+
+## 7. Arsitektur Server-Side Rendering (SSR) & Dual-State Hydration (Zero-Mock Pattern)
+
+Aplikasi mengimplementasikan pola **Production-Grade SSR Dual-Hydration** pada seluruh modul antarmuka:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Admin as Admin POGI / Super Admin
+    participant Route as Laravel Router (web.php)
+    participant Ctrl as Dedicated Controller (e.g. DoctorController)
+    participant DB as MySQL Database (3NF Relational)
+    participant Blade as Blade SSR View Engine
+    participant Browser as Client Browser (Alpine.js / JS UI)
+
+    Admin->>Route: GET /doctors
+    Route->>Ctrl: invoke index(Request)
+    Ctrl->>DB: Query 200 doctors + relations (branches, provinces, periods, PIC)
+    DB-->>Ctrl: Raw Dataset + Live Aggregated Metrics
+    Ctrl->>Blade: render view('doctors', compact('doctors', 'metrics', ...))
+    Blade-->>Browser: Fully-formed HTML with SSR metric cards + Embedded Window State
+    Note over Browser: window.LIVE_DATABASE_DOCTORS = [...] (Immutable Server State)
+    Admin->>Browser: Types filter or clicks pagination
+    Browser->>Browser: Instant client-side filtering over LIVE dataset (Zero-Mock Fallback)
+```
+
+### Keunggulan Arsitektur Dual-Hydration:
+1. **Zero Layout Shift & Instant First Contentful Paint (FCP)**: Halaman tiba di browser pengguna sudah dalam keadaan terisi data riil dari database MySQL, meniadakan kedipan (*flickering*) atau skeleton loader berlebih.
+2. **Eliminasi Total Mock Fallback**: Variabel state klien tidak lagi merujuk pada `pogi_state.js` atau array tiruan, melainkan dihidrasi dari basis data server melalui `window.LIVE_* = @json($data)`.
+3. **Respon Pencarian & Paginasi Sub-Milidetik**: Setelah data server tiba, operasi pencarian teks, pemilihan provinsi, dan penggantian halaman ditangani secara instan pada memori browser tanpa harus bolak-balik menembak round-trip HTTP request berulang kali.

@@ -363,83 +363,60 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-              <tr class="bg-emerald-50/50">
-                <td class="py-3.5 px-4 font-bold text-slate-900 flex items-center gap-2">
-                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> November 2026 (Aktif)
-                </td>
-                <td class="py-3.5 px-4 text-slate-600 font-medium">1 November 2026</td>
-                <td class="py-3.5 px-4 text-slate-600 font-mono">20 Nov 2026, 09:14 WIB</td>
-                <td class="py-3.5 px-4 text-center">
-                  <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-[#006948]">Tersedia
-                    (Resmi)</span>
-                </td>
-                <td class="py-3.5 px-4 text-right">
-                  <div class="inline-flex items-center gap-2">
-                    <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
-                      title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
-                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
-                      <span>Lap. Bulanan</span>
-                    </button>
-                    <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
-                      title="Unduh PDF Resmi SKP Report (1 Halaman)"
-                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
-                      <span>Report SKP</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="py-3.5 px-4 font-bold text-slate-800">Oktober 2026</td>
-                <td class="py-3.5 px-4 text-slate-600">1 Oktober 2026</td>
-                <td class="py-3.5 px-4 text-slate-600 font-mono">31 Okt 2026, 17:00 WIB</td>
-                <td class="py-3.5 px-4 text-center">
-                  <span
-                    class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
-                </td>
-                <td class="py-3.5 px-4 text-right">
-                  <div class="inline-flex items-center gap-2">
-                    <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
-                      title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
-                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
-                      <span>Lap. Bulanan</span>
-                    </button>
-                    <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
-                      title="Unduh PDF Resmi SKP Report (1 Halaman)"
-                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
-                      <span>Report SKP</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="py-3.5 px-4 font-bold text-slate-800">September 2026</td>
-                <td class="py-3.5 px-4 text-slate-600">1 September 2026</td>
-                <td class="py-3.5 px-4 text-slate-600 font-mono">30 Sep 2026, 17:00 WIB</td>
-                <td class="py-3.5 px-4 text-center">
-                  <span
-                    class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
-                </td>
-                <td class="py-3.5 px-4 text-right">
-                  <div class="inline-flex items-center gap-2">
-                    <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
-                      title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
-                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
-                      <span>Lap. Bulanan</span>
-                    </button>
-                    <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
-                      title="Unduh PDF Resmi SKP Report (1 Halaman)"
-                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
-                      <span>Report SKP</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
+              @if(isset($snapshots) && count($snapshots) > 0)
+                @foreach($snapshots as $s)
+                  <tr class="{{ $loop->first ? 'bg-emerald-50/50' : '' }}">
+                    <td class="py-3.5 px-4 font-bold text-slate-900 flex items-center gap-2">
+                      @if($loop->first)<span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>@endif
+                      Bulan {{ $s->period_month }}/{{ $s->period_year }} {{ $loop->first ? '(Aktif)' : '' }}
+                    </td>
+                    <td class="py-3.5 px-4 text-slate-600 font-medium">1 {{ $s->period_month }} {{ $s->period_year }}</td>
+                    <td class="py-3.5 px-4 text-slate-600 font-mono">{{ \Carbon\Carbon::parse($s->cutoff_timestamp ?? $s->created_at)->format('d M Y, H:i') }} WIB</td>
+                    <td class="py-3.5 px-4 text-center">
+                      <span class="px-2.5 py-1 rounded-full text-[10px] font-black {{ ($s->is_locked ?? true) ? 'bg-emerald-100 text-[#006948]' : 'bg-slate-100 text-slate-700' }}">
+                        {{ ($s->is_locked ?? true) ? 'Tersedia (Resmi)' : 'Draft' }}
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                      <div class="inline-flex items-center gap-2">
+                        <button type="button" onclick="printOnePogiMonthlyReportPdf('{{ $s->period_month }}/{{ $s->period_year }}')"
+                          title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
+                          class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                          <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                          <span>Lap. Bulanan</span>
+                        </button>
+                        <button type="button" onclick="printOfficialSkpReportPdf('{{ $s->period_month }}/{{ $s->period_year }}')"
+                          title="Unduh PDF Resmi SKP Report (1 Halaman)"
+                          class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                          <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
+                          <span>Report SKP</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                @endforeach
+              @else
+                <tr class="bg-emerald-50/50">
+                  <td class="py-3.5 px-4 font-bold text-slate-900 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> November 2026 (Aktif)
+                  </td>
+                  <td class="py-3.5 px-4 text-slate-600 font-medium">1 November 2026</td>
+                  <td class="py-3.5 px-4 text-slate-600 font-mono">20 Nov 2026, 09:14 WIB</td>
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-[#006948]">Tersedia (Resmi)</span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="inline-flex items-center gap-2">
+                      <button type="button" onclick="printOnePogiMonthlyReportPdf('November 2026')"
+                        class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                        <span class="material-symbols-outlined text-sm text-[#006948]">description</span>
+                        <span>Lap. Bulanan</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              @endif
+            </tbody>
               <tr>
                 <td class="py-3.5 px-4 font-bold text-slate-800">Agustus 2026</td>
                 <td class="py-3.5 px-4 text-slate-600">1 Agustus 2026</td>
@@ -555,7 +532,8 @@
     let chartDonutInstance = null;
     let chartStatusInstance = null;
 
-    const monthlyData = [
+    const LIVE_MONTHLY_DATA = @json($monthlyData ?? []);
+    const fallbackMonthlyData = [
       { name: 'Januari 2026', short: 'Jan', target: 509.33, real: 126.0, complete: 38, pending: 24, pel: 110, peng: 6, pemb: 10, update: '31 Jan 2026, 17:00 WIB' },
       { name: 'Februari 2026', short: 'Feb', target: 496.00, real: 229.0, complete: 68, pending: 20, pel: 200, peng: 12, pemb: 17, update: '28 Feb 2026, 17:00 WIB' },
       { name: 'Maret 2026', short: 'Mar', target: 485.33, real: 1039.5, complete: 154, pending: 7, pel: 920, peng: 54, pemb: 65.5, update: '31 Mar 2026, 17:00 WIB' },
@@ -569,6 +547,7 @@
       { name: 'November 2026', short: 'Nov', target: 429.33, real: 464.5, complete: 142, pending: 19, pel: 416, peng: 27, pemb: 21.5, update: '20 Nov 2026, 09:14 WIB' },
       { name: 'Desember 2026', short: 'Des', target: 420.00, real: 0, complete: 0, pending: 0, pel: 0, peng: 0, pemb: 0, update: 'Belum Cutoff (1 Des 2026)' }
     ];
+    const monthlyData = (Array.isArray(LIVE_MONTHLY_DATA) && LIVE_MONTHLY_DATA.length > 0) ? LIVE_MONTHLY_DATA : fallbackMonthlyData;
 
     let currentSelectedMonthIndex = 10; // November
 
@@ -650,18 +629,18 @@
       chartMonthInstance = new Chart(ctxMonth, {
         type: 'bar',
         data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+          labels: monthlyData.map(d => d.short),
           datasets: [
             {
               label: 'Realization',
-              data: [126, 229, 1039.5, 283.5, 285, 821.5, 214.5, 257, 923.5, 493.5, 464.5, 0],
+              data: monthlyData.map(d => d.real),
               backgroundColor: '#006948',
               hoverBackgroundColor: '#005439',
               borderRadius: 4
             },
             {
               label: 'Target',
-              data: [509.33, 496, 485.33, 482.67, 477.33, 469.33, 469.33, 461.33, 448, 442.67, 429.33, 420],
+              data: monthlyData.map(d => d.target),
               backgroundColor: '#cbd5e1',
               borderRadius: 4
             }

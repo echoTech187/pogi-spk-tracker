@@ -124,7 +124,8 @@ Untuk memastikan berkas dokter tidak tertahan lama, sistem memonitor kinerja tim
    * **Good Performer** ($75 \le \text{Score} < 90$): SLA $12 - 24$ jam, penanganan stabil.
    * **Needs Attention** ($\text{Score} < 75$): SLA $> 24$ jam atau tingkat penolakan berkas tidak wajar.
 4. **Otomasi Pencatatan Sesi Kemenkes (*Zero-Manual Session Logging*)**:
-   * Saat Admin POGI atau Super Admin menekan tombol **"Akses Portal Kemenkes"** di dashboard atau detail dokter, sistem secara otomatis mengarahkan ke portal Plataran Sehat sekaligus merekam log riwayat kerja ke tabel `verifier_performance_logs` (`action_type = 'KEMENKES_SYNC_SESSION'`) dan `audit_logs` (`action = 'KEMENKES_PORTAL_ACCESS'`).
+   * Saat Admin POGI atau Super Admin menekan tombol **"Akses Portal Kemenkes"** di dashboard, header navigasi, atau rincian portofolio dokter, sistem secara otomatis mengarahkan ke portal resmi **SatuSehat SDMK Kemenkes RI (`https://satusehat.kemkes.go.id/sdmk/login`)** melalui rute `GET /kemenkes/launch` atau `POST /kemenkes/track-access`.
+   * Pada saat yang sama, sistem secara otomatis merekam log riwayat kerja ke tabel `verifier_performance_logs` (`action_type = 'KEMENKES_SYNC_SESSION'`) dan `audit_logs` (`action = 'KEMENKES_PORTAL_ACCESS'`).
    * Mekanisme ini meniadakan kebutuhan input manual jam kerja verifikator, sehingga metrik produktivitas dan KPI admin terukur secara transparan dan akurat.
 
 ---
@@ -195,3 +196,22 @@ Mengakomodasi penyesuaian peran operasional klien (Bu Dian, Bp. Ade, Bp. Ircham,
    * Pada lapisan ORM/Repository, pemanggilan relasi wajib menggunakan *Eager Loading* eksplisit (`with(['branch', 'province', 'activePeriod'])`).
 4. **Paginasi Efisien**:
    * Query volume besar wajib menggunakan *Cursor Pagination* (`cursorPaginate()`) dan *Chunking* (`chunkById()`).
+
+---
+
+## 11. Arsitektur Server-Side Rendering (SSR) & Eliminasi Data Tiruan (Mock Fallback)
+
+1. **Prinsip Eliminasi Mutlak Data Tiruan (*Zero-Mock Guarantee*)**:
+   * Sesuai mandat arsitektur produksi, **seluruh halaman aplikasi tanpa terkecuali** (`/dashboard`, `/doctors`, `/doctor-detail/{id}`, `/provinces`, `/events`, `/reports`, `/admin-performance`, `/activity`, `/manage`) **dilarang keras menggunakan data statis hardcode atau fallback ke mock store client-side (`PogiStore`)**.
+   * Seluruh kartu metrik, angka agregasi, tabel, opsi filter wilayah/faskes, dan grafik analitik dihitung dan di-query secara langsung dari basis data relasional MySQL/PostgreSQL melalui dedicated controller:
+     - `DashboardController`: Ringkasan KPI nasional, rasio kepatuhan, sebaran provinsi, dan audit aktivitas terkini.
+     - `DoctorController`: Direktori 200 dokter dengan relasi lengkap, isolasi cabang otomatis `ADMIN_CABANG`, portofolio 5 tahun, repositori berkas vault, dan detektor kekurangan dokumen.
+     - `ProvinceController`: Capaian 38 provinsi terakreditasi, perangkingan kepatuhan, dan ringkasan nasional.
+     - `EventController`: Katalog acara ilmiah SKP dan kategori ranah kompetensi.
+     - `ActivityController`: Jejak audit trail sekuriti permanen dan metrik aktivitas harian.
+     - `ReportController`: Snapshot cutoff bulanan resmi dan deret 12 bulan realisasi SKP riil.
+     - `AdminPerformanceController`: Pengukuran SLA turnaround, volume binaan riil, akurasi, dan log kinerja verifikator.
+     - `ManageController`: Master entitas lengkap (dokter, faskes/RS jejaring, kegiatan SKP, kategori, dan pengguna sistem).
+2. **Pola Dual-Hydration SSR ke Client-Side Interactivity**:
+   * Data dari basis data diinjeksi pada sisi server melalui Blade template dan disalurkan ke variabel global window berstatus immutable (`window.LIVE_*` / `window.__INITIAL_*__`).
+   * Interaksi client-side seperti pencarian instan, filter multi-kategori, dan paginasi client beroperasi langsung di atas dataset riil yang telah dihidrasi dari server tanpa pernah menyentuh dummy data mock.

@@ -25,30 +25,36 @@ class KemenkesController extends Controller
         $doctorId = $request->input('doctor_id');
         $doctorName = $request->input('doctor_name');
 
+        $userId = $user?->id ?? DB::table('users')->where('role', 'SUPER_ADMIN')->value('id');
+        $userName = $user?->full_name ?? 'Admin POGI';
+        $userRole = $user?->role ?? 'ADMIN_POGI';
+
         // 1. Simpan ke verifier_performance_logs untuk metrik SLA / Kinerja Admin
-        DB::table('verifier_performance_logs')->insert([
-            'id' => (string) Str::uuid(),
-            'verifier_user_id' => $user->id,
-            'doctor_id' => $doctorId,
-            'skp_entry_id' => null,
-            'document_id' => null,
-            'action_type' => 'KEMENKES_SYNC_SESSION',
-            'turnaround_time_seconds' => 0,
-            'created_at' => $now,
-        ]);
+        if ($userId) {
+            DB::table('verifier_performance_logs')->insert([
+                'id' => (string) Str::uuid(),
+                'verifier_user_id' => $userId,
+                'doctor_id' => $doctorId,
+                'skp_entry_id' => null,
+                'document_id' => null,
+                'action_type' => 'KEMENKES_SYNC_SESSION',
+                'turnaround_time_seconds' => 0,
+                'created_at' => $now,
+            ]);
+        }
 
         // 2. Simpan ke jejak audit permanen audit_logs
         DB::table('audit_logs')->insert([
             'id' => (string) Str::uuid(),
-            'user_id' => $user->id,
+            'user_id' => $userId,
             'action' => 'KEMENKES_PORTAL_ACCESS',
             'entity_name' => 'kemenkes_portal',
-            'entity_id' => $doctorId ?? $user->id,
+            'entity_id' => $doctorId ?? $userId,
             'old_values' => null,
             'new_values' => json_encode([
                 'event' => 'Akses Portal Kemenkes Plataran Sehat',
-                'user_name' => $user->full_name,
-                'role' => $user->role,
+                'user_name' => $userName,
+                'role' => $userRole,
                 'doctor_context' => $doctorName ?? ($doctorId ? "Dokter ID: {$doctorId}" : 'Monitoring Umum Dashboard'),
                 'source' => $request->input('source', 'dashboard_button'),
             ]),
@@ -73,7 +79,7 @@ class KemenkesController extends Controller
             'portal_url' => $portalUrl,
             'message' => 'Sesi kerja Kemenkes tercatat otomatis ke jejak kinerja admin.',
             'timestamp' => $now->toDateTimeString(),
-            'verifier' => $user->full_name,
+            'verifier' => $userName,
         ]);
     }
 

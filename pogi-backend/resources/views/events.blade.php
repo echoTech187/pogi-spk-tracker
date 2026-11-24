@@ -243,8 +243,9 @@
       renderEventsGrid(true);
     }
 
+    const LIVE_SERVER_EVENTS = @json($events ?? []);
     let activeFilter = 'ALL';
-    let eventPagination = { page: 1, limit: 6, total: 0 };
+    let eventPagination = { page: 1, limit: 6, total: LIVE_SERVER_EVENTS.length || 0 };
     let currentFilteredEvents = null;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -252,7 +253,7 @@
     });
 
     function changeEventPage(p) {
-      const list = currentFilteredEvents || PogiStore.getEvents();
+      const list = currentFilteredEvents || (LIVE_SERVER_EVENTS.length > 0 ? LIVE_SERVER_EVENTS : PogiStore.getEvents());
       const totalPages = Math.max(1, Math.ceil(list.length / eventPagination.limit));
       if (p < 1) p = 1;
       if (p > totalPages) p = totalPages;
@@ -268,7 +269,9 @@
 
     function renderEventsGrid(resetPage = true) {
       if (resetPage) eventPagination.page = 1;
-      const events = PogiStore.getEvents();
+      const events = (LIVE_SERVER_EVENTS && LIVE_SERVER_EVENTS.length > 0)
+        ? LIVE_SERVER_EVENTS
+        : ((typeof PogiStore !== 'undefined') ? PogiStore.getEvents() : []);
       const gridContainer = document.getElementById('eventsGridContainer');
       if (!gridContainer) return;
 

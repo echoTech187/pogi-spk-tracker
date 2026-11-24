@@ -45,6 +45,15 @@
 
     <!-- Right: Notifikasi & Profil User -->
     <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+      <!-- Akses Kemenkes SatuSehat Action Button -->
+      <a href="{{ route('kemenkes.launch') }}" target="_blank"
+        onclick="if(typeof showToast === 'function') showToast('Membuka Portal Kemenkes SDMK & mencatat sesi kerja...', 'info');"
+        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#006948] border border-emerald-200/80 font-bold text-xs transition shadow-2xs"
+        title="Buka SatuSehat SDMK Kemenkes (Tercatat otomatis ke riwayat kerja & log kinerja admin)">
+        <span class="material-symbols-outlined text-base text-emerald-700">health_and_safety</span>
+        <span class="hidden md:inline">Portal Kemenkes</span>
+      </a>
+
       <!-- Notification Bell with Red Dot Indicator -->
       <div class="relative">
         <button type="button" id="topNotifBtn" onclick="toggleTopNotifDropdown()" class="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer" aria-label="Notifikasi">

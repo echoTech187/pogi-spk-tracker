@@ -183,7 +183,8 @@
     }
 
 
-    let provincePagination = { page: 1, limit: 10, total: 0 };
+    const LIVE_SERVER_PROVINCES = @json($provinces ?? []);
+    let provincePagination = { page: 1, limit: 10, total: LIVE_SERVER_PROVINCES.length || 0 };
     let currentFilteredProvinces = null;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -191,7 +192,7 @@
     });
 
     function changeProvincePage(p) {
-      const list = currentFilteredProvinces || PogiStore.getProvinces();
+      const list = currentFilteredProvinces || (LIVE_SERVER_PROVINCES.length > 0 ? LIVE_SERVER_PROVINCES : PogiStore.getProvinces());
       const totalPages = Math.max(1, Math.ceil(list.length / provincePagination.limit));
       if (p < 1) p = 1;
       if (p > totalPages) p = totalPages;
@@ -211,7 +212,9 @@
 
     function renderProvincesTable(filterText = '', hideZero = false, resetPage = true) {
       if (resetPage) provincePagination.page = 1;
-      const provinces = PogiStore.getProvinces();
+      const provinces = (LIVE_SERVER_PROVINCES && LIVE_SERVER_PROVINCES.length > 0)
+        ? LIVE_SERVER_PROVINCES
+        : ((typeof PogiStore !== 'undefined') ? PogiStore.getProvinces() : []);
       const tbody = document.getElementById('provincesTableBody');
       if (!tbody) return;
 

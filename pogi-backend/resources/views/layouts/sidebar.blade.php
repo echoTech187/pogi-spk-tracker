@@ -53,6 +53,11 @@
       </nav>
     </div>
 
+    @php
+      $currentRole = Auth::user()?->role ?? 'SUPER_ADMIN';
+    @endphp
+
+    @if(in_array($currentRole, ['SUPER_ADMIN', 'ADMIN_POGI']))
     <div>
       <div class="px-3 mb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
         PENGATURAN DATA (MANAGE)
@@ -74,12 +79,15 @@
           <span class="material-symbols-outlined text-[18px]">category</span>
           <span>Event Category</span>
         </a>
+        @if($currentRole === 'SUPER_ADMIN')
         <a href="{{ url('/manage?tab=user') }}" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
           <span class="material-symbols-outlined text-[18px]">manage_accounts</span>
-          <span>User</span>
+          <span>User &amp; Hak Akses</span>
         </a>
+        @endif
       </nav>
     </div>
+    @endif
   </div>
 
   @php

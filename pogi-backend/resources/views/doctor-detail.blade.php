@@ -846,16 +846,65 @@
   <script src="/js/navigation.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
+    const LIVE_SERVER_DOCTOR = @json($doctor ?? null);
+    const LIVE_SERVER_DOCUMENTS = @json($documents ?? []);
+    const LIVE_SERVER_PERIOD = @json($period ?? null);
+    const LIVE_SERVER_ENTRIES = @json($skpEntries ?? []);
+
     let activeDoctor = null;
     let currentDetailTab = 'logbook';
 
+    function buildDoctorObject(rawDoc, period) {
+      if (!rawDoc) return null;
+      const target = period ? Number(period.target_total_credits || 160) : 160;
+      const achieved = period ? Number(period.achieved_total_credits || 0) : 0;
+      const pel = period ? Number(period.achieved_pelayanan_credits || 0) : 0;
+      const peng = period ? Number(period.achieved_pengabdian_credits || 0) : 0;
+      const pemb = period ? Number(period.achieved_pembelajaran_credits || 0) : 0;
+
+      const cleanName = (rawDoc.full_name || '').replace(/dr\.\s*|drg\.\s*|Prof\.|Sp\.OG|\,/gi, '').trim();
+      const parts = cleanName.split(' ').filter(Boolean);
+      let initials = 'DR';
+      if (parts.length >= 2) initials = (parts[0][0] + parts[1][0]).toUpperCase();
+      else if (parts.length === 1) initials = parts[0].substring(0, 2).toUpperCase();
+
+      return {
+        id: String(rawDoc.id),
+        pogiId: rawDoc.npa_pogi ? `#${rawDoc.npa_pogi}` : `#POGI-${String(rawDoc.id).substring(0, 8)}`,
+        name: rawDoc.full_name,
+        specialization: rawDoc.specialization_title || 'Spesialis Obstetri & Ginekologi',
+        initials: initials,
+        avatar: initials,
+        province: rawDoc.province_name || 'Nasional',
+        hospital: rawDoc.institution_name || 'RS Jejaring POGI',
+        institution: rawDoc.institution_name || 'RS Jejaring POGI',
+        nik: rawDoc.nik_hash ? '32' + String(rawDoc.nik_hash).substring(0, 14) : '3273100000000883',
+        strNumber: rawDoc.str_number || '-',
+        sipNumber: rawDoc.sip_number || '-',
+        validUntilLabel: rawDoc.sip_expiry_date ? `Siklus: Habis ${rawDoc.sip_expiry_date}` : 'Siklus 5 Thn: Aktif',
+        assignedTo: rawDoc.assigned_pic_name || 'Belum Ditentukan',
+        status: rawDoc.status === 'COMPLETE' ? 'Complete' : 'Incomplete',
+        achievedCredits: achieved,
+        targetCredits: target,
+        pelayananCredits: pel,
+        pengabdianCredits: peng,
+        pembelajaranCredits: pemb,
+        dashboardUpdatedAt: rawDoc.dashboard_updated_at || 'Baru saja',
+        kemenkesUpdatedAt: rawDoc.kemenkes_updated_at || 'Menunggu Sinkronisasi'
+      };
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const docId = urlParams.get('id') || 'doc-001';
+      const docId = urlParams.get('id');
       const requestedTab = urlParams.get('tab');
 
-      const doctors = PogiStore.getDoctors();
-      activeDoctor = doctors.find(d => d.id === docId) || doctors[0];
+      if (LIVE_SERVER_DOCTOR) {
+        activeDoctor = buildDoctorObject(LIVE_SERVER_DOCTOR, LIVE_SERVER_PERIOD);
+      } else {
+        const doctors = (typeof PogiStore !== 'undefined') ? PogiStore.getDoctors() : [];
+        activeDoctor = doctors.find(d => d.id === docId) || doctors[0];
+      }
 
       renderDoctorDetails(activeDoctor);
       renderDoctorRepositoryAndDetector(activeDoctor.id);
@@ -1088,9 +1137,20 @@
     }
 
     function renderDoctorActivities(docId) {
-      const activities = (typeof PogiStore !== 'undefined' && PogiStore.getDoctorActivities)
-        ? PogiStore.getDoctorActivities(docId)
-        : [];
+      let activities = [];
+      if (LIVE_SERVER_ENTRIES && LIVE_SERVER_ENTRIES.length > 0) {
+        activities = LIVE_SERVER_ENTRIES.map(e => ({
+          id: String(e.id),
+          title: e.title,
+          category: e.domain || 'Pembelajaran',
+          date: e.activity_date ? new Date(e.activity_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-',
+          credit: Number(e.credit_amount || 0),
+          status: e.status === 'DONE' ? 'Terverifikasi' : (e.status === 'REJECTED' ? 'Ditolak' : 'Pending'),
+          evidence: 'Tersedia'
+        }));
+      } else if (typeof PogiStore !== 'undefined' && PogiStore.getDoctorActivities) {
+        activities = PogiStore.getDoctorActivities(docId);
+      }
 
       const countEl = document.getElementById('totalActivitiesCount');
       if (countEl) countEl.innerText = `Total: ${activities.length} Entri Kegiatan`;
@@ -1141,8 +1201,10 @@
     }
 
     function renderDoctorRepositoryAndDetector(docId) {
-      const docs = PogiStore.getDoctorDocuments(docId);
-      const detector = PogiStore.getDoctorMissingDocuments(docId);
+      let docs = (LIVE_SERVER_DOCUMENTS && LIVE_SERVER_DOCUMENTS.length > 0)
+        ? LIVE_SERVER_DOCUMENTS
+        : ((typeof PogiStore !== 'undefined') ? PogiStore.getDoctorDocuments(docId) : []);
+      const detector = (typeof PogiStore !== 'undefined') ? PogiStore.getDoctorMissingDocuments(docId) : { missingCount: 0, items: [] };
 
       // Update Tab Badges
       const docCountBadge = document.getElementById('tabBadgeDocCount');
