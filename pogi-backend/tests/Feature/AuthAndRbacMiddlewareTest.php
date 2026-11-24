@@ -103,6 +103,7 @@ class AuthAndRbacMiddlewareTest extends TestCase
         $response = $this->post('/login', [
             'email'    => 'super@example.com',
             'password' => 'Super2026!Master',
+            'remember' => 'on',
         ]);
 
         $response->assertRedirect('/dashboard');

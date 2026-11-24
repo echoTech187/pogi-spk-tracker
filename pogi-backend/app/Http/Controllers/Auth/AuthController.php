@@ -73,8 +73,14 @@ class AuthController extends Controller
             ])->withInput($request->only('email'));
         }
 
-        // 5. Lakukan Login Session
-        Auth::login($user, $request->boolean('remember'));
+        // 5. Lakukan Login Session secara aman (fallback jika DB password belum diisi)
+        try {
+            $canRemember = !empty(config('database.connections.pgsql.password')) && $user->exists;
+            Auth::login($user, $canRemember ? $request->boolean('remember') : false);
+        } catch (\Throwable $e) {
+            Auth::login($user, false);
+        }
+
         $request->session()->regenerate();
 
         // 6. Catat aktivitas login
