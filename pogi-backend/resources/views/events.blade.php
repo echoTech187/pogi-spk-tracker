@@ -4,7 +4,7 @@
 @section('content')
 
       <!-- Main Body -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-5 page-fade-in">
+      <div class="space-y-5">
 
         <!-- MedCred Standard Heading Banner -->
         <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -63,10 +63,10 @@
           <!-- Rendered dynamically -->
         </div>
 
-      </main>
-    </div>
   </div>
+@endsection
 
+@section('modals')
   <!-- Modal Daftar Peserta Dokter Obgyn -->
   <div id="eventParticipantsModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
@@ -113,7 +113,9 @@
       </div>
     </div>
   </div>
+@endsection
 
+@section('scripts')
   <script src="/js/pdf_exporter.js"></script>
   <script>
     

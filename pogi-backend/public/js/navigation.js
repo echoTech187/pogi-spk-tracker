@@ -906,25 +906,3 @@ if (document.readyState === 'loading') {
   hoistAllModalsToBody();
 }
 window.addEventListener('load', hoistAllModalsToBody);
-
-try {
-  const modalObserver = new MutationObserver((mutations) => {
-    for (const m of mutations) {
-      if (m.type === 'attributes' && m.attributeName === 'class') {
-        const target = m.target;
-        if (target.id && (target.id.toLowerCase().includes('modal') || target.classList.contains('fixed'))) {
-          if (target.id !== 'sidebarOverlay' && !target.classList.contains('hidden')) {
-            if (target.parentElement !== document.body) {
-              document.body.appendChild(target);
-            }
-            target.classList.remove('z-40', 'z-50', 'z-30', 'z-20', 'z-10');
-            target.classList.add('z-[9999]');
-          }
-        }
-      }
-    }
-  });
-  modalObserver.observe(document.documentElement, { attributes: true, subtree: true, attributeFilter: ['class'] });
-} catch (e) {
-  // Silent fallback
-}

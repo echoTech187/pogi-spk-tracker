@@ -4,7 +4,7 @@
 @section('content')
 
   <!-- Main Body -->
-  <main class="flex-1 overflow-y-auto space-y-5 page-fade-in">
+  <div class="space-y-5">
 
     <!-- MEDCRED STANDARD HEADING (Persis Screenshot Klien) -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
@@ -147,8 +147,10 @@
       <!-- Interactive MedCred Pagination Footer -->
       <div id="doctorsDirectoryPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
     </div>
-  </main>
+  </div>
+@endsection
 
+@section('modals')
   <!-- Modal Detail & Verifikasi Dokter -->
   <div id="doctorDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-5 responsive-modal-body overflow-y-auto">
@@ -386,6 +388,9 @@
       </form>
     </div>
   </div>
+@endsection
+
+@section('scripts')
   <script src="/js/pdf_exporter.js"></script>
   <script>
     

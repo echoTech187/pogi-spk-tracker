@@ -4,7 +4,7 @@
 @section('content')
 
   <!-- Main Body -->
-  <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-5 page-fade-in">
+  <div class="space-y-5">
 
     <!-- MedCred Standard Heading Banner -->
     <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -514,8 +514,6 @@
       </div>
     </div>
 
-  </main>
-
   <!-- Reusable Action Dropdown Menu -->
   <div id="rowActionMenu" class="hidden fixed z-50 bg-white border border-slate-200 rounded-2xl shadow-2xl py-1.5 text-xs w-40">
     <button onclick="handleRowAction('detail')" class="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium">
@@ -529,9 +527,12 @@
       <span class="material-symbols-outlined text-sm">delete</span> Hapus Data
     </button>
   </div>
+</div>
+@endsection
 
+@section('modals')
   <!-- Modal Add Generic Master Item -->
-  <div id="manageAddModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+  <div id="manageAddModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 id="manageAddModalTitle" class="font-black text-slate-900 text-base">Add Item</h3>
@@ -552,7 +553,7 @@
   </div>
 
   <!-- Modal View Details -->
-  <div id="manageDetailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+  <div id="manageDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3 shrink-0">
         <h3 id="manageDetailModalTitle" class="font-black text-slate-900 text-base">Rincian Data Master</h3>
@@ -570,7 +571,7 @@
   </div>
 
   <!-- Modal Edit Item -->
-  <div id="manageEditModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+  <div id="manageEditModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 id="manageEditModalTitle" class="font-black text-slate-900 text-base">Edit Data Master</h3>
@@ -589,7 +590,9 @@
       </form>
     </div>
   </div>
+@endsection
 
+@section('scripts')
   <script src="/js/pdf_exporter.js"></script>
   <script>
     window.LIVE_MANAGE_DOCTORS = @json($doctors ?? []);
