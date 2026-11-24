@@ -1,3 +1,19 @@
+@php
+  $headerUser = Auth::user() ?? ($user ?? null);
+  $headerName = $headerUser?->full_name ?? 'Super Admin';
+  $headerEmail = $headerUser?->email ?? 'super@example.com';
+  $headerRole = $headerUser?->role ?? 'SUPER_ADMIN';
+  $headerRoleLabel = match($headerRole) {
+      'SUPER_ADMIN' => 'Super Admin Sistem',
+      'ADMIN_PUSAT' => 'Admin Data Pusat',
+      'ADMIN_POGI' => 'Pengurus PP POGI',
+      'ADMIN_CABANG' => 'Pengurus Cabang POGI',
+      'DOKTER' => 'Dokter Spesialis Obgyn',
+      default => 'Pengurus'
+  };
+  $headerInitials = collect(explode(' ', $headerName))->filter()->map(fn($part) => strtoupper(substr($part, 0, 1)))->take(2)->implode('') ?: 'SA';
+@endphp
+
 <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200/90 shrink-0 w-full print:hidden">
   <div class="h-14 sm:h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
     <!-- Left: Mobile menu & Scope Selector -->
@@ -10,27 +26,36 @@
       <div class="relative">
         <button type="button" id="headerOrgScopeBtn" onclick="toggleOrgScopeDropdown()" class="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 transition border border-slate-200 rounded-xl px-3 py-1.5 cursor-pointer max-w-[170px] sm:max-w-[240px]">
           <span class="material-symbols-outlined text-[#006948] text-base shrink-0">public</span>
-          <span id="selectedOrgScopeLabel" class="text-xs font-bold text-slate-800 truncate">Semua Wilayah Nasional (38 Provinsi)</span>
+          <span id="selectedOrgScopeLabel" class="text-xs font-bold text-slate-800 truncate">{{ isset($summary) ? $summary->activeScopeLabel : 'Semua Wilayah Nasional (38 Provinsi)' }}</span>
           <span class="material-symbols-outlined text-sm text-slate-400 shrink-0">expand_more</span>
         </button>
-        <div id="orgScopeDropdown" class="hidden absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 text-xs">
+        <div id="orgScopeDropdown" class="hidden absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 text-xs max-h-80 overflow-y-auto">
           <div class="px-3.5 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cakupan Pantauan</div>
-          <button type="button" onclick="selectOrgScope('all', 'Semua Wilayah Nasional (38 Provinsi)')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-            <span>Seluruh Indonesia</span>
-            <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-bold">200 Dokter</span>
-          </button>
-          <button type="button" onclick="selectOrgScope('jabar', 'POGI Cabang Jawa Barat')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-            <span>POGI Cabang Jawa Barat</span>
-            <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
-          </button>
-          <button type="button" onclick="selectOrgScope('dki', 'POGI Cabang DKI Jakarta')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-            <span>POGI Cabang DKI Jakarta</span>
-            <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">22 Dokter</span>
-          </button>
-          <button type="button" onclick="selectOrgScope('jatim', 'POGI Cabang Jawa Timur')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-            <span>POGI Cabang Jawa Timur</span>
-            <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
-          </button>
+          @if(isset($summary) && !empty($summary->scopeOptions))
+            @foreach($summary->scopeOptions as $opt)
+              <button type="button" onclick="selectOrgScope('{{ $opt['id'] }}', '{{ $opt['name'] }}')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
+                <span class="truncate">{{ $opt['name'] }}</span>
+                <span class="px-2 py-0.5 rounded-full {{ $opt['id'] === 'all' ? 'bg-emerald-100 text-[#006948]' : 'bg-sky-100 text-sky-800' }} text-[10px] font-bold shrink-0 ml-2">{{ $opt['count'] }} Dokter</span>
+              </button>
+            @endforeach
+          @else
+            <button type="button" onclick="selectOrgScope('all', 'Semua Wilayah Nasional (38 Provinsi)')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
+              <span>Seluruh Indonesia</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-bold">200 Dokter</span>
+            </button>
+            <button type="button" onclick="selectOrgScope('dki', 'POGI Cabang DKI Jakarta')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
+              <span>POGI Cabang DKI Jakarta</span>
+              <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">22 Dokter</span>
+            </button>
+            <button type="button" onclick="selectOrgScope('jabar', 'POGI Cabang Jawa Barat')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
+              <span>POGI Cabang Jawa Barat</span>
+              <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
+            </button>
+            <button type="button" onclick="selectOrgScope('jatim', 'POGI Cabang Jawa Timur')" class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
+              <span>POGI Cabang Jawa Timur</span>
+              <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
+            </button>
+          @endif
         </div>
       </div>
     </div>
@@ -92,17 +117,17 @@
       <!-- User Avatar Profile Circle -->
       <div class="relative">
         <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#006948] hover:bg-[#005439] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna">
-          <span id="headerUserInitials">SA</span>
+          <span id="headerUserInitials">{{ $headerInitials }}</span>
         </button>
         <!-- User Profile Dropdown Menu -->
         <div id="topUserDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
           <div class="px-4 py-2 border-b border-slate-100 flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-[#006948] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs" id="headerDropdownAvatar">
-              SA
+              {{ $headerInitials }}
             </div>
             <div class="min-w-0">
-              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Super Admin</div>
-              <div class="text-[10px] text-slate-500 truncate" id="headerDropdownRole">Tim Data &amp; IT PP POGI</div>
+              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">{{ $headerName }}</div>
+              <div class="text-[10px] text-slate-500 truncate" id="headerDropdownRole">{{ $headerRoleLabel }}</div>
               <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#006948] border border-emerald-200 text-[9px] font-bold mt-1">
                 <span class="w-1 h-1 rounded-full bg-emerald-600"></span> Online
               </span>

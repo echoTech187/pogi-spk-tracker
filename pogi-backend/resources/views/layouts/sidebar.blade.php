@@ -1,7 +1,7 @@
 <aside id="appSidebar" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] lg:w-64 bg-white border-r border-slate-200/90 flex flex-col shrink-0 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static lg:inset-auto shadow-2xl lg:shadow-none">
   <!-- Top Brand Header -->
   <div class="px-4 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
-    <a href="{{ url('/') }}" class="flex items-center gap-2.5 min-w-0">
+    <a href="{{ url('/dashboard') }}" class="flex items-center gap-2.5 min-w-0">
       <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs shrink-0">
         <img src="{{ asset('assets/img/pogi_logo.jpg') }}" alt="Logo POGI" class="w-full h-full object-contain">
       </div>
@@ -82,6 +82,13 @@
     </div>
   </div>
 
+  @php
+    $sidebarUser = Auth::user() ?? ($user ?? null);
+    $sidebarName = $sidebarUser?->full_name ?? 'Super Admin';
+    $sidebarEmail = $sidebarUser?->email ?? 'super@example.com';
+    $sidebarRole = $sidebarUser?->role ?? 'SUPER_ADMIN';
+  @endphp
+
   <!-- Bottom Profile Card -->
   <div class="p-3 border-t border-slate-100 bg-slate-50/70">
     <div class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
@@ -90,8 +97,8 @@
           <span class="material-symbols-outlined text-lg">admin_panel_settings</span>
         </div>
         <div class="min-w-0">
-          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Super Admin</div>
-          <div class="text-[10px] text-slate-400 font-mono truncate" id="sidebarUserEmail">super@example.com</div>
+          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">{{ $sidebarName }}</div>
+          <div class="text-[10px] text-slate-400 font-mono truncate" id="sidebarUserEmail">{{ $sidebarEmail }}</div>
         </div>
       </div>
       <button type="button" onclick="performLogout()" title="Keluar" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition shrink-0">
