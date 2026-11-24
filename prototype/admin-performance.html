@@ -130,27 +130,7 @@
           <button type="button" onclick="toggleMobileSidebar(true)" class="lg:hidden p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition shrink-0" aria-label="Buka Menu">
             <span class="material-symbols-outlined text-2xl">menu</span>
           </button>
-          <!-- Scope Selector Pill -->
-          <div class="relative">
-            <button type="button" onclick="toggleOrgScopeDropdown()" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-bold transition border border-slate-200/80">
-              <span class="material-symbols-outlined text-[#006948] text-base">public</span>
-              <span id="selectedOrgScopeLabel">Semua Wilayah Nasional (38 Cabang)</span>
-              <span class="material-symbols-outlined text-slate-400 text-sm">expand_more</span>
-            </button>
-            <div id="orgScopeDropdown" class="hidden absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2 z-50 text-xs">
-              <div class="px-3 py-1.5 font-bold text-[10px] text-slate-400 uppercase tracking-wider">Pilih Wilayah Kerja</div>
-              <button type="button" onclick="selectOrgScope('all', 'Semua Wilayah Nasional (38 Cabang)')" class="w-full text-left px-3 py-2 hover:bg-slate-50 font-semibold flex items-center justify-between text-slate-800">
-                <span>Semua Wilayah Nasional (38 Cabang)</span>
-                <span class="material-symbols-outlined text-sm text-[#006948]">check</span>
-              </button>
-              <button type="button" onclick="selectOrgScope('jabar', 'POGI Cabang Jawa Barat')" class="w-full text-left px-3 py-2 hover:bg-slate-50 font-semibold text-slate-600">
-                <span>POGI Cabang Jawa Barat</span>
-              </button>
-              <button type="button" onclick="selectOrgScope('dki', 'POGI Cabang DKI Jakarta')" class="w-full text-left px-3 py-2 hover:bg-slate-50 font-semibold text-slate-600">
-                <span>POGI Cabang DKI Jakarta</span>
-              </button>
-            </div>
-          </div>
+          
         </div>
 
         <div class="flex items-center gap-2 sm:gap-3 shrink-0">

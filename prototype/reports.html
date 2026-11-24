@@ -152,42 +152,7 @@
               <span class="material-symbols-outlined text-2xl">menu</span>
             </button>
 
-            <!-- Scope Selector (38 Provinsi / Cabang) -->
-            <div class="relative">
-              <button type="button" id="headerOrgScopeBtn" onclick="toggleOrgScopeDropdown()"
-                class="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 transition border border-slate-200 rounded-xl px-3 py-1.5 cursor-pointer max-w-[170px] sm:max-w-[240px]">
-                <span class="material-symbols-outlined text-[#006948] text-base shrink-0">public</span>
-                <span id="selectedOrgScopeLabel" class="text-xs font-bold text-slate-800 truncate">Semua Wilayah
-                  Nasional (38 Provinsi)</span>
-                <span class="material-symbols-outlined text-sm text-slate-400 shrink-0">expand_more</span>
-              </button>
-              <div id="orgScopeDropdown"
-                class="hidden absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 text-xs">
-                <div class="px-3.5 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cakupan
-                  Pantauan</div>
-                <button type="button" onclick="selectOrgScope('all', 'Semua Wilayah Nasional (38 Provinsi)')"
-                  class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-                  <span>Seluruh Indonesia</span>
-                  <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#006948] text-[10px] font-bold">200
-                    Dokter</span>
-                </button>
-                <button type="button" onclick="selectOrgScope('jabar', 'POGI Cabang Jawa Barat')"
-                  class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-                  <span>POGI Cabang Jawa Barat</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
-                </button>
-                <button type="button" onclick="selectOrgScope('dki', 'POGI Cabang DKI Jakarta')"
-                  class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-                  <span>POGI Cabang DKI Jakarta</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">22 Dokter</span>
-                </button>
-                <button type="button" onclick="selectOrgScope('jatim', 'POGI Cabang Jawa Timur')"
-                  class="w-full text-left px-3.5 py-2 hover:bg-emerald-50 text-slate-700 flex items-center justify-between font-semibold">
-                  <span>POGI Cabang Jawa Timur</span>
-                  <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">8 Dokter</span>
-                </button>
-              </div>
-            </div>
+            
           </div>
 
           <!-- Center: Global Search Input (Inside Red Box 1) -->

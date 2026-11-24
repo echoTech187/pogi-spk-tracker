@@ -850,35 +850,6 @@ function applyRbacEnforcement() {
 }
 
 function initRbacRoleSwitcher() {
-  if (typeof PogiStore === 'undefined') return;
-  const user = PogiStore.getCurrentUser();
-
-  // Switcher inside dropdown as secondary
-  const userDd = document.getElementById('topUserDropdown');
-  if (userDd && !document.getElementById('headerRoleSwitcher')) {
-    const switcherDiv = document.createElement('div');
-    switcherDiv.className = 'px-3.5 py-2.5 border-b border-slate-100 bg-slate-50/80';
-    switcherDiv.innerHTML = `
-      <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center justify-between">
-        <span>Simulasi Peran Hak Akses</span>
-        <span class="text-[9px] text-[#006948] font-black">5 Role Resmi</span>
-      </div>
-      <select id="headerRoleSwitcher" onchange="switchUserRole(this.value)" class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#006948]">
-        <option value="SUPER_ADMIN">👑 Super Admin (Full-access)</option>
-        <option value="ADMIN_PUSAT">🏛️ Admin Pusat (Pantau Verifikator &amp; SLA)</option>
-        <option value="ADMIN_POGI">⚡ Admin POGI (Validasi SKP &amp; Dokumen PJ)</option>
-        <option value="ADMIN_CABANG">🏢 Admin Cabang (Verifikasi SKP Wilayah)</option>
-        <option value="DOKTER">🩺 User/Dokter (Progress SKP Mandiri)</option>
-      </select>
-    `;
-    const linksDiv = userDd.querySelector('.py-1') || userDd.children[1];
-    if (linksDiv && linksDiv.parentElement === userDd) {
-      userDd.insertBefore(switcherDiv, linksDiv);
-    } else {
-      userDd.appendChild(switcherDiv);
-    }
-  }
-
   applyRbacEnforcement();
 }
 
