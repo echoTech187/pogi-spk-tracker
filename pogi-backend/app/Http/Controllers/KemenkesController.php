@@ -20,7 +20,7 @@ class KemenkesController extends Controller
     {
         $user = Auth::user();
         $now = Carbon::now();
-        $portalUrl = config('services.kemenkes.portal_url', 'https://satusehat.kemkes.go.id');
+        $portalUrl = config('services.kemenkes.portal_url', 'https://satusehat.kemkes.go.id/sdmk/login');
 
         $doctorId = $request->input('doctor_id');
         $doctorName = $request->input('doctor_name');
@@ -83,7 +83,7 @@ class KemenkesController extends Controller
     public function launchAndTrack(Request $request): RedirectResponse
     {
         $this->trackAccess($request);
-        $portalUrl = config('services.kemenkes.portal_url', 'https://satusehat.kemkes.go.id');
+        $portalUrl = config('services.kemenkes.portal_url', 'https://satusehat.kemkes.go.id/sdmk/login');
 
         return redirect()->away($portalUrl);
     }

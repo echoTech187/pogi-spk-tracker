@@ -17,7 +17,7 @@
     <!-- Mobile Top Brand Bar (< lg) -->
     <div class="lg:hidden bg-gradient-to-r from-[#022b1f] via-[#004d34] to-[#01140f] px-5 py-4 border-b border-emerald-800/40 flex items-center justify-between text-white">
       <div class="flex items-center gap-3 min-w-0">
-        <div class="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-md shadow-emerald-500/30 shrink-0">
+        <div class="w-10 h-10 rounded-xl p-1 flex items-center justify-center shadow-md shadow-emerald-500/30 shrink-0">
           <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
         </div>
         <div class="min-w-0">
@@ -115,7 +115,7 @@
 
       <!-- Top Header Brand -->
       <div class="flex items-center gap-4 relative z-10">
-        <div class="w-14 h-14 rounded-2xl bg-white p-1.5 flex items-center justify-center shadow-xl shadow-emerald-950/40 shrink-0">
+        <div class="w-14 h-14 rounded-2xl p-1.5 flex items-center justify-center shadow-xl shadow-emerald-950/40 shrink-0">
           <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
         </div>
         <div>

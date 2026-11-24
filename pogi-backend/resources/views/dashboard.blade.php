@@ -698,13 +698,13 @@
       .then(data => {
         if (data.success) {
           showToast('Sesi Kemenkes tercatat otomatis ke log kinerja admin!', 'success');
-          window.open(data.portal_url || 'https://satusehat.kemkes.go.id', '_blank');
+          window.open(data.portal_url || 'https://satusehat.kemkes.go.id/sdmk/login', '_blank');
         } else {
-          window.open('https://satusehat.kemkes.go.id', '_blank');
+          window.open('https://satusehat.kemkes.go.id/sdmk/login', '_blank');
         }
       })
       .catch(() => {
-        window.open('https://satusehat.kemkes.go.id', '_blank');
+        window.open('https://satusehat.kemkes.go.id/sdmk/login', '_blank');
       });
     }
 

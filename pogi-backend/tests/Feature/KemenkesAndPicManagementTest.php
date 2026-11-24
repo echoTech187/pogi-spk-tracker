@@ -45,7 +45,7 @@ class KemenkesAndPicManagementTest extends TestCase
             ->assertJson([
                 'success' => true,
                 'status' => 'success',
-                'portal_url' => 'https://satusehat.kemkes.go.id',
+                'portal_url' => 'https://satusehat.kemkes.go.id/sdmk/login',
             ]);
 
         // Verifikasi log tercatat di database
@@ -71,7 +71,7 @@ class KemenkesAndPicManagementTest extends TestCase
         $response = $this->actingAs($superAdmin)
             ->get('/kemenkes/launch');
 
-        $response->assertRedirect('https://satusehat.kemkes.go.id');
+        $response->assertRedirect('https://satusehat.kemkes.go.id/sdmk/login');
     }
 
     public function test_guest_cannot_access_kemenkes_tracker(): void

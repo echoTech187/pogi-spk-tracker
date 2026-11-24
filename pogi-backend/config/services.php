@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'kemenkes' => [
+        'portal_url' => env('KEMENKES_PORTAL_URL', 'https://satusehat.kemkes.go.id/sdmk/login'),
+    ],
+
 ];

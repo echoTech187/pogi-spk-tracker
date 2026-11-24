@@ -459,7 +459,7 @@ sequenceDiagram
     opt Jika ada konteks dokter
         Ctrl->>DB: UPDATE doctors SET kemenkes_updated_at = NOW()
     end
-    Ctrl-->>UI: 200 OK (portal_url: https://satusehat.kemkes.go.id, status: 'success')
+    Ctrl-->>UI: 200 OK (portal_url: https://satusehat.kemkes.go.id/sdmk/login, status: 'success')
     UI->>UI: Tampilkan Toast "Sesi kerja Kemenkes tercatat otomatis!"
     UI->>Portal: Buka tab baru portal Plataran Sehat Kemenkes
     Note over Admin,Portal: Admin bekerja tanpa perlu mencatat manual jam mulai/selesai kerja
