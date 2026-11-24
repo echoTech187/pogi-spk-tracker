@@ -201,10 +201,12 @@
         </table>
       </div>
     </div>
-  </main>
+  </div>
+@endsection
 
+@section('modals')
   <!-- MODAL 1: Detail Kinerja & Log Aktivitas Admin (Drill-Down Modal) -->
-  <div id="adminDetailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+  <div id="adminDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3 shrink-0">
         <div class="flex items-center gap-3">
@@ -267,7 +269,7 @@
   </div>
 
   <!-- MODAL 2: Redistribusi Beban Dokter (Workload Rebalancer) -->
-  <div id="workloadRebalanceModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+  <div id="workloadRebalanceModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
@@ -308,6 +310,9 @@
       </div>
     </div>
   </div>
+@endsection
+
+@section('scripts')
   <!-- Shared Scripts -->
   <script>
     const IS_SUPER_ADMIN = @json(Auth::user()?->role === 'SUPER_ADMIN');

@@ -1,541 +1,520 @@
-<!DOCTYPE html>
-<html lang="id" class="h-full bg-[#f4f7f6]">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POGI SKP Tracker - Pengelolaan Master Data (Manage)</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Core Styles -->
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
-  <!-- Mobile Backdrop Overlay -->
-  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
+@extends('layouts.app')
 
-  <div class="flex h-screen overflow-hidden">
-    <!-- APP SIDEBAR -->
-    @include('layouts.sidebar')
+@section('title', 'POGI SKP Tracker - Dashboard Pemantauan SKP Nasional')
+@section('content')
 
-    <!-- MAIN CONSOLE WRAPPER -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-      <!-- Top Sticky Header -->
-      @include('layouts.header')
+  <!-- Main Body -->
+  <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-5 page-fade-in">
 
-      <!-- Main Body -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-5 page-fade-in">
-
-        <!-- MedCred Standard Heading Banner -->
-        <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div class="space-y-1.5">
-            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
-              <span>PUSAT PENGELOLAAN MASTER DATA</span>
-            </div>
-            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              <span>Master Data Pangkalan POGI SKP</span>
-              <span id="manageHeadingBadge" class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(5 Entitas Terpadu)</span>
-            </h1>
-            <p class="text-xs text-slate-500 max-w-2xl leading-relaxed">
-              Manajemen terpadu database dokter spesialis, rumah sakit &amp; jejaring faskes, katalog kegiatan SKP, kategori kegiatan, serta hak akses pengguna sistem.
-            </p>
-          </div>
-          
+    <!-- MedCred Standard Heading Banner -->
+    <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="space-y-1.5">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
+          <span>PUSAT PENGELOLAAN MASTER DATA</span>
         </div>
-
-        <!-- Top Segmented Tabs (Doctor, Institution, SKP Event, Event Category, User) -->
-        <div class="p-1.5 bg-slate-200/70 rounded-2xl flex flex-wrap gap-1 text-xs font-bold text-slate-600">
-          <button type="button" onclick="switchManageTab('doctor')" id="tab-btn-doctor" class="py-2 px-3.5 rounded-xl bg-white text-slate-900 shadow-xs transition flex items-center gap-1.5 font-bold">
-            <span class="material-symbols-outlined text-sm">person</span>
-            <span>1. Doctor</span>
-          </button>
-          <button type="button" onclick="switchManageTab('institution')" id="tab-btn-institution" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-sm">domain</span>
-            <span>2. Institution (RS Jejaring)</span>
-          </button>
-          <button type="button" onclick="switchManageTab('event')" id="tab-btn-event" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-sm">calendar_month</span>
-            <span>3. SKP Event Master</span>
-          </button>
-          <button type="button" onclick="switchManageTab('category')" id="tab-btn-category" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-sm">category</span>
-            <span>4. Event Category</span>
-          </button>
-          <button type="button" onclick="switchManageTab('user')" id="tab-btn-user" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-sm">manage_accounts</span>
-            <span>5. User &amp; Hak Akses</span>
-          </button>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- PANE 1: DOCTOR MASTER                      -->
-        <!-- ========================================== -->
-        <div id="pane-doctor" class="space-y-4">
-          <!-- Toolbar Filters (Persis Doctors.html) -->
-          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Nama Dokter / NIK / No Anggota</label>
-                <div class="relative">
-                  <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
-                  <input id="searchManageDoctorInput" onkeyup="filterManageDoctorTable()" type="text" placeholder="Ketik nama spesialis, NIK, STR..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
-                </div>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Provinsi / Wilayah Cabang</label>
-                <select id="manageDoctorProvFilter" onchange="filterManageDoctorTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                  <option value="ALL">Semua Cabang (38 Provinsi)</option>
-                <option value="Aceh">Aceh</option>
-                <option value="Bali">Bali</option>
-                <option value="Banten">Banten</option>
-                <option value="Bengkulu">Bengkulu</option>
-                <option value="DI Yogyakarta">DI Yogyakarta</option>
-                <option value="DKI Jakarta">DKI Jakarta</option>
-                <option value="Gorontalo">Gorontalo</option>
-                <option value="Jambi">Jambi</option>
-                <option value="Jawa Barat">Jawa Barat</option>
-                <option value="Jawa Tengah">Jawa Tengah</option>
-                <option value="Jawa Timur">Jawa Timur</option>
-                <option value="Kalimantan Barat">Kalimantan Barat</option>
-                <option value="Kalimantan Selatan">Kalimantan Selatan</option>
-                <option value="Kalimantan Tengah">Kalimantan Tengah</option>
-                <option value="Kalimantan Timur">Kalimantan Timur</option>
-                <option value="Kalimantan Utara">Kalimantan Utara</option>
-                <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
-                <option value="Kepulauan Riau">Kepulauan Riau</option>
-                <option value="Lampung">Lampung</option>
-                <option value="Maluku">Maluku</option>
-                <option value="Maluku Utara">Maluku Utara</option>
-                <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
-                <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
-                <option value="Papua">Papua</option>
-                <option value="Papua Barat">Papua Barat</option>
-                <option value="Papua Barat Daya">Papua Barat Daya</option>
-                <option value="Papua Pegunungan">Papua Pegunungan</option>
-                <option value="Papua Selatan">Papua Selatan</option>
-                <option value="Papua Tengah">Papua Tengah</option>
-                <option value="Riau">Riau</option>
-                <option value="Sulawesi Barat">Sulawesi Barat</option>
-                <option value="Sulawesi Selatan">Sulawesi Selatan</option>
-                <option value="Sulawesi Tengah">Sulawesi Tengah</option>
-                <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
-                <option value="Sulawesi Utara">Sulawesi Utara</option>
-                <option value="Sumatera Barat">Sumatera Barat</option>
-                <option value="Sumatera Selatan">Sumatera Selatan</option>
-                <option value="Sumatera Utara">Sumatera Utara</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Status Kepatuhan SKP</label>
-                <select id="manageDoctorStatusFilter" onchange="filterManageDoctorTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                  <option value="ALL">Semua Status (Complete &amp; Incomplete)</option>
-                  <option value="Complete">Complete (Target Terpenuhi)</option>
-                  <option value="Incomplete">Incomplete (Perlu Follow-Up)</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-              <div>Menampilkan <span id="manageDoctorCounter" class="font-bold text-slate-900">0</span> dokter dari total pangkalan data</div>
-              <div class="flex items-center gap-3">
-                <button type="button" onclick="resetManageDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
-                  <span class="material-symbols-outlined text-sm">person_add</span>
-                  <span>Tambah Dokter</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Table (Persis Format doctors.html) -->
-          <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
-            <div class="hidden md:block overflow-x-auto">
-              <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
-                  <tr>
-                    <th class="py-3 px-4">Dokter &amp; No Anggota</th>
-                    <th class="py-3 px-4">Provinsi &amp; RS Jejaring</th>
-                    <th class="py-3 px-4">SKP Progress (Q4)</th>
-                    <th class="py-3 px-4 text-center">Pending Credits</th>
-                    <th class="py-3 px-4">
-                      <div class="flex items-center gap-1 text-sky-800 font-bold">
-                        <span class="w-2 h-2 rounded-full bg-sky-600"></span> Pelayanan (Min 80)
-                      </div>
-                    </th>
-                    <th class="py-3 px-4">
-                      <div class="flex items-center gap-1 text-amber-800 font-bold">
-                        <span class="w-2 h-2 rounded-full bg-amber-600"></span> Pengabdian (Min 30)
-                      </div>
-                    </th>
-                    <th class="py-3 px-4">
-                      <div class="flex items-center gap-1 text-emerald-800 font-bold">
-                        <span class="w-2 h-2 rounded-full bg-emerald-600"></span> Pembelajaran (Min 50)
-                      </div>
-                    </th>
-                    <th class="py-3 px-4 text-center">Status</th>
-                    <th class="py-3 px-4">Aktivitas Terakhir</th>
-                    <th class="py-3 px-4 text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="manageDoctorTableBody" class="divide-y divide-slate-100 font-medium">
-                  <!-- Rendered dynamically -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- MedCred Pagination Footer -->
-            <div id="manageDoctorPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
-          </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- PANE 2: INSTITUTION (RS JEJARING)          -->
-        <!-- ========================================== -->
-        <div id="pane-institution" class="hidden space-y-4">
-          <!-- Toolbar Filters -->
-          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Rumah Sakit / Klinik / Alamat</label>
-                <div class="relative">
-                  <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
-                  <input id="searchManageInstInput" onkeyup="filterManageInstTable()" type="text" placeholder="Ketik nama rumah sakit..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
-                </div>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Provinsi / Wilayah</label>
-                <select id="manageInstProvFilter" onchange="filterManageInstTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                  <option value="ALL">Semua Provinsi (38 Wilayah)</option>
-                <option value="Aceh">Aceh</option>
-                <option value="Bali">Bali</option>
-                <option value="Banten">Banten</option>
-                <option value="Bengkulu">Bengkulu</option>
-                <option value="DI Yogyakarta">DI Yogyakarta</option>
-                <option value="DKI Jakarta">DKI Jakarta</option>
-                <option value="Gorontalo">Gorontalo</option>
-                <option value="Jambi">Jambi</option>
-                <option value="Jawa Barat">Jawa Barat</option>
-                <option value="Jawa Tengah">Jawa Tengah</option>
-                <option value="Jawa Timur">Jawa Timur</option>
-                <option value="Kalimantan Barat">Kalimantan Barat</option>
-                <option value="Kalimantan Selatan">Kalimantan Selatan</option>
-                <option value="Kalimantan Tengah">Kalimantan Tengah</option>
-                <option value="Kalimantan Timur">Kalimantan Timur</option>
-                <option value="Kalimantan Utara">Kalimantan Utara</option>
-                <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
-                <option value="Kepulauan Riau">Kepulauan Riau</option>
-                <option value="Lampung">Lampung</option>
-                <option value="Maluku">Maluku</option>
-                <option value="Maluku Utara">Maluku Utara</option>
-                <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
-                <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
-                <option value="Papua">Papua</option>
-                <option value="Papua Barat">Papua Barat</option>
-                <option value="Papua Barat Daya">Papua Barat Daya</option>
-                <option value="Papua Pegunungan">Papua Pegunungan</option>
-                <option value="Papua Selatan">Papua Selatan</option>
-                <option value="Papua Tengah">Papua Tengah</option>
-                <option value="Riau">Riau</option>
-                <option value="Sulawesi Barat">Sulawesi Barat</option>
-                <option value="Sulawesi Selatan">Sulawesi Selatan</option>
-                <option value="Sulawesi Tengah">Sulawesi Tengah</option>
-                <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
-                <option value="Sulawesi Utara">Sulawesi Utara</option>
-                <option value="Sumatera Barat">Sumatera Barat</option>
-                <option value="Sumatera Selatan">Sumatera Selatan</option>
-                <option value="Sumatera Utara">Sumatera Utara</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Tipe Faskes</label>
-                <select id="manageInstTypeFilter" onchange="filterManageInstTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                  <option value="ALL">Semua Tipe Faskes</option>
-                  <option value="RSUP">RSUP (Pusat Rujukan Nasional)</option>
-                  <option value="RSUD">RSUD (Daerah / Provinsi)</option>
-                  <option value="Swasta">RS Swasta / Jejaring</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-              <div>Menampilkan <span id="manageInstCounter" class="font-bold text-slate-900">0</span> faskes jejaring</div>
-              <div class="flex items-center gap-3">
-                <button type="button" onclick="resetManageInstFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
-                  <span class="material-symbols-outlined text-sm">domain_add</span>
-                  <span>Tambah Institusi</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Table -->
-          <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
-            <div class="hidden md:block overflow-x-auto">
-              <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
-                  <tr>
-                    <th class="py-3 px-4">Rumah Sakit &amp; Faskes</th>
-                    <th class="py-3 px-4">Provinsi &amp; Alamat</th>
-                    <th class="py-3 px-4 text-center">Dokter Obgyn</th>
-                    <th class="py-3 px-4 text-center">Kapasitas Pelayanan</th>
-                    <th class="py-3 px-4 text-center">Status Faskes</th>
-                    <th class="py-3 px-4">Aktivitas Terakhir</th>
-                    <th class="py-3 px-4 text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="manageInstTableBody" class="divide-y divide-slate-100 font-medium">
-                  <!-- Rendered dynamically -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Mobile Touch Cards (< md) -->
-            <div id="manageInstMobileCards" class="md:hidden space-y-3 p-4">
-              <!-- Rendered dynamically for mobile -->
-            </div>
-
-            <!-- MedCred Pagination Footer -->
-            <div id="manageInstPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
-          </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- PANE 3: SKP EVENT MASTER                   -->
-        <!-- ========================================== -->
-        <div id="pane-event" class="hidden space-y-4">
-          <!-- Toolbar Filters -->
-          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Event / Topik Ilmiah</label>
-                <div class="relative">
-                  <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
-                  <input id="searchManageEventInput" onkeyup="filterManageEventTable()" type="text" placeholder="Ketik nama workshop, PIT..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
-                </div>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Subbidang / Ranah SKP</label>
-                <select id="manageEventTypeFilter" onchange="filterManageEventTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                  <option value="ALL">Semua Ranah (3 Subbidang)</option>
-                  <option value="Pembelajaran">3. Pembelajaran (Ilmiah/Workshop)</option>
-                  <option value="Pengabdian">2. Pengabdian (Baksos/Penyuluhan)</option>
-                  <option value="Pelayanan">1. Pelayanan (Praktik Klinis)</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Status Event</label>
-                <select id="manageEventStatusFilter" onchange="filterManageEventTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                  <option value="ALL">Semua Status</option>
-                  <option value="Dibuka">Dibuka (Pendaftaran Aktif)</option>
-                  <option value="Selesai">Selesai (Kredit Ditutup)</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-              <div>Menampilkan <span id="manageEventCounter" class="font-bold text-slate-900">0</span> event SKP terdaftar</div>
-              <div class="flex items-center gap-3">
-                <button type="button" onclick="resetManageEventFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
-                  <span class="material-symbols-outlined text-sm">add_circle</span>
-                  <span>Tambah Event SKP</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Table -->
-          <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
-            <div class="hidden md:block overflow-x-auto">
-              <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
-                  <tr>
-                    <th class="py-3 px-4">Event &amp; Kegiatan Ilmiah</th>
-                    <th class="py-3 px-4">Tanggal &amp; Jadwal</th>
-                    <th class="py-3 px-4 text-center">Ranah SKP</th>
-                    <th class="py-3 px-4 text-center">Nilai Kredit</th>
-                    <th class="py-3 px-4">Peserta Tuntas</th>
-                    <th class="py-3 px-4 text-center">Status Kegiatan</th>
-                    <th class="py-3 px-4 text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="manageEventTableBody" class="divide-y divide-slate-100 font-medium">
-                  <!-- Rendered dynamically -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Mobile Touch Cards (< md) -->
-            <div id="manageEventMobileCards" class="md:hidden space-y-3 p-4">
-              <!-- Rendered dynamically for mobile -->
-            </div>
-
-            <!-- MedCred Pagination Footer -->
-            <div id="manageEventPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
-          </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- PANE 4: EVENT CATEGORY                     -->
-        <!-- ========================================== -->
-        <div id="pane-category" class="hidden space-y-4">
-          <!-- Toolbar Filters -->
-          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Kategori Kegiatan</label>
-                <div class="relative">
-                  <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
-                  <input id="searchManageCatInput" onkeyup="filterManageCatTable()" type="text" placeholder="Ketik nama kategori..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
-                </div>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Ranah SKP Acuan</label>
-                <select id="manageCatTypeFilter" onchange="filterManageCatTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                  <option value="ALL">Semua Ranah</option>
-                  <option value="Pembelajaran">Pembelajaran</option>
-                  <option value="Pengabdian">Pengabdian</option>
-                  <option value="Pelayanan">Pelayanan</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Status Kategori</label>
-                <select class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                  <option>Aktif Digunakan</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-              <div>Menampilkan <span id="manageCatCounter" class="font-bold text-slate-900">0</span> kategori terverifikasi</div>
-              <div class="flex items-center gap-3">
-                <button type="button" onclick="resetManageCatFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
-                  <span class="material-symbols-outlined text-sm">category</span>
-                  <span>Tambah Kategori</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Table -->
-          <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
-            <div class="hidden md:block overflow-x-auto">
-              <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
-                  <tr>
-                    <th class="py-3 px-4">Kategori Kegiatan SKP</th>
-                    <th class="py-3 px-4 text-center">Ranah Terkait</th>
-                    <th class="py-3 px-4 text-center">Jumlah Kegiatan</th>
-                    <th class="py-3 px-4 text-center">Standar Nilai Kredit</th>
-                    <th class="py-3 px-4 text-center">Status</th>
-                    <th class="py-3 px-4 text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="manageCatTableBody" class="divide-y divide-slate-100 font-medium">
-                  <!-- Rendered dynamically -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Mobile Touch Cards (< md) -->
-            <div id="manageCatMobileCards" class="md:hidden space-y-3 p-4">
-              <!-- Rendered dynamically for mobile -->
-            </div>
-
-            <!-- MedCred Pagination Footer -->
-            <div id="manageCatPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
-          </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- PANE 5: USER & HAK AKSES                   -->
-        <!-- ========================================== -->
-        <div id="pane-user" class="hidden space-y-4">
-          <!-- Toolbar Filters -->
-          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Pengguna / Email</label>
-                <div class="relative">
-                  <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
-                  <input id="searchManageUserInput" onkeyup="filterManageUserTable()" type="text" placeholder="Ketik nama admin atau email..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
-                </div>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Peran / Hak Akses</label>
-                <select id="manageUserRoleFilter" onchange="filterManageUserTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                  <option value="ALL">Semua Role (5 Role)</option>
-                  <option value="Super Admin">Super Admin</option>
-                  <option value="Admin Pusat">Admin Pusat</option>
-                  <option value="Admin POGI">Admin POGI</option>
-                  <option value="Admin Cabang">Admin Cabang</option>
-                  <option value="User/Dokter">User/Dokter</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 mb-1 text-xs">Status Akun</label>
-                <select class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                  <option>Aktif Terverifikasi</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-              <div>Menampilkan <span id="manageUserCounter" class="font-bold text-slate-900">0</span> akun pengelola</div>
-              <div class="flex items-center gap-3">
-                <button type="button" onclick="resetManageUserFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
-                <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
-                  <span class="material-symbols-outlined text-sm">manage_accounts</span>
-                  <span>Tambah Pengguna</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Table -->
-          <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
-            <div class="hidden md:block overflow-x-auto">
-              <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
-                  <tr>
-                    <th class="py-3 px-4">Pengguna &amp; Email</th>
-                    <th class="py-3 px-4 text-center">Peran / Hak Akses</th>
-                    <th class="py-3 px-4">Wilayah Penugasan</th>
-                    <th class="py-3 px-4">Terdaftar Sejak</th>
-                    <th class="py-3 px-4 text-center">Status Akun</th>
-                    <th class="py-3 px-4 text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="manageUserTableBody" class="divide-y divide-slate-100 font-medium">
-                  <!-- Rendered dynamically -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Mobile Touch Cards (< md) -->
-            <div id="manageUserMobileCards" class="md:hidden space-y-3 p-4">
-              <!-- Rendered dynamically for mobile -->
-            </div>
-
-            <!-- MedCred Pagination Footer -->
-            <div id="manageUserPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
-          </div>
-        </div>
-
-      </main>
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <span>Master Data Pangkalan POGI SKP</span>
+          <span id="manageHeadingBadge" class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(5 Entitas Terpadu)</span>
+        </h1>
+        <p class="text-xs text-slate-500 max-w-2xl leading-relaxed">
+          Manajemen terpadu database dokter spesialis, rumah sakit &amp; jejaring faskes, katalog kegiatan SKP, kategori kegiatan, serta hak akses pengguna sistem.
+        </p>
+      </div>
+      
     </div>
-  </div>
+
+    <!-- Top Segmented Tabs (Doctor, Institution, SKP Event, Event Category, User) -->
+    <div class="p-1.5 bg-slate-200/70 rounded-2xl flex flex-wrap gap-1 text-xs font-bold text-slate-600">
+      <button type="button" onclick="switchManageTab('doctor')" id="tab-btn-doctor" class="py-2 px-3.5 rounded-xl bg-white text-slate-900 shadow-xs transition flex items-center gap-1.5 font-bold">
+        <span class="material-symbols-outlined text-sm">person</span>
+        <span>1. Doctor</span>
+      </button>
+      <button type="button" onclick="switchManageTab('institution')" id="tab-btn-institution" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">domain</span>
+        <span>2. Institution (RS Jejaring)</span>
+      </button>
+      <button type="button" onclick="switchManageTab('event')" id="tab-btn-event" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">calendar_month</span>
+        <span>3. SKP Event Master</span>
+      </button>
+      <button type="button" onclick="switchManageTab('category')" id="tab-btn-category" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">category</span>
+        <span>4. Event Category</span>
+      </button>
+      <button type="button" onclick="switchManageTab('user')" id="tab-btn-user" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">manage_accounts</span>
+        <span>5. User &amp; Hak Akses</span>
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PANE 1: DOCTOR MASTER                      -->
+    <!-- ========================================== -->
+    <div id="pane-doctor" class="space-y-4">
+      <!-- Toolbar Filters (Persis Doctors.html) -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Nama Dokter / NIK / No Anggota</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
+              <input id="searchManageDoctorInput" onkeyup="filterManageDoctorTable()" type="text" placeholder="Ketik nama spesialis, NIK, STR..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Provinsi / Wilayah Cabang</label>
+            <select id="manageDoctorProvFilter" onchange="filterManageDoctorTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+              <option value="ALL">Semua Cabang (38 Provinsi)</option>
+            <option value="Aceh">Aceh</option>
+            <option value="Bali">Bali</option>
+            <option value="Banten">Banten</option>
+            <option value="Bengkulu">Bengkulu</option>
+            <option value="DI Yogyakarta">DI Yogyakarta</option>
+            <option value="DKI Jakarta">DKI Jakarta</option>
+            <option value="Gorontalo">Gorontalo</option>
+            <option value="Jambi">Jambi</option>
+            <option value="Jawa Barat">Jawa Barat</option>
+            <option value="Jawa Tengah">Jawa Tengah</option>
+            <option value="Jawa Timur">Jawa Timur</option>
+            <option value="Kalimantan Barat">Kalimantan Barat</option>
+            <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+            <option value="Kalimantan Tengah">Kalimantan Tengah</option>
+            <option value="Kalimantan Timur">Kalimantan Timur</option>
+            <option value="Kalimantan Utara">Kalimantan Utara</option>
+            <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
+            <option value="Kepulauan Riau">Kepulauan Riau</option>
+            <option value="Lampung">Lampung</option>
+            <option value="Maluku">Maluku</option>
+            <option value="Maluku Utara">Maluku Utara</option>
+            <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
+            <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
+            <option value="Papua">Papua</option>
+            <option value="Papua Barat">Papua Barat</option>
+            <option value="Papua Barat Daya">Papua Barat Daya</option>
+            <option value="Papua Pegunungan">Papua Pegunungan</option>
+            <option value="Papua Selatan">Papua Selatan</option>
+            <option value="Papua Tengah">Papua Tengah</option>
+            <option value="Riau">Riau</option>
+            <option value="Sulawesi Barat">Sulawesi Barat</option>
+            <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+            <option value="Sulawesi Tengah">Sulawesi Tengah</option>
+            <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
+            <option value="Sulawesi Utara">Sulawesi Utara</option>
+            <option value="Sumatera Barat">Sumatera Barat</option>
+            <option value="Sumatera Selatan">Sumatera Selatan</option>
+            <option value="Sumatera Utara">Sumatera Utara</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Status Kepatuhan SKP</label>
+            <select id="manageDoctorStatusFilter" onchange="filterManageDoctorTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+              <option value="ALL">Semua Status (Complete &amp; Incomplete)</option>
+              <option value="Complete">Complete (Target Terpenuhi)</option>
+              <option value="Incomplete">Incomplete (Perlu Follow-Up)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
+          <div>Menampilkan <span id="manageDoctorCounter" class="font-bold text-slate-900">0</span> dokter dari total pangkalan data</div>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="resetManageDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+              <span class="material-symbols-outlined text-sm">person_add</span>
+              <span>Tambah Dokter</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table (Persis Format doctors.html) -->
+      <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+              <tr>
+                <th class="py-3 px-4">Dokter &amp; No Anggota</th>
+                <th class="py-3 px-4">Provinsi &amp; RS Jejaring</th>
+                <th class="py-3 px-4">SKP Progress (Q4)</th>
+                <th class="py-3 px-4 text-center">Pending Credits</th>
+                <th class="py-3 px-4">
+                  <div class="flex items-center gap-1 text-sky-800 font-bold">
+                    <span class="w-2 h-2 rounded-full bg-sky-600"></span> Pelayanan (Min 80)
+                  </div>
+                </th>
+                <th class="py-3 px-4">
+                  <div class="flex items-center gap-1 text-amber-800 font-bold">
+                    <span class="w-2 h-2 rounded-full bg-amber-600"></span> Pengabdian (Min 30)
+                  </div>
+                </th>
+                <th class="py-3 px-4">
+                  <div class="flex items-center gap-1 text-emerald-800 font-bold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span> Pembelajaran (Min 50)
+                  </div>
+                </th>
+                <th class="py-3 px-4 text-center">Status</th>
+                <th class="py-3 px-4">Aktivitas Terakhir</th>
+                <th class="py-3 px-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="manageDoctorTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- MedCred Pagination Footer -->
+        <div id="manageDoctorPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PANE 2: INSTITUTION (RS JEJARING)          -->
+    <!-- ========================================== -->
+    <div id="pane-institution" class="hidden space-y-4">
+      <!-- Toolbar Filters -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Rumah Sakit / Klinik / Alamat</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
+              <input id="searchManageInstInput" onkeyup="filterManageInstTable()" type="text" placeholder="Ketik nama rumah sakit..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Provinsi / Wilayah</label>
+            <select id="manageInstProvFilter" onchange="filterManageInstTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+              <option value="ALL">Semua Provinsi (38 Wilayah)</option>
+            <option value="Aceh">Aceh</option>
+            <option value="Bali">Bali</option>
+            <option value="Banten">Banten</option>
+            <option value="Bengkulu">Bengkulu</option>
+            <option value="DI Yogyakarta">DI Yogyakarta</option>
+            <option value="DKI Jakarta">DKI Jakarta</option>
+            <option value="Gorontalo">Gorontalo</option>
+            <option value="Jambi">Jambi</option>
+            <option value="Jawa Barat">Jawa Barat</option>
+            <option value="Jawa Tengah">Jawa Tengah</option>
+            <option value="Jawa Timur">Jawa Timur</option>
+            <option value="Kalimantan Barat">Kalimantan Barat</option>
+            <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+            <option value="Kalimantan Tengah">Kalimantan Tengah</option>
+            <option value="Kalimantan Timur">Kalimantan Timur</option>
+            <option value="Kalimantan Utara">Kalimantan Utara</option>
+            <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
+            <option value="Kepulauan Riau">Kepulauan Riau</option>
+            <option value="Lampung">Lampung</option>
+            <option value="Maluku">Maluku</option>
+            <option value="Maluku Utara">Maluku Utara</option>
+            <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
+            <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
+            <option value="Papua">Papua</option>
+            <option value="Papua Barat">Papua Barat</option>
+            <option value="Papua Barat Daya">Papua Barat Daya</option>
+            <option value="Papua Pegunungan">Papua Pegunungan</option>
+            <option value="Papua Selatan">Papua Selatan</option>
+            <option value="Papua Tengah">Papua Tengah</option>
+            <option value="Riau">Riau</option>
+            <option value="Sulawesi Barat">Sulawesi Barat</option>
+            <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+            <option value="Sulawesi Tengah">Sulawesi Tengah</option>
+            <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
+            <option value="Sulawesi Utara">Sulawesi Utara</option>
+            <option value="Sumatera Barat">Sumatera Barat</option>
+            <option value="Sumatera Selatan">Sumatera Selatan</option>
+            <option value="Sumatera Utara">Sumatera Utara</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Tipe Faskes</label>
+            <select id="manageInstTypeFilter" onchange="filterManageInstTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+              <option value="ALL">Semua Tipe Faskes</option>
+              <option value="RSUP">RSUP (Pusat Rujukan Nasional)</option>
+              <option value="RSUD">RSUD (Daerah / Provinsi)</option>
+              <option value="Swasta">RS Swasta / Jejaring</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
+          <div>Menampilkan <span id="manageInstCounter" class="font-bold text-slate-900">0</span> faskes jejaring</div>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="resetManageInstFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+              <span class="material-symbols-outlined text-sm">domain_add</span>
+              <span>Tambah Institusi</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+              <tr>
+                <th class="py-3 px-4">Rumah Sakit &amp; Faskes</th>
+                <th class="py-3 px-4">Provinsi &amp; Alamat</th>
+                <th class="py-3 px-4 text-center">Dokter Obgyn</th>
+                <th class="py-3 px-4 text-center">Kapasitas Pelayanan</th>
+                <th class="py-3 px-4 text-center">Status Faskes</th>
+                <th class="py-3 px-4">Aktivitas Terakhir</th>
+                <th class="py-3 px-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="manageInstTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Touch Cards (< md) -->
+        <div id="manageInstMobileCards" class="md:hidden space-y-3 p-4">
+          <!-- Rendered dynamically for mobile -->
+        </div>
+
+        <!-- MedCred Pagination Footer -->
+        <div id="manageInstPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PANE 3: SKP EVENT MASTER                   -->
+    <!-- ========================================== -->
+    <div id="pane-event" class="hidden space-y-4">
+      <!-- Toolbar Filters -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Event / Topik Ilmiah</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
+              <input id="searchManageEventInput" onkeyup="filterManageEventTable()" type="text" placeholder="Ketik nama workshop, PIT..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Subbidang / Ranah SKP</label>
+            <select id="manageEventTypeFilter" onchange="filterManageEventTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+              <option value="ALL">Semua Ranah (3 Subbidang)</option>
+              <option value="Pembelajaran">3. Pembelajaran (Ilmiah/Workshop)</option>
+              <option value="Pengabdian">2. Pengabdian (Baksos/Penyuluhan)</option>
+              <option value="Pelayanan">1. Pelayanan (Praktik Klinis)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Status Event</label>
+            <select id="manageEventStatusFilter" onchange="filterManageEventTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+              <option value="ALL">Semua Status</option>
+              <option value="Dibuka">Dibuka (Pendaftaran Aktif)</option>
+              <option value="Selesai">Selesai (Kredit Ditutup)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
+          <div>Menampilkan <span id="manageEventCounter" class="font-bold text-slate-900">0</span> event SKP terdaftar</div>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="resetManageEventFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+              <span class="material-symbols-outlined text-sm">add_circle</span>
+              <span>Tambah Event SKP</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+              <tr>
+                <th class="py-3 px-4">Event &amp; Kegiatan Ilmiah</th>
+                <th class="py-3 px-4">Tanggal &amp; Jadwal</th>
+                <th class="py-3 px-4 text-center">Ranah SKP</th>
+                <th class="py-3 px-4 text-center">Nilai Kredit</th>
+                <th class="py-3 px-4">Peserta Tuntas</th>
+                <th class="py-3 px-4 text-center">Status Kegiatan</th>
+                <th class="py-3 px-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="manageEventTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Touch Cards (< md) -->
+        <div id="manageEventMobileCards" class="md:hidden space-y-3 p-4">
+          <!-- Rendered dynamically for mobile -->
+        </div>
+
+        <!-- MedCred Pagination Footer -->
+        <div id="manageEventPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PANE 4: EVENT CATEGORY                     -->
+    <!-- ========================================== -->
+    <div id="pane-category" class="hidden space-y-4">
+      <!-- Toolbar Filters -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Kategori Kegiatan</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
+              <input id="searchManageCatInput" onkeyup="filterManageCatTable()" type="text" placeholder="Ketik nama kategori..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Ranah SKP Acuan</label>
+            <select id="manageCatTypeFilter" onchange="filterManageCatTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+              <option value="ALL">Semua Ranah</option>
+              <option value="Pembelajaran">Pembelajaran</option>
+              <option value="Pengabdian">Pengabdian</option>
+              <option value="Pelayanan">Pelayanan</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Status Kategori</label>
+            <select class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+              <option>Aktif Digunakan</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
+          <div>Menampilkan <span id="manageCatCounter" class="font-bold text-slate-900">0</span> kategori terverifikasi</div>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="resetManageCatFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+              <span class="material-symbols-outlined text-sm">category</span>
+              <span>Tambah Kategori</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+              <tr>
+                <th class="py-3 px-4">Kategori Kegiatan SKP</th>
+                <th class="py-3 px-4 text-center">Ranah Terkait</th>
+                <th class="py-3 px-4 text-center">Jumlah Kegiatan</th>
+                <th class="py-3 px-4 text-center">Standar Nilai Kredit</th>
+                <th class="py-3 px-4 text-center">Status</th>
+                <th class="py-3 px-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="manageCatTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Touch Cards (< md) -->
+        <div id="manageCatMobileCards" class="md:hidden space-y-3 p-4">
+          <!-- Rendered dynamically for mobile -->
+        </div>
+
+        <!-- MedCred Pagination Footer -->
+        <div id="manageCatPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PANE 5: USER & HAK AKSES                   -->
+    <!-- ========================================== -->
+    <div id="pane-user" class="hidden space-y-4">
+      <!-- Toolbar Filters -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Pengguna / Email</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
+              <input id="searchManageUserInput" onkeyup="filterManageUserTable()" type="text" placeholder="Ketik nama admin atau email..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Peran / Hak Akses</label>
+            <select id="manageUserRoleFilter" onchange="filterManageUserTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+              <option value="ALL">Semua Role (5 Role)</option>
+              <option value="Super Admin">Super Admin</option>
+              <option value="Admin Pusat">Admin Pusat</option>
+              <option value="Admin POGI">Admin POGI</option>
+              <option value="Admin Cabang">Admin Cabang</option>
+              <option value="User/Dokter">User/Dokter</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Status Akun</label>
+            <select class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+              <option>Aktif Terverifikasi</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
+          <div>Menampilkan <span id="manageUserCounter" class="font-bold text-slate-900">0</span> akun pengelola</div>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="resetManageUserFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+              <span class="material-symbols-outlined text-sm">manage_accounts</span>
+              <span>Tambah Pengguna</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+              <tr>
+                <th class="py-3 px-4">Pengguna &amp; Email</th>
+                <th class="py-3 px-4 text-center">Peran / Hak Akses</th>
+                <th class="py-3 px-4">Wilayah Penugasan</th>
+                <th class="py-3 px-4">Terdaftar Sejak</th>
+                <th class="py-3 px-4 text-center">Status Akun</th>
+                <th class="py-3 px-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="manageUserTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Touch Cards (< md) -->
+        <div id="manageUserMobileCards" class="md:hidden space-y-3 p-4">
+          <!-- Rendered dynamically for mobile -->
+        </div>
+
+        <!-- MedCred Pagination Footer -->
+        <div id="manageUserPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
+      </div>
+    </div>
+
+  </main>
 
   <!-- Reusable Action Dropdown Menu -->
   <div id="rowActionMenu" class="hidden fixed z-50 bg-white border border-slate-200 rounded-2xl shadow-2xl py-1.5 text-xs w-40">
@@ -611,8 +590,6 @@
     </div>
   </div>
 
-  <script src="/js/pogi_state.js"></script>
-  <script src="/js/navigation.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
     window.LIVE_MANAGE_DOCTORS = @json($doctors ?? []);
@@ -2173,5 +2150,4 @@
       closeManageAddModal();
     }
   </script>
-</body>
-</html>
+@endsection

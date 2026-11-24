@@ -1,26 +1,7 @@
-<!DOCTYPE html>
-<html lang="id" class="h-full bg-[#f4f7f6]">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POGI SKP Tracker - Katalog Kegiatan &amp; Event SKP</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Core Styles -->
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
-  <!-- Mobile Backdrop Overlay -->
-  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
+@extends('layouts.app')
 
-  <div class="flex h-screen overflow-hidden">
-    <!-- APP SIDEBAR -->
-    @include('layouts.sidebar')
-
-    <!-- MAIN CONSOLE WRAPPER -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-      <!-- Top Sticky Header -->
-      @include('layouts.header')
+@section('title', 'POGI SKP Tracker - Dashboard Pemantauan SKP Nasional')
+@section('content')
 
       <!-- Main Body -->
       <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-5 page-fade-in">
@@ -87,7 +68,7 @@
   </div>
 
   <!-- Modal Daftar Peserta Dokter Obgyn -->
-  <div id="eventParticipantsModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+  <div id="eventParticipantsModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3 shrink-0">
         <div class="flex items-center gap-2.5">
@@ -133,8 +114,6 @@
     </div>
   </div>
 
-  <script src="/js/pogi_state.js"></script>
-  <script src="/js/navigation.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
     
@@ -428,5 +407,4 @@
     }
   
 </script>
-</body>
-</html>
+@endsection

@@ -858,3 +858,73 @@ document.addEventListener('DOMContentLoaded', () => {
     initRbacRoleSwitcher();
   }, 30);
 });
+
+// =========================================================================
+// UNIVERSAL MODAL VIEWPORT HOISTER & Z-INDEX STANDARDIZATION
+// Memastikan seluruh modal di seluruh aplikasi lepas dari stacking context
+// (overflow-hidden / transform / anim), berposisi fixed inset-0 level body,
+// dan memiliki z-[9999] agar backdrop overlay menutupi 100% layar (sidebar & header).
+// =========================================================================
+function hoistAllModalsToBody() {
+  if (typeof document === 'undefined' || !document.body) return;
+
+  const modals = document.querySelectorAll('div[id$="Modal"], div[id$="modal"], .fixed.inset-0:not(#sidebarOverlay)');
+  modals.forEach(modal => {
+    if (modal.id === 'sidebarOverlay') return;
+
+    // Pindahkan ke root body jika masih terperangkap di dalam container / main
+    if (modal.parentElement !== document.body) {
+      document.body.appendChild(modal);
+    }
+
+    // Pastikan z-index tertinggi untuk overlay layar penuh menembus sidebar (z-50) & header (z-30)
+    modal.classList.remove('z-40', 'z-50', 'z-30', 'z-20', 'z-10');
+    if (!modal.classList.contains('z-[9999]')) {
+      modal.classList.add('z-[9999]');
+    }
+
+    // Tambahkan backdrop click to close jika belum ada
+    if (!modal.dataset.backdropHandled) {
+      modal.dataset.backdropHandled = 'true';
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          const closeBtn = modal.querySelector('button[onclick*="close"], button[onclick*="Modal"], button[data-dismiss]');
+          if (closeBtn) {
+            closeBtn.click();
+          } else {
+            modal.classList.add('hidden');
+          }
+        }
+      });
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', hoistAllModalsToBody);
+} else {
+  hoistAllModalsToBody();
+}
+window.addEventListener('load', hoistAllModalsToBody);
+
+try {
+  const modalObserver = new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      if (m.type === 'attributes' && m.attributeName === 'class') {
+        const target = m.target;
+        if (target.id && (target.id.toLowerCase().includes('modal') || target.classList.contains('fixed'))) {
+          if (target.id !== 'sidebarOverlay' && !target.classList.contains('hidden')) {
+            if (target.parentElement !== document.body) {
+              document.body.appendChild(target);
+            }
+            target.classList.remove('z-40', 'z-50', 'z-30', 'z-20', 'z-10');
+            target.classList.add('z-[9999]');
+          }
+        }
+      }
+    }
+  });
+  modalObserver.observe(document.documentElement, { attributes: true, subtree: true, attributeFilter: ['class'] });
+} catch (e) {
+  // Silent fallback
+}

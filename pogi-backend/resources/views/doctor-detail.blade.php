@@ -576,7 +576,7 @@
 
   <!-- Modal Unggah Berkas Baru ke Cloud Internal (RULES.md Bab 1.2) -->
   <div id="uploadDoctorDocModal"
-    class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
@@ -672,7 +672,7 @@
 
   <!-- Modal Pratinjau Dokumen PDF Realistis (Full-Screen Document Viewer) -->
   <div id="doctorDocPreviewModal"
-    class="fixed inset-0 z-50 bg-slate-950 hidden flex flex-col w-screen h-screen overflow-hidden">
+    class="fixed inset-0 z-[9999] bg-slate-950 hidden flex flex-col w-screen h-screen overflow-hidden">
 
     <!-- Viewer Toolbar Header (Full Width & Clean) -->
     <div id="doctorDocPreviewModalHeader"
@@ -748,7 +748,7 @@
   </div>
 
   <!-- Modal Ganti PIC Dokter Binaan -->
-  <div id="changeDoctorPicModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+  <div id="changeDoctorPicModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200/90 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
@@ -801,7 +801,7 @@
 
   <!-- Modal Konfirmasi Sukses Verifikasi Kredit SKP (Feedback Reaktif Lengkap) -->
   <div id="doctorVerificationSuccessModal"
-    class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div
       class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-emerald-100 space-y-4 animate-in fade-in zoom-in-95 duration-200">
       <div class="flex items-center gap-3">

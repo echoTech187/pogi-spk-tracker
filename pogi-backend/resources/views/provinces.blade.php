@@ -1,94 +1,69 @@
-<!DOCTYPE html>
-<html lang="id" class="h-full bg-[#f4f7f6]">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POGI SKP Tracker - Monitoring Kepatuhan 38 Provinsi</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Core Styles -->
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
-  <!-- Mobile Backdrop Overlay -->
-  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
+@extends('layouts.app')
 
-  <div class="flex h-screen overflow-hidden">
-    <!-- APP SIDEBAR -->
-    @include('layouts.sidebar')
+@section('title', 'POGI SKP Tracker - Monitoring Kepatuhan 38 Provinsi')
+@section('content')
 
-    <!-- MAIN CONSOLE WRAPPER -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-      <!-- Top Sticky Header -->
-      @include('layouts.header')
-
-      <!-- Main Body -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-5 page-fade-in">
-
-        <!-- MedCred Standard Heading Banner -->
-        <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div class="space-y-1.5">
-            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
-              <span>MONITORING 38 WILAYAH PROVINSI</span>
-            </div>
-            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              <span>Distribusi &amp; Kepatuhan Cabang POGI</span>
-              <span class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(38 Wilayah)</span>
-            </h1>
-            <p class="text-xs text-slate-500 max-w-2xl leading-relaxed">
-              Pemetaan persebaran dokter spesialis obstetri &amp; ginekologi dan tingkat kepatuhan pemenuhan standar 160 SKP di 38 cabang POGI seluruh Indonesia.
-            </p>
-          </div>
-          <div class="flex items-center gap-2.5 shrink-0">
-            <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer bg-slate-50 hover:bg-slate-100 px-3 py-2 rounded-xl border border-slate-200 transition">
-              <input id="hideZeroDoctors" type="checkbox" onchange="toggleZeroDoctors()" class="rounded text-[#16b3ac] focus:ring-[#16b3ac]" />
-              <span class="text-[11px]">Sembunyikan 0 Dokter</span>
-            </label>
-          </div>
+    <!-- MedCred Standard Heading Banner -->
+    <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="space-y-1.5">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
+          <span>MONITORING 38 WILAYAH PROVINSI</span>
         </div>
-
-        <!-- Search Bar -->
-        <div class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center gap-3">
-          <span class="material-symbols-outlined text-slate-400 text-lg ml-1">search</span>
-          <input id="searchProvinceInput" onkeyup="filterProvinces()" type="text" placeholder="Cari nama provinsi atau cabang POGI daerah..." class="w-full text-xs text-slate-800 placeholder:text-slate-400 bg-transparent focus:outline-none" />
-        </div>
-
-        <!-- Tabel 38 Provinsi -->
-        <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
-          <div class="hidden md:block overflow-x-auto">
-            <table class="w-full text-left text-xs whitespace-nowrap">
-              <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
-                <tr>
-                  <th class="py-3 px-4 w-12 text-center">#</th>
-                  <th class="py-3 px-4">Nama Provinsi / Cabang POGI</th>
-                  <th class="py-3 px-4 text-center">Jumlah Dokter</th>
-                  <th class="py-3 px-4 text-center">Complete</th>
-                  <th class="py-3 px-4 text-center">Incomplete</th>
-                  <th class="py-3 px-4 w-48">Progress Kepatuhan</th>
-                  <th class="py-3 px-4 text-center">Status</th>
-                  <th class="py-3 px-4 text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="provincesTableBody" class="divide-y divide-slate-100 font-medium">
-                <!-- Rendered dynamically -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Mobile Touch Cards (< md) -->
-          <div id="provincesMobileCards" class="md:hidden divide-y divide-slate-100 p-2 sm:p-3 space-y-3">
-            <!-- Rendered dynamically for mobile -->
-          </div>
-
-          <!-- Interactive MedCred Pagination Footer -->
-          <div id="provincesTablePagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
-        </div>
-      </main>
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <span>Distribusi &amp; Kepatuhan Cabang POGI</span>
+          <span class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(38 Wilayah)</span>
+        </h1>
+        <p class="text-xs text-slate-500 max-w-2xl leading-relaxed">
+          Pemetaan persebaran dokter spesialis obstetri &amp; ginekologi dan tingkat kepatuhan pemenuhan standar 160 SKP di 38 cabang POGI seluruh Indonesia.
+        </p>
+      </div>
+      <div class="flex items-center gap-2.5 shrink-0">
+        <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer bg-slate-50 hover:bg-slate-100 px-3 py-2 rounded-xl border border-slate-200 transition">
+          <input id="hideZeroDoctors" type="checkbox" onchange="toggleZeroDoctors()" class="rounded text-[#16b3ac] focus:ring-[#16b3ac]" />
+          <span class="text-[11px]">Sembunyikan 0 Dokter</span>
+        </label>
+      </div>
     </div>
-  </div>
 
-  <script src="/js/pogi_state.js"></script>
-  <script src="/js/navigation.js"></script>
+    <!-- Search Bar -->
+    <div class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center gap-3">
+      <span class="material-symbols-outlined text-slate-400 text-lg ml-1">search</span>
+      <input id="searchProvinceInput" onkeyup="filterProvinces()" type="text" placeholder="Cari nama provinsi atau cabang POGI daerah..." class="w-full text-xs text-slate-800 placeholder:text-slate-400 bg-transparent focus:outline-none" />
+    </div>
+
+    <!-- Tabel 38 Provinsi -->
+    <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+      <div class="hidden md:block overflow-x-auto">
+        <table class="w-full text-left text-xs whitespace-nowrap">
+          <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+            <tr>
+              <th class="py-3 px-4 w-12 text-center">#</th>
+              <th class="py-3 px-4">Nama Provinsi / Cabang POGI</th>
+              <th class="py-3 px-4 text-center">Jumlah Dokter</th>
+              <th class="py-3 px-4 text-center">Complete</th>
+              <th class="py-3 px-4 text-center">Incomplete</th>
+              <th class="py-3 px-4 w-48">Progress Kepatuhan</th>
+              <th class="py-3 px-4 text-center">Status</th>
+              <th class="py-3 px-4 text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="provincesTableBody" class="divide-y divide-slate-100 font-medium">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Touch Cards (< md) -->
+      <div id="provincesMobileCards" class="md:hidden divide-y divide-slate-100 p-2 sm:p-3 space-y-3">
+        <!-- Rendered dynamically for mobile -->
+      </div>
+
+      <!-- Interactive MedCred Pagination Footer -->
+      <div id="provincesTablePagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
+    </div>
+@endsection
+
+@section('scripts')
   <script src="/js/pdf_exporter.js"></script>
   <script>
     
@@ -312,5 +287,4 @@
     }
     const exportProvincesCSV = exportProvincesPdf;
 </script>
-</body>
-</html>
+@endsection

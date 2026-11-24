@@ -1,177 +1,156 @@
-<!DOCTYPE html>
-<html lang="id" class="h-full bg-[#f4f7f6]">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POGI SKP Tracker - Direktori Dokter Spesialis Obgyn</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Core Styles -->
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
-  <!-- Mobile Backdrop Overlay -->
-  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
+@extends('layouts.app')
 
-  <div class="flex h-screen overflow-hidden">
-    <!-- APP SIDEBAR -->
-    @include('layouts.sidebar')
+@section('title', 'POGI SKP Tracker - Dashboard Pemantauan SKP Nasional')
+@section('content')
 
-    <!-- MAIN CONSOLE WRAPPER -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-      <!-- Top Sticky Header -->
-      @include('layouts.header')
+  <!-- Main Body -->
+  <main class="flex-1 overflow-y-auto space-y-5 page-fade-in">
 
-      <!-- Main Body -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-5 page-fade-in">
+    <!-- MEDCRED STANDARD HEADING (Persis Screenshot Klien) -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+      <div class="space-y-1">
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+          Daftar Dokter &amp; Tenaga Kesehatan (<span id="headingTotalCount">{{ $metrics['total'] ?? count($doctors ?? []) }} Terdaftar</span>)
+        </h1>
+        <p class="text-xs text-slate-500 leading-relaxed max-w-3xl">
+          Direktori kredensialing aktif, pemantauan pengurusan perizinan instansi &amp; akses pemenuhan kredit 160 SKP (Pelayanan, Pengabdian, Pembelajaran) terintegrasi SATUSEHAT.
+        </p>
+      </div>
+      @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
+      <div class="flex items-center gap-2 shrink-0 flex-wrap">
+        <button type="button" onclick="openAddDoctorModal()" id="btnAddDoctor" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational">
+          <span class="material-symbols-outlined text-base">person_add</span>
+          <span>Daftarkan Dokter Baru</span>
+        </button>
+      </div>
+      @endif
+    </div>
 
-        <!-- MEDCRED STANDARD HEADING (Persis Screenshot Klien) -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
-          <div class="space-y-1">
-            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Daftar Dokter &amp; Tenaga Kesehatan (<span id="headingTotalCount">{{ $metrics['total'] ?? count($doctors ?? []) }} Terdaftar</span>)
-            </h1>
-            <p class="text-xs text-slate-500 leading-relaxed max-w-3xl">
-              Direktori kredensialing aktif, pemantauan pengurusan perizinan instansi &amp; akses pemenuhan kredit 160 SKP (Pelayanan, Pengabdian, Pembelajaran) terintegrasi SATUSEHAT.
-            </p>
+    <!-- Filter & Search Toolbar (Sesuai Screenshot Klien) -->
+    <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 text-xs">
+        <!-- Search -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Cari Dokter / No POGI / STR</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">search</span>
+            <input id="searchDoctorInput" onkeyup="applyDoctorFilters()" type="text" placeholder="Ketik nama atau STR..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
           </div>
-          @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
-          <div class="flex items-center gap-2 shrink-0 flex-wrap">
-            <button type="button" onclick="openAddDoctorModal()" id="btnAddDoctor" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational">
-              <span class="material-symbols-outlined text-base">person_add</span>
-              <span>Daftarkan Dokter Baru</span>
-            </button>
-          </div>
+        </div>
+
+        <!-- Quartal Filter (Dipisah sesuai permintaan) -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Kuartal</label>
+          <select id="quarterFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+            <option value="ALL" selected>Semua Kuartal</option>
+            <option value="Q4">Q4</option>
+            <option value="Q3">Q3</option>
+            <option value="Q2">Q2</option>
+            <option value="Q1">Q1</option>
+            
+          </select>
+        </div>
+
+        <!-- Tahun Filter (Dipisah sesuai permintaan) -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Tahun</label>
+          <select id="yearFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+            <option value="ALL" selected>Semua Tahun</option>
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+            
+          </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Status Kepatuhan SKP</label>
+          <select id="statusFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+            <option value="ALL">Semua Status</option>
+            <option value="Complete">Complete</option>
+            <option value="Incomplete">Incomplete</option>
+          </select>
+        </div>
+
+        <!-- Institusi Filter (All Institutions) -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Institusi / RS Jejaring</label>
+          <select id="institutionFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+            <option value="ALL">Semua RS Jejaring</option>
+            @if(!empty($institutions))
+              @foreach($institutions as $inst)
+                <option value="{{ $inst->name }}">{{ $inst->name }}</option>
+              @endforeach
+            @endif
+          </select>
+        </div>
+
+        <!-- Provinsi Filter (38 Cabang POGI) -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Cabang POGI / Provinsi</label>
+          @if(Auth::user()?->isAdminCabang())
+            @php
+              $userBranch = \Illuminate\Support\Facades\DB::table('pogi_branches')->where('id', Auth::user()?->branch_id)->first();
+              $userProvince = $userBranch ? \Illuminate\Support\Facades\DB::table('provinces')->where('id', $userBranch->province_id)->first() : null;
+            @endphp
+            <select id="provinceFilter" disabled class="w-full py-2 px-3 bg-slate-100 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 cursor-not-allowed">
+              <option value="{{ $userProvince?->name ?? 'Cabang Anda' }}">{{ $userBranch?->branch_name ?? 'Cabang Wilayah Anda' }} (Terkunci)</option>
+            </select>
+          @else
+            <select id="provinceFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+              <option value="ALL">Semua Provinsi (38 Cabang)</option>
+              @if(!empty($provinces))
+                @foreach($provinces as $p)
+                  <option value="{{ $p->name }}">{{ $p->name }}</option>
+                @endforeach
+              @endif
+            </select>
           @endif
         </div>
+      </div>
 
-        <!-- Filter & Search Toolbar (Sesuai Screenshot Klien) -->
-        <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 text-xs">
-            <!-- Search -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Cari Dokter / No POGI / STR</label>
-              <div class="relative">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">search</span>
-                <input id="searchDoctorInput" onkeyup="applyDoctorFilters()" type="text" placeholder="Ketik nama atau STR..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
-              </div>
-            </div>
-
-            <!-- Quartal Filter (Dipisah sesuai permintaan) -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Kuartal</label>
-              <select id="quarterFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                <option value="ALL" selected>Semua Kuartal</option>
-                <option value="Q4">Q4</option>
-                <option value="Q3">Q3</option>
-                <option value="Q2">Q2</option>
-                <option value="Q1">Q1</option>
-                
-              </select>
-            </div>
-
-            <!-- Tahun Filter (Dipisah sesuai permintaan) -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Tahun</label>
-              <select id="yearFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                <option value="ALL" selected>Semua Tahun</option>
-                <option value="2026">2026</option>
-                <option value="2025">2025</option>
-                <option value="2024">2024</option>
-                
-              </select>
-            </div>
-
-            <!-- Status Filter -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Status Kepatuhan SKP</label>
-              <select id="statusFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                <option value="ALL">Semua Status</option>
-                <option value="Complete">Complete</option>
-                <option value="Incomplete">Incomplete</option>
-              </select>
-            </div>
-
-            <!-- Institusi Filter (All Institutions) -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Institusi / RS Jejaring</label>
-              <select id="institutionFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                <option value="ALL">Semua RS Jejaring</option>
-                @if(!empty($institutions))
-                  @foreach($institutions as $inst)
-                    <option value="{{ $inst->name }}">{{ $inst->name }}</option>
-                  @endforeach
-                @endif
-              </select>
-            </div>
-
-            <!-- Provinsi Filter (38 Cabang POGI) -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Cabang POGI / Provinsi</label>
-              @if(Auth::user()?->isAdminCabang())
-                @php
-                  $userBranch = \Illuminate\Support\Facades\DB::table('pogi_branches')->where('id', Auth::user()?->branch_id)->first();
-                  $userProvince = $userBranch ? \Illuminate\Support\Facades\DB::table('provinces')->where('id', $userBranch->province_id)->first() : null;
-                @endphp
-                <select id="provinceFilter" disabled class="w-full py-2 px-3 bg-slate-100 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 cursor-not-allowed">
-                  <option value="{{ $userProvince?->name ?? 'Cabang Anda' }}">{{ $userBranch?->branch_name ?? 'Cabang Wilayah Anda' }} (Terkunci)</option>
-                </select>
-              @else
-                <select id="provinceFilter" onchange="applyDoctorFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-                  <option value="ALL">Semua Provinsi (38 Cabang)</option>
-                  @if(!empty($provinces))
-                    @foreach($provinces as $p)
-                      <option value="{{ $p->name }}">{{ $p->name }}</option>
-                    @endforeach
-                  @endif
-                </select>
-              @endif
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-            <div>Menampilkan <span id="doctorFilteredCount" class="font-bold text-slate-900">10</span> dokter dari total <span id="doctorTotalFilteredCount" class="font-bold text-slate-900">200</span> anggota</div>
-            <button type="button" onclick="resetDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
-          </div>
-        </div>
-
-        <!-- Tabel Dokter Utama (Sesuai Kolom Screenshot Asli) -->
-        <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
-          <div class="hidden md:block overflow-x-auto">
-            <table class="w-full text-left text-xs whitespace-nowrap">
-              <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
-                <tr>
-                  <th class="py-3 px-4">Name</th>
-                  <th class="py-3 px-4">SKP</th>
-                  <th class="py-3 px-4">Pending</th>
-                  <th class="py-3 px-4">Pengabdian</th>
-                  <th class="py-3 px-4">Pelayanan</th>
-                  <th class="py-3 px-4">Pembelajaran</th>
-                  <th class="py-3 px-4 text-center">Status</th>
-                  <th class="py-3 px-4">Last Activity</th>
-                  <th class="py-3 px-4 text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="doctorsTableBody" class="divide-y divide-slate-100 font-medium">
-                <!-- Rendered dynamically by JavaScript -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Mobile Touch Cards (< md) -->
-          <div id="doctorsDirectoryMobileCards" class="md:hidden divide-y divide-slate-100 p-2 sm:p-3 space-y-3">
-            <!-- Rendered dynamically for mobile -->
-          </div>
-
-          <!-- Interactive MedCred Pagination Footer -->
-          <div id="doctorsDirectoryPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
-        </div>
-      </main>
+      <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
+        <div>Menampilkan <span id="doctorFilteredCount" class="font-bold text-slate-900">10</span> dokter dari total <span id="doctorTotalFilteredCount" class="font-bold text-slate-900">200</span> anggota</div>
+        <button type="button" onclick="resetDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+      </div>
     </div>
-  </div>
+
+    <!-- Tabel Dokter Utama (Sesuai Kolom Screenshot Asli) -->
+    <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+      <div class="hidden md:block overflow-x-auto">
+        <table class="w-full text-left text-xs whitespace-nowrap">
+          <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+            <tr>
+              <th class="py-3 px-4">Name</th>
+              <th class="py-3 px-4">SKP</th>
+              <th class="py-3 px-4">Pending</th>
+              <th class="py-3 px-4">Pengabdian</th>
+              <th class="py-3 px-4">Pelayanan</th>
+              <th class="py-3 px-4">Pembelajaran</th>
+              <th class="py-3 px-4 text-center">Status</th>
+              <th class="py-3 px-4">Last Activity</th>
+              <th class="py-3 px-4 text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="doctorsTableBody" class="divide-y divide-slate-100 font-medium">
+            <!-- Rendered dynamically by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Touch Cards (< md) -->
+      <div id="doctorsDirectoryMobileCards" class="md:hidden divide-y divide-slate-100 p-2 sm:p-3 space-y-3">
+        <!-- Rendered dynamically for mobile -->
+      </div>
+
+      <!-- Interactive MedCred Pagination Footer -->
+      <div id="doctorsDirectoryPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
+    </div>
+  </main>
 
   <!-- Modal Detail & Verifikasi Dokter -->
-  <div id="doctorDetailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+  <div id="doctorDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-5 responsive-modal-body overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-3">
@@ -255,7 +234,7 @@
   </div>
 
   <!-- Modal Pratinjau Sertifikat PDF -->
-  <div id="certificateModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+  <div id="certificateModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
@@ -293,7 +272,7 @@
   </div>
 
   <!-- Modal Tambah Dokter Baru -->
-  <div id="addDoctorModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+  <div id="addDoctorModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
@@ -407,9 +386,6 @@
       </form>
     </div>
   </div>
-
-    <script src="/js/pogi_state.js"></script>
-  <script src="/js/navigation.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
     
@@ -1153,5 +1129,4 @@
     // -------------------------------------------------------------
     
   </script>
-</body>
-</html>
+@endsection
