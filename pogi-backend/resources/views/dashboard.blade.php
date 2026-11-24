@@ -168,9 +168,15 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6">
             <!-- Left Column: Lowest -->
             <div class="space-y-4">
-              <div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 pb-1">
-                <span class="material-symbols-outlined text-base text-slate-400">trending_down</span>
-                <span class="font-bold text-slate-600">Lowest</span>
+              <div class="flex items-center justify-between text-xs font-bold text-slate-500 pb-1">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-base text-slate-400">trending_down</span>
+                  <span class="font-bold text-slate-600">Lowest</span>
+                </div>
+                <button type="button" onclick="openFollowUpModal('lowest')" class="text-[11px] text-[#16b3ac] hover:text-[#129993] font-bold flex items-center gap-1 hover:underline rbac-operational cursor-pointer">
+                  <span class="material-symbols-outlined text-xs">notifications_active</span>
+                  <span>Follow-Up 5 Terendah</span>
+                </button>
               </div>
 
               @foreach($summary->lowestProvinces as $prov)
@@ -351,6 +357,67 @@
           </div>
         </div>
 
+  <!-- Modal Follow-Up Massal (Terhubung ke MySQL Live) -->
+  <div id="fuModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-teal-50 text-[#16b3ac] flex items-center justify-center">
+            <span class="material-symbols-outlined text-2xl">forward_to_inbox</span>
+          </div>
+          <div>
+            <h3 class="font-black text-slate-900 text-base">Kirim Follow-Up (FU) Pemenuhan SKP</h3>
+            <p class="text-xs text-slate-500">Notifikasi otomatis ke Rumah Sakit Jejaring &amp; Admin Cabang POGI</p>
+          </div>
+        </div>
+        <button onclick="closeFollowUpModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Target Penerima Follow-Up:</label>
+          <select id="fuTarget" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
+            @if(count($summary->lowestProvinces) > 0)
+              <option value="lowest_5" selected>5 Cabang Kepatuhan Terendah ({{ collect($summary->lowestProvinces)->pluck('name')->implode(', ') }})</option>
+            @endif
+            <option value="all_incomplete">Semua {{ $summary->incompleteCount }} Dokter Incomplete ({{ $summary->activeScopeLabel }})</option>
+            @foreach(collect($summary->topProvinces)->take(4) as $tp)
+              <option value="{{ \Illuminate\Support\Str::slug($tp['name']) }}">Khusus Cabang {{ $tp['name'] }} ({{ $tp['doctors'] }} Dokter Terdata)</option>
+            @endforeach
+          </select>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Kanal Pengiriman Notifikasi:</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="p-2.5 rounded-xl border border-teal-300 bg-teal-50/50 flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="fuChannelWa" checked class="rounded text-[#16b3ac] focus:ring-[#16b3ac]" />
+              <span class="font-bold text-slate-800">WhatsApp Gateway</span>
+            </label>
+            <label class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="fuChannelEmail" checked class="rounded text-[#16b3ac] focus:ring-[#16b3ac]" />
+              <span class="font-bold text-slate-800">Email Resmi Cabang</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Pesan Pengingat Standar POGI:</label>
+          <textarea id="fuMessage" rows="3" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">Yth. Pengurus Cabang POGI & Direksi RS Jejaring. Berdasarkan pemantauan sistem kepatuhan SKP terkini, mohon bantuan percepatan pengajuan logbook Pelayanan, Pengabdian, dan Pembelajaran dokter spesialis Obgyn agar memenuhi standar wajib 160 SKP Kemenkes RI.</textarea>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <button type="button" onclick="closeFollowUpModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">Batal</button>
+        <button type="button" id="btnSendFuSubmit" onclick="sendFollowUpAction()" class="px-4 py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1.5 rbac-operational cursor-pointer">
+          <span class="material-symbols-outlined text-sm">send</span>
+          <span>Kirimkan Notifikasi FU Sekarang</span>
+        </button>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section('scripts')
@@ -565,6 +632,70 @@
         if (k.includes(key) || key.includes(k)) {
           geoJsonLayer.resetStyle(provinceLayerMap[k]);
         }
+      }
+    }
+
+    function openFollowUpModal(mode) {
+      const m = document.getElementById('fuModal');
+      if (m) {
+        m.classList.remove('hidden');
+        if (mode === 'lowest') {
+          const t = document.getElementById('fuTarget');
+          if (t) t.value = 'lowest_5';
+        }
+      }
+    }
+
+    function closeFollowUpModal() {
+      const m = document.getElementById('fuModal');
+      if (m) m.classList.add('hidden');
+    }
+
+    async function sendFollowUpAction() {
+      const targetSelect = document.getElementById('fuTarget');
+      const target = targetSelect.value;
+      const targetLabel = targetSelect.selectedOptions[0] ? targetSelect.selectedOptions[0].text : target;
+      const message = document.getElementById('fuMessage').value;
+      const waChecked = document.getElementById('fuChannelWa').checked;
+      const emailChecked = document.getElementById('fuChannelEmail').checked;
+
+      const channels = [];
+      if (waChecked) channels.push('whatsapp');
+      if (emailChecked) channels.push('email');
+
+      if (channels.length === 0) {
+        showToast('Pilih minimal satu kanal pengiriman (WhatsApp atau Email).', 'warning');
+        return;
+      }
+
+      const btn = document.getElementById('btnSendFuSubmit');
+      const originalText = btn.innerHTML;
+      btn.setAttribute('disabled', 'true');
+      btn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">refresh</span><span>Menyimpan ke Antrean Database...</span>';
+
+      try {
+        const res = await fetch('{{ route("dashboard.followup") }}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ target, channels, message })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          closeFollowUpModal();
+          showToast(`Sukses: ${data.recipients_count} notifikasi berhasil dijadwalkan di antrean database (${data.target_label})!`, 'success');
+        } else {
+          showToast(data.message || 'Gagal mengirimkan notifikasi follow-up.', 'error');
+        }
+      } catch (err) {
+        showToast('Terjadi kesalahan jaringan saat menyimpan ke antrean.', 'error');
+      } finally {
+        btn.removeAttribute('disabled');
+        btn.innerHTML = originalText;
       }
     }
 
