@@ -180,11 +180,11 @@
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-3">
           <div id="modalAvatar" class="w-12 h-12 rounded-2xl bg-[#16b3ac] text-white font-extrabold text-base flex items-center justify-center shrink-0">
-            AP
+            DR
           </div>
           <div>
-            <h3 id="modalDoctorName" class="font-black text-slate-900 text-base">dr. Andi Pratama, Sp.OG(K)</h3>
-            <p id="modalDoctorMeta" class="text-xs text-slate-500">POGI-DKI-2019-0842 &bull; STR: 31.1.1.100.2.21.084291</p>
+            <h3 id="modalDoctorName" class="font-black text-slate-900 text-base">Detail Dokter</h3>
+            <p id="modalDoctorMeta" class="text-xs text-slate-500">-</p>
           </div>
         </div>
         <button onclick="closeDoctorModal()" class="text-slate-400 hover:text-slate-600 p-1">
@@ -196,17 +196,17 @@
       <div class="grid grid-cols-3 gap-2.5 text-xs">
         <div class="p-3 rounded-xl bg-sky-50 border border-sky-200">
           <div class="text-[10px] text-sky-800 font-bold uppercase">1. Pelayanan (35%)</div>
-          <div id="modalPelayananScore" class="text-base font-black text-sky-900 mt-0.5">56 / 56 SKP</div>
+          <div id="modalPelayananScore" class="text-base font-black text-sky-900 mt-0.5">0 / 56 SKP</div>
           <div class="text-[10px] text-sky-700 mt-1">Standar Min. 56 SKP</div>
         </div>
         <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
           <div class="text-[10px] text-amber-800 font-bold uppercase">2. Pengabdian (5%)</div>
-          <div id="modalPengabdianScore" class="text-base font-black text-amber-900 mt-0.5">8 / 8 SKP</div>
+          <div id="modalPengabdianScore" class="text-base font-black text-amber-900 mt-0.5">0 / 8 SKP</div>
           <div class="text-[10px] text-amber-700 mt-1">Standar Min. 8 SKP</div>
         </div>
         <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
           <div class="text-[10px] text-emerald-800 font-bold uppercase">3. Pembelajaran (45%)</div>
-          <div id="modalPembelajaranScore" class="text-base font-black text-emerald-900 mt-0.5">72 / 72 SKP</div>
+          <div id="modalPembelajaranScore" class="text-base font-black text-emerald-900 mt-0.5">0 / 72 SKP</div>
           <div class="text-[10px] text-emerald-700 mt-1">Standar Min. 72 SKP</div>
         </div>
       </div>
@@ -437,16 +437,16 @@
           <div class="flex items-center justify-between">
             <label class="font-extrabold text-slate-800">1. Tentukan Sasaran Penerima Blast</label>
             <span id="blastRecipientCountBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] font-black text-[11px]">
-              158 Dokter Terpilih
+              {{ $metrics['incomplete'] ?? 0 }} Dokter Terpilih
             </span>
           </div>
           <select id="blastFilterOption" onchange="updateBlastRecipients()" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-800">
-            <option value="incomplete" selected>Dokter Status Incomplete (Seluruh Indonesia - 158 Dokter)</option>
+            <option value="incomplete" selected>Dokter Status Incomplete (Seluruh Indonesia - {{ $metrics['incomplete'] ?? 0 }} Dokter)</option>
             <option value="missing_docs">Dokter dengan Missing Documents (Belum Unggah Bukti)</option>
             <option value="jabar_incomplete">Dokter Incomplete di Cabang Jawa Barat</option>
             <option value="dki_incomplete">Dokter Incomplete di Cabang DKI Jakarta</option>
             <option value="jatim_incomplete">Dokter Incomplete di Cabang Jawa Timur</option>
-            <option value="all">Semua Dokter Terdaftar (200 Dokter)</option>
+            <option value="all">Semua Dokter Terdaftar ({{ $metrics['total'] ?? 0 }} Dokter)</option>
           </select>
           <div class="text-[11px] text-slate-500 flex items-center gap-1.5">
             <span class="material-symbols-outlined text-sm text-[#16b3ac]">shield</span>
@@ -662,7 +662,7 @@ Admin Data PP POGI & PT Energi Cipta
 
     document.addEventListener('DOMContentLoaded', () => {
       // Inisialisasi dataset dokter langsung dari basis data live
-      const allDoctors = LIVE_DATABASE_DOCTORS.length > 0 ? LIVE_DATABASE_DOCTORS : ((typeof PogiStore !== 'undefined') ? PogiStore.getDoctors() : []);
+      const allDoctors = LIVE_DATABASE_DOCTORS || [];
       const instSelect = document.getElementById('institutionFilter');
       if (instSelect && instSelect.options.length <= 1) {
         populateInstitutionFilter(allDoctors);
@@ -675,7 +675,7 @@ Admin Data PP POGI & PT Energi Cipta
       if (!select) return;
       const currentVal = select.value || 'ALL';
       const instSet = new Set();
-      (doctors || PogiStore.getDoctors()).forEach(d => {
+      (doctors || LIVE_DATABASE_DOCTORS || []).forEach(d => {
         if (d.hospital) instSet.add(d.hospital.trim());
         if (d.institution) instSet.add(d.institution.trim());
       });
@@ -706,7 +706,7 @@ Admin Data PP POGI & PT Energi Cipta
     }
 
     function changeDoctorPage(p) {
-      const list = currentFilteredDoctors || PogiStore.getDoctors();
+      const list = currentFilteredDoctors || LIVE_DATABASE_DOCTORS || [];
       const totalPages = Math.max(1, Math.ceil(list.length / doctorPagination.limit));
       if (p < 1) p = 1;
       if (p > totalPages) p = totalPages;
@@ -739,9 +739,44 @@ Admin Data PP POGI & PT Energi Cipta
       return `<span class="${achColor}">${achStr}</span> <span class="text-slate-400 font-normal">/</span> ${tgtStr}`;
     }
 
+    function calculateDoctorStats(d) {
+      const isComp = (d.status === 'Complete' || d.status === 'COMPLETE' || d.rawStatus === 'COMPLETE');
+      const achieved = Number(d.achievedCredits !== undefined ? d.achievedCredits : (d.q4Credits || 0));
+      const target = Number(d.targetCredits !== undefined ? d.targetCredits : 160.0);
+      const pending = Number(d.pendingCredits || 0);
+      const pel = Number(d.pelayananCredits || 0);
+      const tgtPel = Number(d.targetPelayananCredits || 56.0);
+      const peng = Number(d.pengabdianCredits || 0);
+      const tgtPeng = Number(d.targetPengabdianCredits || 8.0);
+      const pemb = Number(d.pembelajaranCredits || 0);
+      const tgtPemb = Number(d.targetPembelajaranCredits || 72.0);
+
+      let redWidth = 0;
+      let yellowWidth = 0;
+      if (!isComp) {
+        const tgt = Math.max(0.1, target);
+        redWidth = Math.min(100, Math.round((achieved / tgt) * 100));
+        yellowWidth = Math.min(100 - redWidth, Math.round((pending / tgt) * 100));
+      }
+
+      return {
+        achieved,
+        target,
+        redPercent: redWidth,
+        yellowPercent: yellowWidth,
+        isGreen: isComp,
+        isComplete: isComp,
+        pendingCredits: pending,
+        pengabdian: { achieved: peng, target: tgtPeng },
+        pelayanan: { achieved: pel, target: tgtPel },
+        pembelajaran: { achieved: pemb, target: tgtPemb },
+        lastActivity: d.lastActivity || 'Baru saja'
+      };
+    }
+
     function renderDoctorTable(customList, resetPage = true) {
       if (resetPage) doctorPagination.page = 1;
-      const allDoctors = customList || PogiStore.getDoctors();
+      const allDoctors = customList || LIVE_DATABASE_DOCTORS || [];
       currentFilteredDoctors = allDoctors;
       doctorPagination.total = allDoctors.length;
 
@@ -787,36 +822,11 @@ Admin Data PP POGI & PT Energi Cipta
         // Desktop / Tablet Rows (9 Kolom sesuai referensi gambar)
         if (tbody) {
           tbody.innerHTML = pageDoctors.map(d => {
-            const isComp = (d.status === 'Complete' || d.status === 'COMPLETE' || d.rawStatus === 'COMPLETE');
-            const stats = ((typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats)
-              ? PogiStore.getDoctorPeriodStats(d, activePeriod)
-              : null) || {
-                  achieved: d.q4Credits || 0,
-                  target: 8.0,
-                  redPercent: 0,
-                  yellowPercent: 0,
-                  isGreen: isComp,
-                  isComplete: isComp,
-                  pendingCredits: d.pendingCredits || 0,
-                  pengabdian: { achieved: d.pengabdianCredits || 0, target: 1 },
-                  pelayanan: { achieved: d.pelayananCredits || 0, target: 5 },
-                  pembelajaran: { achieved: d.pembelajaranCredits || 0, target: 2 },
-                  lastActivity: d.lastActivity || '17 Nov 2026, 09.00'
-                };
-
-            let redWidth = 0;
-            let yellowWidth = 0;
-            if (stats.redPercent !== undefined) {
-              redWidth = stats.redPercent;
-              yellowWidth = stats.yellowPercent || 0;
-            } else if (!stats.isComplete) {
-              const tgt = Math.max(0.1, stats.target);
-              redWidth = Math.min(100, Math.round((stats.achieved / tgt) * 100));
-              yellowWidth = Math.min(100 - redWidth, Math.round(((stats.pendingCredits || 0) / tgt) * 100));
-            }
-
-            const pendingVal = stats.pendingCredits || 0;
-            const lastAct = stats.lastActivity || d.lastActivity || '17 Nov 2026, 09.00';
+            const stats = calculateDoctorStats(d);
+            const redWidth = stats.redPercent;
+            const yellowWidth = stats.yellowPercent;
+            const pendingVal = stats.pendingCredits;
+            const lastAct = stats.lastActivity;
 
             return `
               <tr class="hover:bg-slate-50/90 transition cursor-pointer" onclick="openDoctorDetail('${d.id}')">
@@ -824,9 +834,9 @@ Admin Data PP POGI & PT Energi Cipta
                 <td class="py-3 px-4">
                   <div class="font-bold text-slate-900 text-xs">${d.name}</div>
                   <div class="text-[10px] text-slate-400 font-mono mt-0.5 flex items-center gap-1.5">
-                    <span>${d.nik}</span>
+                    <span>${d.nik || '-'}</span>
                     <span class="text-slate-300">&bull;</span>
-                    <span class="text-indigo-600 font-semibold font-sans" title="PIC Admin Binaan">PIC: ${d.assignedTo || 'Siti Rahma'}</span>
+                    <span class="text-indigo-600 font-semibold font-sans" title="PIC Admin Binaan">PIC: ${d.assignedTo || 'Belum Ditentukan'}</span>
                   </div>
                 </td>
                 <!-- 2. SKP -->
@@ -887,32 +897,16 @@ Admin Data PP POGI & PT Energi Cipta
         // Mobile Touch Cards (< md)
         if (mobileContainer) {
           mobileContainer.innerHTML = pageDoctors.map(d => {
-            const isComp = (d.status === 'Complete' || d.status === 'COMPLETE' || d.rawStatus === 'COMPLETE');
-            const stats = ((typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats)
-              ? PogiStore.getDoctorPeriodStats(d, activePeriod)
-              : null) || {
-                  achieved: d.q4Credits || 0,
-                  target: 8.0,
-                  redPercent: 0,
-                  yellowPercent: 0,
-                  isGreen: isComp,
-                  isComplete: isComp,
-                  pendingCredits: d.pendingCredits || 0,
-                  pengabdian: { achieved: d.pengabdianCredits || 0, target: 1 },
-                  pelayanan: { achieved: d.pelayananCredits || 0, target: 5 },
-                  pembelajaran: { achieved: d.pembelajaranCredits || 0, target: 2 },
-                  lastActivity: d.lastActivity || '17 Nov 2026, 09.00'
-                };
-
-            const pendingVal = stats.pendingCredits || 0;
-            const lastAct = stats.lastActivity || d.lastActivity || '17 Nov 2026, 09.00';
+            const stats = calculateDoctorStats(d);
+            const pendingVal = stats.pendingCredits;
+            const lastAct = stats.lastActivity;
 
             return `
               <div onclick="openDoctorDetail('${d.id}')" class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-3 cursor-pointer hover:border-emerald-300 transition">
                 <div class="flex items-start justify-between gap-2">
                   <div>
                     <div class="font-bold text-slate-900 text-xs leading-snug">${d.name}</div>
-                    <div class="text-[10px] text-slate-400 font-mono mt-0.5">${d.nik}</div>
+                    <div class="text-[10px] text-slate-400 font-mono mt-0.5">${d.nik || '-'}</div>
                   </div>
                   <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${stats.isComplete ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'} shrink-0">
                     ${stats.isComplete ? 'Complete' : 'Incomplete'}
@@ -991,11 +985,7 @@ Admin Data PP POGI & PT Energi Cipta
         activePeriod = `${qVal} ${yVal}`;
       }
 
-      let list = (typeof LIVE_DATABASE_DOCTORS !== 'undefined' && LIVE_DATABASE_DOCTORS.length > 0)
-        ? [...LIVE_DATABASE_DOCTORS]
-        : ((typeof PogiStore !== 'undefined' && PogiStore.getDoctorsForCurrentUser)
-            ? PogiStore.getDoctorsForCurrentUser()
-            : (typeof PogiStore !== 'undefined' ? PogiStore.getDoctors() : []));
+      let list = [...(LIVE_DATABASE_DOCTORS || [])];
 
       const currentUser = (typeof PogiStore !== 'undefined') ? PogiStore.getCurrentUser() : null;
       if (currentUser && currentUser.role === 'ADMIN_CABANG' && currentUser.branch && currentUser.branch !== 'Nasional') {
@@ -1022,28 +1012,13 @@ Admin Data PP POGI & PT Energi Cipta
         }
       }
 
-      // Filter by Kuartal & Tahun (Periode)
-      if ((qVal && qVal !== 'ALL') || (yVal && yVal !== 'ALL')) {
-        list = list.filter(d => (typeof PogiStore !== 'undefined' && PogiStore.isDoctorInPeriod) ? PogiStore.isDoctorInPeriod(d, qVal, yVal) : true);
-      }
-
       // Pipeline status filter
       if (currentPipelineFilter === 'complete') {
-        list = list.filter(d => {
-          const s = (typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats) ? PogiStore.getDoctorPeriodStats(d, activePeriod) : null;
-          return s ? s.isComplete : (d.status === 'Complete' || d.status === 'COMPLETE' || d.rawStatus === 'COMPLETE');
-        });
+        list = list.filter(d => (d.status === 'Complete' || d.status === 'COMPLETE' || d.rawStatus === 'COMPLETE'));
       } else if (currentPipelineFilter === 'incomplete') {
-        list = list.filter(d => {
-          const s = (typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats) ? PogiStore.getDoctorPeriodStats(d, activePeriod) : null;
-          return s ? !s.isComplete : (d.status !== 'Complete' && d.status !== 'COMPLETE' && d.rawStatus !== 'COMPLETE');
-        });
+        list = list.filter(d => (d.status !== 'Complete' && d.status !== 'COMPLETE' && d.rawStatus !== 'COMPLETE'));
       } else if (currentPipelineFilter === 'pending') {
-        list = list.filter(d => {
-          const s = (typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats) ? PogiStore.getDoctorPeriodStats(d, activePeriod) : null;
-          const p = s ? s.pendingCredits : (d.pendingCredits || 0);
-          return p > 0;
-        });
+        list = list.filter(d => Number(d.pendingCredits || 0) > 0);
       }
 
       // Toolbar filters
@@ -1066,8 +1041,7 @@ Admin Data PP POGI & PT Energi Cipta
 
       if (status && status !== 'ALL') {
         list = list.filter(d => {
-          const s = (typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats) ? PogiStore.getDoctorPeriodStats(d, activePeriod) : null;
-          const isComp = s ? s.isComplete : (d.status === 'Complete' || d.status === 'COMPLETE' || d.rawStatus === 'COMPLETE');
+          const isComp = (d.status === 'Complete' || d.status === 'COMPLETE' || d.rawStatus === 'COMPLETE');
           return status === 'Complete' ? isComp : !isComp;
         });
       }
@@ -1099,15 +1073,14 @@ Admin Data PP POGI & PT Energi Cipta
 
     function openDoctorDetailModal(docId) {
       activeDoctorId = docId;
-      const d = (typeof LIVE_DATABASE_DOCTORS !== 'undefined' ? LIVE_DATABASE_DOCTORS.find(x => x.id === docId) : null)
-        || ((typeof PogiStore !== 'undefined') ? PogiStore.getDoctors().find(x => x.id === docId) : null);
+      const d = (typeof LIVE_DATABASE_DOCTORS !== 'undefined' ? LIVE_DATABASE_DOCTORS.find(x => x.id === docId) : null);
       if (!d) return;
 
       const initials = d.initials || d.avatar || 'DR';
-      const pel = d.pelayananCredits !== undefined ? d.pelayananCredits : (d.pelayanan?.achieved || 0);
-      const peng = d.pengabdianCredits !== undefined ? d.pengabdianCredits : (d.pengabdian?.achieved || 0);
-      const pemb = d.pembelajaranCredits !== undefined ? d.pembelajaranCredits : (d.pembelajaran?.achieved || 0);
-      const strNum = d.strNumber || d.nik || '31.1.1.100.2.21.084291';
+      const pel = Number(d.pelayananCredits || 0);
+      const peng = Number(d.pengabdianCredits || 0);
+      const pemb = Number(d.pembelajaranCredits || 0);
+      const strNum = d.strNumber || d.nik || '-';
 
       if (document.getElementById('modalAvatar')) document.getElementById('modalAvatar').innerText = initials;
       if (document.getElementById('modalDoctorName')) document.getElementById('modalDoctorName').innerText = d.name;
@@ -1142,40 +1115,49 @@ Admin Data PP POGI & PT Energi Cipta
 
     function approvePendingCredits() {
       if (!activeDoctorId) return;
-      const docs = PogiStore.getDoctors();
-      const doc = docs.find(d => d.id === activeDoctorId);
-      if (doc) {
-        doc.pendingCredits = 0;
-        doc.qAchieved = Math.round((doc.qAchieved + 4.5) * 100) / 100;
-        doc.skpDisplay = doc.qAchieved.toString().replace('.', ',') + ' / ' + doc.qTarget;
-        doc.pembelajaran.achieved = Math.round((doc.pembelajaran.achieved + 4.5) * 100) / 100;
-        doc.total5YearAchieved += 4.5;
-        if (doc.qAchieved >= doc.qTarget) {
-          doc.status = 'Complete';
+      fetch(`/doctors/${activeDoctorId}/verify-credits`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          credit_amount: 4.5,
+          domain: 'PEMBELAJARAN',
+          description: 'Verifikasi Kredit SKP Pembelajaran'
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const doc = (LIVE_DATABASE_DOCTORS || []).find(d => d.id === activeDoctorId);
+          if (doc) {
+            doc.pendingCredits = 0;
+            doc.pembelajaranCredits = (doc.pembelajaranCredits || 0) + 4.5;
+            doc.achievedCredits = (doc.achievedCredits || 0) + 4.5;
+            if (doc.achievedCredits >= (doc.targetCredits || 160)) {
+              doc.status = 'Complete';
+              doc.rawStatus = 'COMPLETE';
+            }
+            doc.lastActivity = 'Baru saja diverifikasi';
+            renderDoctorTable(currentFilteredDoctors, false);
+          }
+          showToast('Kredit SKP Pembelajaran (+4.5 SKP) Berhasil Diverifikasi & Disimpan ke Database!', 'success');
+        } else {
+          showToast(data.message || 'Gagal memverifikasi kredit', 'error');
         }
-        doc.lastActivity = 'Verifikasi +4.5 SKP Disetujui (' + PogiStore.formatCurrentTimestamp() + ')';
-        PogiStore.saveDoctors(docs);
-        renderDoctorTable(currentFilteredDoctors, false);
-      }
-      showToast('Kredit SKP Pembelajaran (+4.5 SKP) Berhasil Diverifikasi & Ditambahkan!', 'success');
-      PogiStore.addActivity({
-        actor: 'Siti Rahma (Admin Data)',
-        action: 'Verifikasi Kredit SKP',
-        details: 'Menyetujui 4.5 SKP Pembelajaran untuk dokter ID: ' + activeDoctorId,
-        category: 'Verification'
+        closeDoctorModal();
+      })
+      .catch(err => {
+        showToast('Gagal menghubungi server verifikasi: ' + err.message, 'error');
+        closeDoctorModal();
       });
-      closeDoctorModal();
     }
 
     function sendDoctorReminder(channel) {
       const type = channel === 'wa' ? 'WhatsApp' : 'Email';
       showToast('Pengingat kelengkapan 160 SKP terkirim ke dokter via ' + type, 'success');
-      PogiStore.addActivity({
-        actor: 'Siti Rahma (Admin Data)',
-        action: 'Kirim Pengingat Dokter',
-        details: 'Notifikasi pemenuhan target SKP terkirim via ' + type,
-        category: 'FollowUp'
-      });
     }
 
     const exportDoctorData = exportDoctorsPdf;
@@ -1184,7 +1166,7 @@ Admin Data PP POGI & PT Energi Cipta
       // 1. Populasi Dropdown Provinsi (38 Provinsi Nasional)
       const provSelect = document.getElementById('newDocProv');
       if (provSelect && provSelect.options.length <= 1) {
-        const provs = (typeof INITIAL_PROVINCES !== 'undefined') ? INITIAL_PROVINCES : ((typeof PogiStore !== 'undefined' && PogiStore.getProvinces) ? PogiStore.getProvinces() : []);
+        const provs = (typeof INITIAL_PROVINCES !== 'undefined') ? INITIAL_PROVINCES : [];
         provs.forEach(p => {
           const opt = document.createElement('option');
           opt.value = p.name || p;
@@ -1196,7 +1178,7 @@ Admin Data PP POGI & PT Energi Cipta
       // 2. Populasi Dropdown Institusi / RS Jejaring
       const instSelect = document.getElementById('newDocInst');
       if (instSelect && instSelect.options.length <= 1) {
-        const insts = (typeof PogiStore !== 'undefined' && PogiStore.getInstitutions) ? PogiStore.getInstitutions() : ((typeof INITIAL_INSTITUTIONS !== 'undefined') ? INITIAL_INSTITUTIONS : []);
+        const insts = (typeof INITIAL_INSTITUTIONS !== 'undefined') ? INITIAL_INSTITUTIONS : [];
         insts.forEach(inst => {
           const opt = document.createElement('option');
           opt.value = inst.name || inst;
@@ -1244,7 +1226,6 @@ Admin Data PP POGI & PT Energi Cipta
       const yearMatch = periodEnd.match(/\d{4}/);
       const endYear = yearMatch ? yearMatch[0] : '2030';
       const periodLabel = `${periodStart} - ${periodEnd}`;
-      const mockNik = '32' + Math.floor(10000000000000 + Math.random() * 90000000000000);
 
       const payload = {
         name: name,
@@ -1275,9 +1256,9 @@ Admin Data PP POGI & PT Energi Cipta
             pogiId: created.pogiId,
             name: created.name,
             initials: initials,
-            nik: mockNik,
+            nik: created.nik || created.strNumber || str,
             strNumber: created.strNumber || str,
-            sipNumber: 'SIP.01.2026/0891',
+            sipNumber: created.sipNumber || '-',
             province: created.province || prov,
             hospital: created.hospital || inst,
             institution: created.hospital || inst,
@@ -1296,29 +1277,13 @@ Admin Data PP POGI & PT Energi Cipta
             pelayananCredits: 0,
             pengabdianCredits: 0,
             pembelajaranCredits: 0,
-            q4Details: {
-              skp: { achieved: 0, target: 8.0, isGreen: false, redPercent: 0, yellowPercent: 0 },
-              pending: 0,
-              pengabdian: { achieved: 0, target: 1 },
-              pelayanan: { achieved: 0, target: 5 },
-              pembelajaran: { achieved: 0, target: 2 }
-            }
+            targetPelayananCredits: 56,
+            targetPengabdianCredits: 8,
+            targetPembelajaranCredits: 72
           };
 
           if (typeof LIVE_DATABASE_DOCTORS !== 'undefined') {
             LIVE_DATABASE_DOCTORS.unshift(newDocItem);
-          }
-
-          if (typeof PogiStore !== 'undefined') {
-            const docs = PogiStore.getDoctors();
-            docs.unshift(newDocItem);
-            PogiStore.saveDoctors(docs);
-            PogiStore.addActivity({
-              actor: 'Admin POGI',
-              action: 'Pendaftaran Dokter Baru',
-              details: 'Mendaftarkan ' + name + ' (' + inst + ', ' + prov + ') ke database',
-              category: 'Registration'
-            });
           }
 
           closeAddDoctorModal();
@@ -1329,39 +1294,7 @@ Admin Data PP POGI & PT Energi Cipta
         }
       })
       .catch(err => {
-        // Fallback store
-        const docs = PogiStore.getDoctors();
-        const newDocId = 'doc-' + (docs.length + 1).toString().padStart(3, '0');
-        const newDocPogiId = '#POGI-2026-' + (1000 + docs.length + 1);
-        const fallbackDoc = {
-          id: newDocId,
-          pogiId: newDocPogiId,
-          name: name,
-          initials: initials,
-          nik: mockNik,
-          province: prov,
-          hospital: inst,
-          institution: inst,
-          phone: phone,
-          assignedTo: assignedTo,
-          pelayananCredits: 0,
-          pengabdianCredits: 0,
-          pembelajaranCredits: 0,
-          q4Credits: 0.0,
-          pendingCredits: 0.0,
-          status: 'Incomplete',
-          rawStatus: 'INCOMPLETE',
-          strExpiry: periodEnd,
-          validUntilLabel: 'Siklus 5 Thn: Habis ' + endYear,
-          avatar: initials,
-          lastActivity: 'Baru didaftarkan',
-          periodLabel: periodLabel
-        };
-        docs.unshift(fallbackDoc);
-        PogiStore.saveDoctors(docs);
-        closeAddDoctorModal();
-        applyDoctorFilters();
-        showToast('Dokter baru ' + name + ' tersimpan!', 'success');
+        showToast('Gagal menghubungi server database: ' + (err.message || 'Terjadi kesalahan'), 'error');
       });
     }
 
@@ -1393,21 +1326,21 @@ Admin Data PP POGI & PT Energi Cipta
 
     function updateBlastRecipients() {
       const opt = document.getElementById('blastFilterOption').value;
-      const allDocs = (typeof PogiStore !== 'undefined') ? PogiStore.getDoctors() : [];
+      const allDocs = (typeof LIVE_DATABASE_DOCTORS !== 'undefined' && LIVE_DATABASE_DOCTORS.length > 0) ? LIVE_DATABASE_DOCTORS : [];
       let list = [];
 
       if (opt === 'all') {
         list = allDocs;
       } else if (opt === 'incomplete') {
-        list = allDocs.filter(d => d.status !== 'Complete');
+        list = allDocs.filter(d => (d.status !== 'Complete' && d.status !== 'COMPLETE' && d.rawStatus !== 'COMPLETE'));
       } else if (opt === 'missing_docs') {
-        list = allDocs.filter(d => d.status !== 'Complete' || (d.q4Credits && d.q4Credits < 8.0));
+        list = allDocs.filter(d => (d.status !== 'Complete' && d.status !== 'COMPLETE' && d.rawStatus !== 'COMPLETE') || (d.achievedCredits && d.achievedCredits < 160.0));
       } else if (opt === 'jabar_incomplete') {
-        list = allDocs.filter(d => d.province === 'Jawa Barat' && d.status !== 'Complete');
+        list = allDocs.filter(d => d.province && d.province.includes('Jawa Barat') && (d.status !== 'Complete' && d.status !== 'COMPLETE'));
       } else if (opt === 'dki_incomplete') {
-        list = allDocs.filter(d => d.province === 'DKI Jakarta' && d.status !== 'Complete');
+        list = allDocs.filter(d => d.province && d.province.includes('DKI Jakarta') && (d.status !== 'Complete' && d.status !== 'COMPLETE'));
       } else if (opt === 'jatim_incomplete') {
-        list = allDocs.filter(d => d.province === 'Jawa Timur' && d.status !== 'Complete');
+        list = allDocs.filter(d => d.province && d.province.includes('Jawa Timur') && (d.status !== 'Complete' && d.status !== 'COMPLETE'));
       }
 
       currentBlastRecipients = list;
@@ -1436,12 +1369,14 @@ Admin Data PP POGI & PT Energi Cipta
       const body = document.getElementById('blastMessagePreviewBody');
       if (!body) return;
 
-      const sampleDoc = currentBlastRecipients.length > 0 ? currentBlastRecipients[0] : {
-        name: 'dr. Nurul Anggraini, Sp.OG',
-        province: 'DKI Jakarta',
-        qAchieved: 2.0,
+      const sampleDoc = currentBlastRecipients.length > 0 ? currentBlastRecipients[0] : ((typeof LIVE_DATABASE_DOCTORS !== 'undefined' && LIVE_DATABASE_DOCTORS.length > 0) ? LIVE_DATABASE_DOCTORS[0] : {
+        name: 'Dokter Obgyn',
+        province: 'Nasional',
+        achievedCredits: 0,
+        targetCredits: 160.0,
+        qAchieved: 0,
         qTarget: 8.0
-      };
+      });
 
       const deficit = Math.max(0, (sampleDoc.qTarget || 8.0) - (sampleDoc.qAchieved || 0)).toFixed(1);
 
@@ -1494,7 +1429,9 @@ Pengurus Pusat POGI & Tim Teknologi Energi Cipta`;
       document.getElementById('blastSetupView').classList.add('hidden');
       document.getElementById('blastQueueView').classList.remove('hidden');
 
-      const queue = PogiStore.queueWaBlast(currentBlastRecipients, currentBlastTemplate);
+      const queue = (typeof PogiStore !== 'undefined' && PogiStore.queueWaBlast)
+        ? PogiStore.queueWaBlast(currentBlastRecipients, currentBlastTemplate)
+        : currentBlastRecipients.map((doc, i) => ({ id: 'queue-' + i, doctorId: doc.id, doctorName: doc.name, phone: doc.phone || '-', status: 'QUEUED' }));
       const total = queue.length;
 
       document.getElementById('queueTotalCount').innerText = total;

@@ -143,9 +143,38 @@
             <span>Kembali </span>
           </a>
           <div class="text-[11px] text-slate-500 font-medium">
-            Monitoring SKP Dokter Obgyn &bull; <strong id="breadcrumbDoctorName">Memuat data...</strong>
+            Monitoring SKP Dokter Obgyn &bull; <strong id="breadcrumbDoctorName">{{ $doctor->full_name ?? 'Detail Dokter' }}</strong>
           </div>
         </div>
+
+        @php
+          $cleanName = preg_replace('/dr\.\s*|drg\.\s*|Prof\.|Sp\.OG|\,/i', '', $doctor->full_name ?? '');
+          $parts = array_values(array_filter(explode(' ', trim($cleanName))));
+          $initials = 'DR';
+          if (count($parts) >= 2) {
+            $initials = strtoupper(substr($parts[0], 0, 1) . substr($parts[1], 0, 1));
+          } elseif (count($parts) === 1) {
+            $initials = strtoupper(substr($parts[0], 0, 2));
+          }
+          $isComplete = in_array(strtoupper($doctor->status ?? ''), ['COMPLETE']);
+          $pel = (float) ($period->achieved_pelayanan_credits ?? 0);
+          $peng = (float) ($period->achieved_pengabdian_credits ?? 0);
+          $pemb = (float) ($period->achieved_pembelajaran_credits ?? 0);
+          $totalAchieved = (float) ($period->achieved_total_credits ?? ($pel + $peng + $pemb));
+          $targetPel = 56;
+          $targetPeng = 8;
+          $targetPemb = 72;
+          $targetFleks = 24;
+          $excessPel = max(0, $pel - $targetPel);
+          $excessPeng = max(0, $peng - $targetPeng);
+          $excessPemb = max(0, $pemb - $targetPemb);
+          $achievedFleks = min($targetFleks, round($excessPel + $excessPeng + $excessPemb, 1));
+          $pctPel = min(100, round(($pel / $targetPel) * 100));
+          $pctPeng = min(100, round(($peng / $targetPeng) * 100));
+          $pctPemb = min(100, round(($pemb / $targetPemb) * 100));
+          $pctFleks = min(100, round(($achievedFleks / $targetFleks) * 100));
+          $nikFormatted = $doctor->nik_hash ? '32' . substr($doctor->nik_hash, 0, 14) : ($doctor->str_number ?? '-');
+        @endphp
 
         <!-- DOCTOR PROFILE HERO CARD -->
         <div class="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-2xs space-y-6">
@@ -153,22 +182,22 @@
             <div class="flex items-center gap-4 min-w-0">
               <div id="doctorAvatar"
                 class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#16b3ac] text-white font-black text-2xl flex items-center justify-center shrink-0 shadow-xs ring-4 ring-emerald-50">
-                CS
+                {{ $initials }}
               </div>
               <div class="min-w-0">
                 <div class="flex items-center gap-2 flex-wrap mb-1">
                   <span id="doctorPogiId"
-                    class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-[#16b3ac] border border-emerald-200 font-mono text-xs font-black">#POGI-2026-1001</span>
+                    class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-[#16b3ac] border border-emerald-200 font-mono text-xs font-black">#{{ $doctor->npa_pogi ?? ('POGI-' . substr($doctor->id ?? 'DOC', 0, 8)) }}</span>
                   <span id="doctorStatusBadge"
-                    class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-50 text-[#16b3ac] border border-emerald-200 flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span>Complete</span>
+                    class="px-2.5 py-0.5 rounded-full text-xs font-extrabold {{ $isComplete ? 'bg-emerald-50 text-[#16b3ac] border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200' }} flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full {{ $isComplete ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
+                    <span>{{ $isComplete ? 'Complete' : 'Incomplete' }}</span>
                   </span>
                   <!-- PIC Admin Binaan Badge -->
                   <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-sky-50 border border-sky-200 text-sky-900 text-xs font-semibold">
                     <span class="material-symbols-outlined text-[15px] text-sky-600">assignment_ind</span>
                     <span>PIC:</span>
-                    <span id="doctorAssignedTo" class="font-bold text-sky-950">Anna</span>
+                    <span id="doctorAssignedTo" class="font-bold text-sky-950">{{ $doctor->assigned_pic_name ?? 'Belum Ditentukan' }}</span>
                     @if(Auth::user()?->role === 'SUPER_ADMIN')
                     <button type="button" onclick="openChangePicModal()" class="ml-1 text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5" title="Ubah PIC Admin Pendamping">
                       <span class="material-symbols-outlined text-[12px]">swap_horiz</span> Ganti PIC
@@ -176,10 +205,8 @@
                     @endif
                   </div>
                 </div>
-                <h1 id="doctorName" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">dr. Cut
-                  Simatupang, Sp.OG, Subsp. KFM</h1>
-                <p id="doctorSpecialty" class="text-xs text-slate-500 font-semibold mt-0.5">Dokter Spesialis Obstetri
-                  dan Ginekologi (Subspesialis Fetomaternal)</p>
+                <h1 id="doctorName" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">{{ $doctor->full_name ?? 'Detail Dokter' }}</h1>
+                <p id="doctorSpecialty" class="text-xs text-slate-500 font-semibold mt-0.5">{{ $doctor->specialization_title ?? 'Dokter Spesialis Obstetri dan Ginekologi' }}</p>
               </div>
             </div>
 
@@ -197,29 +224,28 @@
           <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
             <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
               <div class="text-[10px] text-slate-400 font-bold uppercase">Nomor STR (Kemenkes)</div>
-              <div id="doctorStr" class="font-extrabold text-slate-900 mt-1 font-mono">32.73.100.2.21.0883</div>
-              <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">&bull; Habis: 11 Nov 2029</div>
+              <div id="doctorStr" class="font-extrabold text-slate-900 mt-1 font-mono">{{ $doctor->str_number ?? '-' }}</div>
+              <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">&bull; Habis: {{ $doctor->sip_expiry_date ? \Carbon\Carbon::parse($doctor->sip_expiry_date)->format('d M Y') : '11 Nov 2029' }}</div>
             </div>
             <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
               <div class="text-[10px] text-slate-400 font-bold uppercase">NIK / Kependudukan</div>
-              <div id="doctorNik" class="font-extrabold text-slate-900 mt-1 font-mono">3273100000000883</div>
+              <div id="doctorNik" class="font-extrabold text-slate-900 mt-1 font-mono">{{ $nikFormatted }}</div>
               <div class="text-[10px] text-slate-500 font-semibold mt-0.5">Dukcapil Valid</div>
             </div>
             <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
               <div class="text-[10px] text-slate-400 font-bold uppercase">Cabang POGI</div>
-              <div id="doctorProvince" class="font-extrabold text-slate-900 mt-1">DKI Jakarta</div>
-              <div class="text-[10px] text-slate-500 font-semibold mt-0.5">Cabang Utama</div>
+              <div id="doctorProvince" class="font-extrabold text-slate-900 mt-1">{{ $doctor->province_name ?? 'Nasional' }}</div>
+              <div class="text-[10px] text-slate-500 font-semibold mt-0.5">Cabang Terdaftar</div>
             </div>
             <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
               <div class="text-[10px] text-slate-400 font-bold uppercase">RS Jejaring Praktik</div>
-              <div id="doctorHospital" class="font-extrabold text-slate-900 mt-1 truncate">RSUPN Dr. Cipto Mangunkusumo
-              </div>
+              <div id="doctorHospital" class="font-extrabold text-slate-900 mt-1 truncate">{{ $doctor->institution_name ?? 'RS Jejaring POGI' }}</div>
               <div class="text-[10px] text-[#16b3ac] font-semibold mt-0.5">SIP Terbit Aktif</div>
             </div>
             <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100 flex flex-col justify-between col-span-2 sm:col-span-1">
               <div>
                 <div class="text-[10px] text-slate-400 font-bold uppercase">PIC Admin Binaan</div>
-                <div id="doctorPicCardName" class="font-extrabold text-slate-900 mt-1 truncate">Anna</div>
+                <div id="doctorPicCardName" class="font-extrabold text-slate-900 mt-1 truncate">{{ $doctor->assigned_pic_name ?? 'Belum Ditentukan' }}</div>
                 <div class="text-[10px] text-sky-700 font-semibold mt-0.5 flex items-center gap-1">
                   <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>Admin POGI
                 </div>
@@ -281,7 +307,7 @@
             </div>
             <div class="text-left sm:text-right shrink-0">
               <span class="text-xs font-bold text-slate-400">Target Kuartal (Q4):</span>
-              <strong id="doctorQ4TargetText" class="text-xs font-black text-[#16b3ac] ml-1">8.0 SKP / Dokter</strong>
+              <strong id="doctorQ4TargetText" class="text-xs font-black text-[#16b3ac] ml-1">8.0 SKP / Dokter <span class="text-slate-400 font-normal">| Realisasi:</span> <span class="{{ $isComplete ? 'text-emerald-700' : 'text-rose-600' }} font-black">{{ $totalAchieved }} SKP</span></strong>
             </div>
           </div>
 
@@ -299,16 +325,16 @@
                   </div>
                 </div>
                 <span id="badgePelayanan"
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-sky-50 text-sky-700 border border-sky-200">0%</span>
+                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-sky-50 text-sky-700 border border-sky-200">{{ $pctPel }}%</span>
               </div>
               <div class="flex items-baseline justify-between text-xs">
                 <span class="text-slate-500 text-[11px]">Realisasi:</span>
-                <span class="text-base font-black text-sky-950"><span id="valPelayanan">0</span> <span
+                <span class="text-base font-black text-sky-950"><span id="valPelayanan">{{ $pel }}</span> <span
                     class="text-xs font-normal text-slate-400">/ 56 SKP</span></span>
               </div>
               <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                 <div id="barPelayanan" class="bg-sky-500 h-2 rounded-full transition-all duration-500"
-                  style="width: 0%"></div>
+                  style="width: {{ $pctPel }}%"></div>
               </div>
               <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
                 IGD PONEK, Bedah SC, Rawat Jalan Poli.
@@ -329,16 +355,16 @@
                   </div>
                 </div>
                 <span id="badgePengabdian"
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200">0%</span>
+                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200">{{ $pctPeng }}%</span>
               </div>
               <div class="flex items-baseline justify-between text-xs">
                 <span class="text-slate-500 text-[11px]">Realisasi:</span>
-                <span class="text-base font-black text-amber-950"><span id="valPengabdian">0</span> <span
+                <span class="text-base font-black text-amber-950"><span id="valPengabdian">{{ $peng }}</span> <span
                     class="text-xs font-normal text-slate-400">/ 8 SKP</span></span>
               </div>
               <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                 <div id="barPengabdian" class="bg-amber-500 h-2 rounded-full transition-all duration-500"
-                  style="width: 0%"></div>
+                  style="width: {{ $pctPeng }}%"></div>
               </div>
               <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
                 Baksos Kanker Serviks, KIA, Edukasi KB.
@@ -360,16 +386,16 @@
                   </div>
                 </div>
                 <span id="badgePembelajaran"
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">0%</span>
+                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">{{ $pctPemb }}%</span>
               </div>
               <div class="flex items-baseline justify-between text-xs">
                 <span class="text-slate-500 text-[11px]">Realisasi:</span>
-                <span class="text-base font-black text-emerald-950"><span id="valPembelajaran">0</span> <span
+                <span class="text-base font-black text-emerald-950"><span id="valPembelajaran">{{ $pemb }}</span> <span
                     class="text-xs font-normal text-slate-400">/ 72 SKP</span></span>
               </div>
               <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                 <div id="barPembelajaran" class="bg-emerald-500 h-2 rounded-full transition-all duration-500"
-                  style="width: 0%"></div>
+                  style="width: {{ $pctPemb }}%"></div>
               </div>
               <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
                 Simposium PIT POGI, Workshop USG.
@@ -390,16 +416,16 @@
                   </div>
                 </div>
                 <span id="badgeFleksibilitas"
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">0%</span>
+                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">{{ $pctFleks }}%</span>
               </div>
               <div class="flex items-baseline justify-between text-xs">
                 <span class="text-slate-500 text-[11px]">Realisasi:</span>
-                <span class="text-base font-black text-purple-950"><span id="valFleksibilitas">0</span> <span
+                <span class="text-base font-black text-purple-950"><span id="valFleksibilitas">{{ $achievedFleks }}</span> <span
                     class="text-xs font-normal text-slate-400">/ 24 SKP</span></span>
               </div>
               <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                 <div id="barFleksibilitas" class="bg-purple-500 h-2 rounded-full transition-all duration-500"
-                  style="width: 0%"></div>
+                  style="width: {{ $pctFleks }}%"></div>
               </div>
               <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
                 Kombinasi bebas 3 ranah pelengkap 160 SKP.
@@ -469,7 +495,7 @@
                   <span class="font-extrabold text-slate-900">Folder Object Storage Cloud Anggota:</span>
                   <span
                     class="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-100 text-[#16b3ac] font-bold border border-emerald-200"
-                    id="repoVaultBadge">pogi-skp-vault/{{ $doctor->id ?? 'doc-001' }}/</span>
+                    id="repoVaultBadge">pogi-skp-vault/{{ $doctor->id ?? 'vault' }}/</span>
                 </div>
                 <p class="text-[11px] text-slate-500">
                   Seluruh berkas bukti fisik SKP tersimpan dan terenkripsi di cloud internal sebelum
@@ -792,7 +818,7 @@
       <div class="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100/80 space-y-2.5 text-xs">
         <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
           <span class="text-slate-600">Dokter Sasaran:</span>
-          <span id="modalVerifDocName" class="font-black text-slate-900">dr. Nurul Anggraini, Sp.OG</span>
+          <span id="modalVerifDocName" class="font-black text-slate-900">{{ $doctor->full_name ?? 'Dokter' }}</span>
         </div>
         <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
           <span class="text-slate-600">Kredit Disetujui:</span>
@@ -879,7 +905,7 @@
         province: rawDoc.province_name || 'Nasional',
         hospital: rawDoc.institution_name || 'RS Jejaring POGI',
         institution: rawDoc.institution_name || 'RS Jejaring POGI',
-        nik: rawDoc.nik_hash ? '32' + String(rawDoc.nik_hash).substring(0, 14) : '3273100000000883',
+        nik: rawDoc.nik_hash ? '32' + String(rawDoc.nik_hash).substring(0, 14) : (rawDoc.str_number || '-'),
         strNumber: rawDoc.str_number || '-',
         sipNumber: rawDoc.sip_number || '-',
         validUntilLabel: rawDoc.sip_expiry_date ? `Siklus: Habis ${rawDoc.sip_expiry_date}` : 'Siklus 5 Thn: Aktif',
@@ -908,12 +934,13 @@
       if (LIVE_SERVER_DOCTOR) {
         activeDoctor = buildDoctorObject(LIVE_SERVER_DOCTOR, LIVE_SERVER_PERIOD);
       } else {
-        const doctors = (typeof PogiStore !== 'undefined') ? PogiStore.getDoctors() : [];
-        activeDoctor = doctors.find(d => d.id === docId) || doctors[0];
+        activeDoctor = null;
       }
 
-      renderDoctorDetails(activeDoctor);
-      renderDoctorRepositoryAndDetector(activeDoctor.id);
+      if (activeDoctor) {
+        renderDoctorDetails(activeDoctor);
+        renderDoctorRepositoryAndDetector(activeDoctor.id);
+      }
 
       const dz = document.getElementById('dropZoneContainer');
       if (dz) {
@@ -989,9 +1016,9 @@
       document.getElementById('doctorName').innerText = doc.name;
       document.getElementById('doctorProvince').innerText = doc.province;
       document.getElementById('doctorHospital').innerText = doc.hospital;
-      document.getElementById('doctorNik').innerText = doc.nik || '3273100000000883';
-      document.getElementById('doctorStr').innerText = doc.strNumber || '32.73.100.2.21.0883';
-      const picName = doc.assignedTo || 'Siti Rahma';
+      document.getElementById('doctorNik').innerText = doc.nik || '-';
+      document.getElementById('doctorStr').innerText = doc.strNumber || '-';
+      const picName = doc.assignedTo || 'Belum Ditentukan';
       if (document.getElementById('doctorAssignedTo')) document.getElementById('doctorAssignedTo').innerText = picName;
       if (document.getElementById('doctorPicCardName')) document.getElementById('doctorPicCardName').innerText = picName;
 
@@ -1161,8 +1188,6 @@
           status: e.status === 'DONE' ? 'Terverifikasi' : (e.status === 'REJECTED' ? 'Ditolak' : 'Pending'),
           evidence: 'Tersedia'
         }));
-      } else if (typeof PogiStore !== 'undefined' && PogiStore.getDoctorActivities) {
-        activities = PogiStore.getDoctorActivities(docId);
       }
 
       const countEl = document.getElementById('totalActivitiesCount');
@@ -1215,10 +1240,8 @@
     }
 
     function renderDoctorRepositoryAndDetector(docId) {
-      let docs = (LIVE_SERVER_DOCUMENTS && LIVE_SERVER_DOCUMENTS.length > 0)
-        ? LIVE_SERVER_DOCUMENTS
-        : ((typeof PogiStore !== 'undefined') ? PogiStore.getDoctorDocuments(docId) : []);
-      const detector = LIVE_SERVER_MISSING_DOCS || ((typeof PogiStore !== 'undefined') ? PogiStore.getDoctorMissingDocuments(docId) : { missingCount: 0, items: [] });
+      let docs = LIVE_SERVER_DOCUMENTS || [];
+      const detector = LIVE_SERVER_MISSING_DOCS || { missingCount: 0, items: [] };
 
       // Update Tab Badges
       const docCountBadge = document.getElementById('tabBadgeDocCount');
@@ -1277,9 +1300,6 @@
             skpBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-[#16b3ac] font-mono border border-emerald-200">+${skpNum} SKP</span>`;
           } else if (fCat.includes('administrasi')) {
             skpBadge = `<span class="text-[10px] text-slate-400 font-medium">— (Non-SKP)</span>`;
-          } else {
-            skpBadge = `<span class="text-[10px] text-slate-400 font-mono">0 SKP</span>`;
-          }
           } else {
             skpBadge = `<span class="text-[10px] text-slate-400 font-mono">0 SKP</span>`;
           }
@@ -1403,7 +1423,7 @@
           `).join('');
         }
       }
-    
+    }
 
     let selectedUploadFile = null;
 
@@ -1609,7 +1629,7 @@
     function openChangePicModal() {
       if (!activeDoctor) return;
       document.getElementById('modalChangePicDocName').innerText = activeDoctor.name;
-      const currentPic = activeDoctor.assignedTo || 'Siti Rahma';
+      const currentPic = activeDoctor.assignedTo || 'Belum Ditentukan';
       document.getElementById('modalChangePicCurrentPic').innerText = currentPic;
       const select = document.getElementById('modalChangePicSelect');
       if (select) {
@@ -2544,13 +2564,13 @@
       const indicator = document.getElementById('docZoomIndicator');
       if (indicator) indicator.innerText = '100%';
 
-      const doc = activeDoctor || (typeof PogiStore !== 'undefined' ? PogiStore.getDoctors()[0] : {
-        name: 'dr. Christy Sumampouw, Sp.OG',
-        pogiId: 'POGI-JAB-2026-007',
-        strNumber: '35.1.1.100.2.21.091823',
-        hospital: 'RSUD Kota Bogor',
-        province: 'Jawa Barat'
-      });
+      const doc = activeDoctor || {
+        name: 'Dokter',
+        pogiId: '-',
+        strNumber: '-',
+        hospital: '-',
+        province: '-'
+      };
 
       currentPreviewDocData = { filename, category, driveUrl, skpValue, doc };
 
@@ -2720,7 +2740,6 @@
         showVerificationSuccessModal(activeDoctor, addedCredit, prevPemb, newPemb, prevStatus);
       });
     }
-    
 
     function showVerificationSuccessModal(doc, addedCredit, prevPemb, newPemb, prevStatus) {
       const modal = document.getElementById('doctorVerificationSuccessModal');
