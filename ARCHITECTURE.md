@@ -1,130 +1,472 @@
-# ARCHITECTURE.md — Cetak Biru Arsitektur Sistem & Infrastruktur
-**Sistem Monitoring & Manajemen SKP Nasional POGI (PT Energi Cipta)**
+# ARCHITECTURE.md — Cetak Biru Arsitektur Sistem, ERD, DFD & Alur Kerja
+**Sistem Monitoring & Manajemen SKP Nasional POGI (MedCred Enterprise)**
+*Dikelola oleh PT Energi Cipta untuk Perkumpulan Obstetri dan Ginekologi Indonesia (POGI)*
 
 ---
 
-## 1. Ikhtisar Arsitektur Sistem
-Sistem dirancang menggunakan pendekatan **Modular Monolith dengan Asynchronous Worker Pipeline** untuk menjaga kecepatan pengembangan, kemudahan pemeliharaan oleh tim kecil, namun tetap tangguh dalam menangani penyimpanan ribuan dokumen PDF/sertifikat, penjadwalan *cutoff* bulanan, pembuatan laporan PDF otomatis, serta pengiriman antrean pesan WhatsApp massal.
+## 1. Ikhtisar Arsitektur Sistem (*High-Level Architecture*)
 
+Sistem dibangun menggunakan pendekatan **Clean Architecture (Hexagonal Architecture) Monolith dengan Asynchronous Worker Pipeline** untuk menjamin skalabilitas, kemudahan pengujian unit (*100% testable*), dan pemisahan aturan bisnis murni dari detail framework dan database.
+
+```mermaid
+flowchart TD
+    subgraph ClientLayer["1. PRESENTATION LAYER (CLIENT & DELIVERY)"]
+        WebAdmin["Web Console Admin (Laravel Blade + Tailwind CSS + Alpine.js)"]
+        PortalDokter["Portal Dokter Mandiri (Mobile-Responsive Web)"]
+        RoleSwitcher["Active Role Context (5 Official RBAC Roles)"]
+    end
+
+    subgraph AppLayer["2. APPLICATION LAYER (USE CASES)"]
+        MW["Auth & RBAC Middleware"]
+        Scope["BranchScope (Isolasi Cabang Otomatis)"]
+        Controllers["Slim Controllers (Maksimal 3-5 Baris/Method)"]
+        UseCases["Use Cases: VerifySkp, RecalculateCredits, CutoffJob, WaBlastJob"]
+        DTOs["Readonly Data Transfer Objects (PHP 8.2 Strict Types)"]
+    end
+
+    subgraph DomainLayer["3. DOMAIN LAYER (CORE BUSINESS RULES)"]
+        Entities["Domain Entities: Doctor, SkpPeriod, SkpEntry, Document"]
+        ValueObjects["Value Objects: Nik, SkpCredit, PhoneNumber"]
+        Contracts["Repository Interfaces & Service Contracts"]
+        Events["Domain Events: SkpVerified, CutoffLocked"]
+    end
+
+    subgraph InfraLayer["4. INFRASTRUCTURE & PERSISTENCE LAYER"]
+        Postgres[("PostgreSQL 14+ (RFC 9562 UUIDv7 + Zero-Fullscan Index)")]
+        RedisQueue[("Redis Queue / Worker Daemon (BullMQ / Laravel Queue)")]
+        DocVault[("S3-Compatible Document Vault (AWS S3 / MinIO / Cloudflare R2)")]
+        WAGateway["WhatsApp Business Gateway API (Anti-Ban Jitter)"]
+    end
+
+    ClientLayer --> MW
+    MW --> Scope
+    Scope --> Controllers
+    Controllers --> UseCases
+    UseCases --> DTOs
+    UseCases --> Contracts
+    UseCases --> Entities
+    UseCases --> ValueObjects
+    UseCases --> Events
+    Contracts -.->|implemented by| InfraLayer
+    UseCases --> RedisQueue
+    RedisQueue --> WAGateway
+    UseCases --> Postgres
+    UseCases --> DocVault
 ```
-+-----------------------------------------------------------------------------------+
-|                                CLIENT & PRESENTATION                              |
-|  [ Web Console Admin Energi Cipta ]   [ Portal Pengurus POGI Pusat & Cabang ]     |
-|           (Next.js / React + Tailwind CSS + Interactive Indonesia Map)            |
-+-----------------------------------------+-----------------------------------------+
-                                          | HTTPS / TLS 1.3 (JWT + RBAC)
-+-----------------------------------------v-----------------------------------------+
-|                                  API & CORE BACKEND                               |
-|  +-----------------------+  +-----------------------+  +-----------------------+  |
-|  |  Auth & RBAC Service  |  |  SKP & Member Engine  |  |  Report & Invoice Gen |  |
-|  +-----------------------+  +-----------------------+  +-----------------------+  |
-|  +-----------------------+  +-----------------------+  +-----------------------+  |
-|  | Dual-Sync & Doc Vault |  |  Geo-Map Aggregator   |  |   Audit Trail Logger  |  |
-|  +-----------------------+  +-----------------------+  +-----------------------+  |
-+-------------------+---------------------+---------------------+-------------------+
-                    |                     |                     |
-        +-----------v-----------+   +-----v------+   +----------v-----------+
-        |  PostgreSQL 16 (Main) |   | Redis 7    |   | S3-Compatible Vault  |
-        |  - Members & SKP Logs |   | - Job Queue|   | - Member Certificates|
-        |  - Monthly Snapshots  |   | - Cache    |   | - Archived PDF Report|
-        +-----------------------+   +-----+------+   +----------------------+
-                                          |
-+-----------------------------------------v-----------------------------------------+
-|                             ASYNCHRONOUS WORKER LAYER                             |
-|  +-----------------------------+  +--------------------------------------------+  |
-|  | Cutoff & PDF Report Worker  |  | WA Blast & Reminder Worker (BullMQ)        |  |
-|  | (Cron: Tgl 1, 00:00 WIB)    |  | (Cron: H-7 & H-2 Cutoff + Manual Trigger)  |  |
-|  +-----------------------------+  +----------------------+---------------------+  |
-+----------------------------------------------------------+------------------------+
-                                                           | Webhook / REST API
-                                            +--------------v--------------+
-                                            |   WhatsApp Gateway / Bot    |
-                                            | (Official WABA / WA Engine) |
-                                            +-----------------------------+
+
+---
+
+## 2. Entity-Relationship Diagram (ERD)
+
+Database dinormalisasi ke tingkat **3NF/BCNF** dengan seluruh tabel menggunakan **RFC 9562 UUIDv7** sebagai *Primary Key* dan terindeks penuh untuk menjamin **Zero Full Table Scan**.
+
+```mermaid
+erDiagram
+    provinces ||--o{ pogi_branches : "has"
+    provinces ||--o{ institutions : "located in"
+    provinces ||--o{ doctors : "governs"
+    pogi_branches ||--o{ users : "assigns"
+    pogi_branches ||--o{ doctors : "manages"
+    institutions ||--o{ doctors : "primary hospital"
+    institutions ||--o{ doctor_additional_institutions : "network hospital"
+
+    users ||--o{ user_refresh_tokens : "owns"
+    users ||--o{ doctors : "assigned as PIC"
+    users ||--o{ doctors : "linked account"
+    users ||--o{ audit_logs : "records"
+    users ||--o{ verifier_performance_logs : "logs SLA"
+
+    doctors ||--o{ doctor_additional_institutions : "practices at"
+    doctors ||--o{ doctor_skp_periods : "evaluates 5-year cycle"
+    doctors ||--o{ skp_entries : "submits"
+    doctors ||--o{ doctor_documents : "stores in vault"
+    doctors ||--o{ monthly_doctor_cutoff_details : "snapshot item"
+    doctors ||--o{ wa_message_queue : "receives reminder"
+
+    event_categories ||--o{ skp_events : "categorizes"
+    event_categories ||--o{ skp_entries : "domain rule"
+    skp_events ||--o{ skp_entries : "references event"
+
+    doctor_skp_periods ||--o{ skp_entries : "aggregates"
+    skp_entries ||--o{ doctor_documents : "verified by"
+    skp_entries ||--o{ verifier_performance_logs : "audits SLA"
+
+    monthly_cutoff_snapshots ||--o{ monthly_doctor_cutoff_details : "contains details"
+    wa_blast_campaigns ||--o{ wa_message_queue : "queues messages"
+
+    provinces {
+        varchar(10) id PK "Kode BPS (e.g. 31, 32)"
+        varchar(100) name
+        varchar(50) region_island
+        decimal latitude
+        decimal longitude
+    }
+
+    pogi_branches {
+        uuid id PK "RFC 9562 UUIDv7"
+        varchar(10) province_id FK
+        varchar(50) branch_code "POGI-32"
+        varchar(150) branch_name
+        text secretariat_address
+        varchar(100) contact_email
+        varchar(30) contact_phone
+    }
+
+    institutions {
+        uuid id PK "RFC 9562 UUIDv7"
+        varchar(10) province_id FK
+        uuid branch_id FK
+        varchar(50) code
+        varchar(200) name
+        varchar(50) institution_type
+        varchar(10) hospital_class
+    }
+
+    users {
+        uuid id PK "RFC 9562 UUIDv7"
+        enum role "5 Official Roles"
+        varchar(150) full_name
+        varchar(150) email UK
+        varchar(30) phone_number
+        varchar(255) password_hash "Argon2id"
+        uuid branch_id FK "Isolasi Cabang"
+        boolean is_active
+    }
+
+    doctors {
+        uuid id PK "RFC 9562 UUIDv7"
+        uuid user_id FK "Tautan Login Mandiri"
+        varchar(50) npa_pogi UK "Nomor Pokok Anggota"
+        varchar(200) full_name
+        varchar(100) specialization_title "Sp.OG"
+        bytea nik_encrypted "AES-256-GCM (UU PDP)"
+        varchar(64) nik_hash UK "HMAC-SHA256"
+        varchar(50) str_number UK
+        varchar(50) sip_number
+        date sip_expiry_date
+        varchar(150) email
+        varchar(30) whatsapp_number
+        uuid branch_id FK
+        varchar(10) province_id FK
+        uuid primary_institution_id FK
+        uuid assigned_pic_id FK "Admin POGI PIC"
+        enum status "COMPLETE | INCOMPLETE"
+        timestamptz dashboard_updated_at
+        timestamptz kemenkes_updated_at
+    }
+
+    doctor_skp_periods {
+        uuid id PK "RFC 9562 UUIDv7"
+        uuid doctor_id FK
+        int cycle_number "1"
+        date start_date
+        date end_date "SIP Expiry"
+        numeric target_total_credits "160.00"
+        numeric target_pembelajaran_credits "72.00"
+        numeric target_pelayanan_credits "56.00"
+        numeric target_pengabdian_credits "8.00"
+        numeric target_flexibility_credits "24.00"
+        numeric achieved_total_credits
+        boolean is_active
+        boolean is_completed
+    }
+
+    skp_entries {
+        uuid id PK "RFC 9562 UUIDv7"
+        uuid doctor_id FK
+        uuid period_id FK
+        uuid event_id FK
+        uuid category_id FK
+        enum domain "PEMBELAJARAN | PELAYANAN | PENGABDIAN"
+        varchar(255) title
+        date activity_date
+        numeric credit_amount
+        enum status "DONE | SUBMITTED | REJECTED | NOT_SUBMITTED"
+        uuid verified_by_user_id FK
+        timestamptz verified_at
+        text rejection_reason
+    }
+
+    doctor_documents {
+        uuid id PK "RFC 9562 UUIDv7"
+        uuid doctor_id FK
+        uuid skp_entry_id FK
+        enum document_type
+        varchar(255) file_name
+        varchar(255) storage_object_key
+        varchar(64) sha256_checksum
+        boolean is_verified
+    }
+
+    monthly_cutoff_snapshots {
+        uuid id PK "RFC 9562 UUIDv7"
+        int period_year
+        int period_month
+        timestamptz cutoff_timestamp "Tgl 1, 00:00 WIB"
+        int total_doctors_monitored "200"
+        int total_complete_doctors
+        int total_incomplete_doctors
+        varchar(255) pdf_storage_key "Invoice Attachment"
+        boolean is_locked "TRUE"
+    }
+
+    wa_blast_campaigns {
+        uuid id PK "RFC 9562 UUIDv7"
+        varchar(200) title
+        varchar(50) trigger_type "H-7 | H-2 | MANUAL"
+        text message_template
+        int total_recipients
+    }
+
+    wa_message_queue {
+        uuid id PK "RFC 9562 UUIDv7"
+        uuid campaign_id FK
+        uuid doctor_id FK
+        varchar(30) recipient_phone
+        text message_body
+        enum status "QUEUED | SENDING | SENT | FAILED"
+        int jitter_ms "1500 - 3000ms"
+        timestamptz scheduled_at
+        timestamptz sent_at
+    }
+
+    audit_logs {
+        uuid id PK "RFC 9562 UUIDv7"
+        uuid user_id FK
+        enum action "LOGIN | VERIFY_SKP | VIEW_SENSITIVE"
+        varchar(100) entity_name
+        text new_values
+        inet ip_address
+        timestamptz created_at
+    }
+
+    verifier_performance_logs {
+        uuid id PK "RFC 9562 UUIDv7"
+        uuid verifier_user_id FK "Admin POGI"
+        uuid doctor_id FK
+        uuid skp_entry_id FK
+        int turnaround_time_seconds "SLA"
+    }
 ```
 
 ---
 
-## 2. Komponen Utama Sistem
+## 3. Data Flow Diagram (DFD)
 
-### A. Lapisan Presentasi (*Frontend Web Application*)
-* **Teknologi**: Next.js (App Router) / React, TypeScript, Tailwind CSS, Lucide Icons, dan library peta vektor Indonesia (GeoJSON 38 Provinsi).
-* **Desain Antarmuka**: Mengadopsi gaya *Clean Medical Dashboard* dengan dominasi latar `#F8FAFC`, kartu kontainer putih dengan sudut membulat (`rounded-2xl`), serta palet aksen utama hijau emerald (`#059669`) yang selaras dengan identitas organisasi POGI.
-* **Modul Tampilan Utama**:
-  1. **Executive & Operational Dashboard**: KPI Ringkasan (Total Dokter, Rata-rata Progres SKP, Status *Complete* vs *Incomplete*), Peta Sebaran Kepatuhan 38 Provinsi (Merah/Hijau/Kuning), dan Peringkat Cabang/Provinsi.
-  2. **Direktori Anggota & Dual-Sync Monitor**: Daftar dokter Sp.OG lengkap dengan progres 3 ranah, indikator dokumen kurang, serta penanda waktu `Last Update Dashboard` vs `Last Update Kemenkes`.
-  3. **Document Vault Per Anggota**: Tampilan folder digital per dokter (pengganti Google Drive manual) untuk menyimpan sertifikat Pembelajaran, bukti Pelayanan, dan surat Pengabdian yang siap diunduh admin saat input ke web Kemenkes.
-  4. **Pusat WA Blast & Log Pengingat**: Antarmuka *filter* penerima pesan, pratinjau template pengingat SKP, serta riwayat status pengiriman pesan WhatsApp.
-  5. **Arsip Laporan Bulanan (*Monthly Report & Invoice*)**: Pemilih periode bulan/tahun (*Month-Year Picker*) untuk melihat pratinjau laporan dan mengunduh file PDF resmi hasil *cutoff* tanggal 1.
+### 3.1 DFD Level 0 (Context Diagram)
 
-### B. Lapisan Aplikasi Inti (*Clean Architecture Backend*)
-* **Pendekatan Arsitektur**: **Clean Architecture (Hexagonal Architecture) & SOLID Principles** (Domain -> Application -> Infrastructure -> Presentation).
-* **Framework**: Laravel 11 (PHP 8.2+) / Node.js NestJS.
-* **Struktur Lapisan Bersih**:
-  1. **Domain Layer (Core Rules)**: Domain Entities (`Doctor`, `SkpEntry`), Value Objects (`Nik`, `SkpCredit`), Enums (`SystemRole`, `SkpDomain`), dan Repository Interfaces (*Contracts*).
-  2. **Application Layer (Use Cases)**: Action classes berskala tunggal (`VerifySkpEntryUseCase`, `RecalculateComplianceUseCase`, `GenerateMonthlyCutoffUseCase`) dan Data Transfer Objects (*Readonly DTOs*).
-  3. **Infrastructure Layer**: Implementasi database PostgreSQL via Repositories (`EloquentDoctorRepository`), client WhatsApp Gateway anti-ban, dan S3 Document Vault.
-  4. **Presentation Layer (MVC)**: *Slim Controllers* (hanya memanggil Use Case dan me-return DTO), Form Request Validation, dan Blade Views / ViewModels.
+Menampilkan batasan sistem dan entitas eksternal yang berinteraksi langsung:
 
-### C. Lapisan Pemrosesan Asinkron (*Background Workers & Scheduler*)
-Dikelola menggunakan **Queue Worker & Scheduler** untuk menjamin keandalan eksekusi tugas latar belakang:
-1. **Monthly Cutoff & Snapshot Worker**:
-   * Berjalan otomatis setiap **tanggal 1 pukul 00:00 WIB**.
-   * Mengambil *snapshot* data SKP seluruh anggota, merender dokumen **Monthly Report PDF**, menyimpannya ke *Object Storage*, dan mendaftarkan metadata arsipnya ke tabel `monthly_cutoff_snapshots`.
-2. **WhatsApp Blast & Reminder Worker**:
-   * Memproses antrean pengiriman pesan WA secara bertahap dengan pengaturan *rate-limit* dan *anti-ban jitter* (delay acak 1.5 - 3 detik) serta pencatatan status pengiriman (`QUEUED`, `SENDING`, `SENT`, `DELIVERED`, `FAILED`).
+```mermaid
+flowchart TD
+    DOKTER["Dokter Spesialis Obgyn (User/Dokter)"]
+    CABANG["Admin Cabang POGI (Daerah)"]
+    VERIF["Admin POGI (Verifikator Nasional)"]
+    PUSAT["Admin Pusat & Pengurus PP POGI"]
+    SUPER["Super Admin (PT Energi Cipta)"]
+    WAGW["WhatsApp Business Gateway API"]
+    KEMENKES["Portal Plataran Sehat Kemenkes (Manual Sync)"]
+
+    SYS(("SISTEM MONITORING & MANAJEMEN SKP NASIONAL POGI (MedCred)"))
+
+    DOKTER <-->|Login Mandiri, Upload Bukti, Cek Portofolio| SYS
+    CABANG <-->|Verifikasi Berkas Cabangnya, Monitoring Wilayah| SYS
+    VERIF <-->|Validasi Dokumen Binaan, Rekalkulasi Ranah, Alasan Tolak| SYS
+    PUSAT <-->|Pantau Peta 38 Prov, Monitor SLA Verifikator, Unduh Invoice PDF| SYS
+    SUPER <-->|Konfigurasi Master Data, User & Hak Akses, Audit Trail| SYS
+    SYS -->|Pesan Pengingat H-7 & H-2 dengan Anti-Ban Jitter| WAGW
+    SYS <-->|Sinkronisasi Status & Last Update Kemenkes| KEMENKES
+```
 
 ---
 
-## 3. Desain Skema Database Relasional & Strategi Optimasi Query (PostgreSQL 14+)
+### 3.2 DFD Level 1 (Dekomposisi Proses Inti)
 
-### A. Entitas Utama Sistem (Normalisasi 3NF & RFC 9562 UUIDv7)
-1. **`users`**: Akun pengguna sistem dengan 5 role resmi (`SUPER_ADMIN`, `ADMIN_PUSAT`, `ADMIN_POGI`, `ADMIN_CABANG`, `DOKTER`) dan password hash Argon2id.
-2. **`provinces` & `pogi_branches`**: Master 38 provinsi di Indonesia (kode BPS) dan struktur cabang POGI daerah.
-3. **`institutions`**: Master rumah sakit dan fasilitas kesehatan jejaring praktik.
-4. **`doctors` (Master Anggota Sp.OG)**:
-   * Kunci utama: `id (UUIDv7)`, `npa_pogi (UNIQUE)`, `full_name`.
-   * UU PDP Enkripsi: `nik_encrypted (BYTEA AES-256)`, `nik_hash (SHA256 HMAC)`, `str_number`, `sip_number`, `sip_expiry_date`, `whatsapp_number`.
-   * Relasi & Kepemilikan: `branch_id`, `province_id`, `primary_institution_id`, `assigned_pic_id (Admin POGI)`.
-   * Sinkronisasi: `dashboard_updated_at`, `kemenkes_updated_at`.
-5. **`doctor_skp_periods`**: Siklus masa berlaku 5 tahun dengan target 160 SKP (Target & Capaian per ranah: Pembelajaran 72, Pelayanan 56, Pengabdian 8, Fleksibilitas 24).
-6. **`event_categories` & `skp_events`**: Katalog kegiatan SKP terstandar Kemenkes Plataran Sehat.
-7. **`skp_entries`**: Buku log transaksi kredit SKP per ranah (`DONE`, `SUBMITTED`, `REJECTED`, `NOT_SUBMITTED`).
-8. **`doctor_documents` (Document Vault)**: Repositori berkas sertifikat dan bukti praktik lengkap dengan checksum SHA-256.
-9. **`monthly_cutoff_snapshots` & `monthly_doctor_cutoff_details`**: Snapshot arsip permanen laporan bulanan dan lampiran *invoice*.
-10. **`wa_blast_campaigns` & `wa_message_queue`**: Antrean pesan broadcast WhatsApp dengan jitter anti-ban.
-11. **`audit_logs` & `verifier_performance_logs`**: Rekam jejak audit kepatuhan UU PDP dan log SLA verifikasi Admin POGI.
+```mermaid
+flowchart TD
+    subgraph P1["1.0 Manajemen Identitas & Hak Akses (RBAC)"]
+        D1[("Users & Roles")]
+    end
 
-### B. Strategi Optimasi Query Database (*Zero Full Table Scan Architecture*)
-Untuk memastikan respon server tetap di bawah 50ms saat menangani puluhan ribu dokter dan ratusan ribu entri SKP, sistem menerapkan arsitektur indeks berlapis:
+    subgraph P2["2.0 Repositori Dokumen & Verifikasi SKP"]
+        D2[("Doctor Documents Vault")]
+        D3[("SKP Entries Logbook")]
+        D4[("Doctor SKP Periods")]
+    end
 
-1. **Covering Index dengan Kolom Proyeksi (`INCLUDE`)**:
-   * Indeks `idx_skp_entries_doc_period_domain` pada tabel `skp_entries`:
-     ```sql
-     CREATE INDEX idx_skp_entries_doc_period_domain 
-     ON skp_entries(doctor_id, period_id, domain, status) 
-     INCLUDE (credit_amount);
-     ```
-     Menghasilkan **Index-Only Scan** saat menghitung total capaian per ranah, database tidak perlu membaca blok tabel utama (*heap read = 0*).
-2. **Pencarian Fuzzy Cepat Berbasis GIN Trigram (`pg_trgm`)**:
-   * Indeks `idx_doctors_trgm_search` pada `doctors(full_name gin_trgm_ops, npa_pogi gin_trgm_ops, str_number gin_trgm_ops)`:
-     Mendukung fitur pencarian autocomplete dokter secara instan tanpa memicu sequential table scan.
-3. **Composite Partial Indexes untuk Isolasi & Dashboard**:
-   * `idx_doctors_branch_status` pada `(branch_id, status)` memfilter dokter cabang secara instan.
-   * `idx_doctors_pic_status` pada `(assigned_pic_id, status)` mempercepat dashboard kerja masing-masing Admin POGI.
-   * `idx_wa_queue_pending` pada `(scheduled_at) WHERE status = 'QUEUED'` membuat worker queue hanya membaca pesan yang belum dikirim.
-4. **Pencegahan N+1 Query di Lapisan Repository**:
-   * Setiap query pemanggilan dokter wajib memuat relasi kritis sekaligus menggunakan Eager Loading:
-     `Doctor::with(['branch:id,name', 'province:id,name', 'activePeriod'])->select([...])`.
-5. **Materialized View Caching untuk Peta Nasional**:
-   * Menghindari kalkulasi agregasi berat (`COUNT`, `SUM`, `GROUP BY`) saat user membuka peta 38 provinsi melalui `mv_province_compliance_summary`. Dilakukan refresh cepat dengan `REFRESH MATERIALIZED VIEW CONCURRENTLY`.
+    subgraph P3["3.0 Pemantauan Wilayah & Kinerja SLA"]
+        D5[("Provinces & Branches")]
+        D6[("Verifier SLA Logs")]
+        D7[("Materialized View Peta")]
+    end
+
+    subgraph P4["4.0 Otomasi Cutoff Bulanan & Arsip PDF"]
+        D8[("Monthly Cutoff Snapshots")]
+        D9[("S3 PDF Storage")]
+    end
+
+    subgraph P5["5.0 Pengiriman Notifikasi & WA Blast"]
+        D10[("WA Message Queue")]
+    end
+
+    subgraph P6["6.0 Audit Trail Kepatuhan UU PDP"]
+        D11[("Audit Logs")]
+    end
+
+    P1 --> D1
+    P2 --> D2
+    P2 --> D3
+    P2 --> D4
+    P2 --> P3
+    P3 --> D5
+    P3 --> D6
+    P3 --> D7
+    P4 --> D8
+    P4 --> D9
+    P5 --> D10
+    P2 --> P6
+    P1 --> P6
+    P6 --> D11
+```
 
 ---
 
-## 4. Alur Data End-to-End (*Operational Workflow*)
+## 4. Alur Kerja Operasional (*Workflows*)
 
-1. **Pengumpulan & Verifikasi Awal**: Admin Cabang POGI atau anggota mengirimkan data dan bukti kegiatan SKP kepada tim Admin Energi Cipta.
-2. **Input & Penyimpanan Berkas**: Admin Energi Cipta mengunggah berkas sertifikat/bukti ke *Document Vault* dokter di sistem internal. Sistem memperbarui `dashboard_updated_at` dan mengevaluasi kekurangan dokumen secara otomatis.
-3. **Follow-Up & WA Blast**: Menjelang *cutoff* (atau sesuai jadwal *follow-up*), sistem/admin mengirimkan WA Blast otomatis kepada dokter dengan status dokumen kurang (`NOT_SUBMITTED` / `REJECTED`).
-4. **Input Manual ke Portal Kemenkes**: Admin mengunduh berkas terverifikasi dari *Document Vault* internal, menginputkannya ke portal resmi SKP Kemenkes / Plataran Sehat milik anggota, lalu menekan tombol **"Tandai Sudah Update Kemenkes"** pada dashboard untuk mencatat `kemenkes_updated_at` dan mengubah status entri menjadi `SUBMITTED` / `DONE`.
-5. **Cutoff Tanggal 1 & Penagihan**: Pada tanggal 1 setiap bulan, sistem mengunci data bulanan, menghasilkan file `Monthly_Report_POGI_YYYY_MM.pdf`, dan menyediakannya pada menu *Report* untuk diunduh sebagai lampiran penagihan (*invoice*).
+### 4.1 Workflow 1: Pengajuan, Verifikasi & Rekalkulasi Otomatis SKP
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Dokter as Dokter / Admin Cabang
+    participant Vault as Document Vault (S3)
+    actor Verifikator as Admin POGI
+    participant API as Backend (Laravel UseCase)
+    participant DB as PostgreSQL 14+
+    participant Audit as Audit Trail Service
+
+    Dokter->>Vault: Unggah bukti fisik (PDF/JPG, max 10MB)
+    Dokter->>API: Submit form pengajuan kegiatan SKP
+    API->>DB: INSERT skp_entries (status: 'NOT_SUBMITTED')
+    
+    Verifikator->>API: Buka halaman verifikasi dokter binaan
+    API->>DB: Query skp_entries via Covering Index
+    Verifikator->>API: Validasi berkas (Approve / Reject)
+    
+    alt Keputusan: APPROVE
+        API->>DB: UPDATE skp_entries SET status = 'DONE'
+        DB-->>DB: Trigger 'trigger_recalculate_doctor_skp' aktif otomatis
+        DB-->>DB: Hitung Pembelajaran, Pelayanan, Pengabdian, Fleksibilitas
+        DB-->>DB: Update status dokter (COMPLETE jika >= 160)
+        API->>DB: INSERT verifier_performance_logs (catat SLA waktu)
+    else Keputusan: REJECT
+        API->>DB: UPDATE skp_entries SET status = 'REJECTED', rejection_reason = '...'
+    end
+
+    API->>Audit: Catat aksi ke audit_logs (User ID, IP, Action)
+    API-->>Verifikator: Respon sukses & pembaruan kartu portofolio
+```
+
+---
+
+### 4.2 Workflow 2: Cutoff Bulanan Tanggal 1 & Pembuatan Laporan Resmi
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Cron as Laravel Task Scheduler
+    participant Worker as Monthly Cutoff Worker
+    participant DB as PostgreSQL 14+
+    participant PDF as PDF Renderer (WeasyPrint/Puppeteer)
+    participant Storage as Object Storage (S3)
+    actor Pusat as Pengurus Pusat POGI
+
+    Note over Cron: Tepat Tanggal 1 pukul 00:00:00 WIB
+    Cron->>Worker: Trigger GenerateMonthlyCutoffJob
+    Worker->>DB: Eksekusi snapshot query 200 dokter
+    DB-->>Worker: Data terkunci (total SKP, complete, incomplete)
+    Worker->>DB: INSERT monthly_cutoff_snapshots (is_locked = TRUE)
+    Worker->>DB: INSERT 200 rows monthly_doctor_cutoff_details
+    
+    Worker->>PDF: Render Laporan Resmi Cutoff (Monthly Report)
+    PDF-->>Worker: File PDF Laporan Resmi
+    Worker->>Storage: Simpan PDF (pogi-medcred-vault/reports/...)
+    Worker->>DB: UPDATE pdf_storage_key & pdf_sha256 checksum
+    
+    Pusat->>Worker: Akses Menu Laporan via Month-Year Picker
+    Worker->>Storage: Generate Presigned URL download PDF
+    Storage-->>Pusat: Unduh Dokumen Resmi Lampiran Invoice Penagihan
+```
+
+---
+
+### 4.3 Workflow 3: Antrean Notifikasi WA Blast dengan Anti-Ban Jitter
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Trigger as Cron H-7 / H-2 / Manual Admin
+    participant Queue as WA Queue Dispatcher UseCase
+    participant DB as PostgreSQL 14+
+    participant Worker as Background Queue Worker
+    participant WAGW as WhatsApp Business Gateway API
+    actor Dokter as Dokter Sp.OG
+
+    Trigger->>Queue: Filter dokter target (Status Incomplete / Not Submitted)
+    Queue->>DB: Query dokter via Index Scan 'idx_doctors_branch_status'
+    Queue->>DB: Batch INSERT wa_message_queue (status: 'QUEUED', jitter: 1500-3000ms)
+    
+    loop Setiap Pesan dalam Antrean (Rate Limit: 15 pesan/menit)
+        Worker->>DB: Ambil 1 pesan status 'QUEUED'
+        Worker->>Worker: Sleep acak sesuai jitter (misal 2.140 ms)
+        Worker->>WAGW: POST /v1/send-message (Recipient & Body)
+        alt Pengiriman Berhasil
+            WAGW-->>Worker: 200 OK (Message ID)
+            Worker->>DB: UPDATE status = 'SENT', sent_at = NOW()
+            WAGW->>Dokter: Kirim pesan WhatsApp pengingat cutoff
+        else Pengiriman Gagal
+            WAGW-->>Worker: Error / Timeout
+            Worker->>DB: UPDATE status = 'FAILED', failure_reason = '...', retry_count++
+        end
+    end
+```
+
+---
+
+## 5. Batasan Sistem & Kendala Teknis (*System Boundaries & Constraints*)
+
+1. **Batasan Integrasi Kemenkes Plataran Sehat**:
+   * Portal Kemenkes Plataran Sehat **tidak menyediakan Webhook atau REST API publik**.
+   * Sistem beroperasi secara *Assisted-Sync*: berkas diinputkan secara manual ke portal Kemenkes oleh tim admin, lalu admin mencatat pembaruan melalui tombol **"Tandai Sudah Update Kemenkes"** yang merekam `kemenkes_updated_at`.
+2. **Batasan Rate-Limiting WhatsApp Gateway**:
+   * WhatsApp Business Gateway membatasi *throughput* pengiriman maksimal **15 pesan per menit** per nomor resmi.
+   * Setiap pesan wajib diproses asinkron menggunakan antrean (*Queue Worker*) dengan delay acak (*jitter*) **1.500 ms – 3.000 ms** untuk mencegah blokir nomor oleh algoritma anti-spam Meta.
+3. **Batasan Repositori Berkas (Document Vault)**:
+   * Ukuran maksimal setiap berkas bukti SKP: **10 MB per dokumen**.
+   * Format berkas yang didukung: **PDF, JPG, PNG**.
+   * Berkas tidak diakses via URL publik, melainkan melalui **Presigned URLs berbatas waktu (maksimal 15 menit)** untuk melindungi privasi anggota.
+4. **Batasan Isolasi Multi-Tenant Cabang**:
+   * Admin Cabang dibatasi secara ketat hanya dapat melihat dan memverifikasi dokter yang terdaftar di wilayah cabangnya sendiri melalui penerapan **Eloquent Global Scope (`BranchScope`)**. Akses ke dokter cabang lain diblokir otomatis dengan kode HTTP `403 Forbidden`.
+
+---
+
+## 6. Standar Optimasi Database & Query (*Zero Full-Scan Architecture*)
+
+Untuk menjamin latensi respon server tetap **< 50ms** saat data bertumbuh, arsitektur database menerapkan aturan pengindeksan presisi:
+
+```mermaid
+flowchart TD
+    subgraph Indexes["Arsitektur Indeks Zero-Fullscan (PostgreSQL 14+)"]
+        I1["Covering Index: idx_skp_entries_doc_period_domain (doctor_id, period_id, domain, status) INCLUDE (credit_amount)"]
+        I2["GIN Trigram Index: idx_doctors_trgm_search ON doctors USING gin(full_name gin_trgm_ops, npa_pogi gin_trgm_ops, str_number gin_trgm_ops)"]
+        I3["Composite Partial Index: idx_doctors_branch_status ON doctors(branch_id, status)"]
+        I4["Composite Partial Index: idx_doctors_pic_status ON doctors(assigned_pic_id, status)"]
+        I5["Partial Queue Index: idx_wa_queue_pending ON wa_message_queue(scheduled_at) WHERE status = 'QUEUED'"]
+        I6["Materialized View: mv_province_compliance_summary (Peta 38 Provinsi Caching)"]
+    end
+```
+
+* **Covering Index (`INCLUDE`)**: Query agregasi dan penghitungan pemenuhan ranah SKP menghasilkan **Index-Only Scan** (*zero heap read*) karena kolom `credit_amount` tersimpan langsung di dalam daun pohon B-Tree indeks.
+* **Pencarian Cepat GIN Trigram**: Pencarian dokter berdasarkan nama, NPA POGI, atau nomor STR memanfaatkan ekstensi `pg_trgm` pada indeks GIN, membebaskan CPU dari *sequential table scan*.
+* **Pencegahan N+1 Query**: Wajib memuat relasi relasional menggunakan *Eager Loading* (`with(['branch', 'province', 'activePeriod'])`).
+* **Materialized View Caching**: Peta kepatuhan 38 provinsi di-cache pada `mv_province_compliance_summary` dan diperbarui secara berkala / terpicu transaksi.

@@ -4,84 +4,315 @@
 ---
 
 ## 1. Tentang Sistem
-**Sistem Monitoring & Manajemen SKP Nasional POGI** adalah platform operasional B2B terpusat yang dirancang untuk membantu tim administrasi **PT Energi Cipta** dan pengurus **POGI** memantau, memvalidasi, serta mengelola pemenuhan Satuan Kredit Profesi (SKP) seluruh Dokter Spesialis Obstetri dan Ginekologi (Sp.OG) di Indonesia.
 
-Sistem ini menjembatani proses pengumpulan berkas dari tingkat cabang/rumah sakit, penyimpanan arsip digital per anggota, pengingat otomatis melalui WhatsApp, pencatatan pembaruan ke portal SKP Kemenkes (Plataran Sehat), hingga pembuatan laporan bulanan (*Monthly Report*) sebagai dasar penagihan (*invoice*).
+**Sistem Monitoring & Manajemen SKP Nasional POGI (MedCred Enterprise)** adalah platform operasional B2B terpusat yang dirancang untuk memantau, memvalidasi, mengaudit, dan mengelola pemenuhan Satuan Kredit Profesi (SKP) seluruh Dokter Spesialis Obstetri dan Ginekologi (Sp.OG) di 38 provinsi Indonesia.
+
+Sistem ini menjembatani pengumpulan berkas sertifikat dan logbook klinis, penyimpanan arsip digital (*Document Vault*), pengingat otomatis berkala melalui WhatsApp dengan perlindungan *anti-ban jitter*, pencatatan audit sinkronisasi ganda (*dual-timestamp*) terhadap portal SKP Kemenkes (*Plataran Sehat*), hingga pembuatan laporan resmi otomatis setiap tanggal 1 (*Monthly Cutoff Snapshot*) sebagai lampiran sah penagihan (*invoice*).
 
 ---
 
 ## 2. Fitur Utama Platform
 
-* **Dashboard Eksekutif & Pemetaan Wilayah (38 Provinsi)**:
-  * Ringkasan total dokter terpantau, persentase capaian SKP nasional, serta rasio status kelengkapan (*Complete* vs *Incomplete*).
-  * **Peta Sebaran Kepatuhan Indonesia**: Visualisasi 38 provinsi dengan indikator warna **Merah** (Sangat Kurang), **Hijau** (Hampir Memenuhi), dan **Kuning** (Terpenuhi).
-* **Monitoring Standar 3 Ranah SKP (Target 160 SKP / 5 Tahun)**:
-  * Pelacakan otomatis proporsi wajib sesuai regulasi Kemenkes: **Pembelajaran (min. 45%)**, **Pelayanan (min. 35%)**, dan **Pengabdian Masyarakat (min. 5%)**.
-  * Klasifikasi status kredit SKP: `Done`, `Submitted`, `Rejected`, dan `Not Submitted`.
-* **Repositori Dokumen Anggota (*Document Vault*) & Deteksi Kekurangan**:
-  * Penyimpanan terstruktur seluruh berkas sertifikat dan bukti praktik per nama dokter sebelum diunggah secara manual ke portal Kemenkes.
-  * Penanda otomatis untuk anggota yang masih kekurangan berkas atau memiliki pengajuan ditolak.
+* **Dashboard Eksekutif & Pemetaan 38 Provinsi**:
+  * KPI ringkasan nasional: total dokter terpantau, rasio kepatuhan (*Complete* vs *Incomplete*), rata-rata SKP berjalan, dan persentase kepatuhan nasional.
+  * **Peta Interaktif Kepatuhan 38 Provinsi**: Visualisasi status wilayah berbasis kode warna baku:
+    - **Kuning (`#EAB308`) — Terpenuhi / Aman**: Capaian wilayah $\ge 85\%$.
+    - **Hijau (`#16A34A`) — Hampir Memenuhi / Waspada**: Capaian wilayah $50\% \le \text{Capaian} < 85\%$.
+    - **Merah (`#DC2626`) — Sangat Kurang / Kritis**: Capaian wilayah $< 50\%$.
+* **Monitoring Standar SKP Kemenkes (Target 160 SKP / 5 Tahun)**:
+  * Penilaian otomatis proporsi wajib sesuai **KMK No. HK.01.07/MENKES/1561/2024 & KMK No. HK.01.07/MENKES/1111/2026**:
+    - **Ranah Pembelajaran**: Minimal $45\%$ ($72\text{ SKP}$).
+    - **Ranah Pelayanan**: Minimal $35\%$ ($56\text{ SKP}$).
+    - **Ranah Pengabdian Masyarakat**: Minimal $5\%$ ($8\text{ SKP}$).
+    - **Ranah Fleksibilitas**: Maksimal $15\%$ ($24\text{ SKP}$).
+* **Repositori Berkas Anggota (*Document Vault*)**:
+  * Penyimpanan terstruktur sertifikat simposium, logbook tindakan faskes, dan surat tugas dengan *checksum* SHA-256 dan perlindungan *Presigned URL*.
 * **Dual-Timestamp Audit Sinkronisasi**:
-  * Menampilkan secara transparan waktu terakhir pembaruan data di **Dashboard Internal** (`Last Update Dashboard`) dan waktu terakhir pembaruan di **Portal Kemenkes** (`Last Update Kemenkes`).
-* **Otomasi WhatsApp Blast & Pengingat Cutoff**:
-  * Pengiriman pesan pengingat otomatis menjelang jadwal *cutoff* bulanan kepada anggota yang belum memenuhi target SKP/dokumen.
-  * Fitur pengiriman WA Blast manual berbasis filter wilayah/cabang oleh admin.
-* **Laporan Bulanan Otomatis & Arsip PDF (*Month-Year Picker*)**:
-  * Pembuatan laporan otomatis setiap **tanggal 1 (Cutoff Bulanan)** yang tersimpan permanen dan dapat dipilih serta diunduh kembali berdasarkan bulan dan tahun sebagai lampiran *invoice*.
+  * Menampilkan secara transparan waktu pembaruan internal (`Last Update Dashboard`) dan waktu sinkronisasi Kemenkes (`Last Update Kemenkes`).
+* **Otomasi WhatsApp Blast dengan Anti-Ban Jitter**:
+  * Pengiriman pengingat otomatis menjelang cutoff bulanan (**H-7** dan **H-2**) menggunakan sistem antrean (*queue*) dengan jeda acak 1.500 ms – 3.000 ms per pesan (maksimal 15 pesan/menit).
+* **Laporan Bulanan Otomatis & Arsip PDF Permanen**:
+  * Eksekusi otomatis setiap **tanggal 1 pukul 00:00 WIB** yang mengunci data (*snapshot locking*) dan merender dokumen `Monthly_Report_POGI_YYYY_MM.pdf` yang dapat diakses via *Month-Year Picker*.
 
 ---
 
-## 3. Struktur Dokumen Spesifikasi Proyek
-Repositori dokumentasi proyek ini terdiri dari tiga dokumen utama:
+## 3. Struktur 5 Peran Resmi (*Role-Based Access Control / RBAC*)
+
+| No | Peran (*System Role*) | Deskripsi & Batas Wewenang |
+|:---:|:---|:---|
+| **1** | **Super Admin** | Akses penuh (*Full-access*), konfigurasi master data (faskes, provinsi, cabang, kategori, event, pengguna), manajemen hak akses, dan audit trail log. |
+| **2** | **Admin Pusat** | Memantau aktivitas operasional seluruh cabang, memonitor SLA dan performance kerja dari tim Admin POGI, serta export laporan nasional (audit/read mode pada data dokter). |
+| **3** | **Admin POGI** *(Verifikator)* | Melakukan verifikasi kesesuaian dokumen bukti fisik, validasi kredit SKP ranah, dan memantau dokter binaan di bawah penugasannya secara nasional. |
+| **4** | **Admin Cabang** | Melakukan verifikasi dan monitoring berkas SKP, namun **terisolasi secara ketat khusus untuk dokter di wilayah cabangnya sendiri** (akses ke cabang lain diblokir otomatis via *Global Scopes*). |
+| **5** | **User / Dokter** | Akses portal mandiri khusus untuk melihat portofolio SKP 5 tahun dan status resertifikasi dirinya sendiri. |
+
+---
+
+## 4. Struktur Dokumen Acuan Proyek
 
 | Dokumen | Deskripsi & Cakupan |
-| :--- | :--- |
-| **`README.md`** | Ikhtisar produk, fitur utama, struktur modul, dan panduan penyiapan lingkungan pengembangan. |
-| **`ARCHITECTURE.md`** | Cetak biru arsitektur sistem, diagram alur data *end-to-end*, desain *worker* asinkron, dan skema database PostgreSQL. |
-| **`RULES.md`** | Aturan bisnis B2B, formula perhitungan SKP 3 ranah, aturan warna peta, jadwal *cutoff* tanggal 1, kebijakan WA Blast, dan kepatuhan UU PDP. |
+|:---|:---|
+| **[`README.md`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/README.md)** | Ikhtisar produk, fitur utama, standar RBAC 5 role, dan **panduan step-by-step implementasi produksi**. |
+| **[`RULES.md`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/RULES.md)** | Seluruh aturan bisnis operasional B2B, formula perhitungan SKP 160, siklus cutoff tanggal 1, jadwal WA Blast, kode warna peta, matriks RBAC, dan kepatuhan UU PDP No. 27/2022. |
+| **[`ARCHITECTURE.md`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/ARCHITECTURE.md)** | Cetak biru Clean Architecture, diagram **ERD lengkap 18 tabel**, **DFD Level 0 & Level 1**, 4 Diagram Alur Kerja (*Workflows*), Batasan Sistem, dan Strategi Indeks *Zero Full-Scan*. |
 
 ---
 
-## 4. Rekomendasi Tech Stack & Standar Arsitektur
+## 5. Panduan Implementasi Step-by-Step (Persiapan s.d. Release Production)
 
-* **Backend & API**: **Laravel 11 (PHP 8.2+)** menerapkan **Clean Architecture (Domain, UseCases, Repositories, Slim Controllers)**, prinsip **SOLID**, dan **OOP Strict Types**.
-* **Database Relasional**: **PostgreSQL 14+** (Skema normalisasi 3NF, **RFC 9562 UUIDv7**, Zero Full Table Scan Indexing, ekstensi `pg_trgm`, Covering Indexes, dan Materialized Views).
-* **Frontend**: Laravel Blade + Tailwind CSS + Alpine.js (atau Next.js / Inertia.js React/Vue).
-* **Queue & Scheduler**: Database / Redis Queue (Antrean WA Blast dengan *anti-ban jitter* 1.5 - 3s) dan Laravel Task Scheduler (Cutoff tanggal 1 jam 00:00 WIB).
-* **Object Storage**: S3-compatible (AWS S3 / Cloudflare R2 / MinIO) untuk repositori berkas *Document Vault* dan arsip laporan PDF.
-* **Keamanan & Kepatuhan**: Kepatuhan UU PDP No. 27/2022 (AES-256-GCM data sensitif, HMAC SHA-256 hash lookup, audit logging permanen, larangan integer auto-increment).
+Berikut adalah panduan operasional teknis tahap demi tahap untuk membangun, mengonfigurasi, dan merilis sistem ini ke lingkungan produksi menggunakan stack **Laravel 11 & PostgreSQL 14+**:
 
----
+### Fase 1: Prasyarat Sistem & Kesiapan Environment
 
-## 5. Standar Kinerja & Optimasi Query (*Zero Full Table Scan*)
-
-1. **Covering Index (`INCLUDE`)**: Query agregasi dan penghitungan pemenuhan ranah SKP memanfaatkan *Index-Only Scan* (`idx_skp_entries_doc_period_domain`) tanpa membebani pembacaan tabel fisik (*zero heap read*).
-2. **Pencegahan N+1 Query**: Wajib memuat relasi relasional menggunakan *Eager Loading* (`with(['branch', 'province', 'activePeriod'])`).
-3. **Pencarian Cepat GIN Trigram**: Pencarian dokter berdasarkan nama, NPA POGI, atau nomor STR memanfaatkan ekstensi `pg_trgm` pada indeks GIN, menjamin respon di bawah 50ms.
-4. **Isolasi Data Cabang Transparan**: Pembatasan data cabang pada peran Admin Cabang dieksekusi secara otomatis di level model melalui *Eloquent Global Scopes* (`BranchScope`).
-5. **Paginasi Efisien**: Menggunakan *Cursor Pagination* (`cursorPaginate()`) dan pemrosesan bertahap (`chunkById()`) untuk menghindari beban memori pada volume data besar.
+Pastikan server atau mesin pengembangan Anda telah memenuhi spesifikasi minimum berikut:
+* **PHP**: Versi `8.2.x` atau `8.3.x` (Ekstensi wajib: `pdo_pgsql`, `openssl`, `mbstring`, `curl`, `bcmath`, `fileinfo`, `gd`, `intl`).
+* **Composer**: Versi `2.7.x` atau lebih baru.
+* **PostgreSQL**: Versi `14.x` atau `16.x` (dengan ekstensi `pg_trgm` dan `uuid-ossp` aktif).
+* **Redis**: Versi `7.x` (untuk antrean pesan background *Queue Worker* dan cache).
+* **Node.js & NPM**: Node `v20.x` LTS untuk kompilasi aset frontend.
 
 ---
 
-## 6. Struktur 5 Peran Resmi (*Role-Based Access Control / RBAC Matrix*)
+### Fase 2: Inisialisasi Proyek Laravel 11 & Konfigurasi Lingkungan
 
-1. **Super Admin**: Akses penuh (*Full-access*), konfigurasi master data (faskes, provinsi, cabang, kategori, event, pengguna), manajemen hak akses, dan audit trail log.
-2. **Admin Pusat**: Memantau aktivitas operasional seluruh cabang, memonitor SLA dan performance kerja dari tim Admin POGI, serta export laporan nasional (audit/read mode pada data dokter).
-3. **Admin POGI** *(Pengganti Verifikator)*: Melakukan verifikasi kesesuaian dokumen bukti fisik, validasi kredit SKP ranah, dan memantau dokter binaan di bawah penugasannya secara nasional.
-4. **Admin Cabang**: Melakukan verifikasi dan monitoring berkas SKP, namun **terisolasi secara ketat khusus untuk dokter di wilayah cabangnya sendiri** (akses ke dokter cabang lain diblokir).
-5. **User / Dokter**: Akses portal mandiri khusus untuk melihat portofolio SKP 5 tahun dan status resertifikasi dirinya sendiri.
+1. Buat proyek Laravel baru:
+   ```bash
+   composer create-project laravel/laravel pogi-backend
+   cd pogi-backend
+   ```
+2. Buat kunci enkripsi aplikasi:
+   ```bash
+   php artisan key:generate
+   ```
+3. Konfigurasi file `.env`:
+   ```env
+   APP_NAME="POGI SKP Tracker"
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_TIMEZONE="Asia/Jakarta"
+   APP_URL=https://skp.pogi.or.id
+
+   # Koneksi Database PostgreSQL
+   DB_CONNECTION=pgsql
+   DB_HOST=127.0.0.1
+   DB_PORT=5432
+   DB_DATABASE=pogi_skp_tracker
+   DB_USERNAME=postgres
+   DB_PASSWORD=SecureProductionPassword2026!
+
+   # Queue & Cache
+   QUEUE_CONNECTION=redis
+   CACHE_STORE=redis
+   REDIS_HOST=127.0.0.1
+   REDIS_PORT=6379
+
+   # Storage Vault S3
+   FILESYSTEM_DISK=s3
+   AWS_ACCESS_KEY_ID=your_minio_or_s3_key
+   AWS_SECRET_ACCESS_KEY=your_minio_or_s3_secret
+   AWS_DEFAULT_REGION=ap-southeast-1
+   AWS_BUCKET=pogi-medcred-vault
+   AWS_ENDPOINT=https://vault.energicipta.id
+
+   # WhatsApp Gateway Provider
+   WA_GATEWAY_URL="https://api.wagateway.energicipta.id/v1"
+   WA_API_TOKEN="pogi_secure_token_wa_blast"
+   ```
 
 ---
 
-## 7. Panduan Penyiapan Database & Eksekusi Seeder
+### Fase 3: Provisioning Database PostgreSQL & Eksekusi Seeder Bebas Error
+
+1. Buat database di PostgreSQL:
+   ```bash
+   psql -U postgres -c "CREATE DATABASE pogi_skp_tracker WITH OWNER postgres ENCODING 'UTF8';"
+   ```
+2. Muat skema database produksi terindeks penuh ([`schema.sql`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/schema.sql)):
+   ```bash
+   psql -U postgres -d pogi_skp_tracker -f schema.sql
+   ```
+3. Muat data awal komprehensif ([`seeds.sql`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/seeds.sql)):
+   ```bash
+   psql -U postgres -d pogi_skp_tracker -f seeds.sql
+   ```
+   > [!NOTE]
+   > File `seeds.sql` telah diaudit 100% mematuhi format **RFC 9562 UUIDv7** (`01935d...`), bebas dari pelanggaran integritas referensial, dan menggunakan klausul `ON CONFLICT` sehingga aman dieksekusi berulang kali tanpa error.
+
+---
+
+### Fase 4: Scaffolding Clean Architecture di Laravel
+
+Buat struktur folder arsitektur bersih di dalam folder `app/`:
 
 ```bash
-# 1. Pastikan PostgreSQL 14+ aktif dan buat database
-psql -U postgres -c "CREATE DATABASE pogi_skp_tracker WITH OWNER postgres ENCODING 'UTF8';"
-
-# 2. Muat skema database produksi (3NF, Zero Full-Scan Index, UUIDv7)
-psql -U postgres -d pogi_skp_tracker -f schema.sql
-
-# 3. Muat data awal komprehensif (38 Provinsi, 38 Cabang, 91 RS, 12 User, 200 Dokter)
-psql -U postgres -d pogi_skp_tracker -f seeds.sql
+mkdir -p app/Domain/Entities app/Domain/ValueObjects app/Domain/Enums app/Domain/Repositories app/Domain/Events
+mkdir -p app/Application/UseCases/Doctor app/Application/UseCases/Skp app/Application/UseCases/Cutoff app/Application/DTOs
+mkdir -p app/Infrastructure/Persistence/Repositories app/Infrastructure/External/WhatsApp app/Infrastructure/External/Storage
+mkdir -p app/Presentation/Http/Controllers app/Presentation/Http/Requests app/Presentation/ViewModels
 ```
+
+1. **Registrasi Service Provider Binding**:
+   Di `app/Providers/AppServiceProvider.php`, hubungkan antarmuka domain dengan implementasi infrastruktur:
+   ```php
+   use App\Domain\Repositories\DoctorRepositoryInterface;
+   use App\Infrastructure\Persistence\Repositories\EloquentDoctorRepository;
+   use App\Domain\Repositories\SkpEntryRepositoryInterface;
+   use App\Infrastructure\Persistence\Repositories\EloquentSkpEntryRepository;
+
+   public function register(): void
+   {
+       $this->app->bind(DoctorRepositoryInterface::class, EloquentDoctorRepository::class);
+       $this->app->bind(SkpEntryRepositoryInterface::class, EloquentSkpEntryRepository::class);
+   }
+   ```
+
+2. **Pasang Global Scope Isolasi Cabang**:
+   Buat `app/Models/Scopes/BranchScope.php` untuk membatasi query Admin Cabang secara otomatis:
+   ```php
+   public function apply(Builder $builder, Model $model): void
+   {
+       $user = Auth::user();
+       if ($user && $user->role === 'ADMIN_CABANG' && $user->branch_id) {
+           $builder->where($model->getTable() . '.branch_id', $user->branch_id);
+       }
+   }
+   ```
+
+---
+
+### Fase 5: Migrasi Antarmuka Tampilan (Blade Views)
+
+Pindahkan seluruh markup prototype HTML ke folder `resources/views/`:
+1. Buat layout utama: `resources/views/layouts/app.blade.php` (sidebar navigasi, role switcher, dan notifikasi toast).
+2. Pindahkan tampilan modul:
+   - Dashboard: `resources/views/dashboard.blade.php` (dari `index.html`)
+   - Dokter & Portofolio: `resources/views/doctors/index.blade.php` dan `resources/views/doctors/show.blade.php` (dari `doctors.html` dan `doctor-detail.html`)
+   - Pengaturan Master: `resources/views/manage/index.blade.php` (dari `manage.html`)
+   - Admin Performance: `resources/views/admin-performance.blade.php` (dari `admin-performance.html`)
+   - Laporan Bulanan: `resources/views/reports.blade.php` (dari `reports.html`)
+3. Kompilasi aset frontend:
+   ```bash
+   npm install && npm run build
+   ```
+
+---
+
+### Fase 6: Konfigurasi Background Queue Worker & Task Scheduler
+
+1. **Konfigurasi Task Scheduler di Crontab Server**:
+   Buka crontab server produksi:
+   ```bash
+   crontab -e
+   ```
+   Tambahkan satu baris berikut untuk menjalankan scheduler Laravel setiap menit:
+   ```text
+   * * * * * cd /var/www/pogi-backend && php artisan schedule:run >> /dev/null 2>&1
+   ```
+
+2. **Konfigurasi Supervisor Daemon untuk Queue Worker (WA Blast & Cutoff)**:
+   Buat file `/etc/supervisor/conf.d/pogi-worker.conf`:
+   ```ini
+   [program:pogi-worker]
+   process_name=%(program_name)s_%(process_num)02d
+   command=php /var/www/pogi-backend/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
+   autostart=true
+   autorestart=true
+   stopasgroup=true
+   killasgroup=true
+   user=www-data
+   numprocs=2
+   redirect_stderr=true
+   stdout_logfile=/var/www/pogi-backend/storage/logs/worker.log
+   stopwaitsecs=3600
+   ```
+   Aktifkan supervisor:
+   ```bash
+   sudo supervisorctl reread
+   sudo supervisorctl update
+   sudo supervisorctl start pogi-worker:*
+   ```
+
+---
+
+### Fase 7: Pengujian & Validasi Kualitas (*Testing & QA*)
+
+1. **Unit Testing Use Cases**:
+   ```bash
+   php artisan test --testsuite=Unit
+   ```
+2. **Validasi Kinerja Database (Zero Full-Scan Audit)**:
+   Uji query utama menggunakan `EXPLAIN ANALYZE` di terminal `psql` untuk memastikan seluruh query menggunakan indeks:
+   ```sql
+   EXPLAIN ANALYZE SELECT * FROM doctors WHERE full_name ILIKE '%Simatupang%';
+   -- Pastikan output menunjukkan 'Bitmap Index Scan on idx_doctors_trgm_search', BUKAN 'Seq Scan'
+   ```
+
+---
+
+### Fase 8: Pengerasan Keamanan & Panduan Rilis Produksi (*Production Release Runbook*)
+
+1. **Optimasi Cache Laravel Produksi**:
+   ```bash
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   php artisan event:cache
+   ```
+2. **Konfigurasi Nginx Web Server**:
+   Buat file `/etc/nginx/sites-available/pogi-skp.conf`:
+   ```nginx
+   server {
+       listen 80;
+       server_name skp.pogi.or.id;
+       return 301 https://$host$request_uri;
+   }
+
+   server {
+       listen 443 ssl http2;
+       server_name skp.pogi.or.id;
+
+       ssl_certificate /etc/letsencrypt/live/skp.pogi.or.id/fullchain.pem;
+       ssl_certificate_key /etc/letsencrypt/live/skp.pogi.or.id/privkey.pem;
+       ssl_protocols TLSv1.2 TLSv1.3;
+       ssl_ciphers HIGH:!aNULL:!MD5;
+
+       root /var/www/pogi-backend/public;
+       index index.php;
+
+       client_max_body_size 12M;
+
+       location / {
+           try_files $uri $uri/ /index.php?$query_string;
+       }
+
+       location ~ \.php$ {
+           include snippets/fastcgi-php.conf;
+           fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+           fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+           include fastcgi_params;
+       }
+
+       location ~ /\.(?!well-known).* {
+           deny all;
+       }
+   }
+   ```
+3. **Backup Rutin Database Otomatis**:
+   Pasang cron job harian untuk mencadangkan database PostgreSQL ke cold storage:
+   ```bash
+   0 2 * * * pg_dump -U postgres pogi_skp_tracker | gzip > /backup/pogi_skp_$(date +\%F).sql.gz
+   ```
+
+---
+
+## 6. Kredensial Uji Coba Bawaan Sistem (Development)
+
+Untuk kebutuhan pengujian, seeder menyediakan 12 akun pengguna mewakili 5 role resmi:
+
+| Peran | Nama Akun | Email Login | Password Default |
+|:---|:---|:---|:---|
+| **Super Admin** | Dodi Firmansyah | `super@example.com` | `pogiSecurePasswordHash2026` |
+| **Admin Pusat** | Bagus Pranoto, M.Kes | `admin.pusat@pogi.or.id` | `pogiSecurePasswordHash2026` |
+| **Admin POGI** | Siti Rahma, S.Farm | `sekretariat.pusat@pogi.or.id` | `pogiSecurePasswordHash2026` |
+| **Admin Cabang** | dr. Firman, Sp.OG (Jabar) | `sekretariat.jabar@pogi.or.id` | `pogiSecurePasswordHash2026` |
+| **User / Dokter** | dr. Cut Simatupang, Sp.OG | `cut.simatupang@pogi.or.id` | `pogiSecurePasswordHash2026` |

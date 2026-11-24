@@ -1,83 +1,167 @@
-# RULES.md — Aturan Bisnis, Kepatuhan Regulasi & Standar Engineering
-**Sistem Monitoring & Manajemen SKP Nasional POGI (PT Energi Cipta)**
+# RULES.md — Aturan Bisnis, Logika Sistem & Kepatuhan Regulasi
+**Sistem Monitoring & Manajemen SKP Nasional POGI**
+*Dikelola secara eksklusif oleh PT Energi Cipta untuk Pengurus Pusat & Cabang Perkumpulan Obstetri dan Ginekologi Indonesia (POGI)*
 
 ---
 
 ## 1. Model Bisnis & Ruang Lingkup Operasional (B2B)
-1. **Model Layanan B2B Eksklusif**: Sistem ini beroperasi murni sebagai platform **B2B (*Business-to-Business*)** antara **PT Energi Cipta** (pengelola operasional & teknologi) dan **POGI** (Perkumpulan Obstetri dan Ginekologi Indonesia) beserta pengurus cabang di seluruh Indonesia. Sistem tidak melayani pendaftaran ritel langsung dari dokter umum di luar keanggotaan POGI (*non-B2C*).
-2. **Batasan Integrasi Kemenkes (Non-API / Manual-Assisted Sync)**:
-   * Portal resmi SKP Kemenkes / Plataran Sehat **tidak menyediakan API publik** untuk penarikan maupun pengunggahan data secara otomatis.
-   * Seluruh berkas bukti SKP yang terkumpul dari anggota atau pengurus cabang **wajib disimpan terlebih dahulu** di repositori penyimpanan cloud internal sistem (*Object Storage* / folder terstruktur per anggota) sebelum diunggah secara manual ke portal Kemenkes oleh tim Admin Energi Cipta.
-   * Sistem **wajib** memiliki mekanisme pelacakan kekurangan dokumen (*missing document detector*) dan pencatatan *timestamp* terpisah antara pembaruan di dashboard internal.
+
+1. **Model Layanan B2B Eksklusif**:
+   * Sistem ini beroperasi murni sebagai platform **B2B (*Business-to-Business*)** antara **PT Energi Cipta** (penyedia infrastruktur teknologi & operasional data) dan **POGI** (Perkumpulan Obstetri dan Ginekologi Indonesia) beserta 38 cabang daerah di seluruh Indonesia.
+   * Sistem tidak melayani pendaftaran ritel langsung dari dokter umum atau pihak luar (*non-B2C*). Seluruh dokter yang terdaftar adalah anggota resmi POGI pemegang gelar Spesialis Obstetri dan Ginekologi (Sp.OG).
+2. **Batasan Integrasi Kemenkes (Non-API / Assisted Sync)**:
+   * Portal resmi SKP Kemenkes (*Plataran Sehat*) **tidak menyediakan API publik** untuk penarikan maupun pengunggahan data secara otomatis.
+   * Seluruh berkas bukti fisik SKP (sertifikat simposium, logbook operasi/tindakan, surat tugas pengabdian) **wajib disimpan dan diverifikasi terlebih dahulu di repositori internal sistem (*Document Vault*)** sebelum diunggah ke portal Kemenkes oleh tim Admin POGI / tim data.
+   * Sistem wajib menyediakan mekanisme deteksi kekurangan dokumen (*missing document detector*) dan pelacakan *dual-timestamp* yang memisahkan waktu pembaruan internal dan waktu sinkronisasi Kemenkes.
 
 ---
 
-## 2. Regulasi & Standar Perhitungan SKP (KMK HK.01.07/MENKES/1561/2024 & KMK HK.01.07/MENKES/1111/2026)
-1. **Landasan Hukum & Standar Resmi**:
-   * Penilaian dan pemenuhan SKP tenaga medis spesialis obstetri dan ginekologi mengacu pada Keputusan Menteri Kesehatan RI Nomor **KMK HK.01.07/MENKES/1561/2024** tentang Petunjuk Teknis Pengelolaan Satuan Kredit Profesi Tenaga Medis dan Tenaga Kesehatan serta pedoman penyempurna/penggantinya **KMK HK.01.07/MENKES/1111/2026**.
-2. **Target Wajib Siklus 5 Tahun**:
-   * Setiap Dokter Spesialis Obstetri dan Ginekologi (Sp.OG) wajib memenuhi target minimal **$160\text{ SKP}$** dalam periode masa berlaku SIP/STR selama **5 tahun** (setara target pemantauan rata-rata **$32\text{ SKP/tahun}$** atau **$8\text{ SKP/kuartal}$**).
-3. **Proporsi Wajib Ranah Kompetensi & Fleksibilitas**:
-   * **Ranah Pembelajaran (Minimal $45\%$)**: Minimal **$72\text{ SKP}$** dalam 5 tahun (seminar, workshop, simposium, pelatihan terakreditasi Plataran Sehat).
-   * **Ranah Pelayanan (Minimal $35\%$)**: Minimal **$56\text{ SKP}$** dalam 5 tahun (praktik klinis, tindakan medis/operasi obstetri-ginekologi, pelayanan rumah sakit/faskes).
-   * **Ranah Pengabdian Masyarakat & Profesi (Minimal $5\%$)**: Minimal **$8\text{ SKP}$** dalam 5 tahun (bakti sosial, penyuluhan kesehatan ibu & anak, penugasan daerah/bencana, kepengurusan organisasi).
-   * **Sisa Fleksibilitas ($15\%$ atau $24\text{ SKP}$)**: Bebas dipenuhi dari kombinasi ketiga ranah di atas sesuai dengan aktivitas profesional masing-masing dokter untuk menggenapkan total minimal 160 SKP.
-4. **Status Pencatatan Kredit SKP**:
-   * Setiap entri kegiatan SKP diklasifikasikan ke dalam 4 status siklus hidup:
-     1. `NOT_SUBMITTED` — Dokumen belum lengkap atau belum diajukan ke Kemenkes.
-     2. `SUBMITTED` — Dokumen telah diverifikasi admin internal dan sudah diinput/diunggah ke portal Kemenkes.
-     3. `DONE` — SKP telah terverifikasi dan disetujui resmi pada Buku Log Kemenkes.
-     4. `REJECTED` — Pengajuan ditolak oleh verifikator Kemenkes dan memerlukan perbaikan berkas.
+## 2. Regulasi & Logika Perhitungan SKP Kemenkes
+
+### 2.1 Landasan Hukum
+Penilaian kredit Satuan Kredit Profesi (SKP) mengacu secara ketat pada:
+1. **Keputusan Menteri Kesehatan RI No. HK.01.07/MENKES/1561/2024** tentang Petunjuk Teknis Pengelolaan Satuan Kredit Profesi Tenaga Medis dan Tenaga Kesehatan.
+2. Pedoman teknis penyempurna **KMK HK.01.07/MENKES/1111/2026**.
+
+### 2.2 Target Wajib Siklus 5 Tahun
+Setiap dokter Sp.OG memiliki siklus pemenuhan SKP selama **5 tahun** (mengikuti masa berlaku STR/SIP):
+* **Target Total Wajib**: Minimal **160 SKP**.
+* **Target Pemantauan Tahunan**: Rata-rata **32 SKP / tahun**.
+* **Target Pemantauan Kuartalan**: Rata-rata **8 SKP / kuartal**.
+
+### 2.3 Formula Pembagian 3 Ranah Wajib + Ranah Fleksibilitas
+Total 160 SKP dibagi ke dalam ambang batas persentase mutlak:
+
+$$\text{Total Target} = 160 \text{ SKP} = \text{Pembelajaran (72)} + \text{Pelayanan (56)} + \text{Pengabdian (8)} + \text{Fleksibilitas (24)}$$
+
+| Ranah Kompetensi | Persentase Minimal | Beban SKP Minimal | Cakupan Kegiatan yang Diakui |
+|:---|:---:|:---:|:---|
+| **Ranah Pembelajaran** | **$\ge 45\%$** | **$72\text{ SKP}$** | Simposium ilmiah, workshop USG fetomaternal, seminar, webinar terakreditasi, kursus Plataran Sehat. |
+| **Ranah Pelayanan** | **$\ge 35\%$** | **$56\text{ SKP}$** | Praktik klinis rawat jalan, tindakan operasi sectio caesarea, penanganan persalinan patologis, tindakan ginekologi. |
+| **Ranah Pengabdian Masyarakat** | **$\ge 5\%$** | **$8\text{ SKP}$** | Bakti sosial penanganan stunting, penyuluhan kanker serviks, penugasan bencana, kepengurusan aktif organisasi profesi. |
+| **Ranah Fleksibilitas** | **$\le 15\%$** | **$24\text{ SKP}$** | Bebas dipenuhi dari kelebihan kredit di salah satu atau kombinasi ketiga ranah di atas untuk menggenapkan total 160 SKP. |
+
+### 2.4 Formula Evaluasi Status Kepatuhan Dokter
+Sistem mengevaluasi status kepatuhan dokter secara otomatis melalui aturan berjenjang:
+1. **Status `COMPLETE`**:
+   * $\text{Total SKP Terverifikasi} \ge 160.0$, **DAN**
+   * $\text{SKP Pembelajaran} \ge 72.0$, **DAN**
+   * $\text{SKP Pelayanan} \ge 56.0$, **DAN**
+   * $\text{SKP Pengabdian} \ge 8.0$.
+2. **Status `INCOMPLETE`**:
+   * Total SKP $< 160.0$ **ATAU** salah satu ranah wajib belum memenuhi nilai minimal, meskipun total kumulatif telah melampaui 160 SKP.
+3. **Peringatan Dini Kepatuhan Berdasarkan Sisa Masa Berlaku SIP**:
+   * **`AMAN`**: Sisa masa berlaku SIP $> 12$ bulan atau status telah `COMPLETE`.
+   * **`WASPADA`**: Sisa masa berlaku SIP antara $6 - 12$ bulan dengan status masih `INCOMPLETE`.
+   * **`KRITIS`**: Sisa masa berlaku SIP $< 6$ bulan dan status masih `INCOMPLETE` (otomatis masuk prioritas tertinggi WA Blast dan pengawalan Admin POGI).
+
+### 2.5 Siklus Hidup Status Entri SKP (*SKP Entry Lifecycle*)
+Setiap entri kegiatan SKP di buku log melewati tahapan status mutlak:
+1. `NOT_SUBMITTED`: Dokumen bukti telah diunggah oleh dokter/cabang tetapi berkas belum lengkap atau belum diperiksa.
+2. `SUBMITTED`: Dokumen telah diverifikasi internal dan siap/sedang diajukan ke portal Kemenkes.
+3. `DONE`: Kredit SKP telah resmi disetujui dan tercatat pada buku log Plataran Sehat Kemenkes (nilai kredit masuk ke akumulasi kelulusan).
+4. `REJECTED`: Pengajuan ditolak oleh verifikator (karena cap faskes tidak terbaca, barcode sertifikat tidak valid, atau kegiatan tidak linier) dan wajib mencantumkan alasan penolakan pada `rejection_reason`.
 
 ---
 
-## 3. Siklus Cutoff Bulanan & Otomasi WhatsApp Blast
-1. **Jadwal Cutoff Rutin**:
-   * *Cutoff* data bulanan ditetapkan secara tetap pada **setiap tanggal 1 pukul 00:00 WIB**.
-   * Snapshot capaian SKP per tanggal 1 dikunci sebagai dasar pembuatan laporan bulanan (*Monthly Report*) dan lampiran penagihan (*invoice*) kepada pihak POGI.
-2. **Aturan Notifikasi & WA Blast Otomatis**:
-   * **Pengingat Rutin Menjelang Cutoff**: Sistem menjalankan tugas terjadwal (*cron job*) pada **H-7** dan **H-2** sebelum tanggal 1 setiap bulan untuk mengirimkan pesan WhatsApp otomatis kepada anggota dokter yang masih memiliki kekurangan target SKP atau dokumen yang berstatus `NOT_SUBMITTED` / `REJECTED`.
-   * **WA Blast Manual oleh Admin**: Admin operasional dapat memicu pengiriman WA Blast massal yang difilter berdasarkan Cabang POGI, Provinsi, atau status kelengkapan dokumen setelah melakukan *follow-up* dengan admin cabang daerah.
-   * **Rate Limiting & Anti-Ban**: Pengiriman WA Blast wajib menggunakan antrean (*message queue*) dengan jeda acak (*jitter*) antar-pesan untuk menjaga reputasi nomor WhatsApp Business resmi Energi Cipta.
+## 3. Logika Bisnis Cutoff Bulanan & Arsip Laporan (Invoice Basis)
+
+1. **Jadwal Cutoff Tetap**:
+   * *Cutoff* data bulanan dilakukan secara otomatis tepat pada **hari pertama setiap bulan pukul 00:00:00 WIB** (misal: 1 Desember, 1 Januari).
+2. **Mekanisme Penguncian (*Snapshot Locking*)**:
+   * Tepat pada saat cutoff, sistem mengeksekusi *snapshot query* yang mengunci:
+     - Jumlah total dokter terpantau.
+     - Jumlah dokter berstatus `COMPLETE` dan `INCOMPLETE`.
+     - Akumulasi kredit terverifikasi (`total_skp_verified`) dan tertunda (`total_skp_pending`).
+     - Detail capaian masing-masing dari 200 dokter pada saat cutoff.
+   * Data ini disimpan secara permanen pada tabel `monthly_cutoff_snapshots` dan `monthly_doctor_cutoff_details` dengan status `is_locked = TRUE`.
+3. **Penerbitan Laporan PDF & Dasar Penagihan (Invoice)**:
+   * Worker sistem merender dokumen resmi `Monthly_Report_POGI_YYYY_MM.pdf`.
+   * Laporan dihitung dengan checksum SHA-256 dan disimpan pada *Object Storage* yang dapat diunduh kembali kapan saja melalui *Month-Year Picker* oleh Super Admin dan Admin Pusat sebagai lampiran penagihan operasional ke PP POGI.
 
 ---
 
-## 4. Aturan Visualisasi Peta Sebaran Wilayah (38 Provinsi)
-Dashboard menampilkan peta interaktif 38 provinsi Indonesia untuk memetakan tingkat kepatuhan anggota POGI per daerah dengan kode warna baku sesuai kesepakatan operasional:
-* **Merah (`#DC2626`) — Sangat Kurang**: Persentase pemenuhan target SKP kumulatif wilayah **$< 50\%$**. Memerlukan eskalasi segera ke pengurus cabang POGI setempat.
-* **Hijau (`#16A34A`) — Hampir Memenuhi**: Persentase pemenuhan target SKP kumulatif wilayah berada pada rentang **$50\% \le \text{Capaian} < 85\%$**.
-* **Kuning (`#EAB308`) — Terpenuhi / Aman**: Persentase pemenuhan target SKP kumulatif wilayah **$\ge 85\%$** (target terpenuhi atau berada di atas ambang batas aman).
+## 4. Logika Bisnis Notifikasi & WhatsApp Blast Automation
+
+1. **Pemicu Jadwal Otomatis (*Automated Triggers*)**:
+   * **H-7 Cutoff (Tanggal 24 setiap bulan)**: Peringatan dini kepada dokter berstatus `INCOMPLETE` atau memiliki berkas berstatus `NOT_SUBMITTED` / `REJECTED`.
+   * **H-2 Cutoff (Tanggal 28/29 setiap bulan)**: Peringatan darurat pemenuhan kuartal berjalan.
+2. **Mekanisme Antrean & Anti-Ban Jitter (*Message Queue Protection*)**:
+   * Pengiriman pesan massal dilarang keras ditembakkan secara bersamaan (*burst spam*).
+   * Seluruh pesan dimasukkan ke antrean `wa_message_queue` dengan status `QUEUED`.
+   * Worker pengiriman wajib menerapkan **jeda acak (*anti-ban jitter*) antara 1.500 ms hingga 3.000 ms** per pesan.
+   * Tingkat pengiriman dibatasi maksimal **15 pesan per menit** per nomor pengirim untuk menjaga reputasi nomor WhatsApp gateway resmi.
+3. **Template Pesan Dinamis**:
+   * Pesan wajib menyertakan parameter dinamis: nama lengkap dokter, sisa kekurangan SKP per ranah, deadline tanggal cutoff, serta tautan portal anggota.
 
 ---
 
-## 5. Aturan Pelaporan Bulanan & Audit Sinkronisasi
-1. **Arsip Laporan Bulanan (*Monthly Report PDF*)**:
-   * Setiap laporan bulanan yang dihasilkan pada saat *cutoff* tanggal 1 wajib disimpan secara permanen (*immutable archive*) pada penyimpanan cloud dan dapat diunduh kembali kapan saja melalui pemilih bulan & tahun (*Month-Year Picker*) untuk kebutuhan audit atau lampiran *invoice*.
-   * Format laporan mencakup ringkasan jumlah dokter terpantau, perbandingan total SKP aktual terhadap target, rincian per ranah (Pengabdian, Pelayanan, Pembelajaran), rekap *Year-to-Date* (YTD), dan rincian kredit berdasarkan status.
-2. **Dual-Timestamp Tracking (Transparansi Pembaruan)**:
-   * Setiap profil dokter wajib menampilkan dua penanda waktu yang berbeda secara eksplisit:
-     * `dashboard_updated_at`: Waktu terakhir admin memperbarui data/berkas di sistem internal Energi Cipta.
-     * `kemenkes_updated_at`: Waktu terakhir admin mengunggah berkas dan menyinkronkan status dari portal SKP Kemenkes.
+## 5. Logika Visualisasi Peta Kepatuhan Wilayah (38 Provinsi)
+
+Peta sebaran nasional 38 provinsi dihitung berdasarkan agregasi persentase pemenuhan rata-rata anggota di provinsi terkait:
+
+$$\text{Capaian Provinsi (\%)} = \left( \frac{\sum \text{SKP Terverifikasi Seluruh Anggota di Provinsi}}{\sum \text{Target SKP Berjalan Seluruh Anggota di Provinsi}} \right) \times 100\%$$
+
+### Kode Warna Baku Sesuai Standar Operasional POGI:
+* **Kuning (`#EAB308`) — Terpenuhi / Aman**: Capaian wilayah **$\ge 85\%$**. Provinsi berada di jalur kepatuhan yang aman.
+* **Hijau (`#16A34A`) — Hampir Memenuhi / Waspada**: Capaian wilayah **$50\% \le \text{Capaian} < 85\%$**. Memerlukan pemantauan berkala.
+* **Merah (`#DC2626`) — Sangat Kurang / Kritis**: Capaian wilayah **$< 50\%$**. Memerlukan intervensi langsung dan pemberitahuan massal ke pengurus cabang setempat.
 
 ---
 
-## 6. Keamanan Data, Standar Engineering & Optimasi Query
-1. **Kepatuhan Perlindungan Data Pribadi (UU PDP No. 27 Tahun 2022)**:
-   * Data sensitif dokter (NIK, Nomor STR, Nomor SIP, kredensial akses Plataran Sehat jika dititipkan untuk bantuan input, serta nomor WhatsApp) wajib dienkripsi pada level penyimpanan (*encryption at rest* menggunakan **AES-256-GCM**) dan komunikasi (*TLS 1.3*).
-   * Seluruh akses dan perubahan data oleh admin dicatat dalam tabel `audit_logs` secara permanen.
-2. **Standar Identifikasi & Database (Anti-IDOR & RFC 9562 UUIDv7)**:
-   * **Larangan Keras Auto-Increment ID**: Seluruh tabel dilarang menggunakan integer auto-increment untuk mencegah serangan enumerasi (*Insecure Direct Object Reference / IDOR*) dan kebocoran intelijen bisnis keanggotaan.
-   * Gunakan **RFC 9562 UUIDv7** (`xxxxxxxx-xxxx-7xxx-8xxx-xxxxxxxxxxxx`) sebagai *Primary Key* di seluruh tabel untuk efisiensi indeks B-Tree berbasis waktu (*time-ordered sequential* tanpa fragmentasi *page* PostgreSQL).
-3. **Pemisahan 5 Peran Resmi (*Role-Based Access Control / RBAC Matrix*)**:
-   * `SUPER_ADMIN`: Akses penuh (*Full-access*), konfigurasi master data (faskes, provinsi, cabang, kategori, event, pengguna), manajemen hak akses, dan audit trail log.
-   * `ADMIN_PUSAT`: Memantau aktivitas operasional seluruh cabang, memonitor SLA dan performance kerja dari tim Admin POGI, serta export laporan nasional (audit/read mode pada data dokter).
-   * `ADMIN_POGI` *(Pengganti Verifikator)*: Melakukan verifikasi kesesuaian dokumen bukti fisik, validasi kredit SKP ranah, dan memantau dokter binaan di bawah penugasannya secara nasional.
-   * `ADMIN_CABANG`: Melakukan verifikasi dan monitoring berkas SKP, namun **terisolasi secara ketat khusus untuk dokter di wilayah cabangnya sendiri** (akses ke dokter cabang lain diblokir via *Global Scopes*).
-   * `DOKTER` / `USER`: Akses portal mandiri khusus untuk melihat portofolio SKP 5 tahun dan status resertifikasi dirinya sendiri.
-4. **Standar Optimasi Query & Database (*Zero Full Table Scan Guarantee*)**:
-   * **Bebas dari Full Table Scan**: Setiap query pencarian, pemfilteran, dan agregasi wajib melewati *Index Scan* atau *Index Only Scan*. Query yang memicu *Sequential Scan* pada tabel utama (`doctors`, `skp_entries`, `doctor_documents`) dianggap cacat performa (*performance bug*).
-   * **Pencegahan Masalah N+1**: Di lapisan ORM/Eloquent, setiap pemanggilan relasi wajib menerapkan *Eager Loading* (`with(['branch', 'province', 'activePeriod'])`).
-   * **Pencarian Teks Berbasis GIN Trigram**: Pencarian dokter berdasarkan nama, NPA POGI, atau nomor STR wajib menggunakan ekstensi `pg_trgm` dengan indeks GIN (`idx_doctors_trgm_search`), bukan `%LIKE%` konvensional yang memicu scan menyeluruh.
-   * **Proyeksi Kolom Eksplisit (Hindari `SELECT *`)**: Query wajib menyebutkan kolom-kolom yang dibutuhkan secara spesifik untuk memanfaatkan *Covering Index* (`INCLUDE (credit_amount)`) dan menghemat memori I/O database.
-   * **Paginasi Skalabilitas Tinggi**: Gunakan *Cursor-based Pagination* (`cursorPaginate()`) untuk data besar atau *infinite scroll*, dan gunakan `chunkById()` untuk proses *batching* WA Blast dan rekap cutoff bulanan.
-   * **Materialized View Caching**: Data agregasi peta kepatuhan 38 provinsi dihitung melalui Materialized View (`mv_province_compliance_summary`) yang disinkronkan secara terjadwal/terpicu transaksi, membebaskan tabel operasional dari query agregasi berat (`SUM`, `COUNT`, `GROUP BY`).
+## 6. Logika Kinerja & SLA Admin POGI (Verifikator)
+
+Untuk memastikan berkas dokter tidak tertahan lama, sistem memonitor kinerja tim Admin POGI:
+1. **Target SLA Turnaround Time**: Verifikasi berkas maksimal **$\le 24$ jam kerja** sejak dokumen diunggah.
+2. **Formula Skor Kinerja Keseluruhan (*Overall Performance Score*)**:
+   $$\text{Score} = (\text{SLA Score} \times 0.35) + (\text{Accuracy Rate} \times 0.30) + (\text{Volume Binaan} \times 0.20) + (\text{Completion Rate} \times 0.15)$$
+3. **Klasifikasi Kategori Kinerja**:
+   * **Top Performer** ($\text{Score} \ge 90$): SLA $< 12$ jam, tingkat akurasi verifikasi $> 98\%$.
+   * **Good Performer** ($75 \le \text{Score} < 90$): SLA $12 - 24$ jam, penanganan stabil.
+   * **Needs Attention** ($\text{Score} < 75$): SLA $> 24$ jam atau tingkat penolakan berkas tidak wajar.
+
+---
+
+## 7. Matriks Hak Akses 5 Peran Resmi (RBAC Matrix)
+
+| Modul & Tindakan | Super Admin | Admin Pusat | Admin POGI | Admin Cabang | User / Dokter |
+|:---|:---:|:---:|:---:|:---:|:---:|
+| **Dashboard Nasional (38 Provinsi)** | Full Access | Full Access | Read Only | Read Only | ❌ Ditolak |
+| **Direktori Dokter Seluruh Indonesia** | Full Access | Read / Audit | Dokter Binaan | ❌ Ditolak | ❌ Ditolak |
+| **Direktori Dokter Cabang Sendiri** | Full Access | Read / Audit | Dokter Binaan | Full Access | ❌ Ditolak |
+| **Portofolio Mandiri Saya Sendiri** | Full Access | Full Access | Full Access | Full Access | **Akses Mandiri** |
+| **Verifikasi / Tolak Kredit SKP** | Ya | ❌ Audit Mode | **Ya (Binaan)** | **Ya (Cabangnya)** | ❌ Ditolak |
+| **Alihkan PIC Binaan Dokter** | Ya | Ya | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak |
+| **Kirim WA Blast Massal** | Ya | Ya | Ya (Binaan) | Ya (Cabangnya) | ❌ Ditolak |
+| **Modul Pengaturan Master (`manage.html`)** | **Full Access** | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak |
+| **Monitoring Kinerja Admin (`admin-performance`)** | Ya | **Ya (Khusus)** | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak |
+| **Export Monthly Report PDF / Invoice** | Ya | Ya | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak |
+
+---
+
+## 8. Kepatuhan Hukum Perlindungan Data Pribadi (UU PDP No. 27/2022)
+
+1. **Enkripsi Data Sensitif Medis (*Encryption at Rest*)**:
+   * Data identitas kependudukan (NIK) dan kredensial Plataran Sehat dokter wajib dienkripsi pada database menggunakan algoritma **AES-256-GCM** (`nik_encrypted BYTEA`).
+   * Kunci enkripsi dikelola secara terpisah melalui konfigurasi lingkungan (`APP_KEY` / `ENCRYPTION_MASTER_KEY`).
+2. **Deterministic Lookup Tanpa Dekripsi (*Zero Decrypt Lookup*)**:
+   * Pencarian dokter berdasarkan NIK dilakukan menggunakan kolom hash deterministik **SHA-256 HMAC** (`nik_hash`). Database tidak perlu mendekripsi seluruh baris data hanya untuk mencari satu NIK (*No fullscan decryption*).
+3. **Pencatatan Audit Trail Permanen (*Immutable Audit Logs*)**:
+   * Setiap aktivitas melihat data sensitif, mengubah data, memverifikasi/menolak SKP, mengirim pesan WA, dan mengunduh laporan PDF wajib dicatat dalam tabel `audit_logs` bersama identitas pengguna, IP Address, dan User Agent.
+
+---
+
+## 9. Standar Engineering & Optimasi Database
+
+1. **Larangan Keras ID Auto-Increment**:
+   * Seluruh tabel dilarang menggunakan integer auto-increment untuk mencegah kebocoran data terenumerasi (*IDOR attack*).
+   * Seluruh tabel wajib menggunakan **RFC 9562 UUIDv7** berbasis waktu untuk menjamin performa indeks pohon B-Tree PostgreSQL tetap sekuensial dan terurut.
+2. **Jaminan Bebas Full Table Scan (*Zero Full-Scan Guarantee*)**:
+   * Semua query wajib melewati indeks:
+     - Covering Index `idx_skp_entries_doc_period_domain` dengan klausa `INCLUDE (credit_amount)` untuk agregasi instan.
+     - Composite Partial Indexes `idx_doctors_branch_status` dan `idx_doctors_pic_status` untuk isolasi query.
+     - Indeks GIN Trigram `idx_doctors_trgm_search` untuk pencarian teks nama dan nomor anggota.
+3. **Pencegahan Masalah N+1**:
+   * Pada lapisan ORM/Repository, pemanggilan relasi wajib menggunakan *Eager Loading* eksplisit (`with(['branch', 'province', 'activePeriod'])`).
+4. **Paginasi Efisien**:
+   * Query volume besar wajib menggunakan *Cursor Pagination* (`cursorPaginate()`) dan *Chunking* (`chunkById()`).
