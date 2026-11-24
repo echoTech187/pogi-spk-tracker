@@ -1,56 +1,75 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes - POGI SKP Tracker
 |--------------------------------------------------------------------------
-| Seluruh antarmuka mempertahankan 100% desain asli, styling Tailwind,
-| komponen Leaflet Maps, ApexCharts, Modal dialog, dan interaktivitas
+| Seluruh alur autentikasi dan otorisasi terintegrasi dengan Matriks RBAC
+| 5 Peran Resmi Sistem, Isolasi Multi-Tenant Cabang, & Middleware Otorisasi
 |--------------------------------------------------------------------------
 */
+
+// =========================================================================
+// 1. RUTE PUBLIK & AUTENTIKASI (GUEST)
+// =========================================================================
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/switch-role', [AuthController::class, 'switchRole'])->name('switch-role');
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+// =========================================================================
+// 2. RUTE TERPROTEKSI (AUTH + ACTIVE USER + RBAC MIDDLEWARE)
+// =========================================================================
+Route::middleware(['active'])->group(function () {
 
-Route::get('/doctors', function () {
-    return view('doctors');
-})->name('doctors.index');
+    // 2.1 Dashboard Nasional (Dapat diakses oleh Super Admin, Pusat, Verifikator, & Cabang)
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
 
-Route::get('/doctor-detail', function () {
-    return view('doctor-detail');
-})->name('doctors.show');
+    // 2.2 Direktori Dokter (Dengan Isolasi Cabang Otomatis untuk ADMIN_CABANG)
+    Route::get('/doctors', function () {
+        return view('doctors');
+    })->name('doctors.index')->middleware(['role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG', 'branch.scope']);
 
-Route::get('/provinces', function () {
-    return view('provinces');
-})->name('provinces');
+    // 2.3 Portofolio Detail Dokter (Semua role termasuk USER_DOKTER untuk akses mandiri)
+    Route::get('/doctor-detail', function () {
+        return view('doctor-detail');
+    })->name('doctors.show')->middleware(['role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG,USER_DOKTER', 'branch.scope']);
 
-Route::get('/events', function () {
-    return view('events');
-})->name('events');
+    // 2.4 Peta Provinsi & Katalog Events
+    Route::get('/provinces', function () {
+        return view('provinces');
+    })->name('provinces')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
 
-Route::get('/activity', function () {
-    return view('activity');
-})->name('activity');
+    Route::get('/events', function () {
+        return view('events');
+    })->name('events')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
 
-Route::get('/reports', function () {
-    return view('reports');
-})->name('reports');
+    // 2.5 Laporan Bulanan (Super Admin, Admin Pusat, Admin Cabang)
+    Route::get('/reports', function () {
+        return view('reports');
+    })->name('reports')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_CABANG');
 
-Route::get('/admin-performance', function () {
-    return view('admin-performance');
-})->name('admin-performance');
+    // 2.6 Monitoring SLA & Performa Admin (Khusus Super Admin & Admin Pusat)
+    Route::get('/admin-performance', function () {
+        return view('admin-performance');
+    })->name('admin-performance')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT');
 
-Route::get('/manage', function () {
-    return view('manage');
-})->name('manage');
+    // 2.7 Log Aktivitas & Jejak Audit (Super Admin & Admin Pusat)
+    Route::get('/activity', function () {
+        return view('activity');
+    })->name('activity')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT');
 
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
+    // 2.8 Pengaturan Master Data (Eksklusif SUPER_ADMIN - RULES.md Bab 7)
+    Route::get('/manage', function () {
+        return view('manage');
+    })->name('manage')->middleware('role:SUPER_ADMIN');
+});
