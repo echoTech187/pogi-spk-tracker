@@ -3,17 +3,17 @@
   "cleanUrls": true,
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/login", "destination": "/index.html" },
-    { "source": "/logout", "destination": "/index.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" },
-    { "source": "/doctors", "destination": "/doctors.html" },
-    { "source": "/events", "destination": "/events.html" },
-    { "source": "/activity", "destination": "/activity.html" },
-    { "source": "/provinces", "destination": "/provinces.html" },
-    { "source": "/reports", "destination": "/reports.html" },
-    { "source": "/admin-performance", "destination": "/admin-performance.html" },
-    { "source": "/manage", "destination": "/manage.html" },
-    { "source": "/doctor-detail", "destination": "/doctor-detail.html" }
+    { "source": "/", "destination": "/" },
+    { "source": "/login", "destination": "/login" },
+    { "source": "/logout", "destination": "/login" },
+    { "source": "/dashboard", "destination": "/dashboard" },
+    { "source": "/doctors", "destination": "/doctors" },
+    { "source": "/events", "destination": "/events" },
+    { "source": "/activity", "destination": "/activity" },
+    { "source": "/provinces", "destination": "/provinces" },
+    { "source": "/reports", "destination": "/reports" },
+    { "source": "/admin-performance", "destination": "/admin-performance" },
+    { "source": "/manage", "destination": "/manage" },
+    { "source": "/doctor-detail", "destination": "/doctor-detail" }
   ]
 }

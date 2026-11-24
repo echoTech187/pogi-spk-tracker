@@ -787,6 +787,7 @@ Admin Data PP POGI & PT Energi Cipta
         // Desktop / Tablet Rows (9 Kolom sesuai referensi gambar)
         if (tbody) {
           tbody.innerHTML = pageDoctors.map(d => {
+            const isComp = (d.status === 'Complete' || d.status === 'COMPLETE' || d.rawStatus === 'COMPLETE');
             const stats = ((typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats)
               ? PogiStore.getDoctorPeriodStats(d, activePeriod)
               : null) || {
@@ -794,8 +795,8 @@ Admin Data PP POGI & PT Energi Cipta
                   target: 8.0,
                   redPercent: 0,
                   yellowPercent: 0,
-                  isGreen: d.status === 'Complete',
-                  isComplete: d.status === 'Complete',
+                  isGreen: isComp,
+                  isComplete: isComp,
                   pendingCredits: d.pendingCredits || 0,
                   pengabdian: { achieved: d.pengabdianCredits || 0, target: 1 },
                   pelayanan: { achieved: d.pelayananCredits || 0, target: 5 },
@@ -886,6 +887,7 @@ Admin Data PP POGI & PT Energi Cipta
         // Mobile Touch Cards (< md)
         if (mobileContainer) {
           mobileContainer.innerHTML = pageDoctors.map(d => {
+            const isComp = (d.status === 'Complete' || d.status === 'COMPLETE' || d.rawStatus === 'COMPLETE');
             const stats = ((typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats)
               ? PogiStore.getDoctorPeriodStats(d, activePeriod)
               : null) || {
@@ -893,8 +895,8 @@ Admin Data PP POGI & PT Energi Cipta
                   target: 8.0,
                   redPercent: 0,
                   yellowPercent: 0,
-                  isGreen: d.status === 'Complete',
-                  isComplete: d.status === 'Complete',
+                  isGreen: isComp,
+                  isComplete: isComp,
                   pendingCredits: d.pendingCredits || 0,
                   pengabdian: { achieved: d.pengabdianCredits || 0, target: 1 },
                   pelayanan: { achieved: d.pelayananCredits || 0, target: 5 },
@@ -1029,12 +1031,12 @@ Admin Data PP POGI & PT Energi Cipta
       if (currentPipelineFilter === 'complete') {
         list = list.filter(d => {
           const s = (typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats) ? PogiStore.getDoctorPeriodStats(d, activePeriod) : null;
-          return s ? s.isComplete : (d.status === 'Complete');
+          return s ? s.isComplete : (d.status === 'Complete' || d.status === 'COMPLETE' || d.rawStatus === 'COMPLETE');
         });
       } else if (currentPipelineFilter === 'incomplete') {
         list = list.filter(d => {
           const s = (typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats) ? PogiStore.getDoctorPeriodStats(d, activePeriod) : null;
-          return s ? !s.isComplete : (d.status !== 'Complete');
+          return s ? !s.isComplete : (d.status !== 'Complete' && d.status !== 'COMPLETE' && d.rawStatus !== 'COMPLETE');
         });
       } else if (currentPipelineFilter === 'pending') {
         list = list.filter(d => {
@@ -1065,7 +1067,7 @@ Admin Data PP POGI & PT Energi Cipta
       if (status && status !== 'ALL') {
         list = list.filter(d => {
           const s = (typeof PogiStore !== 'undefined' && PogiStore.getDoctorPeriodStats) ? PogiStore.getDoctorPeriodStats(d, activePeriod) : null;
-          const isComp = s ? s.isComplete : (d.status === 'Complete');
+          const isComp = s ? s.isComplete : (d.status === 'Complete' || d.status === 'COMPLETE' || d.rawStatus === 'COMPLETE');
           return status === 'Complete' ? isComp : !isComp;
         });
       }
@@ -1097,7 +1099,8 @@ Admin Data PP POGI & PT Energi Cipta
 
     function openDoctorDetailModal(docId) {
       activeDoctorId = docId;
-      const d = PogiStore.getDoctors().find(x => x.id === docId);
+      const d = (typeof LIVE_DATABASE_DOCTORS !== 'undefined' ? LIVE_DATABASE_DOCTORS.find(x => x.id === docId) : null)
+        || ((typeof PogiStore !== 'undefined') ? PogiStore.getDoctors().find(x => x.id === docId) : null);
       if (!d) return;
 
       const initials = d.initials || d.avatar || 'DR';
@@ -1221,6 +1224,7 @@ Admin Data PP POGI & PT Energi Cipta
       const periodEnd = (document.getElementById('newDocPeriodEnd')?.value || '31 Des 2030').trim();
       const lmsUser = (document.getElementById('newDocLmsUsername')?.value || '').trim();
       const lmsPass = (document.getElementById('newDocLmsPassword')?.value || '').trim();
+      const assignedTo = (document.getElementById('newDocAssignedTo') ? document.getElementById('newDocAssignedTo').value : 'Siti Rahma');
 
       if (!name) {
         showToast('Mohon masukkan nama dokter!', 'error');
@@ -1237,72 +1241,128 @@ Admin Data PP POGI & PT Energi Cipta
       }
 
       const initials = name.replace(/dr\.\s*|Sp\.OG|Sp\.PD|Prof\.|Dr\./gi, '').trim().split(' ').filter(c => /[A-Za-z]/.test(c)).slice(0, 2).map(w => w[0]).join('').toUpperCase() || 'DR';
-
       const yearMatch = periodEnd.match(/\d{4}/);
       const endYear = yearMatch ? yearMatch[0] : '2030';
       const periodLabel = `${periodStart} - ${periodEnd}`;
       const mockNik = '32' + Math.floor(10000000000000 + Math.random() * 90000000000000);
 
-      const docs = PogiStore.getDoctors();
-      const newDocId = 'doc-' + (docs.length + 1).toString().padStart(3, '0');
-      const newDocPogiId = '#POGI-2026-' + (1000 + docs.length + 1);
-
-      const newDoc = {
-        id: newDocId,
-        pogiId: newDocPogiId,
+      const payload = {
         name: name,
-        initials: initials,
-        nik: mockNik,
-        province: prov,
-        hospital: inst,
-        institution: inst,
+        str: str,
         phone: phone,
-        assignedTo: (document.getElementById('newDocAssignedTo') ? document.getElementById('newDocAssignedTo').value : 'Siti Rahma'),
-        pelayananCredits: 0,
-        pengabdianCredits: 0,
-        pembelajaranCredits: 0,
-        q4Credits: 0.0,
-        pendingCredits: 0.0,
-        status: 'Incomplete',
-        strExpiry: periodEnd,
-        validUntilLabel: 'Siklus 5 Thn: Habis ' + endYear,
-        avatar: initials,
-        q3Credits: 0.0,
-        year2026Credits: 0.0,
-        lastActivity: 'Baru didaftarkan (' + PogiStore.formatCurrentDate() + ')',
-        periodLabel: periodLabel,
-        plataranAccount: {
-          username: lmsUser || 'super@example.com',
-          status: 'CONNECTED',
-          lastSync: PogiStore.formatCurrentTimestamp()
-        },
-        q4Details: {
-          skp: {
-            achieved: 0.0,
-            target: 8.0,
-            redPercent: 0,
-            yellowPercent: 0
-          },
-          pending: 0.0,
-          pengabdian: { achieved: 0.0, target: 1.0 },
-          pelayanan: { achieved: 0.0, target: 4.5 },
-          pembelajaran: { achieved: 0.0, target: 2.5 }
-        }
+        province: prov,
+        institution: inst,
+        assigned_to: assignedTo,
+        period_start: periodStart,
+        period_end: periodEnd
       };
 
-      docs.unshift(newDoc);
-      PogiStore.saveDoctors(docs);
+      fetch('/doctors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.doctor) {
+          const created = data.doctor;
+          const newDocItem = {
+            id: created.id,
+            pogiId: created.pogiId,
+            name: created.name,
+            initials: initials,
+            nik: mockNik,
+            strNumber: created.strNumber || str,
+            sipNumber: 'SIP.01.2026/0891',
+            province: created.province || prov,
+            hospital: created.hospital || inst,
+            institution: created.hospital || inst,
+            phone: phone,
+            assignedTo: created.assignedTo || assignedTo,
+            status: 'Incomplete',
+            rawStatus: 'INCOMPLETE',
+            validUntilLabel: 'Siklus 5 Thn: Habis ' + endYear,
+            avatar: initials,
+            lastActivity: 'Baru didaftarkan (Live Database)',
+            periodLabel: periodLabel,
+            achievedCredits: 0,
+            targetCredits: 160,
+            pendingCredits: 0,
+            q4Credits: 0,
+            pelayananCredits: 0,
+            pengabdianCredits: 0,
+            pembelajaranCredits: 0,
+            q4Details: {
+              skp: { achieved: 0, target: 8.0, isGreen: false, redPercent: 0, yellowPercent: 0 },
+              pending: 0,
+              pengabdian: { achieved: 0, target: 1 },
+              pelayanan: { achieved: 0, target: 5 },
+              pembelajaran: { achieved: 0, target: 2 }
+            }
+          };
 
-      PogiStore.addActivity({
-        actor: 'Siti Rahma (Admin Data)',
-        action: 'Pendaftaran Dokter Baru',
-        details: 'Mendaftarkan ' + name + ' (' + inst + ', ' + prov + ') dengan kredensial LMS Plataran Sehat',
-        category: 'Registration'
+          if (typeof LIVE_DATABASE_DOCTORS !== 'undefined') {
+            LIVE_DATABASE_DOCTORS.unshift(newDocItem);
+          }
+
+          if (typeof PogiStore !== 'undefined') {
+            const docs = PogiStore.getDoctors();
+            docs.unshift(newDocItem);
+            PogiStore.saveDoctors(docs);
+            PogiStore.addActivity({
+              actor: 'Admin POGI',
+              action: 'Pendaftaran Dokter Baru',
+              details: 'Mendaftarkan ' + name + ' (' + inst + ', ' + prov + ') ke database',
+              category: 'Registration'
+            });
+          }
+
+          closeAddDoctorModal();
+          applyDoctorFilters();
+          showToast('Dokter baru ' + name + ' berhasil didaftarkan ke sistem & database!', 'success');
+        } else {
+          showToast(data.message || 'Gagal mendaftarkan dokter baru', 'error');
+        }
+      })
+      .catch(err => {
+        // Fallback store
+        const docs = PogiStore.getDoctors();
+        const newDocId = 'doc-' + (docs.length + 1).toString().padStart(3, '0');
+        const newDocPogiId = '#POGI-2026-' + (1000 + docs.length + 1);
+        const fallbackDoc = {
+          id: newDocId,
+          pogiId: newDocPogiId,
+          name: name,
+          initials: initials,
+          nik: mockNik,
+          province: prov,
+          hospital: inst,
+          institution: inst,
+          phone: phone,
+          assignedTo: assignedTo,
+          pelayananCredits: 0,
+          pengabdianCredits: 0,
+          pembelajaranCredits: 0,
+          q4Credits: 0.0,
+          pendingCredits: 0.0,
+          status: 'Incomplete',
+          rawStatus: 'INCOMPLETE',
+          strExpiry: periodEnd,
+          validUntilLabel: 'Siklus 5 Thn: Habis ' + endYear,
+          avatar: initials,
+          lastActivity: 'Baru didaftarkan',
+          periodLabel: periodLabel
+        };
+        docs.unshift(fallbackDoc);
+        PogiStore.saveDoctors(docs);
+        closeAddDoctorModal();
+        applyDoctorFilters();
+        showToast('Dokter baru ' + name + ' tersimpan!', 'success');
       });
-
-      closeAddDoctorModal();
-      renderDoctorTable(null, true);
-      showToast('Dokter baru ' + name + ' berhasil didaftarkan!', 'success');
     }
 
     // -------------------------------------------------------------

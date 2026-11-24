@@ -245,7 +245,7 @@
                 </div>
                 <div class="text-[11px] text-slate-500 mt-0.5">
                   Folder Cloud Anggota: <code id="metaVaultPath"
-                    class="font-mono text-[#16b3ac] font-bold">cloud-storage://pogi-skp-vault/doc-001/</code>
+                    class="font-mono text-[#16b3ac] font-bold">cloud-storage://pogi-skp-vault/{{ $doctor->id ?? 'doc-001' }}/</code>
                 </div>
               </div>
             </div>
@@ -254,12 +254,12 @@
               <div>
                 <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Internal Updated
                   (Energi Cipta)</span>
-                <span id="tsInternal" class="font-mono font-bold text-slate-800">17 Nov 2026, 09.15 WIB</span>
+                <span id="tsInternal" class="font-mono font-bold text-slate-800">{{ $doctor->dashboard_updated_at ? \Carbon\Carbon::parse($doctor->dashboard_updated_at)->format('d M Y, H.i') . ' WIB' : 'Baru saja' }}</span>
               </div>
               <div>
                 <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Kemenkes Synced (Portal
                   Plataran)</span>
-                <span id="tsKemenkes" class="font-mono font-bold text-emerald-700">17 Nov 2026, 10.24 WIB</span>
+                <span id="tsKemenkes" class="font-mono font-bold text-emerald-700">{{ $doctor->kemenkes_updated_at ? \Carbon\Carbon::parse($doctor->kemenkes_updated_at)->format('d M Y, H.i') . ' WIB' : 'Menunggu Sinkronisasi' }}</span>
               </div>
             </div>
           </div>
@@ -433,10 +433,6 @@
                   class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-800 font-black">0</span>
               </button>
             </div>
-            <div class="text-xs text-slate-400 font-medium flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Terhubung Repositori Internal</span>
-            </div>
           </div>
 
           <!-- PANE 1: LOGBOOK KEGIATAN SKP -->
@@ -473,7 +469,7 @@
                   <span class="font-extrabold text-slate-900">Folder Object Storage Cloud Anggota:</span>
                   <span
                     class="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-100 text-[#16b3ac] font-bold border border-emerald-200"
-                    id="repoVaultBadge">pogi-skp-vault/doc-001/</span>
+                    id="repoVaultBadge">pogi-skp-vault/{{ $doctor->id ?? 'doc-001' }}/</span>
                 </div>
                 <p class="text-[11px] text-slate-500">
                   Seluruh berkas bukti fisik SKP tersimpan dan terenkripsi di cloud internal sebelum
@@ -852,6 +848,7 @@
     const LIVE_SERVER_DOCUMENTS = @json($documents ?? []);
     const LIVE_SERVER_PERIOD = @json($period ?? null);
     const LIVE_SERVER_ENTRIES = @json($skpEntries ?? []);
+    const LIVE_SERVER_MISSING_DOCS = @json($missingDocs ?? null);
 
     let activeDoctor = null;
     let currentDetailTab = 'logbook';
@@ -870,6 +867,8 @@
       if (parts.length >= 2) initials = (parts[0][0] + parts[1][0]).toUpperCase();
       else if (parts.length === 1) initials = parts[0].substring(0, 2).toUpperCase();
 
+      const isComp = (rawDoc.status === 'COMPLETE' || rawDoc.status === 'Complete');
+
       return {
         id: String(rawDoc.id),
         pogiId: rawDoc.npa_pogi ? `#${rawDoc.npa_pogi}` : `#POGI-${String(rawDoc.id).substring(0, 8)}`,
@@ -885,9 +884,14 @@
         sipNumber: rawDoc.sip_number || '-',
         validUntilLabel: rawDoc.sip_expiry_date ? `Siklus: Habis ${rawDoc.sip_expiry_date}` : 'Siklus 5 Thn: Aktif',
         assignedTo: rawDoc.assigned_pic_name || 'Belum Ditentukan',
-        status: rawDoc.status === 'COMPLETE' ? 'Complete' : 'Incomplete',
+        assignedPicId: rawDoc.assigned_pic_id || null,
+        status: isComp ? 'Complete' : 'Incomplete',
+        rawStatus: rawDoc.status || (isComp ? 'COMPLETE' : 'INCOMPLETE'),
         achievedCredits: achieved,
+        q4Credits: achieved,
         targetCredits: target,
+        qTarget: target,
+        pendingCredits: Number(rawDoc.pending_credits || 0),
         pelayananCredits: pel,
         pengabdianCredits: peng,
         pembelajaranCredits: pemb,
@@ -1006,12 +1010,14 @@
         }
       }
 
-      // Dual-Timestamp Tracking & Vault
-      const ts = PogiStore.getDoctorTimestamps(doc.id);
-      if (document.getElementById('tsInternal')) document.getElementById('tsInternal').innerText = ts.dashboard_updated_at;
-      if (document.getElementById('tsKemenkes')) document.getElementById('tsKemenkes').innerText = ts.kemenkes_updated_at;
-      if (document.getElementById('metaVaultPath')) document.getElementById('metaVaultPath').innerText = ts.vaultPath;
-      if (document.getElementById('repoVaultBadge')) document.getElementById('repoVaultBadge').innerText = ts.vaultPath.replace('cloud-storage://', '');
+      // Dual-Timestamp Tracking & Vault (Live Database Synchronized)
+      const tsInternal = doc.dashboardUpdatedAt || ((typeof PogiStore !== 'undefined' && PogiStore.getDoctorTimestamps) ? PogiStore.getDoctorTimestamps(doc.id).dashboard_updated_at : 'Baru saja');
+      const tsKemenkes = doc.kemenkesUpdatedAt || ((typeof PogiStore !== 'undefined' && PogiStore.getDoctorTimestamps) ? PogiStore.getDoctorTimestamps(doc.id).kemenkes_updated_at : 'Menunggu Sinkronisasi');
+      const vaultPath = `cloud-storage://pogi-skp-vault/${doc.id}/`;
+      if (document.getElementById('tsInternal')) document.getElementById('tsInternal').innerText = tsInternal;
+      if (document.getElementById('tsKemenkes')) document.getElementById('tsKemenkes').innerText = tsKemenkes;
+      if (document.getElementById('metaVaultPath')) document.getElementById('metaVaultPath').innerText = vaultPath;
+      if (document.getElementById('repoVaultBadge')) document.getElementById('repoVaultBadge').innerText = vaultPath.replace('cloud-storage://', '');
 
       const statusBadge = document.getElementById('doctorStatusBadge');
       if (statusBadge) {
@@ -1144,9 +1150,14 @@
         activities = LIVE_SERVER_ENTRIES.map(e => ({
           id: String(e.id),
           title: e.title,
-          category: e.domain || 'Pembelajaran',
-          date: e.activity_date ? new Date(e.activity_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-',
-          credit: Number(e.credit_amount || 0),
+          category: e.category || e.domain || 'Pembelajaran',
+          date: e.date || (e.activity_date ? new Date(e.activity_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'),
+          credit: Number(e.credit !== undefined ? e.credit : (e.credit_amount || 0)),
+          credits: Number(e.credits !== undefined ? e.credits : (e.credit_amount || 0)),
+          organizer: e.organizer || (activeDoctor ? activeDoctor.hospital : 'PP POGI / RS Jejaring'),
+          statusLabel: e.statusLabel || (e.status === 'DONE' ? '✓ Terverifikasi Kemenkes' : (e.status === 'REJECTED' ? '✕ Ditolak' : 'Menunggu Verifikasi')),
+          statusClass: e.statusClass || (e.status === 'DONE' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : (e.status === 'REJECTED' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-amber-50 text-amber-700 border border-amber-200')),
+          eventId: e.eventId || (e.event_id ? String(e.event_id).substring(0, 8) : null),
           status: e.status === 'DONE' ? 'Terverifikasi' : (e.status === 'REJECTED' ? 'Ditolak' : 'Pending'),
           evidence: 'Tersedia'
         }));
@@ -1168,17 +1179,18 @@
       tbody.innerHTML = activities.map(act => {
         let catBadge = '';
         let valColor = 'text-slate-900';
-        if (act.category === 'Pelayanan') {
+        const actCat = (act.category || '').toLowerCase();
+        if (actCat.includes('pelayanan')) {
           catBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-50 text-sky-700">Pelayanan</span>';
           valColor = 'text-sky-900';
-        } else if (act.category === 'Pembelajaran') {
+        } else if (actCat.includes('pembelajaran')) {
           catBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700">Pembelajaran</span>';
           valColor = 'text-emerald-900';
-        } else if (act.category === 'Pengabdian') {
+        } else if (actCat.includes('pengabdian')) {
           catBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700">Pengabdian</span>';
           valColor = 'text-amber-900';
         } else {
-          catBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700">Pengembangan</span>';
+          catBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700">Administrasi</span>';
           valColor = 'text-purple-900';
         }
 
@@ -1190,8 +1202,8 @@
               ${act.eventId ? `<div class="text-[10px] text-slate-400 font-mono mt-0.5 flex items-center gap-1.5"><a href="/events" target="_blank" title="Buka Katalog Master Events" class="px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 font-bold border border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition inline-flex items-center gap-1"><span>ID: ${act.eventId}</span><span class="material-symbols-outlined text-[10px]">open_in_new</span></a><span class="text-slate-500">Katalog Master Events</span></div>` : ''}
             </td>
             <td class="py-3 px-3">${catBadge}</td>
-            <td class="py-3 px-3 text-center font-bold ${valColor}">${act.credits}</td>
-            <td class="py-3 px-3 text-slate-600">${act.organizer}</td>
+            <td class="py-3 px-3 text-center font-bold ${valColor}">${act.credits !== undefined ? act.credits : (act.credit || 0)}</td>
+            <td class="py-3 px-3 text-slate-600">${act.organizer || '-'}</td>
             <td class="py-3 px-3 text-center">
               <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${act.statusClass || 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
                 ${act.statusLabel || '✓ Terverifikasi Kemenkes'}
@@ -1206,7 +1218,7 @@
       let docs = (LIVE_SERVER_DOCUMENTS && LIVE_SERVER_DOCUMENTS.length > 0)
         ? LIVE_SERVER_DOCUMENTS
         : ((typeof PogiStore !== 'undefined') ? PogiStore.getDoctorDocuments(docId) : []);
-      const detector = (typeof PogiStore !== 'undefined') ? PogiStore.getDoctorMissingDocuments(docId) : { missingCount: 0, items: [] };
+      const detector = LIVE_SERVER_MISSING_DOCS || ((typeof PogiStore !== 'undefined') ? PogiStore.getDoctorMissingDocuments(docId) : { missingCount: 0, items: [] });
 
       // Update Tab Badges
       const docCountBadge = document.getElementById('tabBadgeDocCount');
@@ -1253,16 +1265,21 @@
           `;
 
           let catBadge = '';
-          if (f.category === 'Pembelajaran') catBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800">Pembelajaran</span>';
-          else if (f.category === 'Pelayanan') catBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-50 text-sky-800">Pelayanan</span>';
-          else if (f.category === 'Pengabdian') catBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800">Pengabdian</span>';
+          const fCat = (f.category || f.domain || '').toLowerCase();
+          if (fCat.includes('pembelajaran')) catBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800">Pembelajaran</span>';
+          else if (fCat.includes('pelayanan')) catBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-50 text-sky-800">Pelayanan</span>';
+          else if (fCat.includes('pengabdian')) catBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800">Pengabdian</span>';
           else catBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-800">Administrasi</span>';
 
           let skpBadge = '';
-          if (typeof f.skpValue !== 'undefined' && Number(f.skpValue) > 0) {
-            skpBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-[#16b3ac] font-mono border border-emerald-200">+${f.skpValue} SKP</span>`;
-          } else if (f.category === 'Administrasi') {
+          const skpNum = Number(f.skpValue !== undefined ? f.skpValue : (f.credit_amount || 0));
+          if (skpNum > 0) {
+            skpBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-[#16b3ac] font-mono border border-emerald-200">+${skpNum} SKP</span>`;
+          } else if (fCat.includes('administrasi')) {
             skpBadge = `<span class="text-[10px] text-slate-400 font-medium">— (Non-SKP)</span>`;
+          } else {
+            skpBadge = `<span class="text-[10px] text-slate-400 font-mono">0 SKP</span>`;
+          }
           } else {
             skpBadge = `<span class="text-[10px] text-slate-400 font-mono">0 SKP</span>`;
           }
@@ -1386,7 +1403,7 @@
           `).join('');
         }
       }
-    }
+    
 
     let selectedUploadFile = null;
 
@@ -1527,17 +1544,65 @@
       const sizeStr = selectedUploadFile ? ((selectedUploadFile.size / (1024 * 1024)).toFixed(1) + ' MB') : (driveUrl ? 'Cloud (Drive)' : '1.8 MB');
 
       if (!activeDoctor) return;
-      PogiStore.addDoctorDocument(activeDoctor.id, {
+
+      const payload = {
         filename: filename,
         category: category,
-        skpValue: skpValue,
-        driveUrl: driveUrl,
-        size: sizeStr
-      });
+        skp_value: skpValue,
+        google_drive_url: driveUrl || null
+      };
 
-      closeUploadDoctorDocModal();
-      renderDoctorRepositoryAndDetector(activeDoctor.id);
-      showToast(`Berkas "${filename}" (${skpValue > 0 ? '+' + skpValue + ' SKP' : 'Tersimpan'}${driveUrl ? ' & Tautan Drive' : ''}) berhasil disimpan ke Object Storage Cloud!`, 'success');
+      fetch(`/doctors/${activeDoctor.id}/documents`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.document) {
+          LIVE_SERVER_DOCUMENTS.unshift(data.document);
+          if (typeof LIVE_SERVER_ENTRIES !== 'undefined') {
+            LIVE_SERVER_ENTRIES.unshift({
+              id: 'entry-' + Date.now(),
+              title: 'Pengajuan Bukti Fisik: ' + filename,
+              category: category,
+              domain: category,
+              date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+              credit: skpValue,
+              credits: skpValue,
+              organizer: activeDoctor.hospital || 'PP POGI / RS Jejaring',
+              status: 'NOT_SUBMITTED',
+              statusLabel: 'Menunggu Verifikasi',
+              statusClass: 'bg-amber-50 text-amber-700 border border-amber-200',
+              eventId: null
+            });
+            renderDoctorActivities(activeDoctor.id);
+          }
+          closeUploadDoctorDocModal();
+          renderDoctorRepositoryAndDetector(activeDoctor.id);
+          showToast(`Berkas "${filename}" (${skpValue > 0 ? '+' + skpValue + ' SKP' : 'Tersimpan'}${driveUrl ? ' & Tautan Drive' : ''}) berhasil disimpan ke Object Storage Cloud & basis data!`, 'success');
+        } else {
+          showToast(data.message || 'Gagal mengunggah berkas ke server', 'error');
+        }
+      })
+      .catch(err => {
+        if (typeof PogiStore !== 'undefined') {
+          PogiStore.addDoctorDocument(activeDoctor.id, {
+            filename: filename,
+            category: category,
+            skpValue: skpValue,
+            driveUrl: driveUrl,
+            size: sizeStr
+          });
+        }
+        closeUploadDoctorDocModal();
+        renderDoctorRepositoryAndDetector(activeDoctor.id);
+        showToast(`Berkas "${filename}" berhasil disimpan ke Object Storage Cloud!`, 'success');
+      });
     }
 
     
@@ -1547,7 +1612,18 @@
       const currentPic = activeDoctor.assignedTo || 'Siti Rahma';
       document.getElementById('modalChangePicCurrentPic').innerText = currentPic;
       const select = document.getElementById('modalChangePicSelect');
-      if (select) select.value = currentPic;
+      if (select) {
+        if (activeDoctor.assignedPicId) {
+          select.value = activeDoctor.assignedPicId;
+        } else {
+          for (let i = 0; i < select.options.length; i++) {
+            if (select.options[i].text.includes(currentPic)) {
+              select.selectedIndex = i;
+              break;
+            }
+          }
+        }
+      }
       document.getElementById('changeDoctorPicModal').classList.remove('hidden');
     }
 
@@ -1576,6 +1652,7 @@
       .then(data => {
         if (data.status === 'success') {
           activeDoctor.assignedTo = newAdminName;
+          activeDoctor.assignedPicId = newAdminId;
           if (document.getElementById('doctorAssignedTo')) {
             document.getElementById('doctorAssignedTo').innerText = newAdminName;
           }
@@ -1605,14 +1682,41 @@
 
     function handleDocStatusChange(fileId, newStatus) {
       if (!activeDoctor) return;
-      PogiStore.updateDoctorDocumentStatus(activeDoctor.id, fileId, newStatus);
-      renderDoctorRepositoryAndDetector(activeDoctor.id);
 
-      if (document.getElementById('tsKemenkes')) {
-        document.getElementById('tsKemenkes').innerText = PogiStore.formatCurrentTimestamp();
-      }
-
-      showToast(`Status siklus Kemenkes berkas berhasil diubah menjadi: ${newStatus}`, 'success');
+      fetch(`/doctors/${activeDoctor.id}/documents/${fileId}/status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus })
+      })
+      .then(res => res.json())
+      .then(data => {
+        const docInList = LIVE_SERVER_DOCUMENTS.find(f => f.id === fileId);
+        if (docInList) {
+          docInList.status = newStatus;
+          if (newStatus === 'DONE') {
+            docInList.uploadedKemenkes = 'Baru saja';
+          }
+        }
+        if (typeof PogiStore !== 'undefined') {
+          PogiStore.updateDoctorDocumentStatus(activeDoctor.id, fileId, newStatus);
+        }
+        renderDoctorRepositoryAndDetector(activeDoctor.id);
+        if (document.getElementById('tsKemenkes')) {
+          document.getElementById('tsKemenkes').innerText = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ', ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+        }
+        showToast(`Status siklus Kemenkes berkas berhasil diubah menjadi: ${newStatus}`, 'success');
+      })
+      .catch(err => {
+        if (typeof PogiStore !== 'undefined') {
+          PogiStore.updateDoctorDocumentStatus(activeDoctor.id, fileId, newStatus);
+        }
+        renderDoctorRepositoryAndDetector(activeDoctor.id);
+        showToast(`Status siklus Kemenkes berkas berhasil diubah menjadi: ${newStatus}`, 'success');
+      });
     }
 
     let currentPreviewDocData = null;
@@ -2508,146 +2612,115 @@
 
     function approveDoctorCredits() {
       if (!activeDoctor) return;
-      const docs = PogiStore.getDoctors();
-      const doc = docs.find(d => d.id === activeDoctor.id);
-      if (!doc) return;
 
-      const addedCredit = (doc.pendingCredits && doc.pendingCredits > 0) ? doc.pendingCredits : 4.5;
-      const prevPemb = doc.pembelajaranCredits !== undefined ? doc.pembelajaranCredits : 28;
-      const newPemb = prevPemb + addedCredit;
-      const prevStatus = doc.status || 'Incomplete';
+      const addedCredit = (activeDoctor.pendingCredits && activeDoctor.pendingCredits > 0) ? activeDoctor.pendingCredits : 4.5;
+      const prevPemb = activeDoctor.pembelajaranCredits !== undefined ? activeDoctor.pembelajaranCredits : 28;
+      const prevStatus = activeDoctor.status || 'Incomplete';
 
-      const qTarget = (doc.q4Details && doc.q4Details.skp && doc.q4Details.skp.target !== undefined)
-        ? doc.q4Details.skp.target
-        : (doc.qTarget !== undefined ? doc.qTarget : 8.0);
-      const newQ4 = (doc.q4Credits || 0) + addedCredit;
-
-      doc.pendingCredits = 0;
-      doc.pembelajaranCredits = newPemb;
-      doc.q4Credits = newQ4;
-      if (newQ4 >= qTarget) {
-        doc.status = 'Complete';
-      } else {
-        doc.status = 'Incomplete';
-      }
-      if (doc.q4Details) {
-        doc.q4Details.pending = 0;
-        if (doc.q4Details.pembelajaran) {
-          doc.q4Details.pembelajaran.achieved = (doc.q4Details.pembelajaran.achieved || 0) + addedCredit;
+      // Kirim permintaan verifikasi langsung ke database backend
+      fetch(`/doctors/${activeDoctor.id}/verify-credits`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'Accept': 'application/json'
         }
-        if (doc.q4Details.skp) {
-          doc.q4Details.skp.achieved = newQ4;
-          if (newQ4 >= qTarget) {
-            doc.q4Details.skp.isGreen = true;
-            doc.q4Details.skp.redPercent = 0;
-            doc.q4Details.skp.yellowPercent = 0;
+      })
+      .then(res => res.json())
+      .then(data => {
+        const newPemb = (data.data && data.data.pembelajaran !== undefined) ? data.data.pembelajaran : (prevPemb + addedCredit);
+        const newStatus = (data.data && data.data.doctorStatus) ? data.data.doctorStatus : 'Complete';
+
+        activeDoctor.pendingCredits = 0;
+        activeDoctor.pembelajaranCredits = newPemb;
+        activeDoctor.status = newStatus;
+        activeDoctor.rawStatus = (data.data && data.data.rawStatus) ? data.data.rawStatus : 'COMPLETE';
+        if (data.data && data.data.totalCredits !== undefined) {
+          activeDoctor.achievedCredits = data.data.totalCredits;
+          activeDoctor.q4Credits = data.data.totalCredits;
+        }
+
+        // Tandai LIVE_SERVER_ENTRIES ke status DONE
+        if (typeof LIVE_SERVER_ENTRIES !== 'undefined') {
+          LIVE_SERVER_ENTRIES.forEach(e => {
+            if (e.status === 'PENDING' || e.status === 'NOT_SUBMITTED') {
+              e.status = 'DONE';
+              e.statusLabel = '✓ Terverifikasi Kemenkes';
+              e.statusClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+            }
+          });
+        }
+
+        // Tandai LIVE_SERVER_DOCUMENTS ke status DONE
+        if (typeof LIVE_SERVER_DOCUMENTS !== 'undefined') {
+          LIVE_SERVER_DOCUMENTS.forEach(d => {
+            if (d.status === 'NOT_SUBMITTED' || d.status === 'SUBMITTED') {
+              d.status = 'DONE';
+              d.uploadedKemenkes = 'Baru saja';
+            }
+          });
+        }
+
+        // Sinkronisasi PogiStore jika tersedia
+        if (typeof PogiStore !== 'undefined') {
+          const docs = PogiStore.getDoctors();
+          const doc = docs.find(d => d.id === activeDoctor.id);
+          if (doc) {
+            doc.pendingCredits = 0;
+            doc.pembelajaranCredits = newPemb;
+            doc.status = newStatus;
+            doc.q4Credits = activeDoctor.q4Credits;
+            PogiStore.saveDoctors(docs);
+          }
+          if (typeof PogiStore.addActivity === 'function') {
+            PogiStore.addActivity({
+              actor: 'Admin POGI',
+              action: 'Verifikasi Kredit SKP',
+              details: `Menyetujui +${addedCredit.toFixed(1)} SKP Pembelajaran untuk ${activeDoctor.name}. Status dokter kini ${newStatus}.`,
+              category: 'Verification'
+            });
           }
         }
-      }
-      activeDoctor = doc;
-      PogiStore.saveDoctors(docs);
 
-      // 1. Update Logbook Activities di localStorage
-      const activitiesKey = `pogi_doctor_activities_${doc.id}`;
-      let activities = [];
-      try {
-        const stored = localStorage.getItem(activitiesKey);
-        if (stored) activities = JSON.parse(stored);
-      } catch (e) { }
+        // Re-render UI (Detail Dokter, Tabel Logbook, & Repositori Cloud)
+        renderDoctorDetails(activeDoctor);
+        renderDoctorActivities(activeDoctor.id);
+        renderDoctorRepositoryAndDetector(activeDoctor.id);
 
-      if (!activities || activities.length === 0) {
-        activities = PogiStore.getDoctorActivities(doc.id);
-      }
-
-      // Tandai seluruh kegiatan pending (khususnya ev-05) menjadi Terverifikasi
-      activities = activities.map(act => {
-        if (act.status === 'PENDING' || (act.id && act.id.includes('pending')) || (act.eventId === 'ev-05')) {
-          return {
-            ...act,
-            status: 'VERIFIED',
-            statusLabel: '✓ Terverifikasi Kemenkes',
-            statusClass: 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-          };
+        // Animasi Highlight Reaktif pada Elemen yang Berubah
+        const cardPemb = document.getElementById('cardSubbidangPembelajaran');
+        if (cardPemb) {
+          cardPemb.classList.add('pulse-emerald');
+          setTimeout(() => cardPemb.classList.remove('pulse-emerald'), 1500);
         }
-        return act;
-      });
-
-      // Filter ketat memastikan ID Event tidak terduplikasi
-      const seenEvents = new Set();
-      activities = activities.filter(act => {
-        const k = act.eventId || act.id;
-        if (seenEvents.has(k)) return false;
-        seenEvents.add(k);
-        return true;
-      });
-
-      try {
-        localStorage.setItem(activitiesKey, JSON.stringify(activities));
-      } catch (e) { }
-
-      // 2. Update Repositori Berkas Cloud di localStorage ke status DONE
-      const docsKey = `pogi_doctor_docs_${doc.id}`;
-      let repoDocs = [];
-      try {
-        const storedDocs = localStorage.getItem(docsKey);
-        if (storedDocs) repoDocs = JSON.parse(storedDocs);
-      } catch (e) { }
-
-      if (!repoDocs || repoDocs.length === 0) {
-        repoDocs = PogiStore.getDoctorDocuments(doc.id);
-      }
-
-      const curTimestamp = PogiStore.formatCurrentTimestamp();
-      repoDocs = repoDocs.map(f => {
-        if (f.status === 'SUBMITTED' || f.status === 'NOT_SUBMITTED' || f.category === 'Pembelajaran') {
-          return {
-            ...f,
-            status: 'DONE',
-            statusLabel: 'Terverifikasi Kemenkes',
-            uploadedKemenkes: curTimestamp
-          };
+        const statusBadge = document.getElementById('doctorStatusBadge');
+        if (statusBadge) {
+          statusBadge.classList.add('pulse-emerald');
+          setTimeout(() => statusBadge.classList.remove('pulse-emerald'), 1500);
         }
-        return f;
+        const valPemb = document.getElementById('valPembelajaran');
+        if (valPemb) {
+          valPemb.classList.add('text-emerald-600', 'scale-110');
+          setTimeout(() => valPemb.classList.remove('text-emerald-600', 'scale-110'), 1500);
+        }
+
+        // Buka Modal Dialog Rincian Sukses Verifikasi
+        showVerificationSuccessModal(activeDoctor, addedCredit, prevPemb, newPemb, prevStatus);
+      })
+      .catch(err => {
+        // Fallback jika request terputus
+        const newPemb = prevPemb + addedCredit;
+        activeDoctor.pendingCredits = 0;
+        activeDoctor.pembelajaranCredits = newPemb;
+        activeDoctor.status = 'Complete';
+        activeDoctor.q4Credits = (activeDoctor.q4Credits || 0) + addedCredit;
+        renderDoctorDetails(activeDoctor);
+        renderDoctorActivities(activeDoctor.id);
+        renderDoctorRepositoryAndDetector(activeDoctor.id);
+        showVerificationSuccessModal(activeDoctor, addedCredit, prevPemb, newPemb, prevStatus);
       });
-      try {
-        localStorage.setItem(docsKey, JSON.stringify(repoDocs));
-      } catch (e) { }
-
-      // 3. Catat ke Jejak Audit POGI
-      if (typeof PogiStore.addActivity === 'function') {
-        PogiStore.addActivity({
-          actor: 'Admin POGI',
-          action: 'Verifikasi Kredit SKP',
-          details: `Menyetujui +${addedCredit.toFixed(1)} SKP Pembelajaran untuk ${doc.name}. Status dokter kini Complete.`,
-          category: 'Verification'
-        });
-      }
-
-      // 4. Re-render UI (Detail Dokter, Tabel Logbook, & Repositori Cloud)
-      renderDoctorDetails(doc);
-      renderDoctorActivities(doc.id);
-      renderDoctorRepositoryAndDetector(doc.id);
-
-      // 5. Animasi Highlight Reaktif pada Elemen yang Berubah
-      const cardPemb = document.getElementById('cardSubbidangPembelajaran');
-      if (cardPemb) {
-        cardPemb.classList.add('pulse-emerald');
-        setTimeout(() => cardPemb.classList.remove('pulse-emerald'), 1500);
-      }
-      const statusBadge = document.getElementById('doctorStatusBadge');
-      if (statusBadge) {
-        statusBadge.classList.add('pulse-emerald');
-        setTimeout(() => statusBadge.classList.remove('pulse-emerald'), 1500);
-      }
-      const valPemb = document.getElementById('valPembelajaran');
-      if (valPemb) {
-        valPemb.classList.add('text-emerald-600', 'scale-110');
-        setTimeout(() => valPemb.classList.remove('text-emerald-600', 'scale-110'), 1500);
-      }
-
-      // 6. Buka Modal Dialog Rincian Sukses Verifikasi
-      showVerificationSuccessModal(doc, addedCredit, prevPemb, newPemb, prevStatus);
     }
+    
 
     function showVerificationSuccessModal(doc, addedCredit, prevPemb, newPemb, prevStatus) {
       const modal = document.getElementById('doctorVerificationSuccessModal');

@@ -59,8 +59,6 @@
   </div>
 
   <!-- Core Scripts -->
-  <script src="{{ asset('js/pogi_template_data.js') }}"></script>
-  <script src="{{ asset('js/pogi_state.js') }}"></script>
   <script src="{{ asset('js/navigation.js') }}"></script>
   @yield('scripts')
 </body>

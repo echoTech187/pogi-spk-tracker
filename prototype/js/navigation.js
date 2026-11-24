@@ -383,7 +383,7 @@ function performLogout() {
     if (isLaravel) {
       window.location.href = '/logout';
     } else {
-      window.location.href = 'index.html';
+      window.location.href ='/login';
     }
   }
 }

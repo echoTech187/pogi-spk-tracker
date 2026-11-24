@@ -53,11 +53,23 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/doctors', [DoctorController::class, 'index'])
         ->name('doctors.index')
         ->middleware(['role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG', 'branch.scope']);
+    Route::post('/doctors', [DoctorController::class, 'store'])
+        ->name('doctors.store')
+        ->middleware('role:SUPER_ADMIN,ADMIN_POGI');
 
-    // 2.4 Portofolio Detail Dokter
+    // 2.4 Portofolio Detail Dokter & Mutasi Data Live
     Route::get('/doctor-detail', [DoctorController::class, 'show'])
         ->name('doctors.show')
         ->middleware(['role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG,USER_DOKTER,DOKTER', 'branch.scope']);
+    Route::post('/doctors/{id}/verify-credits', [DoctorController::class, 'verifyCredits'])
+        ->name('doctors.verify-credits')
+        ->middleware('role:SUPER_ADMIN,ADMIN_POGI');
+    Route::post('/doctors/{id}/documents', [DoctorController::class, 'uploadDocument'])
+        ->name('doctors.upload-doc')
+        ->middleware('role:SUPER_ADMIN,ADMIN_POGI,USER_DOKTER,DOKTER');
+    Route::post('/doctors/{id}/documents/{docId}/status', [DoctorController::class, 'updateDocumentStatus'])
+        ->name('doctors.update-doc-status')
+        ->middleware('role:SUPER_ADMIN,ADMIN_POGI');
 
     // 2.5 Ubah & Tentukan PIC Pengelola Dokter (Eksklusif SUPER_ADMIN - Bu Dian, Bp Ade, Bp Ircham)
     Route::post('/doctors/{id}/assign-pic', [DoctorController::class, 'assignPic'])
