@@ -356,10 +356,12 @@
             @endforelse
           </div>
         </div>
+@endsection
 
-  <!-- Modal Follow-Up Massal (Terhubung ke MySQL Live) -->
-  <div id="fuModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+@section('modals')
+  <!-- Modal Follow-Up Massal (Terhubung ke MySQL Live - Full Viewport Overlay z-[9999]) -->
+  <div id="fuModal" onclick="if(event.target.id === 'fuModal') closeFollowUpModal()" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 relative z-10 animate-in fade-in zoom-in duration-150">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-xl bg-teal-50 text-[#16b3ac] flex items-center justify-center">

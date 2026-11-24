@@ -58,6 +58,9 @@
     </div>
   </div>
 
+  <!-- Global Application Modals (Outside Main Stacking Context for Full Viewport Overlay) -->
+  @yield('modals')
+
   <!-- Core Scripts -->
   <script src="{{ asset('js/navigation.js') }}"></script>
   @yield('scripts')
