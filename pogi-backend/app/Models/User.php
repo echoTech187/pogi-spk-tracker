@@ -69,14 +69,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Perlindungan penyimpanan database (mencegah crash jika kredensial DB belum lengkap)
+     * Perlindungan penyimpanan database jika ada kendala koneksi
      */
     public function save(array $options = [])
     {
         try {
-            if (!$this->exists && empty(config('database.connections.pgsql.password'))) {
-                return false;
-            }
             return parent::save($options);
         } catch (\Throwable $e) {
             return false;
@@ -86,12 +83,9 @@ class User extends Authenticatable
     public function update(array $attributes = [], array $options = [])
     {
         try {
-            if (empty(config('database.connections.pgsql.password'))) {
-                $this->fill($attributes);
-                return true;
-            }
             return parent::update($attributes, $options);
         } catch (\Throwable $e) {
+            $this->fill($attributes);
             return false;
         }
     }
