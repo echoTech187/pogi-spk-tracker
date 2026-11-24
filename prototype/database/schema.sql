@@ -402,7 +402,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 CREATE TABLE IF NOT EXISTS verifier_performance_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     verifier_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    doctor_id UUID NOT NULL REFERENCES doctors(id) ON DELETE CASCADE,
+    doctor_id UUID REFERENCES doctors(id) ON DELETE CASCADE,
     skp_entry_id UUID REFERENCES skp_entries(id) ON DELETE SET NULL,
     document_id UUID REFERENCES doctor_documents(id) ON DELETE SET NULL,
     action_type VARCHAR(50) NOT NULL,            -- 'VERIFIED', 'REJECTED'

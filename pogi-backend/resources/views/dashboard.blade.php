@@ -14,11 +14,11 @@
               Memantau ketercapaian kredit SKP di 3 Subbidang (Pelayanan, Pengabdian, Pembelajaran) untuk dokter Obgyn se-Indonesia. Lakukan tindak lanjut (FU) kepada Rumah Sakit jejaring dan Pengurus Cabang di daerah.
             </p>
           </div>
-          <div class="flex items-center gap-2 shrink-0">
-            <a href="/doctors" class="px-4 py-2.5 rounded-xl bg-white text-slate-900 font-extrabold text-xs hover:bg-slate-100 shadow-sm transition flex items-center gap-1.5">
-              <span>Buka Direktori Dokter</span>
-              <span class="material-symbols-outlined text-base">arrow_forward</span>
-            </a>
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <button type="button" onclick="launchKemenkesPortal()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5 border border-emerald-400/40 cursor-pointer" title="Otomatis catat jam kerja/sesi Kemenkes ke log kinerja admin">
+              <span class="material-symbols-outlined text-base">open_in_new</span>
+              <span>Akses Portal Kemenkes</span>
+            </button>
           </div>
         </div>
 
@@ -677,6 +677,35 @@
         }
         showToast('Sinkronisasi Sukses: Kredit SKP Baru Diperbarui!', 'success');
       }, 1200);
+    }
+
+    function launchKemenkesPortal(doctorId, doctorName) {
+      showToast('Membuka Portal Kemenkes & mencatat riwayat kerja...', 'info');
+
+      fetch('{{ route("kemenkes.track") }}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+          doctor_id: doctorId || null,
+          doctor_name: doctorName || null,
+          source: 'dashboard_hero_cta'
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showToast('Sesi Kemenkes tercatat otomatis ke log kinerja admin!', 'success');
+          window.open(data.portal_url || 'https://satusehat.kemkes.go.id', '_blank');
+        } else {
+          window.open('https://satusehat.kemkes.go.id', '_blank');
+        }
+      })
+      .catch(() => {
+        window.open('https://satusehat.kemkes.go.id', '_blank');
+      });
     }
 
     function selectOrgScope(scope, labelText) {

@@ -168,10 +168,12 @@
                   <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-sky-50 border border-sky-200 text-sky-900 text-xs font-semibold">
                     <span class="material-symbols-outlined text-[15px] text-sky-600">assignment_ind</span>
                     <span>PIC:</span>
-                    <span id="doctorAssignedTo" class="font-bold text-sky-950">Siti Rahma</span>
-                    <button type="button" onclick="openChangePicModal()" class="ml-1 text-[11px] text-[#006948] hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5 rbac-operational" title="Ubah PIC Admin Pendamping">
+                    <span id="doctorAssignedTo" class="font-bold text-sky-950">Anna</span>
+                    @if(Auth::user()?->role === 'SUPER_ADMIN')
+                    <button type="button" onclick="openChangePicModal()" class="ml-1 text-[11px] text-[#006948] hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5" title="Ubah PIC Admin Pendamping">
                       <span class="material-symbols-outlined text-[12px]">swap_horiz</span> Ganti PIC
                     </button>
+                    @endif
                   </div>
                 </div>
                 <h1 id="doctorName" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">dr. Cut
@@ -217,14 +219,16 @@
             <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100 flex flex-col justify-between col-span-2 sm:col-span-1">
               <div>
                 <div class="text-[10px] text-slate-400 font-bold uppercase">PIC Admin Binaan</div>
-                <div id="doctorPicCardName" class="font-extrabold text-slate-900 mt-1 truncate">Siti Rahma</div>
+                <div id="doctorPicCardName" class="font-extrabold text-slate-900 mt-1 truncate">Anna</div>
                 <div class="text-[10px] text-sky-700 font-semibold mt-0.5 flex items-center gap-1">
                   <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>Admin POGI
                 </div>
               </div>
-              <button type="button" onclick="openChangePicModal()" class="mt-2 text-left text-[11px] text-[#006948] font-bold hover:underline inline-flex items-center gap-1 rbac-operational">
+              @if(Auth::user()?->role === 'SUPER_ADMIN')
+              <button type="button" onclick="openChangePicModal()" class="mt-2 text-left text-[11px] text-[#006948] font-bold hover:underline inline-flex items-center gap-1">
                 <span class="material-symbols-outlined text-[13px]">swap_horiz</span> Alihkan PIC
               </button>
+              @endif
             </div>
           </div>
 
@@ -751,13 +755,12 @@
       <div class="space-y-1.5 text-xs">
         <label class="block font-bold text-slate-700">Pilih PIC Admin Baru</label>
         <select id="modalChangePicSelect" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#006948]">
-          <option value="Siti Rahma">Siti Rahma (Lead Admin POGI Tim Data Pusat)</option>
-          <option value="Dewi Lestari">Dewi Lestari (Admin POGI DKI &amp; Banten)</option>
-          <option value="Wahyu Setiawan">Wahyu Setiawan (Admin POGI Jawa Barat)</option>
-          <option value="Melati Sihombing">Melati Sihombing (Admin POGI Jawa Tengah &amp; DIY)</option>
-          <option value="Rina Kartika">Rina Kartika (Admin POGI Jawa Timur &amp; Bali)</option>
-          <option value="Dimas Saputra">Dimas Saputra (Admin POGI Luar Jawa / Sumatera &amp; Kalimantan)</option>
-          <option value="Fikri Ramadhan">Fikri Ramadhan (Admin POGI Indonesia Timur)</option>
+          @php
+            $adminPogiList = \Illuminate\Support\Facades\DB::table('users')->where('role', 'ADMIN_POGI')->orderBy('full_name')->get();
+          @endphp
+          @foreach($adminPogiList as $adm)
+            <option value="{{ $adm->id }}">{{ $adm->full_name }} (Admin POGI)</option>
+          @endforeach
         </select>
         <p class="text-[11px] text-slate-400">Pengalihan akan dicatat secara otomatis dalam log audit sistem.</p>
       </div>
@@ -1157,6 +1160,8 @@
 
       // Render Repositori Cloud Table
       const repoTbody = document.getElementById('doctorDocumentsTableBody');
+      const CAN_EDIT_DOC_STATUS = @json(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']));
+
       if (repoTbody) {
         repoTbody.innerHTML = docs.map(f => {
           let selectClass = 'bg-amber-50 text-amber-800 border-amber-200';
@@ -1168,15 +1173,19 @@
             selectClass = 'bg-rose-50 text-rose-800 border-rose-200';
           }
 
-          const statusSelector = `
+          const statusSelector = CAN_EDIT_DOC_STATUS ? `
             <div class="inline-flex items-center">
-              <select onchange="handleDocStatusChange('${f.id}', this.value)" class="text-[10px] font-extrabold rounded-full border px-2 py-0.5 cursor-pointer outline-none transition text-center shadow-2xs ${selectClass}" title="Klik untuk mengubah status siklus hidup dokumen sesuai RULES.md #2.3">
+              <select onchange="handleDocStatusChange('${f.id}', this.value)" class="text-[10px] font-extrabold rounded-full border px-2 py-0.5 cursor-pointer outline-none transition text-center shadow-2xs ${selectClass}" title="Klik untuk mengubah status siklus hidup dokumen">
                 <option value="NOT_SUBMITTED" ${f.status === 'NOT_SUBMITTED' ? 'selected' : ''}>NOT_SUBMITTED</option>
                 <option value="SUBMITTED" ${f.status === 'SUBMITTED' ? 'selected' : ''}>SUBMITTED</option>
                 <option value="DONE" ${f.status === 'DONE' ? 'selected' : ''}>&#10003; DONE (Kemenkes)</option>
                 <option value="REJECTED" ${f.status === 'REJECTED' ? 'selected' : ''}>&#10007; REJECTED</option>
               </select>
             </div>
+          ` : `
+            <span class="inline-flex items-center text-[10px] font-black rounded-full border px-2.5 py-0.5 text-center ${selectClass}" title="Hanya Super Admin & Admin POGI yang dapat mengubah status dokumen">
+              ${f.status}
+            </span>
           `;
 
           let catBadge = '';
@@ -1484,21 +1493,50 @@
 
     function submitChangePic() {
       if (!activeDoctor) return;
-      const newAdmin = document.getElementById('modalChangePicSelect').value;
-      if (!newAdmin) return;
+      const selectElem = document.getElementById('modalChangePicSelect');
+      const newAdminId = selectElem.value;
+      if (!newAdminId) return;
+      const newAdminName = selectElem.options[selectElem.selectedIndex]?.text?.split(' (')[0] || newAdminId;
       
-      const success = PogiStore.reassignDoctor(activeDoctor.id, newAdmin);
-      if (success) {
-        activeDoctor.assignedTo = newAdmin;
+      // Kirim request ke backend API /doctors/{id}/assign-pic
+      fetch(`/doctors/${activeDoctor.id}/assign-pic`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ assigned_pic_id: newAdminId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          activeDoctor.assignedTo = newAdminName;
+          if (document.getElementById('doctorAssignedTo')) {
+            document.getElementById('doctorAssignedTo').innerText = newAdminName;
+          }
+          if (document.getElementById('doctorPicCardName')) {
+            document.getElementById('doctorPicCardName').innerText = newAdminName;
+          }
+          closeChangePicModal();
+          showToast(`PIC dokter berhasil dialihkan ke ${newAdminName}!`, 'success');
+        } else {
+          showToast(data.message || 'Gagal mengalihkan PIC dokter', 'error');
+        }
+      })
+      .catch(err => {
+        // Fallback store
+        PogiStore.reassignDoctor(activeDoctor.id, newAdminName);
+        activeDoctor.assignedTo = newAdminName;
         if (document.getElementById('doctorAssignedTo')) {
-          document.getElementById('doctorAssignedTo').innerText = newAdmin;
+          document.getElementById('doctorAssignedTo').innerText = newAdminName;
         }
         if (document.getElementById('doctorPicCardName')) {
-          document.getElementById('doctorPicCardName').innerText = newAdmin;
+          document.getElementById('doctorPicCardName').innerText = newAdminName;
         }
         closeChangePicModal();
-        showToast(`PIC dokter berhasil dialihkan ke ${newAdmin}!`, 'success');
-      }
+        showToast(`PIC dokter berhasil dialihkan ke ${newAdminName}!`, 'success');
+      });
     }
 
     function handleDocStatusChange(fileId, newStatus) {
@@ -1900,7 +1938,7 @@
           <!-- Certificate Header -->
           <div class="text-center space-y-1 border-b border-amber-300 pb-4">
             <div class="w-16 h-16 mx-auto p-1 flex items-center justify-center">
-              <img src="/assets/img/pogi_logo.jpg" alt="Logo POGI" class="w-full h-full object-contain">
+              <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
             </div>
             <div class="text-[11px] font-extrabold tracking-widest text-slate-700 uppercase">PENGURUS BESAR PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA (PP POGI)</div>
             <div class="text-[10px] font-bold text-[#006948] uppercase tracking-wider">KOLEGIUM OBSTETRI DAN GINEKOLOGI INDONESIA</div>
@@ -1993,7 +2031,7 @@
         <!-- POGI Branch Letterhead -->
         <div class="border-b-2 border-slate-900 pb-3 flex items-center gap-4 font-sans">
           <div class="w-16 h-16 shrink-0 p-1 flex items-center justify-center">
-            <img src="/assets/img/pogi_logo.jpg" alt="Logo POGI" class="w-full h-full object-contain">
+            <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
           </div>
           <div class="flex-1 text-center">
             <div class="text-[10px] font-bold tracking-widest text-slate-500 uppercase">PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA (POGI)</div>
@@ -2245,7 +2283,7 @@
         <!-- Generic Official Certificate / Letter -->
         <div class="border-b-2 border-slate-900 pb-3 flex items-center gap-4 font-sans">
           <div class="w-16 h-16 shrink-0 p-1 flex items-center justify-center">
-            <img src="/assets/img/pogi_logo.jpg" alt="Logo POGI" class="w-full h-full object-contain">
+            <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
           </div>
           <div class="flex-1 text-center">
             <div class="text-[10px] font-bold tracking-widest text-slate-500 uppercase">PENGURUS BESAR PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA</div>

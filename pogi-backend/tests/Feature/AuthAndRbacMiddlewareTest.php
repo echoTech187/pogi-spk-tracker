@@ -65,17 +65,18 @@ class AuthAndRbacMiddlewareTest extends TestCase
             ->assertStatus(403);
     }
 
-    public function test_admin_pogi_is_forbidden_from_admin_performance_module(): void
+    public function test_admin_pogi_can_access_admin_performance_module_but_admin_cabang_is_forbidden(): void
     {
         $adminPogi = $this->makeUser('ADMIN_POGI');
+        $adminCabang = $this->makeUser('ADMIN_CABANG', (string) Str::uuid());
 
-        // Can access dashboard
+        // Admin POGI can view performance & SLA metrics
         $this->actingAs($adminPogi)
-            ->get('/dashboard')
+            ->get('/admin-performance')
             ->assertStatus(200);
 
-        // Forbidden from admin performance (Khusus Super Admin & Pusat)
-        $this->actingAs($adminPogi)
+        // Admin Cabang is strictly forbidden from admin performance (hanya cek cabang sendiri di dashboard)
+        $this->actingAs($adminCabang)
             ->get('/admin-performance')
             ->assertStatus(403);
     }

@@ -275,7 +275,7 @@ $tables = [
     "CREATE TABLE IF NOT EXISTS verifier_performance_logs (
         id CHAR(36) PRIMARY KEY,
         verifier_user_id CHAR(36) NOT NULL,
-        doctor_id CHAR(36) NOT NULL,
+        doctor_id CHAR(36) NULL,
         skp_entry_id CHAR(36) NULL,
         document_id CHAR(36) NULL,
         action_type VARCHAR(50) NOT NULL,

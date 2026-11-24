@@ -15,9 +15,9 @@ enum SystemRole: string
     {
         return match($this) {
             self::SUPER_ADMIN  => 'Super Admin (PT Energi Cipta)',
-            self::ADMIN_PUSAT  => 'Pengurus Pusat POGI (Monitoring & SLA)',
-            self::ADMIN_POGI   => 'Admin POGI (Verifikator SKP)',
-            self::ADMIN_CABANG => 'Pengurus Cabang Daerah',
+            self::ADMIN_PUSAT  => 'POGI Pusat (Monitoring All Area)',
+            self::ADMIN_POGI   => 'Admin POGI (Data Entry & Update Kemenkes)',
+            self::ADMIN_CABANG => 'Admin Cabang (Monitoring Cabang Daerah)',
             self::DOKTER, self::USER_DOKTER => 'Dokter Spesialis Obgyn (Anggota)',
         };
     }

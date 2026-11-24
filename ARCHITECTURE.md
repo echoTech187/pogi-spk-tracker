@@ -415,7 +415,7 @@ sequenceDiagram
     autonumber
     participant Trigger as Cron H-7 / H-2 / Manual Admin
     participant Queue as WA Queue Dispatcher UseCase
-    participant DB as PostgreSQL 14+
+    participant DB as MySQL 8+ / PostgreSQL 14+
     participant Worker as Background Queue Worker
     participant WAGW as WhatsApp Business Gateway API
     actor Dokter as Dokter Sp.OG
@@ -441,20 +441,77 @@ sequenceDiagram
 
 ---
 
+### 4.4 Workflow 4: Sesi Akses Portal Kemenkes & Auto-Log Kinerja Admin (Zero-Manual Logging)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Admin as Admin POGI (Anna / Vivi / Lily)
+    participant UI as Dashboard / Doctor Detail View
+    participant Ctrl as KemenkesController (trackAccess)
+    participant DB as Basis Data (MySQL 8+)
+    participant Portal as Portal Plataran Sehat (Kemenkes)
+
+    Admin->>UI: Klik Tombol "Akses Portal Kemenkes"
+    UI->>Ctrl: POST /kemenkes/track-access (doctor_id, doctor_name)
+    Ctrl->>DB: INSERT verifier_performance_logs (action_type='KEMENKES_SYNC_SESSION')
+    Ctrl->>DB: INSERT audit_logs (action='KEMENKES_PORTAL_ACCESS')
+    opt Jika ada konteks dokter
+        Ctrl->>DB: UPDATE doctors SET kemenkes_updated_at = NOW()
+    end
+    Ctrl-->>UI: 200 OK (portal_url: https://satusehat.kemkes.go.id, status: 'success')
+    UI->>UI: Tampilkan Toast "Sesi kerja Kemenkes tercatat otomatis!"
+    UI->>Portal: Buka tab baru portal Plataran Sehat Kemenkes
+    Note over Admin,Portal: Admin bekerja tanpa perlu mencatat manual jam mulai/selesai kerja
+```
+
+---
+
+### 4.5 Workflow 5: Penetapan & Pengalihan Admin PIC Dokter oleh Super Admin
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Super as Super Admin (Bu Dian / Bp. Ade / Bp. Ircham)
+    actor NonSuper as Non-Super Admin (Admin POGI / Pusat / Cabang)
+    participant UI as Doctor Detail / Rebalancer Modal
+    participant Ctrl as DoctorController (assignPic)
+    participant DB as Basis Data (MySQL 8+)
+
+    NonSuper->>Ctrl: POST /doctors/{id}/assign-pic
+    Ctrl-->>NonSuper: 403 Forbidden (Otoritas Eksklusif Super Admin)
+
+    Super->>UI: Pilih Dokter & Tentukan PIC Baru (Admin POGI)
+    UI->>Ctrl: POST /doctors/{id}/assign-pic (assigned_pic_id)
+    Ctrl->>Ctrl: Validasi Role Super Admin & UUID PIC
+    Ctrl->>DB: UPDATE doctors SET assigned_pic_id = target_pic_id, updated_at = NOW()
+    Ctrl->>DB: INSERT audit_logs (action='REASSIGN_DOCTOR_PIC', old_pic, new_pic)
+    Ctrl-->>UI: 200 OK (status: 'success', message: 'PIC dokter berhasil dialihkan')
+    UI->>UI: Update Tampilan Badge PIC Dokter & Tampilkan Toast
+```
+
+---
+
 ## 5. Batasan Sistem & Kendala Teknis (*System Boundaries & Constraints*)
 
-1. **Batasan Integrasi Kemenkes Plataran Sehat**:
+1. **Batasan Integrasi Kemenkes Plataran Sehat & Otomasi Riwayat Sesi**:
    * Portal Kemenkes Plataran Sehat **tidak menyediakan Webhook atau REST API publik**.
-   * Sistem beroperasi secara *Assisted-Sync*: berkas diinputkan secara manual ke portal Kemenkes oleh tim admin, lalu admin mencatat pembaruan melalui tombol **"Tandai Sudah Update Kemenkes"** yang merekam `kemenkes_updated_at`.
-2. **Batasan Rate-Limiting WhatsApp Gateway**:
+   * Sistem beroperasi secara *Assisted-Sync*: berkas diinputkan secara manual ke portal Kemenkes oleh tim Admin POGI (Anna, Vivi, Lily).
+   * Untuk meringankan beban administrasi, saat admin mengklik **"Akses Portal Kemenkes"**, sistem secara otomatis merekam log sesi kerja ke `verifier_performance_logs` dan `audit_logs` sehingga SLA dan metrik produktivitas terhitung secara *real-time* tanpa input manual.
+2. **Batasan Wewenang Peran (*Role Boundaries*)**:
+   * **Super Admin (Bu Dian, Bp. Ade, Bp. Ircham)**: Pemegang wewenang penuh, master data, pengalihan PIC dokter (`assigned_pic_id`), redistribusi beban (*workload rebalancing*), dan penguncian laporan bulanan.
+   * **Admin POGI (Anna, Vivi, Lily)**: Pelaksana data entry dan verifikasi berkas SKP. Tidak memiliki akses mengubah PIC dokter.
+   * **POGI Pusat (dr. Ulul, Bu Ratna)**: Pemantauan eksekutif nasional (**Hanya bisa cek saja**), dapat meninjau 38 provinsi tanpa batasan, namun tidak dapat mengedit data dokter.
+   * **Admin Cabang (Pengurus Daerah)**: Pemantauan cabang daerah (**Hanya bisa cek saja**), terisolasi ketat hanya untuk wilayah cabangnya sendiri melalui *BranchScope*. Tidak dapat mengedit data dokter.
+3. **Batasan Rate-Limiting WhatsApp Gateway**:
    * WhatsApp Business Gateway membatasi *throughput* pengiriman maksimal **15 pesan per menit** per nomor resmi.
    * Setiap pesan wajib diproses asinkron menggunakan antrean (*Queue Worker*) dengan delay acak (*jitter*) **1.500 ms – 3.000 ms** untuk mencegah blokir nomor oleh algoritma anti-spam Meta.
-3. **Batasan Repositori Berkas (Document Vault) & Kebijakan Anti-Storage Bloat**:
+4. **Batasan Repositori Berkas (Document Vault) & Kebijakan Anti-Storage Bloat**:
    * **URL / Tautan Google Drive adalah MANDATORI**: Setiap pengajuan bukti fisik SKP (sertifikat simposium, logbook tindakan, surat tugas) **WAJIB** menyertakan URL tautan Google Drive yang dapat diakses (akses share *view*).
    * **Pencegahan Pembengkakan Storage Server (*Storage Bloat Prevention*)**: Kebijakan ini diberlakukan secara tegas karena pengurus dan *stakeholder* khawatir kapasitas *storage* server cepat penuh dan membengkak drastis jika menampung puluhan ribu berkas biner (PDF/gambar) dari ribuan dokter spesialis obgyn di seluruh Indonesia.
    * **Upload Berkas Biner Fisik Langsung Bersifat OPSIONAL**: Sistem tetap menyediakan opsi upload berkas biner langsung ke disk/Object Storage jika sewaktu-waktu dibutuhkan, namun bukan merupakan syarat wajib submit. Jika berkas diunggah, batas maksimal ukuran adalah **10 MB per dokumen** (format PDF, JPG, PNG) dan diamankan dengan *Presigned URL berbatas waktu (maksimal 15 menit)*.
-4. **Batasan Isolasi Multi-Tenant Cabang**:
-   * Admin Cabang dibatasi secara ketat hanya dapat melihat dan memverifikasi dokter yang terdaftar di wilayah cabangnya sendiri melalui penerapan **Eloquent Global Scope (`BranchScope`)**. Akses ke dokter cabang lain diblokir otomatis dengan kode HTTP `403 Forbidden`.
+5. **Batasan Isolasi Multi-Tenant Cabang**:
+   * Admin Cabang dibatasi secara ketat hanya dapat melihat dokter yang terdaftar di wilayah cabangnya sendiri melalui penerapan **Eloquent Global Scope (`BranchScope`)**. Akses ke dokter cabang lain diblokir otomatis dengan kode HTTP `403 Forbidden`.
 
 ---
 

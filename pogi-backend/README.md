@@ -38,13 +38,15 @@ Sistem ini menjembatani pengumpulan berkas sertifikat dan logbook klinis, penyim
 
 ## 3. Struktur 5 Peran Resmi (*Role-Based Access Control / RBAC*)
 
-| No | Peran (*System Role*) | Deskripsi & Batas Wewenang |
-|:---:|:---|:---|
-| **1** | **Super Admin** | Akses penuh (*Full-access*), konfigurasi master data (faskes, provinsi, cabang, kategori, event, pengguna), manajemen hak akses, dan audit trail log. |
-| **2** | **Admin Pusat** | Memantau aktivitas operasional seluruh cabang, memonitor SLA dan performance kerja dari tim Admin POGI, serta export laporan nasional (audit/read mode pada data dokter). |
-| **3** | **Admin POGI** *(Verifikator)* | Melakukan verifikasi kesesuaian dokumen bukti fisik, validasi kredit SKP ranah, dan memantau dokter binaan di bawah penugasannya secara nasional. |
-| **4** | **Admin Cabang** | Melakukan verifikasi dan monitoring berkas SKP, namun **terisolasi secara ketat khusus untuk dokter di wilayah cabangnya sendiri** (akses ke cabang lain diblokir otomatis via *Global Scopes*). |
-| **5** | **User / Dokter** | Akses portal mandiri khusus untuk melihat portofolio SKP 5 tahun dan status resertifikasi dirinya sendiri. |
+Sesuai arahan operasional manajemen PP POGI & hasil evaluasi alur kerja:
+
+| No | Peran (*System Role*) | Personil Utama | Deskripsi & Batas Wewenang |
+|:---:|:---|:---|:---|
+| **1** | **Super Admin** | Bu Dian, Bp. Ade, Bp. Ircham | Akses penuh (*Full-access*), konfigurasi master data, **wewenang eksklusif menentukan & mengalihkan Admin PIC pengelola dokter** (`assigned_pic_id`), penyeimbang beban (*workload rebalancing*), laporan bulanan resmi, dan audit trail log. |
+| **2** | **Admin POGI** *(Data Entry & Verifikator)* | Anna, Vivi, Lily, Dewi Lestari, Fikri Ramadhan | Penginputan dan pembaruan data dari Kemenkes ke dashboard POGI, verifikasi berkas SKP, dan monitoring dokter binaan. Setiap klik tombol **"Akses Portal Kemenkes"** otomatis tercatat sebagai riwayat kerja (*auto-logging* SLA). **Tidak dapat mengubah PIC dokter**. |
+| **3** | **POGI Pusat** | dr. Ulul, Bu Ratna | Pemantauan eksekutif nasional (*Executive Read-Only Monitoring*). **Hanya bisa cek saja**, memiliki akses pemantauan ke **seluruh wilayah cabang (38 provinsi)**, namun tidak dapat mengedit data atau mengubah PIC. |
+| **4** | **Admin Cabang** | Sekretariat Cabang Daerah (dr. Firman, Sp.OG, dll.) | Pemantauan cabang daerah (*Branch Read-Only Monitoring*). **Hanya bisa cek saja**, terisolasi ketat **hanya untuk dokter di wilayah cabangnya sendiri** (*multi-tenant scope*). Tidak dapat mengedit data atau mengubah PIC. |
+| **5** | **User / Dokter** | Anggota Sp.OG (dr. Cut Simatupang, dll.) | Akses portal mandiri khusus untuk melihat portofolio SKP 5 tahun dan status resertifikasi dirinya sendiri. |
 
 ---
 
@@ -78,10 +80,10 @@ Sistem ini menjembatani pengumpulan berkas sertifikat dan logbook klinis, penyim
 
 Untuk kebutuhan pengujian, sistem menyediakan akun terdaftar resmi pada basis data MySQL dengan hash kata sandi Bcrypt terverifikasi mewakili 5 peran resmi sistem:
 
-| Peran Resmi | ID / Email Resmi | Kata Sandi | Tujuan Akses |
+| Peran Resmi | Personil & Email Resmi | Kata Sandi | Tujuan & Batasan Akses |
 | :--- | :--- | :--- | :--- |
-| **Super Admin** | `super@example.com` | `Super2026!Master` | Akses penuh seluruh modul & master data |
-| **Pengurus Pusat** | `admin.pusat@pogi.or.id` | `AdminPusat2026!` | Monitoring nasional, SLA & performa cabang |
-| **Admin POGI** | `sekretariat.pusat@pogi.or.id` | `POGI2026!Nasional` | Verifikasi SKP & kegiatan (tanpa modul performa) |
-| **Admin Cabang (Jabar)** | `sekretariat.jabar@pogi.or.id` | `POGIJabar2026!` | Monitoring terbatas cabang Jawa Barat |
-| **Dokter Sp.OG** | `cut.simatupang@pogi.or.id` | `DokterCut2026!` | Akses mandiri portofolio & capaian SKP dokter |
+| **Super Admin** | Dian (`super@example.com`), Bp. Ade (`ade@pogi.or.id`), Bp. Ircham (`ircham@pogi.or.id`) | `Super2026!Master` | Akses penuh, alihkan PIC dokter, rebalance beban, master data |
+| **Admin POGI** | Anna (`sekretariat.pusat@pogi.or.id`), Vivi (`vivi@pogi.or.id`), Lily (`lily@pogi.or.id`) | `POGI2026!Nasional` | Input & update data, verifikasi berkas, auto-log Kemenkes, pantau SLA pribadi |
+| **POGI Pusat** | dr. Ulul (`admin.pusat@pogi.or.id`), Bu Ratna (`bu.ratna@pogi.or.id`) | `AdminPusat2026!` | Monitoring eksekutif 38 provinsi nasional (**Hanya bisa cek saja**) |
+| **Admin Cabang** | dr. Firman, Sp.OG (`sekretariat.jabar@pogi.or.id`) | `POGIJabar2026!` | Monitoring terbatas cabang Jawa Barat (**Hanya bisa cek saja**) |
+| **Dokter Sp.OG** | dr. Cut Simatupang, Sp.OG (`cut.simatupang@pogi.or.id`) | `DokterCut2026!` | Akses mandiri portofolio & capaian SKP dokter |

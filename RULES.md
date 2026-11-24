@@ -123,23 +123,30 @@ Untuk memastikan berkas dokter tidak tertahan lama, sistem memonitor kinerja tim
    * **Top Performer** ($\text{Score} \ge 90$): SLA $< 12$ jam, tingkat akurasi verifikasi $> 98\%$.
    * **Good Performer** ($75 \le \text{Score} < 90$): SLA $12 - 24$ jam, penanganan stabil.
    * **Needs Attention** ($\text{Score} < 75$): SLA $> 24$ jam atau tingkat penolakan berkas tidak wajar.
+4. **Otomasi Pencatatan Sesi Kemenkes (*Zero-Manual Session Logging*)**:
+   * Saat Admin POGI atau Super Admin menekan tombol **"Akses Portal Kemenkes"** di dashboard atau detail dokter, sistem secara otomatis mengarahkan ke portal Plataran Sehat sekaligus merekam log riwayat kerja ke tabel `verifier_performance_logs` (`action_type = 'KEMENKES_SYNC_SESSION'`) dan `audit_logs` (`action = 'KEMENKES_PORTAL_ACCESS'`).
+   * Mekanisme ini meniadakan kebutuhan input manual jam kerja verifikator, sehingga metrik produktivitas dan KPI admin terukur secara transparan dan akurat.
 
 ---
 
 ## 7. Matriks Hak Akses 5 Peran Resmi (RBAC Matrix)
 
-| Modul & Tindakan | Super Admin | Admin Pusat | Admin POGI | Admin Cabang | User / Dokter |
+Mengakomodasi penyesuaian peran operasional klien (Bu Dian, Bp. Ade, Bp. Ircham, Anna, Vivi, Lily, dr. Ulul, Bu Ratna, dan Cabang Daerah):
+
+| Modul & Tindakan | Super Admin (Bu Dian, Ade, Ircham) | POGI Pusat (dr. Ulul, Bu Ratna) | Admin POGI (Anna, Vivi, Lily) | Admin Cabang (Daerah) | User / Dokter |
 |:---|:---:|:---:|:---:|:---:|:---:|
-| **Dashboard Nasional (38 Provinsi)** | Full Access | Full Access | Read Only | Read Only | ❌ Ditolak |
-| **Direktori Dokter Seluruh Indonesia** | Full Access | Read / Audit | Dokter Binaan | ❌ Ditolak | ❌ Ditolak |
-| **Direktori Dokter Cabang Sendiri** | Full Access | Read / Audit | Dokter Binaan | Full Access | ❌ Ditolak |
+| **Dashboard Nasional (38 Provinsi)** | Full Access | **Read Only (Cek Saja)** | Read Only | **Read Only (Cek Saja Cabangnya)** | ❌ Ditolak |
+| **Direktori Dokter Seluruh Indonesia** | Full Access | **Read Only (Cek Saja 38 Wilayah)** | Read & Update (Data Entry) | ❌ Ditolak (Terisolasi Cabang) | ❌ Ditolak |
+| **Direktori Dokter Cabang Sendiri** | Full Access | **Read Only (Cek Saja)** | Read & Update | **Read Only (Cek Saja)** | ❌ Ditolak |
 | **Portofolio Mandiri Saya Sendiri** | Full Access | Full Access | Full Access | Full Access | **Akses Mandiri** |
-| **Verifikasi / Tolak Kredit SKP** | Ya | ❌ Audit Mode | **Ya (Binaan)** | **Ya (Cabangnya)** | ❌ Ditolak |
-| **Alihkan PIC Binaan Dokter** | Ya | Ya | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak |
-| **Kirim WA Blast Massal** | Ya | Ya | Ya (Binaan) | Ya (Cabangnya) | ❌ Ditolak |
-| **Modul Pengaturan Master (`manage.html`)** | **Full Access** | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak |
-| **Monitoring Kinerja Admin (`admin-performance`)** | Ya | **Ya (Khusus)** | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak |
-| **Export Monthly Report PDF / Invoice** | Ya | Ya | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak |
+| **Penginputan & Verifikasi Berkas SKP** | Ya | ❌ Ditolak (Hanya Cek Saja) | **Ya (Update & Input Data)** | ❌ Ditolak (Hanya Cek Saja) | ❌ Ditolak |
+| **Alihkan PIC Pengelola Dokter (`assigned_pic_id`)** | **Ya (Eksklusif Super Admin)** | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak |
+| **Redistribusi Beban Kerja (*Workload Balancing*)** | **Ya (Eksklusif Super Admin)** | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak |
+| **Akses Portal Kemenkes & Auto-Log Sesi** | Ya | Ya (Monitoring) | **Ya (Sesi Tercatat Otomatis)** | Ya (Monitoring) | ❌ Ditolak |
+| **Kirim WA Blast Massal** | Ya | ❌ Ditolak | Ya (Binaan) | ❌ Ditolak | ❌ Ditolak |
+| **Modul Pengaturan Master (`manage`)** | **Full Access** | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak |
+| **Monitoring Kinerja Admin (`admin-performance`)** | **Full Access (Rebalancer Aktif)** | Read Only (Cek Saja) | Read Only (SLA Pribadi) | ❌ Ditolak | ❌ Ditolak |
+| **Export Monthly Report PDF / Invoice** | Ya | Ya (Audit / Arsip) | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak |
 
 ---
 

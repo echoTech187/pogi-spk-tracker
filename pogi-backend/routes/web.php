@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\KemenkesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,17 +37,28 @@ Route::middleware(['auth', 'active'])->group(function () {
         ->name('dashboard')
         ->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
 
-    // 2.2 Direktori Dokter (Dengan Isolasi Cabang Otomatis untuk ADMIN_CABANG)
-    Route::get('/doctors', function () {
-        return view('doctors');
-    })->name('doctors.index')->middleware(['role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG', 'branch.scope']);
+    // 2.2 Sesi Kemenkes Tracker (Auto-Log Aktivitas Kinerja Admin ke DB)
+    Route::post('/kemenkes/track-access', [KemenkesController::class, 'trackAccess'])
+        ->name('kemenkes.track');
+    Route::get('/kemenkes/launch', [KemenkesController::class, 'launchAndTrack'])
+        ->name('kemenkes.launch');
 
-    // 2.3 Portofolio Detail Dokter (Semua role termasuk USER_DOKTER & DOKTER untuk akses mandiri)
-    Route::get('/doctor-detail', function () {
-        return view('doctor-detail');
-    })->name('doctors.show')->middleware(['role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG,USER_DOKTER,DOKTER', 'branch.scope']);
+    // 2.3 Direktori Dokter (Dengan Isolasi Cabang Otomatis untuk ADMIN_CABANG)
+    Route::get('/doctors', [DoctorController::class, 'index'])
+        ->name('doctors.index')
+        ->middleware(['role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG', 'branch.scope']);
 
-    // 2.4 Peta Provinsi & Katalog Events
+    // 2.4 Portofolio Detail Dokter
+    Route::get('/doctor-detail', [DoctorController::class, 'show'])
+        ->name('doctors.show')
+        ->middleware(['role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG,USER_DOKTER,DOKTER', 'branch.scope']);
+
+    // 2.5 Ubah & Tentukan PIC Pengelola Dokter (Eksklusif SUPER_ADMIN - Bu Dian, Bp Ade, Bp Ircham)
+    Route::post('/doctors/{id}/assign-pic', [DoctorController::class, 'assignPic'])
+        ->name('doctors.assign-pic')
+        ->middleware('role:SUPER_ADMIN');
+
+    // 2.6 Peta Provinsi & Katalog Events
     Route::get('/provinces', function () {
         return view('provinces');
     })->name('provinces')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
@@ -54,22 +67,22 @@ Route::middleware(['auth', 'active'])->group(function () {
         return view('events');
     })->name('events')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI,ADMIN_CABANG');
 
-    // 2.5 Laporan Bulanan (Super Admin, Admin Pusat, Admin Cabang)
+    // 2.7 Laporan Bulanan (Super Admin, POGI Pusat, Admin Cabang)
     Route::get('/reports', function () {
         return view('reports');
     })->name('reports')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_CABANG');
 
-    // 2.6 Monitoring SLA & Performa Admin (Khusus Super Admin & Admin Pusat)
+    // 2.8 Monitoring SLA & Performa Admin (Super Admin, POGI Pusat, Admin POGI)
     Route::get('/admin-performance', function () {
         return view('admin-performance');
-    })->name('admin-performance')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT');
+    })->name('admin-performance')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT,ADMIN_POGI');
 
-    // 2.7 Log Aktivitas & Jejak Audit (Super Admin & Admin Pusat)
+    // 2.9 Log Aktivitas & Jejak Audit (Super Admin & POGI Pusat)
     Route::get('/activity', function () {
         return view('activity');
     })->name('activity')->middleware('role:SUPER_ADMIN,ADMIN_PUSAT');
 
-    // 2.8 Pengaturan Master Data (Eksklusif SUPER_ADMIN - RULES.md Bab 7)
+    // 2.10 Pengaturan Master Data (Eksklusif SUPER_ADMIN - RULES.md Bab 7)
     Route::get('/manage', function () {
         return view('manage');
     })->name('manage')->middleware('role:SUPER_ADMIN');

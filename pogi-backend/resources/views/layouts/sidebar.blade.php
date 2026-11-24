@@ -3,7 +3,7 @@
   <div class="px-4 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
     <a href="{{ url('/dashboard') }}" class="flex items-center gap-2.5 min-w-0">
       <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs shrink-0">
-        <img src="{{ asset('assets/img/pogi_logo.jpg') }}" alt="Logo POGI" class="w-full h-full object-contain">
+        <img src="{{ asset('logo.png') }}" alt="Logo POGI" class="w-full h-full object-contain">
       </div>
       <div class="min-w-0">
         <div class="font-black text-sm tracking-tight text-[#006948] leading-none">POGI SKP TRACKER</div>

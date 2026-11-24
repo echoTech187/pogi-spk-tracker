@@ -288,7 +288,7 @@
       </div>
       <div class="p-5 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 space-y-3 text-center">
         <div class="w-12 h-12 mx-auto rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs">
-          <img src="/assets/img/pogi_logo.jpg" alt="Logo POGI" class="w-full h-full object-contain">
+          <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
         </div>
         <div>
           <div class="text-[10px] uppercase font-black tracking-widest text-[#006948]">PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA</div>

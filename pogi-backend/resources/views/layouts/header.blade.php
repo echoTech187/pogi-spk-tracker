@@ -5,9 +5,9 @@
   $headerRole = $headerUser?->role ?? 'SUPER_ADMIN';
   $headerRoleLabel = match($headerRole) {
       'SUPER_ADMIN' => 'Super Admin Sistem',
-      'ADMIN_PUSAT' => 'Admin Data Pusat',
-      'ADMIN_POGI' => 'Pengurus PP POGI',
-      'ADMIN_CABANG' => 'Pengurus Cabang POGI',
+      'ADMIN_PUSAT' => 'POGI Pusat (Monitoring All Area)',
+      'ADMIN_POGI' => 'Admin POGI (Data Entry & Kemenkes)',
+      'ADMIN_CABANG' => 'Admin Cabang (Monitoring Daerah)',
       'DOKTER' => 'Dokter Spesialis Obgyn',
       default => 'Pengurus'
   };

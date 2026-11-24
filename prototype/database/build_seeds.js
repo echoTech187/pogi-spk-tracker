@@ -194,18 +194,29 @@ const USER_PASSWORDS = {
 const defaultPassHash = '$2y$12$McPd1MDIwEN3wfTwNcfRLO.PYWfWkGBihYgVpAqrNaUs3jYOkmkzG'; // POGI2026!Nasional
 
 const SEED_USERS = [
-  { id: makeUUIDv7(3, 1), name: 'Dodi Firmansyah', email: 'super@example.com', role: 'SUPER_ADMIN', branch: null },
-  { id: makeUUIDv7(3, 2), name: 'Bagus Pranoto, M.Kes', email: 'admin.pusat@pogi.or.id', role: 'ADMIN_PUSAT', branch: null },
-  { id: makeUUIDv7(3, 3), name: 'Siti Rahma, S.Farm', email: 'sekretariat.pusat@pogi.or.id', role: 'ADMIN_POGI', branch: null },
-  { id: makeUUIDv7(3, 4), name: 'dr. Firman, Sp.OG', email: 'sekretariat.jabar@pogi.or.id', role: 'ADMIN_CABANG', branch: jabarBranchUuid },
-  { id: makeUUIDv7(3, 5), name: 'dr. Cut Simatupang, Sp.OG', email: 'cut.simatupang@pogi.or.id', role: 'DOKTER', branch: jabarBranchUuid },
-  { id: makeUUIDv7(3, 6), name: 'Rina Kartika', email: 'user@example.com', role: 'ADMIN_POGI', branch: null },
-  { id: makeUUIDv7(3, 7), name: 'Dimas Saputra', email: 'user2@example.com', role: 'ADMIN_POGI', branch: null },
-  { id: makeUUIDv7(3, 8), name: 'Wahyu Setiawan', email: 'user3@example.com', role: 'ADMIN_PUSAT', branch: null },
-  { id: makeUUIDv7(3, 9), name: 'Melati Sihombing', email: 'user4@example.com', role: 'ADMIN_CABANG', branch: jabarBranchUuid },
+  // 1. Super Admin (Bu Dian, Bp. Ade, Bp. Ircham) - Full Access
+  { id: makeUUIDv7(3, 1), name: 'Dian (Super Admin)', email: 'super@example.com', role: 'SUPER_ADMIN', branch: null },
+  { id: makeUUIDv7(3, 13), name: 'Bp. Ade', email: 'ade@pogi.or.id', role: 'SUPER_ADMIN', branch: null },
+  { id: makeUUIDv7(3, 14), name: 'Bp. Ircham', email: 'ircham@pogi.or.id', role: 'SUPER_ADMIN', branch: null },
+
+  // 2. Admin POGI (Anna, Vivi, Lily) - Penginputan dan Update Data Dashboard & Kemenkes
+  { id: makeUUIDv7(3, 3), name: 'Anna (Admin POGI)', email: 'sekretariat.pusat@pogi.or.id', role: 'ADMIN_POGI', branch: null },
+  { id: makeUUIDv7(3, 6), name: 'Vivi', email: 'vivi@pogi.or.id', role: 'ADMIN_POGI', branch: null },
+  { id: makeUUIDv7(3, 7), name: 'Lily', email: 'lily@pogi.or.id', role: 'ADMIN_POGI', branch: null },
   { id: makeUUIDv7(3, 10), name: 'Fikri Ramadhan', email: 'user5@example.com', role: 'ADMIN_POGI', branch: null },
+  { id: makeUUIDv7(3, 12), name: 'Dewi Lestari', email: 'dewi.lestari@pogi.or.id', role: 'ADMIN_POGI', branch: null },
+
+  // 3. POGI Pusat (dr. Ulul, Bu Ratna) - Cek Saja All Area Cabang (Read-Only)
+  { id: makeUUIDv7(3, 2), name: 'dr. Ulul (POGI Pusat)', email: 'admin.pusat@pogi.or.id', role: 'ADMIN_PUSAT', branch: null },
+  { id: makeUUIDv7(3, 8), name: 'Bu Ratna', email: 'bu.ratna@pogi.or.id', role: 'ADMIN_PUSAT', branch: null },
+
+  // 4. Admin Cabang - Cek Saja Area Cabang Daerah (Read-Only)
+  { id: makeUUIDv7(3, 4), name: 'dr. Firman, Sp.OG (Admin Cabang)', email: 'sekretariat.jabar@pogi.or.id', role: 'ADMIN_CABANG', branch: jabarBranchUuid },
+  { id: makeUUIDv7(3, 9), name: 'Melati Sihombing', email: 'user4@example.com', role: 'ADMIN_CABANG', branch: jabarBranchUuid },
   { id: makeUUIDv7(3, 11), name: 'Ayu Lestari', email: 'user6@example.com', role: 'ADMIN_CABANG', branch: jabarBranchUuid },
-  { id: makeUUIDv7(3, 12), name: 'Dewi Lestari', email: 'dewi.lestari@pogi.or.id', role: 'ADMIN_POGI', branch: null }
+
+  // 5. Dokter Spesialis Obgyn (Akses Mandiri Portofolio)
+  { id: makeUUIDv7(3, 5), name: 'dr. Cut Simatupang, Sp.OG', email: 'cut.simatupang@pogi.or.id', role: 'DOKTER', branch: jabarBranchUuid }
 ];
 
 const userSqlRows = SEED_USERS.map((u, i) => {
@@ -277,15 +288,19 @@ ON CONFLICT (id) DO UPDATE SET
 `;
 
 // Helper PIC lookup
+const annaId = SEED_USERS.find(u => u.name.includes('Anna')).id;
+const viviId = SEED_USERS.find(u => u.name.includes('Vivi')).id;
+const lilyId = SEED_USERS.find(u => u.name.includes('Lily')).id;
+
 const picNameToUserUuid = {
-  'siti rahma': SEED_USERS[2].id,
-  'rina kartika': SEED_USERS[5].id,
-  'dimas saputra': SEED_USERS[6].id,
-  'wahyu setiawan': SEED_USERS[7].id,
-  'melati sihombing': SEED_USERS[8].id,
-  'fikri ramadhan': SEED_USERS[9].id,
-  'ayu lestari': SEED_USERS[10].id,
-  'dewi lestari': SEED_USERS[11].id
+  'anna': annaId,
+  'siti rahma': annaId,
+  'vivi': viviId,
+  'rina kartika': viviId,
+  'lily': lilyId,
+  'dimas saputra': lilyId,
+  'fikri ramadhan': SEED_USERS.find(u => u.name.includes('Fikri')).id,
+  'dewi lestari': SEED_USERS.find(u => u.name.includes('Dewi')).id
 };
 
 const doctorSqlRows = [];
@@ -454,13 +469,14 @@ REFRESH MATERIALIZED VIEW mv_province_compliance_summary;
 -- ============================================================================
 `;
 
-fs.writeFileSync('seeds.sql', sql, 'utf8');
-fs.writeFileSync('database/seeds.sql', sql, 'utf8');
-const fsExtra = require('path');
-const pogiSeedsPath = fsExtra.resolve(__dirname, '../../pogi-backend/database/sql/seeds.sql');
-const protoSeedsPath = fsExtra.resolve(__dirname, '../seeds.sql');
-try { fs.writeFileSync(pogiSeedsPath, sql, 'utf8'); } catch (e) {}
-try { fs.writeFileSync(protoSeedsPath, sql, 'utf8'); } catch (e) {}
+const pathMod = require('path');
+const p1 = pathMod.resolve(__dirname, 'seeds.sql');
+const p2 = pathMod.resolve(__dirname, '../seeds.sql');
+const p3 = pathMod.resolve(__dirname, '../../pogi-backend/database/sql/seeds.sql');
+
+fs.writeFileSync(p1, sql, 'utf8');
+fs.writeFileSync(p2, sql, 'utf8');
+try { fs.writeFileSync(p3, sql, 'utf8'); } catch (e) {}
 console.log('Successfully generated seeds.sql across all repositories!');
 console.log('Total file size:', sql.length, 'bytes');
 console.log('Provinces seeded:', provSqlRows.length);

@@ -47,10 +47,12 @@
 
           <!-- Quick Action Buttons -->
           <div class="flex items-center gap-2 shrink-0">
+            @if(Auth::user()?->role === 'SUPER_ADMIN')
             <button type="button" onclick="openWorkloadRebalanceModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs rbac-operational">
               <span class="material-symbols-outlined text-sm text-emerald-400">balance</span>
               <span>Redistribusi Beban Dokter</span>
             </button>
+            @endif
             <button type="button" onclick="exportKpiReport()" class="px-3.5 py-2 rounded-xl bg-[#006948] hover:bg-[#005439] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs">
               <span class="material-symbols-outlined text-sm">download</span>
               <span>Ekspor Rekap KPI</span>
@@ -176,10 +178,12 @@
               </div>
             </div>
 
+            @if(Auth::user()?->role === 'SUPER_ADMIN')
             <button type="button" onclick="openWorkloadRebalanceModal()" class="w-full mt-4 py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#006948] text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-200 rbac-operational">
               <span class="material-symbols-outlined text-sm">tune</span>
               <span>Buka Tool Seimbangkan Beban (Rebalancer)</span>
             </button>
+            @endif
           </div>
         </div>
 
@@ -339,6 +343,7 @@
   <script src="/js/pogi_state.js"></script>
   <script src="/js/navigation.js"></script>
   <script>
+    const IS_SUPER_ADMIN = @json(Auth::user()?->role === 'SUPER_ADMIN');
     let performanceData = null;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -476,10 +481,12 @@
                   <span class="material-symbols-outlined text-xs">visibility</span>
                   <span>Rincian</span>
                 </button>
+                ${IS_SUPER_ADMIN ? `
                 <button type="button" onclick="openWorkloadRebalanceModal('${a.name}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#006948] font-bold text-[11px] transition flex items-center gap-1 border border-emerald-200 rbac-operational">
                   <span class="material-symbols-outlined text-xs">tune</span>
                   <span>Alihkan</span>
                 </button>
+                ` : ''}
               </div>
             </td>
           </tr>
@@ -573,9 +580,9 @@
         <option value="${d.id}">${d.name} (Saat ini dipegang: ${d.assignedTo || 'Unassigned'})</option>
       `).join('');
 
-      const adminNames = ['Siti Rahma', 'Dewi Lestari', 'Wahyu Setiawan', 'Melati Sihombing', 'Rina Kartika', 'Dimas Saputra', 'Fikri Ramadhan'];
+      const adminNames = ['Anna', 'Vivi', 'Lily', 'Dewi Lestari', 'Fikri Ramadhan', 'Siti Rahma'];
       adminSelect.innerHTML = adminNames.map(name => `
-        <option value="${name}">${name}</option>
+        <option value="${name}">${name} (Admin POGI)</option>
       `).join('');
     }
 
