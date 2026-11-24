@@ -57,41 +57,67 @@ Sistem dirancang menggunakan pendekatan **Modular Monolith dengan Asynchronous W
   4. **Pusat WA Blast & Log Pengingat**: Antarmuka *filter* penerima pesan, pratinjau template pengingat SKP, serta riwayat status pengiriman pesan WhatsApp.
   5. **Arsip Laporan Bulanan (*Monthly Report & Invoice*)**: Pemilih periode bulan/tahun (*Month-Year Picker*) untuk melihat pratinjau laporan dan mengunduh file PDF resmi hasil *cutoff* tanggal 1.
 
-### B. Lapisan Aplikasi Inti (*Core Backend API*)
-* **Teknologi**: Node.js (NestJS / Fastify) atau Python (FastAPI) dengan arsitektur berlapis (*Controller -> Service -> Repository*).
-* **Modul Inti**:
-  * **SKP Calculation Engine**: Menghitung otomatis persentase pemenuhan target $160\text{ SKP}/5\text{ tahun}$ dan validasi ambang batas minimal tiap ranah ($45\%$ Pembelajaran, $35\%$ Pelayanan, $5\%$ Pengabdian) serta pengelompokan status (`DONE`, `SUBMITTED`, `REJECTED`, `NOT_SUBMITTED`).
-  * **Missing Document Detector**: Membandingkan dokumen yang diwajibkan per ranah dengan berkas yang sudah terunggah di *Document Vault* untuk menandai dokter yang memerlukan *follow-up*.
-  * **Presigned URL File Handler**: Mengamankan proses unggah dan unduh sertifikat dokter langsung ke *Object Storage* tanpa membebani memori server API.
+### B. Lapisan Aplikasi Inti (*Clean Architecture Backend*)
+* **Pendekatan Arsitektur**: **Clean Architecture (Hexagonal Architecture) & SOLID Principles** (Domain -> Application -> Infrastructure -> Presentation).
+* **Framework**: Laravel 11 (PHP 8.2+) / Node.js NestJS.
+* **Struktur Lapisan Bersih**:
+  1. **Domain Layer (Core Rules)**: Domain Entities (`Doctor`, `SkpEntry`), Value Objects (`Nik`, `SkpCredit`), Enums (`SystemRole`, `SkpDomain`), dan Repository Interfaces (*Contracts*).
+  2. **Application Layer (Use Cases)**: Action classes berskala tunggal (`VerifySkpEntryUseCase`, `RecalculateComplianceUseCase`, `GenerateMonthlyCutoffUseCase`) dan Data Transfer Objects (*Readonly DTOs*).
+  3. **Infrastructure Layer**: Implementasi database PostgreSQL via Repositories (`EloquentDoctorRepository`), client WhatsApp Gateway anti-ban, dan S3 Document Vault.
+  4. **Presentation Layer (MVC)**: *Slim Controllers* (hanya memanggil Use Case dan me-return DTO), Form Request Validation, dan Blade Views / ViewModels.
 
 ### C. Lapisan Pemrosesan Asinkron (*Background Workers & Scheduler*)
-Dikelola menggunakan **Redis + BullMQ** untuk menjamin keandalan eksekusi tugas latar belakang:
+Dikelola menggunakan **Queue Worker & Scheduler** untuk menjamin keandalan eksekusi tugas latar belakang:
 1. **Monthly Cutoff & Snapshot Worker**:
    * Berjalan otomatis setiap **tanggal 1 pukul 00:00 WIB**.
-   * Mengambil *snapshot* data SKP seluruh anggota, merender dokumen **Monthly Report PDF** (menggunakan Puppeteer / WeasyPrint), menyimpannya ke *Object Storage*, dan mendaftarkan metadata arsipnya ke tabel `monthly_reports`.
+   * Mengambil *snapshot* data SKP seluruh anggota, merender dokumen **Monthly Report PDF**, menyimpannya ke *Object Storage*, dan mendaftarkan metadata arsipnya ke tabel `monthly_cutoff_snapshots`.
 2. **WhatsApp Blast & Reminder Worker**:
-   * Memproses antrean pengiriman pesan WA secara bertahap dengan pengaturan *rate-limit* (misal 10–15 pesan per menit) dan pencatatan status pengiriman (`QUEUED`, `SENT`, `DELIVERED`, `FAILED`).
+   * Memproses antrean pengiriman pesan WA secara bertahap dengan pengaturan *rate-limit* dan *anti-ban jitter* (delay acak 1.5 - 3 detik) serta pencatatan status pengiriman (`QUEUED`, `SENDING`, `SENT`, `DELIVERED`, `FAILED`).
 
 ---
 
-## 3. Desain Skema Database Relasional (PostgreSQL 16+)
-Berikut adalah entitas utama yang menyusun basis data sistem:
+## 3. Desain Skema Database Relasional & Strategi Optimasi Query (PostgreSQL 14+)
 
-1. **`users` & `roles`**: Menyimpan akun pengguna sistem (`SUPER_ADMIN`, `ADMIN_OPERASIONAL`, `ADMIN_CABANG`, `VIEWER_POGI`) beserta hash kata sandi (Argon2id).
-2. **`provinces` & `pogi_branches`**: Data master 38 provinsi di Indonesia dan struktur cabang POGI daerah beserta PIC cabang.
-3. **`institutions`**: Data master rumah sakit dan fasilitas kesehatan tempat praktik dokter.
-4. **`doctors` (Profil Anggota POGI)**:
-   * Kolom utama: `id (UUIDv7)`, `npa_pogi`, `full_name`, `nik_encrypted`, `str_number`, `sip_number`, `sip_expiry_date`, `whatsapp_number`, `branch_id`, `province_id`, `institution_id`, `pic_admin_id`.
-   * Kolom pelacakan sinkronisasi: `dashboard_updated_at`, `kemenkes_updated_at`, `plataran_sehat_username`, `plataran_sehat_pass_encrypted`.
-5. **`skp_events` & `event_categories`**: Katalog kegiatan SKP (seminar, workshop, bakti sosial, dll.) beserta bobot nilai SKP dan ranahnya.
-6. **`skp_entries` (Buku Log SKP Internal)**:
-   * Mencatat setiap perolehan/pengajuan SKP per dokter: `doctor_id`, `event_id` (opsional), `domain` (`PEMBELAJARAN` | `PELAYANAN` | `PENGABDIAN`), `skp_points`, `activity_date`, `status` (`DONE` | `SUBMITTED` | `REJECTED` | `NOT_SUBMITTED`), `rejection_note`.
-7. **`doctor_documents` (Repositori Berkas)**:
-   * Metadata berkas digital milik dokter: `doctor_id`, `skp_entry_id`, `document_type`, `file_key` (path di S3/R2), `file_size`, `uploaded_by`, `verified_at`.
-8. **`monthly_reports` (Arsip Laporan Cutoff)**:
-   * Menyimpan arsip laporan per bulan: `report_period` (`YYYY-MM`), `cutoff_timestamp`, `total_doctors`, `total_skp_achieved`, `total_skp_target`, `pdf_file_key`, `generated_by`.
-9. **`wa_blast_campaigns` & `wa_blast_logs`**: Menyimpan kampanye pengiriman WA Blast, template pesan, target filter, dan status pengiriman per nomor dokter.
-10. **`audit_logs`**: Rekam jejak perubahan data sensitif dan aktivitas input/verifikasi oleh setiap admin.
+### A. Entitas Utama Sistem (Normalisasi 3NF & RFC 9562 UUIDv7)
+1. **`users`**: Akun pengguna sistem dengan 5 role resmi (`SUPER_ADMIN`, `ADMIN_PUSAT`, `ADMIN_POGI`, `ADMIN_CABANG`, `DOKTER`) dan password hash Argon2id.
+2. **`provinces` & `pogi_branches`**: Master 38 provinsi di Indonesia (kode BPS) dan struktur cabang POGI daerah.
+3. **`institutions`**: Master rumah sakit dan fasilitas kesehatan jejaring praktik.
+4. **`doctors` (Master Anggota Sp.OG)**:
+   * Kunci utama: `id (UUIDv7)`, `npa_pogi (UNIQUE)`, `full_name`.
+   * UU PDP Enkripsi: `nik_encrypted (BYTEA AES-256)`, `nik_hash (SHA256 HMAC)`, `str_number`, `sip_number`, `sip_expiry_date`, `whatsapp_number`.
+   * Relasi & Kepemilikan: `branch_id`, `province_id`, `primary_institution_id`, `assigned_pic_id (Admin POGI)`.
+   * Sinkronisasi: `dashboard_updated_at`, `kemenkes_updated_at`.
+5. **`doctor_skp_periods`**: Siklus masa berlaku 5 tahun dengan target 160 SKP (Target & Capaian per ranah: Pembelajaran 72, Pelayanan 56, Pengabdian 8, Fleksibilitas 24).
+6. **`event_categories` & `skp_events`**: Katalog kegiatan SKP terstandar Kemenkes Plataran Sehat.
+7. **`skp_entries`**: Buku log transaksi kredit SKP per ranah (`DONE`, `SUBMITTED`, `REJECTED`, `NOT_SUBMITTED`).
+8. **`doctor_documents` (Document Vault)**: Repositori berkas sertifikat dan bukti praktik lengkap dengan checksum SHA-256.
+9. **`monthly_cutoff_snapshots` & `monthly_doctor_cutoff_details`**: Snapshot arsip permanen laporan bulanan dan lampiran *invoice*.
+10. **`wa_blast_campaigns` & `wa_message_queue`**: Antrean pesan broadcast WhatsApp dengan jitter anti-ban.
+11. **`audit_logs` & `verifier_performance_logs`**: Rekam jejak audit kepatuhan UU PDP dan log SLA verifikasi Admin POGI.
+
+### B. Strategi Optimasi Query Database (*Zero Full Table Scan Architecture*)
+Untuk memastikan respon server tetap di bawah 50ms saat menangani puluhan ribu dokter dan ratusan ribu entri SKP, sistem menerapkan arsitektur indeks berlapis:
+
+1. **Covering Index dengan Kolom Proyeksi (`INCLUDE`)**:
+   * Indeks `idx_skp_entries_doc_period_domain` pada tabel `skp_entries`:
+     ```sql
+     CREATE INDEX idx_skp_entries_doc_period_domain 
+     ON skp_entries(doctor_id, period_id, domain, status) 
+     INCLUDE (credit_amount);
+     ```
+     Menghasilkan **Index-Only Scan** saat menghitung total capaian per ranah, database tidak perlu membaca blok tabel utama (*heap read = 0*).
+2. **Pencarian Fuzzy Cepat Berbasis GIN Trigram (`pg_trgm`)**:
+   * Indeks `idx_doctors_trgm_search` pada `doctors(full_name gin_trgm_ops, npa_pogi gin_trgm_ops, str_number gin_trgm_ops)`:
+     Mendukung fitur pencarian autocomplete dokter secara instan tanpa memicu sequential table scan.
+3. **Composite Partial Indexes untuk Isolasi & Dashboard**:
+   * `idx_doctors_branch_status` pada `(branch_id, status)` memfilter dokter cabang secara instan.
+   * `idx_doctors_pic_status` pada `(assigned_pic_id, status)` mempercepat dashboard kerja masing-masing Admin POGI.
+   * `idx_wa_queue_pending` pada `(scheduled_at) WHERE status = 'QUEUED'` membuat worker queue hanya membaca pesan yang belum dikirim.
+4. **Pencegahan N+1 Query di Lapisan Repository**:
+   * Setiap query pemanggilan dokter wajib memuat relasi kritis sekaligus menggunakan Eager Loading:
+     `Doctor::with(['branch:id,name', 'province:id,name', 'activePeriod'])->select([...])`.
+5. **Materialized View Caching untuk Peta Nasional**:
+   * Menghindari kalkulasi agregasi berat (`COUNT`, `SUM`, `GROUP BY`) saat user membuka peta 38 provinsi melalui `mv_province_compliance_summary`. Dilakukan refresh cepat dengan `REFRESH MATERIALIZED VIEW CONCURRENTLY`.
 
 ---
 

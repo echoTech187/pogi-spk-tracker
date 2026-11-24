@@ -61,11 +61,23 @@ Dashboard menampilkan peta interaktif 38 provinsi Indonesia untuk memetakan ting
 
 ---
 
-## 6. Keamanan Data & Standar Engineering
+## 6. Keamanan Data, Standar Engineering & Optimasi Query
 1. **Kepatuhan Perlindungan Data Pribadi (UU PDP No. 27 Tahun 2022)**:
    * Data sensitif dokter (NIK, Nomor STR, Nomor SIP, kredensial akses Plataran Sehat jika dititipkan untuk bantuan input, serta nomor WhatsApp) wajib dienkripsi pada level penyimpanan (*encryption at rest* menggunakan **AES-256-GCM**) dan komunikasi (*TLS 1.3*).
    * Seluruh akses dan perubahan data oleh admin dicatat dalam tabel `audit_logs` secara permanen.
-2. **Standar Pengkodean & Database**:
-   * Gunakan **UUIDv7** sebagai *Primary Key* seluruh tabel untuk efisiensi indeks B-Tree berbasis waktu.
-   * Terapkan *Role-Based Access Control* (**RBAC**) ketat dengan pemisahan hak akses antara `SUPER_ADMIN` (Energi Cipta), `ADMIN_OPERASIONAL` (Tim Input & Verifikasi), `ADMIN_CABANG` (Pengurus POGI Daerah — *read/upload only* untuk cabangnya), dan `VIEWER_POGI` (Pengurus Pusat POGI untuk memantau laporan & *invoice*).
-   * Setiap *endpoint* mutasi data wajib bersifat *idempotent* dan dilindungi validasi skema ketat (*Zod* / *Pydantic*).
+2. **Standar Identifikasi & Database (Anti-IDOR & RFC 9562 UUIDv7)**:
+   * **Larangan Keras Auto-Increment ID**: Seluruh tabel dilarang menggunakan integer auto-increment untuk mencegah serangan enumerasi (*Insecure Direct Object Reference / IDOR*) dan kebocoran intelijen bisnis keanggotaan.
+   * Gunakan **RFC 9562 UUIDv7** (`xxxxxxxx-xxxx-7xxx-8xxx-xxxxxxxxxxxx`) sebagai *Primary Key* di seluruh tabel untuk efisiensi indeks B-Tree berbasis waktu (*time-ordered sequential* tanpa fragmentasi *page* PostgreSQL).
+3. **Pemisahan 5 Peran Resmi (*Role-Based Access Control / RBAC Matrix*)**:
+   * `SUPER_ADMIN`: Akses penuh (*Full-access*), konfigurasi master data (faskes, provinsi, cabang, kategori, event, pengguna), manajemen hak akses, dan audit trail log.
+   * `ADMIN_PUSAT`: Memantau aktivitas operasional seluruh cabang, memonitor SLA dan performance kerja dari tim Admin POGI, serta export laporan nasional (audit/read mode pada data dokter).
+   * `ADMIN_POGI` *(Pengganti Verifikator)*: Melakukan verifikasi kesesuaian dokumen bukti fisik, validasi kredit SKP ranah, dan memantau dokter binaan di bawah penugasannya secara nasional.
+   * `ADMIN_CABANG`: Melakukan verifikasi dan monitoring berkas SKP, namun **terisolasi secara ketat khusus untuk dokter di wilayah cabangnya sendiri** (akses ke dokter cabang lain diblokir via *Global Scopes*).
+   * `DOKTER` / `USER`: Akses portal mandiri khusus untuk melihat portofolio SKP 5 tahun dan status resertifikasi dirinya sendiri.
+4. **Standar Optimasi Query & Database (*Zero Full Table Scan Guarantee*)**:
+   * **Bebas dari Full Table Scan**: Setiap query pencarian, pemfilteran, dan agregasi wajib melewati *Index Scan* atau *Index Only Scan*. Query yang memicu *Sequential Scan* pada tabel utama (`doctors`, `skp_entries`, `doctor_documents`) dianggap cacat performa (*performance bug*).
+   * **Pencegahan Masalah N+1**: Di lapisan ORM/Eloquent, setiap pemanggilan relasi wajib menerapkan *Eager Loading* (`with(['branch', 'province', 'activePeriod'])`).
+   * **Pencarian Teks Berbasis GIN Trigram**: Pencarian dokter berdasarkan nama, NPA POGI, atau nomor STR wajib menggunakan ekstensi `pg_trgm` dengan indeks GIN (`idx_doctors_trgm_search`), bukan `%LIKE%` konvensional yang memicu scan menyeluruh.
+   * **Proyeksi Kolom Eksplisit (Hindari `SELECT *`)**: Query wajib menyebutkan kolom-kolom yang dibutuhkan secara spesifik untuk memanfaatkan *Covering Index* (`INCLUDE (credit_amount)`) dan menghemat memori I/O database.
+   * **Paginasi Skalabilitas Tinggi**: Gunakan *Cursor-based Pagination* (`cursorPaginate()`) untuk data besar atau *infinite scroll*, dan gunakan `chunkById()` untuk proses *batching* WA Blast dan rekap cutoff bulanan.
+   * **Materialized View Caching**: Data agregasi peta kepatuhan 38 provinsi dihitung melalui Materialized View (`mv_province_compliance_summary`) yang disinkronkan secara terjadwal/terpicu transaksi, membebaskan tabel operasional dari query agregasi berat (`SUM`, `COUNT`, `GROUP BY`).
