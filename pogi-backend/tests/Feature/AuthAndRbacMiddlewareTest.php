@@ -52,7 +52,7 @@ class AuthAndRbacMiddlewareTest extends TestCase
 
     public function test_admin_cabang_is_forbidden_from_manage_module(): void
     {
-        $adminCabang = $this->makeUser('ADMIN_CABANG', '01935d01-8140-7002-8000-000000000002');
+        $adminCabang = $this->makeUser('ADMIN_CABANG', (string) Str::uuid());
 
         // Can access dashboard
         $this->actingAs($adminCabang)

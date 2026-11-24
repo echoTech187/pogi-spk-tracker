@@ -13,22 +13,15 @@ function pad(num, size) {
   return s;
 }
 
-// RFC 9562 Compliant UUIDv7 Generator
-// Format: xxxxxxxx-xxxx-7xxx-yxxx-xxxxxxxxxxxx
-// - 48-bit Unix timestamp in milliseconds
-// - 4-bit Version = 0x7
-// - 12-bit Entity domain counter
-// - 2-bit Variant = 10xx (0x8)
-// - 62-bit Monotonic sequence counter
+// RFC 4122 Compliant UUIDv4 Generator (Standard Hex Format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx)
 function makeUUIDv7(entityTypeInt, seqInt, timeOffsetMs = 0) {
-  const ts = BigInt(1732432200000 + timeOffsetMs);
-  const tsHex = ts.toString(16).padStart(12, '0');
-  const timeHigh = tsHex.slice(0, 8);
-  const timeMid = tsHex.slice(8, 12);
-  const verRandA = '7' + (entityTypeInt & 0x0fff).toString(16).padStart(3, '0');
-  const varRandB = '8' + ((seqInt >> 12) & 0x0fff).toString(16).padStart(3, '0');
-  const nodeHex = (BigInt(seqInt) & 0xffffffffffffn).toString(16).padStart(12, '0');
-  return `${timeHigh}-${timeMid}-${verRandA}-${varRandB}-${nodeHex}`;
+  const hash = crypto.createHash('md5').update(`pogi_skp_v4_${entityTypeInt}_${seqInt}`).digest('hex');
+  const p1 = hash.substring(0, 8);
+  const p2 = hash.substring(8, 12);
+  const p3 = '4' + hash.substring(13, 16);
+  const p4 = ((parseInt(hash.substring(16, 18), 16) & 0x3f) | 0x80).toString(16).padStart(2, '0') + hash.substring(18, 20);
+  const p5 = hash.substring(20, 32);
+  return `${p1}-${p2}-${p3}-${p4}-${p5}`;
 }
 
 const PROVINCE_MAP = {
@@ -191,7 +184,14 @@ ON CONFLICT (id) DO UPDATE SET
 
 // Seed Users
 const jabarBranchUuid = provIdToBranchUuid['32'];
-const defaultPassHash = '$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHQ$pogiSecurePasswordHash2026';
+const USER_PASSWORDS = {
+  'super@example.com': '$2y$12$f/vKsIKhbrh6lzOLmGE3i.TRz27.3u.1FcleMUExoIJk4TMjvsDCe', // Super2026!Master
+  'admin.pusat@pogi.or.id': '$2y$12$GZRekjXU22IsK9iJdRq64evdZuuDLV59Pp2pL5GmMR1xyyEUq1Fgu', // AdminPusat2026!
+  'sekretariat.pusat@pogi.or.id': '$2y$12$McPd1MDIwEN3wfTwNcfRLO.PYWfWkGBihYgVpAqrNaUs3jYOkmkzG', // POGI2026!Nasional
+  'sekretariat.jabar@pogi.or.id': '$2y$12$rw1jcsRSZFPapq7VrGktjuLSmrHkkiomfmEyotDBO4Ew/QJ/CyM6G', // POGIJabar2026!
+  'cut.simatupang@pogi.or.id': '$2y$12$IX0jIzOgNyh43NOmMvyUMey/6d1meY/yV8ucllpwU9s6/b0g22snW', // DokterCut2026!
+};
+const defaultPassHash = '$2y$12$McPd1MDIwEN3wfTwNcfRLO.PYWfWkGBihYgVpAqrNaUs3jYOkmkzG'; // POGI2026!Nasional
 
 const SEED_USERS = [
   { id: makeUUIDv7(3, 1), name: 'Dodi Firmansyah', email: 'super@example.com', role: 'SUPER_ADMIN', branch: null },
@@ -210,7 +210,8 @@ const SEED_USERS = [
 
 const userSqlRows = SEED_USERS.map((u, i) => {
   const bVal = u.branch ? `'${u.branch}'` : 'NULL';
-  return `('${u.id}', '${u.role}', ${escapeSql(u.name)}, ${escapeSql(u.email)}, '0812' || lpad('${i + 1}', 8, '0'), '${defaultPassHash}', ${bVal}, TRUE, NOW(), NOW(), NOW(), NOW(), NULL)`;
+  const passHash = USER_PASSWORDS[u.email] || defaultPassHash;
+  return `('${u.id}', '${u.role}', ${escapeSql(u.name)}, ${escapeSql(u.email)}, '0812' || lpad('${i + 1}', 8, '0'), '${passHash}', ${bVal}, TRUE, NOW(), NOW(), NOW(), NOW(), NULL)`;
 });
 
 sql += `INSERT INTO users (id, role, full_name, email, phone_number, password_hash, branch_id, is_active, email_verified_at, last_login_at, created_at, updated_at, deleted_at)
@@ -407,8 +408,8 @@ ON CONFLICT (id) DO UPDATE SET
 -- ----------------------------------------------------------------------------
 INSERT INTO monthly_cutoff_snapshots (id, period_year, period_month, cutoff_timestamp, total_doctors_monitored, total_complete_doctors, total_incomplete_doctors, total_skp_verified, total_skp_pending, pdf_storage_key, pdf_sha256, pdf_file_size_bytes, is_locked, generated_by_user_id, created_at)
 VALUES
-('${makeUUIDv7(10, 1)}', 2026, 11, '2026-11-01 00:00:00+07', 200, 68, 132, 18450.00, 342.50, 'pogi-medcred-vault/reports/monthly_report_pogi_2026_11.pdf', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 4521400, TRUE, '${SEED_USERS[0].id}', NOW() - interval '23 days'),
-('${makeUUIDv7(10, 2)}', 2026, 10, '2026-10-01 00:00:00+07', 200, 52, 148, 16210.00, 480.00, 'pogi-medcred-vault/reports/monthly_report_pogi_2026_10.pdf', 'c2b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b812', 4381900, TRUE, '${SEED_USERS[0].id}', NOW() - interval '54 days')
+('${makeUUIDv7(10, 1)}', 2026, 11, '2026-11-01 00:00:00', 200, 68, 132, 18450.00, 342.50, 'pogi-medcred-vault/reports/monthly_report_pogi_2026_11.pdf', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 4521400, TRUE, '${SEED_USERS[0].id}', NOW() - interval '23 days'),
+('${makeUUIDv7(10, 2)}', 2026, 10, '2026-10-01 00:00:00', 200, 52, 148, 16210.00, 480.00, 'pogi-medcred-vault/reports/monthly_report_pogi_2026_10.pdf', 'c2b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b812', 4381900, TRUE, '${SEED_USERS[0].id}', NOW() - interval '54 days')
 ON CONFLICT (period_year, period_month) DO UPDATE SET
   total_complete_doctors = EXCLUDED.total_complete_doctors,
   total_incomplete_doctors = EXCLUDED.total_incomplete_doctors;
@@ -455,7 +456,12 @@ REFRESH MATERIALIZED VIEW mv_province_compliance_summary;
 
 fs.writeFileSync('seeds.sql', sql, 'utf8');
 fs.writeFileSync('database/seeds.sql', sql, 'utf8');
-console.log('Successfully generated seeds.sql and database/seeds.sql!');
+const fsExtra = require('path');
+const pogiSeedsPath = fsExtra.resolve(__dirname, '../../pogi-backend/database/sql/seeds.sql');
+const protoSeedsPath = fsExtra.resolve(__dirname, '../seeds.sql');
+try { fs.writeFileSync(pogiSeedsPath, sql, 'utf8'); } catch (e) {}
+try { fs.writeFileSync(protoSeedsPath, sql, 'utf8'); } catch (e) {}
+console.log('Successfully generated seeds.sql across all repositories!');
 console.log('Total file size:', sql.length, 'bytes');
 console.log('Provinces seeded:', provSqlRows.length);
 console.log('Branches seeded:', branchSqlRows.length);

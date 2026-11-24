@@ -20,7 +20,7 @@ class DashboardDataTest extends TestCase
     public function test_super_admin_can_access_dashboard_with_summary_data(): void
     {
         $user = new User([
-            'id' => '01935d01-8140-7000-8000-000000000001',
+            'id' => (string) \Illuminate\Support\Str::uuid(),
             'role' => SystemRole::SUPER_ADMIN,
             'full_name' => 'Super Admin Test',
             'email' => 'super@example.com',
@@ -52,12 +52,14 @@ class DashboardDataTest extends TestCase
 
     public function test_admin_cabang_can_access_dashboard_with_branch_scoping(): void
     {
+        $jabarBranch = \App\Infrastructure\Persistence\Eloquent\PogiBranch::where('branch_code', 'POGI-32')->first();
+
         $user = new User([
-            'id' => '01935d01-8140-7000-8000-000000000004',
+            'id' => (string) \Illuminate\Support\Str::uuid(),
             'role' => SystemRole::ADMIN_CABANG,
             'full_name' => 'Admin Cabang Jabar',
             'email' => 'cabang.jabar@example.com',
-            'branch_id' => '01935d01-8140-7001-8000-000000000020',
+            'branch_id' => $jabarBranch ? $jabarBranch->id : null,
             'is_active' => true,
         ]);
 
@@ -72,7 +74,7 @@ class DashboardDataTest extends TestCase
     public function test_query_scope_filter_works_correctly(): void
     {
         $user = new User([
-            'id' => '01935d01-8140-7000-8000-000000000001',
+            'id' => (string) \Illuminate\Support\Str::uuid(),
             'role' => SystemRole::SUPER_ADMIN,
             'full_name' => 'Super Admin Test',
             'email' => 'super@example.com',

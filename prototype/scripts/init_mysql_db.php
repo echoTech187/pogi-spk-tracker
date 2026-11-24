@@ -113,11 +113,11 @@ $tables = [
         cycle_number INT NOT NULL DEFAULT 1,
         start_date DATE NOT NULL,
         end_date DATE NOT NULL,
-        target_total_credits DECIMAL(5,2) NOT NULL DEFAULT 160.00,
-        target_pembelajaran_credits DECIMAL(5,2) NOT NULL DEFAULT 72.00,
-        target_pelayanan_credits DECIMAL(5,2) NOT NULL DEFAULT 56.00,
-        target_pengabdian_credits DECIMAL(5,2) NOT NULL DEFAULT 8.00,
-        target_flexibility_credits DECIMAL(5,2) NOT NULL DEFAULT 24.00,
+        target_total_credits DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+        target_pembelajaran_credits DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+        target_pelayanan_credits DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+        target_pengabdian_credits DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+        target_flexibility_credits DECIMAL(5,2) NOT NULL DEFAULT 0.00,
         achieved_pembelajaran_credits DECIMAL(5,2) NOT NULL DEFAULT 0.00,
         achieved_pelayanan_credits DECIMAL(5,2) NOT NULL DEFAULT 0.00,
         achieved_pengabdian_credits DECIMAL(5,2) NOT NULL DEFAULT 0.00,
@@ -134,7 +134,7 @@ $tables = [
         id CHAR(36) PRIMARY KEY,
         name VARCHAR(150) NOT NULL UNIQUE,
         domain ENUM('PEMBELAJARAN', 'PELAYANAN', 'PENGABDIAN', 'PUBLIKASI_ILMIAH') NOT NULL,
-        default_credit_value DECIMAL(5,2) NOT NULL DEFAULT 1.00,
+        default_credit_value DECIMAL(5,2) NOT NULL DEFAULT 0.00,
         description TEXT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB;",
@@ -250,7 +250,7 @@ $tables = [
         message_body TEXT NOT NULL,
         status VARCHAR(50) NOT NULL DEFAULT 'QUEUED',
         retry_count INT NOT NULL DEFAULT 0,
-        jitter_ms INT NOT NULL DEFAULT 1500,
+        jitter_ms INT NOT NULL DEFAULT 0,
         scheduled_at TIMESTAMP NOT NULL,
         sent_at TIMESTAMP NULL,
         failure_reason TEXT NULL,
@@ -291,7 +291,9 @@ foreach ($tables as $sql) {
 
 echo "3. Tables created successfully. Transforming seeds.sql for MySQL...\n";
 
-$seedsPath = __DIR__ . '/../pogi-backend/database/sql/seeds.sql';
+$seedsPath = file_exists(__DIR__ . '/../../pogi-backend/database/sql/seeds.sql')
+    ? __DIR__ . '/../../pogi-backend/database/sql/seeds.sql'
+    : (file_exists(__DIR__ . '/../seeds.sql') ? __DIR__ . '/../seeds.sql' : __DIR__ . '/../database/seeds.sql');
 $sqlContent = file_get_contents($seedsPath);
 
 // Normalize line endings
@@ -309,6 +311,7 @@ foreach ($lines as $line) {
 $sqlContent = implode("\n", $cleanLines);
 
 // Replacements for MySQL compatibility
+$sqlContent = preg_replace("/'([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})\+[0-9]{2}'/", "'$1'", $sqlContent);
 $sqlContent = preg_replace("/'\\\\x([0-9a-fA-F]+)'::bytea/", "UNHEX('$1')", $sqlContent);
 $sqlContent = preg_replace("/'0812'\\s*\\|\\|\\s*lpad\\(([^,]+),\\s*([^,]+),\\s*'([^']+)'\\)/", "CONCAT('0812', LPAD($1, $2, '$3'))", $sqlContent);
 $sqlContent = preg_replace_callback("/interval\s*'([0-9]+)\s*(day|days|hour|hours)'/i", function($m) {
@@ -355,7 +358,8 @@ $provCount = $pdo->query("SELECT COUNT(*) FROM provinces")->fetchColumn();
 $branchCount = $pdo->query("SELECT COUNT(*) FROM pogi_branches")->fetchColumn();
 $periodCount = $pdo->query("SELECT COUNT(*) FROM doctor_skp_periods")->fetchColumn();
 $entryCount = $pdo->query("SELECT COUNT(*) FROM skp_entries")->fetchColumn();
-$dkiCount = $pdo->query("SELECT COUNT(*) FROM doctors WHERE branch_id = '01935d01-8140-7001-8000-00000000001f'")->fetchColumn();
+$dkiBranchId = $pdo->query("SELECT id FROM pogi_branches WHERE branch_code = 'POGI-31'")->fetchColumn();
+$dkiCount = $pdo->query("SELECT COUNT(*) FROM doctors WHERE branch_id = '{$dkiBranchId}'")->fetchColumn();
 
 echo "====================================================\n";
 echo " VERIFIKASI DATA MYSQL (pogi_skp_tracker):\n";
