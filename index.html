@@ -65,10 +65,10 @@
             </button>
             <button type="button" onclick="fillQuickLogin('admin_pusat')" class="p-2 rounded-xl bg-white hover:bg-indigo-50 border border-indigo-200 text-left transition shadow-2xs">
               <div class="font-bold text-indigo-900 text-[11px] leading-tight">🏛️ Admin Pusat</div>
-              <div class="text-[9px] text-slate-500 mt-0.5 truncate">Pantau Verifikator</div>
+              <div class="text-[9px] text-slate-500 mt-0.5 truncate">Pantau Admin POGI</div>
             </button>
-            <button type="button" onclick="fillQuickLogin('verifikator')" class="p-2 rounded-xl bg-white hover:bg-emerald-50 border border-emerald-300 text-left transition shadow-2xs">
-              <div class="font-bold text-[#006948] text-[11px] leading-tight">⚡ Verifikator</div>
+            <button type="button" onclick="fillQuickLogin('admin_pogi')" class="p-2 rounded-xl bg-white hover:bg-emerald-50 border border-emerald-300 text-left transition shadow-2xs">
+              <div class="font-bold text-[#006948] text-[11px] leading-tight">⚡ Admin POGI</div>
               <div class="text-[9px] text-slate-500 mt-0.5 truncate">Validasi SKP &amp; PJ</div>
             </button>
             <button type="button" onclick="fillQuickLogin('admin_cabang')" class="p-2 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-left transition shadow-2xs">
@@ -219,7 +219,7 @@
         tabAdmin.className = 'py-2.5 px-2 rounded-lg bg-white text-slate-900 shadow-xs transition';
         tabBranch.className = 'py-2.5 px-2 rounded-lg text-slate-500 hover:text-slate-900 transition';
         inputEmail.value = 'sekretariat.pusat@pogi.or.id';
-        currentSelectedRoleKey = 'VERIFIKATOR';
+        currentSelectedRoleKey = 'ADMIN_POGI';
       } else {
         tabBranch.className = 'py-2.5 px-2 rounded-lg bg-white text-slate-900 shadow-xs transition';
         tabAdmin.className = 'py-2.5 px-2 rounded-lg text-slate-500 hover:text-slate-900 transition';
@@ -241,11 +241,11 @@
         email.value = 'admin.pusat@pogi.or.id';
         pass.value = 'AdminPusat2026!';
         currentSelectedRoleKey = 'ADMIN_PUSAT';
-      } else if (type === 'verifikator') {
+      } else if (type === 'admin_pogi' || type === 'verifikator') {
         switchLoginRole('admin');
         email.value = 'sekretariat.pusat@pogi.or.id';
         pass.value = 'POGI2026!Nasional';
-        currentSelectedRoleKey = 'VERIFIKATOR';
+        currentSelectedRoleKey = 'ADMIN_POGI';
       } else if (type === 'admin_cabang' || type === 'cabang_jabar') {
         switchLoginRole('branch');
         email.value = 'sekretariat.jabar@pogi.or.id';
@@ -278,7 +278,7 @@
       } else if (email.includes('cut') || email.includes('dokter')) {
         targetRole = 'DOKTER';
       } else if (email.includes('sekretariat') || email.includes('pusat')) {
-        targetRole = 'VERIFIKATOR';
+        targetRole = 'ADMIN_POGI';
       }
 
       if (typeof PogiStore !== 'undefined') {

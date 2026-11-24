@@ -455,8 +455,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // -------------------------------------------------------------
 // BAB 6.1 & 6.2 — RBAC ENFORCEMENT & ROLE SIMULATION (5 ROLE RESMI)
 // 1. Super Admin (Full-access)
-// 2. Admin Pusat (Memantau setiap aktifitas dan performance dari verifikator)
-// 3. Verifikator (Melakukan kesesuaian dokumen-dokumen, SKP, validasi & monitoring data dokter PJ)
+// 2. Admin Pusat (Memantau setiap aktifitas dan performance dari Admin POGI)
+// 3. Admin POGI (Melakukan kesesuaian dokumen-dokumen, SKP, validasi & monitoring data dokter PJ)
 // 4. Admin Cabang (Tugas verifikator untuk dokter wilayah cabang sendiri)
 // 5. User/Dokter (Melihat progress SKP mereka sendiri)
 // -------------------------------------------------------------
@@ -475,7 +475,7 @@ function switchUserRole(roleKey) {
       window.location.href = 'doctor-detail.html?id=doc-001';
       return;
     }
-  } else if (target.role === 'VERIFIKATOR' || target.role === 'ADMIN_CABANG') {
+  } else if (target.role === 'ADMIN_POGI' || target.role === 'VERIFIKATOR' || target.role === 'ADMIN_CABANG') {
     if (currentPath.includes('admin-performance')) {
       window.location.href = 'dashboard.html';
       return;
@@ -499,8 +499,8 @@ function applyRbacEnforcement() {
     roleKey = 'SUPER_ADMIN';
   } else if (rawRole === 'ADMIN_PUSAT' || rawRole === 'ADMIN PUSAT') {
     roleKey = 'ADMIN_PUSAT';
-  } else if (rawRole === 'VERIFIKATOR' || rawRole === 'ADMIN_OPERASIONAL') {
-    roleKey = 'VERIFIKATOR';
+  } else if (rawRole === 'ADMIN_POGI' || rawRole === 'ADMIN POGI' || rawRole === 'VERIFIKATOR' || rawRole === 'ADMIN_OPERASIONAL') {
+    roleKey = 'ADMIN_POGI';
   } else if (rawRole === 'ADMIN_CABANG' || rawRole === 'ADMIN CABANG') {
     roleKey = 'ADMIN_CABANG';
   } else if (rawRole === 'DOKTER' || rawRole === 'USER/DOKTER' || rawRole === 'USER') {
@@ -524,7 +524,7 @@ function applyRbacEnforcement() {
     if (profileCard) {
       const avatarEl = profileCard.querySelector('.rounded-full') || profileCard.querySelector('div');
       if (avatarEl) {
-        avatarEl.innerText = user.avatar || (roleKey === 'SUPER_ADMIN' ? 'SA' : (roleKey === 'ADMIN_PUSAT' ? 'BP' : (roleKey === 'ADMIN_CABANG' ? 'DF' : (roleKey === 'DOKTER' ? 'CS' : 'SR'))));
+        avatarEl.innerText = user.avatar || (roleKey === 'SUPER_ADMIN' ? 'SA' : (roleKey === 'ADMIN_PUSAT' ? 'BP' : (roleKey === 'ADMIN_CABANG' ? 'DF' : (roleKey === 'DOKTER' ? 'CS' : 'AP'))));
         avatarEl.className = 'w-9 h-9 rounded-full ' + (user.avatarBg || (roleKey === 'SUPER_ADMIN' ? 'bg-purple-700 text-white' : (roleKey === 'ADMIN_PUSAT' ? 'bg-indigo-700 text-white' : (roleKey === 'ADMIN_CABANG' ? 'bg-sky-700 text-white' : (roleKey === 'DOKTER' ? 'bg-teal-700 text-white' : 'bg-[#006948] text-white'))))) + ' font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs';
       }
       const textContainer = profileCard.querySelector('.min-w-0');
@@ -566,7 +566,7 @@ function applyRbacEnforcement() {
   if (topUserBtn) {
     const topAv = topUserBtn.querySelector('div');
     if (topAv) {
-      topAv.innerText = user.avatar || (roleKey === 'SUPER_ADMIN' ? 'SA' : (roleKey === 'ADMIN_PUSAT' ? 'BP' : (roleKey === 'ADMIN_CABANG' ? 'DF' : (roleKey === 'DOKTER' ? 'CS' : 'SR'))));
+      topAv.innerText = user.avatar || (roleKey === 'SUPER_ADMIN' ? 'SA' : (roleKey === 'ADMIN_PUSAT' ? 'BP' : (roleKey === 'ADMIN_CABANG' ? 'DF' : (roleKey === 'DOKTER' ? 'CS' : 'AP'))));
       topAv.className = 'w-7 h-7 rounded-lg ' + (user.avatarBg || (roleKey === 'SUPER_ADMIN' ? 'bg-purple-700 text-white' : (roleKey === 'ADMIN_PUSAT' ? 'bg-indigo-700 text-white' : (roleKey === 'ADMIN_CABANG' ? 'bg-sky-700 text-white' : (roleKey === 'DOKTER' ? 'bg-teal-700 text-white' : 'bg-[#006948] text-white'))))) + ' font-extrabold text-[11px] flex items-center justify-center shadow-2xs';
     }
   }
@@ -606,7 +606,7 @@ function applyRbacEnforcement() {
           </div>
           <h2 class="text-lg font-black text-slate-900">Akses Modul Terbatas (RBAC)</h2>
           <p class="text-xs text-slate-600 leading-relaxed">
-            Modul <strong>Admin Performance &amp; SLA Tracker</strong> adalah instrumen evaluasi nasional untuk <strong>Admin Pusat</strong> dan <strong>Super Admin</strong> guna memantau performa serta kecepatan verifikasi tim verifikator.
+            Modul <strong>Admin Performance &amp; SLA Tracker</strong> adalah instrumen evaluasi nasional untuk <strong>Admin Pusat</strong> dan <strong>Super Admin</strong> guna memantau performa serta kecepatan verifikasi tim Admin POGI.
           </p>
           <div class="pt-2">
             <a href="dashboard.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#006948] text-white text-xs font-bold hover:bg-[#005439] transition">
@@ -680,9 +680,9 @@ function applyRbacEnforcement() {
     banner.innerHTML = `
       <div class="flex items-center gap-2">
         <span class="material-symbols-outlined text-base text-indigo-600">monitoring</span>
-        <span>Mode Akses: <strong>Admin Pusat (Bagus Pranoto)</strong> — Memantau setiap aktifitas, log audit, dan performa SLA tim verifikator.</span>
+        <span>Mode Akses: <strong>Admin Pusat (Bagus Pranoto)</strong> — Memantau setiap aktifitas, log audit, dan performa SLA tim Admin POGI.</span>
       </div>
-      <span class="px-2.5 py-0.5 rounded-full bg-indigo-200 text-indigo-900 text-xs font-black uppercase">Pemantau Verifikator</span>
+      <span class="px-2.5 py-0.5 rounded-full bg-indigo-200 text-indigo-900 text-xs font-black uppercase">Pemantau Admin POGI</span>
     `;
     banner.classList.remove('hidden');
 
@@ -691,7 +691,7 @@ function applyRbacEnforcement() {
       document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => {
         btn.setAttribute('disabled', 'true');
         btn.classList.add('opacity-50', 'cursor-not-allowed');
-        btn.title = 'Akses monitoring/audit: verifikasi kredit operasional dilakukan oleh Verifikator & Admin Cabang';
+        btn.title = 'Akses monitoring/audit: verifikasi kredit operasional dilakukan oleh Admin POGI & Admin Cabang';
       });
     });
     // Sembunyikan aksi super-only (delete, rebalance)
@@ -700,7 +700,7 @@ function applyRbacEnforcement() {
       document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => { btn.style.display = 'none'; });
     });
 
-  } else if (roleKey === 'VERIFIKATOR') {
+  } else if (roleKey === 'ADMIN_POGI' || roleKey === 'VERIFIKATOR') {
     if (!banner) {
       banner = document.createElement('div');
       banner.id = 'rbacNoticeBanner';
@@ -710,13 +710,13 @@ function applyRbacEnforcement() {
     banner.innerHTML = `
       <div class="flex items-center gap-2">
         <span class="material-symbols-outlined text-base text-[#006948]">verified_user</span>
-        <span>Mode Akses: <strong>Verifikator (Siti Rahma, S.Farm)</strong> — Melakukan kesesuaian dokumen, validasi SKP, verifikasi kredit, &amp; monitoring dokter PJ.</span>
+        <span>Mode Akses: <strong>Admin POGI (Siti Rahma, S.Farm)</strong> — Melakukan kesesuaian dokumen, validasi SKP, verifikasi kredit, &amp; monitoring dokter PJ.</span>
       </div>
-      <span class="px-2.5 py-0.5 rounded-full bg-emerald-200 text-[#006948] text-xs font-black uppercase">Verifikasi SKP</span>
+      <span class="px-2.5 py-0.5 rounded-full bg-emerald-200 text-[#006948] text-xs font-black uppercase">Admin POGI</span>
     `;
     banner.classList.remove('hidden');
 
-    // --- VERIFIKATOR: VERIFIKASI KREDIT, REVIEW DOKUMEN & UNGGAH BERKAS AKTIF ---
+    // --- ADMIN POGI: VERIFIKASI KREDIT, REVIEW DOKUMEN & UNGGAH BERKAS AKTIF ---
     ['approveDoctorCredits','approvePendingCredits','openUploadDoctorDocModal'].forEach(fn => {
       document.querySelectorAll('button[onclick*="' + fn + '"]').forEach(btn => {
         btn.style.display = '';
@@ -855,7 +855,7 @@ function initRbacRoleSwitcher() {
       <select id="topHeaderRoleSelect" onchange="switchUserRole(this.value)" class="bg-transparent text-xs font-bold text-slate-800 outline-none cursor-pointer">
         <option value="SUPER_ADMIN">&#x1F451; Super Admin</option>
         <option value="ADMIN_PUSAT">&#x1F3DB;&#xFE0F; Admin Pusat</option>
-        <option value="VERIFIKATOR">&#x26A1; Verifikator</option>
+        <option value="ADMIN_POGI">&#x26A1; Admin POGI</option>
         <option value="ADMIN_CABANG">&#x1F3E2; Admin Cabang</option>
         <option value="DOKTER">&#x1FA7A; User/Dokter</option>
       </select>
@@ -882,7 +882,7 @@ function initRbacRoleSwitcher() {
       <select id="headerRoleSwitcher" onchange="switchUserRole(this.value)" class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#006948]">
         <option value="SUPER_ADMIN">👑 Super Admin (Full-access)</option>
         <option value="ADMIN_PUSAT">🏛️ Admin Pusat (Pantau Verifikator &amp; SLA)</option>
-        <option value="VERIFIKATOR">⚡ Verifikator (Validasi SKP &amp; Dokumen PJ)</option>
+        <option value="ADMIN_POGI">⚡ Admin POGI (Validasi SKP &amp; Dokumen PJ)</option>
         <option value="ADMIN_CABANG">🏢 Admin Cabang (Verifikasi SKP Wilayah)</option>
         <option value="DOKTER">🩺 User/Dokter (Progress SKP Mandiri)</option>
       </select>

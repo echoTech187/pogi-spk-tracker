@@ -730,7 +730,7 @@
                   <option value="ALL">Semua Role (5 Role)</option>
                   <option value="Super Admin">Super Admin</option>
                   <option value="Admin Pusat">Admin Pusat</option>
-                  <option value="Verifikator">Verifikator</option>
+                  <option value="Admin POGI">Admin POGI</option>
                   <option value="Admin Cabang">Admin Cabang</option>
                   <option value="User/Dokter">User/Dokter</option>
                 </select>
@@ -1681,7 +1681,7 @@
         const getRoleBadge = (role) => {
           if (role === 'Super Admin') return '<span class="px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-extrabold text-[10px]">Super Admin</span>';
           if (role === 'Admin Pusat') return '<span class="px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 font-extrabold text-[10px]">Admin Pusat</span>';
-          if (role === 'Verifikator') return '<span class="px-2.5 py-1 rounded-md bg-emerald-50 text-[#006948] border border-emerald-200 font-extrabold text-[10px]">Verifikator</span>';
+          if (role === 'Admin POGI' || role === 'Verifikator') return '<span class="px-2.5 py-1 rounded-md bg-emerald-50 text-[#006948] border border-emerald-200 font-extrabold text-[10px]">Admin POGI</span>';
           if (role === 'Admin Cabang') return '<span class="px-2.5 py-1 rounded-md bg-sky-50 text-sky-700 border border-sky-200 font-extrabold text-[10px]">Admin Cabang</span>';
           return '<span class="px-2.5 py-1 rounded-md bg-teal-50 text-teal-700 border border-teal-200 font-extrabold text-[10px]">User/Dokter</span>';
         };
@@ -2076,7 +2076,7 @@
             <select id="editUsrRole" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
               <option value="Super Admin" ${item.role === 'Super Admin' ? 'selected' : ''}>Super Admin</option>
               <option value="Admin Pusat" ${item.role === 'Admin Pusat' ? 'selected' : ''}>Admin Pusat</option>
-              <option value="Verifikator" ${item.role === 'Verifikator' ? 'selected' : ''}>Verifikator</option>
+              <option value="Admin POGI" ${item.role === 'Admin POGI' || item.role === 'Verifikator' ? 'selected' : ''}>Admin POGI</option>
               <option value="Admin Cabang" ${item.role === 'Admin Cabang' ? 'selected' : ''}>Admin Cabang</option>
               <option value="User/Dokter" ${item.role === 'User/Dokter' || item.role === 'Dokter' ? 'selected' : ''}>User/Dokter</option>
             </select>
@@ -2297,7 +2297,7 @@
         container.innerHTML = `
           <div><label class="font-bold text-slate-700 block mb-1">Nama Lengkap</label><input required type="text" id="addUsrName" placeholder="Nama..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl" /></div>
           <div><label class="font-bold text-slate-700 block mb-1">Email</label><input required type="email" id="addUsrEmail" placeholder="user@pogi.or.id" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl" /></div>
-          <div><label class="font-bold text-slate-700 block mb-1">Role</label><select id="addUsrRole" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl"><option value="Super Admin">Super Admin</option><option value="Admin Pusat">Admin Pusat</option><option value="Verifikator">Verifikator</option><option value="Admin Cabang">Admin Cabang</option><option value="User/Dokter">User/Dokter</option></select></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Role</label><select id="addUsrRole" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl"><option value="Super Admin">Super Admin</option><option value="Admin Pusat">Admin Pusat</option><option value="Admin POGI">Admin POGI</option><option value="Admin Cabang">Admin Cabang</option><option value="User/Dokter">User/Dokter</option></select></div>
         `;
       }
 

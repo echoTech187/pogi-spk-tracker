@@ -9447,13 +9447,13 @@ const INITIAL_CATEGORIES = [
   { id: 'cat-11', name: 'Penyuluhan Kesehatan Masyarakat', type: 'Pengabdian', eventsCount: 3 }
 ];
 
-// Master Users (5 Role Resmi: Super Admin, Admin Pusat, Verifikator, Admin Cabang, User/Dokter)
+// Master Users (5 Role Resmi: Super Admin, Admin Pusat, Admin POGI, Admin Cabang, User/Dokter)
 const INITIAL_USERS = [
-  { id: 'usr-01', name: 'Rina Kartika', email: 'user@example.com', role: 'Verifikator', created: '18 Nov 2026' },
-  { id: 'usr-02', name: 'Dimas Saputra', email: 'user2@example.com', role: 'Verifikator', created: '18 Nov 2026' },
+  { id: 'usr-01', name: 'Rina Kartika', email: 'user@example.com', role: 'Admin POGI', created: '18 Nov 2026' },
+  { id: 'usr-02', name: 'Dimas Saputra', email: 'user2@example.com', role: 'Admin POGI', created: '18 Nov 2026' },
   { id: 'usr-03', name: 'Wahyu Setiawan', email: 'user3@example.com', role: 'Admin Pusat', created: '18 Nov 2026' },
   { id: 'usr-04', name: 'Melati Sihombing', email: 'user4@example.com', role: 'Admin Cabang', created: '18 Nov 2026' },
-  { id: 'usr-05', name: 'Fikri Ramadhan', email: 'user5@example.com', role: 'Verifikator', created: '18 Nov 2026' },
+  { id: 'usr-05', name: 'Fikri Ramadhan', email: 'user5@example.com', role: 'Admin POGI', created: '18 Nov 2026' },
   { id: 'usr-06', name: 'Ayu Lestari', email: 'user6@example.com', role: 'Admin Cabang', created: '18 Nov 2026' },
   { id: 'usr-07', name: 'Bagus Pranoto', email: 'user7@example.com', role: 'Admin Pusat', created: '18 Nov 2026' },
   { id: 'usr-08', name: 'dr. Cut Simatupang, Sp.OG', email: 'cut.simatupang@pogi.or.id', role: 'User/Dokter', created: '18 Nov 2026' },
@@ -10284,7 +10284,7 @@ const PogiStore = {
       }
     }
     // Normalisasi role ke 5 role resmi (Super Admin, Admin Pusat, Verifikator, Admin Cabang, User/Dokter)
-    const validRoles = ['Super Admin', 'Admin Pusat', 'Verifikator', 'Admin Cabang', 'User/Dokter', 'Dokter'];
+    const validRoles = ['Super Admin', 'Admin Pusat', 'Admin POGI', 'Admin Cabang', 'User/Dokter', 'Dokter', 'Verifikator'];
     let changed = false;
     users = users.map((u, idx) => {
       if (!validRoles.includes(u.role)) {
@@ -10293,7 +10293,7 @@ const PogiStore = {
         else if (idx === 2 || idx === 6) u.role = 'Admin Pusat';
         else if (idx === 3 || idx === 5) u.role = 'Admin Cabang';
         else if (idx === 7 || idx === 9) u.role = 'User/Dokter';
-        else u.role = 'Verifikator';
+        else u.role = 'Admin POGI';
       }
       return u;
     });
@@ -10521,8 +10521,8 @@ const PogiStore = {
   // -------------------------------------------------------------
   // BAB 6.1 & 6.2 — ROLE-BASED ACCESS CONTROL (RBAC) 5 ROLE RESMI
   // 1. Super Admin (Full-access)
-  // 2. Admin Pusat (Memantau setiap aktifitas dan performance dari verifikator)
-  // 3. Verifikator (Melakukan kesesuaian dokumen-dokumen, SKP, validasi & monitoring data dokter PJ)
+  // 2. Admin Pusat (Memantau setiap aktifitas dan performance dari Admin POGI)
+  // 3. Admin POGI (Melakukan kesesuaian dokumen-dokumen, SKP, validasi & monitoring data dokter PJ)
   // 4. Admin Cabang (Tugas verifikator untuk dokter wilayah cabang sendiri)
   // 5. User/Dokter (Melihat progress SKP mereka sendiri)
   // -------------------------------------------------------------
@@ -10533,7 +10533,7 @@ const PogiStore = {
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          if (parsed.role === 'ADMIN_OPERASIONAL') parsed.role = 'VERIFIKATOR';
+          if (parsed.role === 'ADMIN_OPERASIONAL' || parsed.role === 'VERIFIKATOR') parsed.role = 'ADMIN_POGI';
           if (parsed.role === 'VIEWER_POGI') parsed.role = 'ADMIN_PUSAT';
           if (parsed.role === 'USER') parsed.role = 'DOKTER';
           this._currentUser = parsed;
@@ -10554,11 +10554,10 @@ const PogiStore = {
         r.role === search || 
         r.roleLabel.toLowerCase() === user.toLowerCase() ||
         (search === 'ADMIN_PUSAT' && r.role === 'ADMIN_PUSAT') ||
-        (search === 'VERIFIKATOR' && r.role === 'VERIFIKATOR') ||
+        ((search === 'ADMIN_POGI' || search === 'ADMIN_POGI' || search === 'VERIFIKATOR' || search === 'ADMIN_OPERASIONAL') && r.role === 'ADMIN_POGI') ||
         (search === 'ADMIN_CABANG' && r.role === 'ADMIN_CABANG') ||
         (search === 'SUPER_ADMIN' && r.role === 'SUPER_ADMIN') ||
         ((search === 'DOKTER' || search === 'USER/DOKTER' || search === 'USER') && r.role === 'DOKTER') ||
-        (search === 'ADMIN_OPERASIONAL' && r.role === 'VERIFIKATOR') ||
         (search === 'VIEWER_POGI' && r.role === 'ADMIN_PUSAT')
       );
       if (found) user = found;
@@ -10599,19 +10598,19 @@ const PogiStore = {
         avatar: 'BP',
         avatarBg: 'bg-indigo-700 text-white',
         badgeClass: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-        description: 'Memantau setiap aktifitas dan performance dari tim verifikator (SLA, log audit, capaian nasional)',
+        description: 'Memantau setiap aktifitas dan performance dari tim Admin POGI (SLA, log audit, capaian nasional)',
         canWrite: false
       },
       {
-        role: 'VERIFIKATOR',
-        id: 'usr-verifikator',
+        role: 'ADMIN_POGI',
+        id: 'usr-admin-pogi',
         name: 'Siti Rahma, S.Farm',
         displayName: 'Siti Rahma, S.Farm',
         email: 'sekretariat.pusat@pogi.or.id',
-        roleLabel: 'Verifikator',
-        shortRole: 'VERIFIKATOR',
+        roleLabel: 'Admin POGI',
+        shortRole: 'ADMIN POGI',
         branch: 'Nasional',
-        avatar: 'SR',
+        avatar: 'AP',
         avatarBg: 'bg-[#006948] text-white',
         badgeClass: 'bg-emerald-100 text-[#006948] border-emerald-200',
         description: 'Melakukan kesesuaian dokumen-dokumen, validasi SKP, verifikasi kredit, dan monitoring data dokter yang mereka PJ',
@@ -10671,8 +10670,8 @@ const PogiStore = {
       return allowed.includes(action);
     }
 
-    if (role === 'VERIFIKATOR' || role === 'ADMIN_OPERASIONAL') {
-      // Verifikator: Melakukan kesesuaian dokumen-dokumen, validasi SKP, verifikasi kredit, & monitoring dokter PJ
+    if (role === 'ADMIN_POGI' || role === 'ADMIN POGI' || role === 'VERIFIKATOR' || role === 'ADMIN_OPERASIONAL') {
+      // Admin POGI: Melakukan kesesuaian dokumen-dokumen, validasi SKP, verifikasi kredit, & monitoring dokter PJ
       const allowed = [
         'VIEW_DASHBOARD',
         'VIEW_DOCTORS',
@@ -10727,9 +10726,13 @@ const PogiStore = {
     return r === 'ADMIN_PUSAT' || r === 'ADMIN PUSAT';
   },
 
-  isVerifikator() {
+  isAdminPogi() {
     const r = (this.getCurrentUser().role || '').toUpperCase();
-    return r === 'VERIFIKATOR' || r === 'ADMIN_OPERASIONAL';
+    return r === 'ADMIN_POGI' || r === 'ADMIN POGI' || r === 'VERIFIKATOR' || r === 'ADMIN_OPERASIONAL';
+  },
+
+  isVerifikator() {
+    return this.isAdminPogi();
   },
 
   isBranchAdmin() {
@@ -10743,7 +10746,7 @@ const PogiStore = {
   },
 
   isOperational() {
-    return this.isSuperAdmin() || this.isVerifikator() || this.isBranchAdmin();
+    return this.isSuperAdmin() || this.isAdminPogi() || this.isBranchAdmin();
   },
 
   isViewer() {
