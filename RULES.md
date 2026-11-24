@@ -9,9 +9,13 @@
 1. **Model Layanan B2B Eksklusif**:
    * Sistem ini beroperasi murni sebagai platform **B2B (*Business-to-Business*)** antara **PT Energi Cipta** (penyedia infrastruktur teknologi & operasional data) dan **POGI** (Perkumpulan Obstetri dan Ginekologi Indonesia) beserta 38 cabang daerah di seluruh Indonesia.
    * Sistem tidak melayani pendaftaran ritel langsung dari dokter umum atau pihak luar (*non-B2C*). Seluruh dokter yang terdaftar adalah anggota resmi POGI pemegang gelar Spesialis Obstetri dan Ginekologi (Sp.OG).
-2. **Batasan Integrasi Kemenkes (Non-API / Assisted Sync)**:
+2. **Batasan Integrasi Kemenkes (Non-API / Assisted Sync) & Kebijakan Berkas Bukti**:
    * Portal resmi SKP Kemenkes (*Plataran Sehat*) **tidak menyediakan API publik** untuk penarikan maupun pengunggahan data secara otomatis.
-   * Seluruh berkas bukti fisik SKP (sertifikat simposium, logbook operasi/tindakan, surat tugas pengabdian) **wajib disimpan dan diverifikasi terlebih dahulu di repositori internal sistem (*Document Vault*)** sebelum diunggah ke portal Kemenkes oleh tim Admin POGI / tim data.
+   * Seluruh berkas bukti fisik SKP (sertifikat simposium, logbook operasi/tindakan, surat tugas pengabdian) **wajib disertakan melalui URL / Tautan Google Drive (MANDATORI)** sebelum diverifikasi oleh tim verifikator dan diinput ke portal Kemenkes oleh tim Admin POGI / tim data.
+   * **Kebijakan Anti-Storage Bloat (Pencegahan Pembengkakan Storage Server)**:
+     - Pengunggahan file fisik biner langsung ke server adalah **OPSIONAL**.
+     - Input **URL Google Drive adalah MANDATORI (WAJIB)**.
+     - Kebijakan ini diterapkan karena kekhawatiran pihak manajemen dan *stakeholder* terhadap membengkaknya kapasitas disk server dan tingginya biaya *bandwidth / storage hosting* jika menampung puluhan ribu berkas biner ribuan dokter spesialis obgyn di seluruh Indonesia.
    * Sistem wajib menyediakan mekanisme deteksi kekurangan dokumen (*missing document detector*) dan pelacakan *dual-timestamp* yang memisahkan waktu pembaruan internal dan waktu sinkronisasi Kemenkes.
 
 ---
@@ -139,7 +143,26 @@ Untuk memastikan berkas dokter tidak tertahan lama, sistem memonitor kinerja tim
 
 ---
 
-## 8. Kepatuhan Hukum Perlindungan Data Pribadi (UU PDP No. 27/2022)
+## 8. Standar Dokumen Bukti SKP & Kebijakan Anti-Storage Bloat (Document Vault)
+
+1. **Mandatori Tautan / URL Google Drive**:
+   * Setiap berkas bukti pendukung (sertifikat kegiatan, logbook operasi/tindakan faskes, surat tugas pengabdian) **WAJIB** menyertakan URL Google Drive yang valid (`google_drive_url NOT NULL`).
+   * Tautan harus dipastikan memiliki akses visibilitas minimal *"Anyone with the link can view"* atau di-share ke grup akun verifikator resmi POGI agar tim verifikator dapat meninjau keabsahan berkas tanpa hambatan otorisasi.
+2. **Kebijakan Pengunggahan File Biner Langsung Bersifat Opsional**:
+   * Pengunggahan file fisik biner (PDF/JPG/PNG) langsung ke storage internal sistem berstatus **OPSIONAL**.
+   * Tujuan kebijakan ini adalah mitigasi risiko pembengkakan kapasitas disk (*storage bloat*) pada server aplikasi, menghemat biaya operasional cloud/VPS, dan mempercepat proses backup database serta restore sistem.
+3. **Validasi & Proteksi Jika File Biner Diunggah**:
+   * Jika opsi upload fisik digunakan oleh dokter/admin:
+     - Ukuran maksimal dibatasi **10 MB per dokumen**.
+     - Tipe konten dibatasi pada `application/pdf`, `image/jpeg`, dan `image/png`.
+     - File biner wajib dihitung nilai hash SHA-256 (`sha256_checksum`) untuk mencegah duplikasi file identik dan menjamin integritas bukti medikolegal.
+     - Akses berkas fisik wajib melalui *Presigned URL* yang kadaluarsa dalam 15 menit, tidak boleh diekspos melalui direktori publik server.
+4. **Alur Verifikasi Bukti Fisik**:
+   * Verifikator (Admin POGI / Admin Cabang) memvalidasi keabsahan data dengan membuka tautan Google Drive tersebut, mencocokkan nomor sertifikat/jam pelatihan dengan SKP yang diklaim, lalu menetapkan status `DONE` (diterima) atau `REJECTED` (ditolak disertai alasan spesifik).
+
+---
+
+## 9. Kepatuhan Hukum Perlindungan Data Pribadi (UU PDP No. 27/2022)
 
 1. **Enkripsi Data Sensitif Medis (*Encryption at Rest*)**:
    * Data identitas kependudukan (NIK) dan kredensial Plataran Sehat dokter wajib dienkripsi pada database menggunakan algoritma **AES-256-GCM** (`nik_encrypted BYTEA`).
@@ -151,7 +174,7 @@ Untuk memastikan berkas dokter tidak tertahan lama, sistem memonitor kinerja tim
 
 ---
 
-## 9. Standar Engineering & Optimasi Database
+## 10. Standar Engineering & Optimasi Database
 
 1. **Larangan Keras ID Auto-Increment**:
    * Seluruh tabel dilarang menggunakan integer auto-increment untuk mencegah kebocoran data terenumerasi (*IDOR attack*).

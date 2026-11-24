@@ -291,11 +291,17 @@ CREATE TABLE IF NOT EXISTS doctor_documents (
     skp_entry_id UUID REFERENCES skp_entries(id) ON DELETE SET NULL,
     document_type document_type_enum NOT NULL,
     file_name VARCHAR(255) NOT NULL,
-    file_size_bytes BIGINT NOT NULL CHECK (file_size_bytes > 0 AND file_size_bytes <= 10485760), -- Max 10MB
-    mime_type VARCHAR(100) NOT NULL DEFAULT 'application/pdf',
-    storage_bucket VARCHAR(100) NOT NULL DEFAULT 'pogi-medcred-vault',
-    storage_object_key VARCHAR(500) NOT NULL UNIQUE, -- Object key di S3 / Cloud Storage
-    sha256_checksum CHAR(64) NOT NULL,              -- Deduplikasi & Integritas Dokumen
+    
+    -- MANDATORI: Tautan Google Drive Berkas Bukti (Pencegahan Pembengkakan Storage Server)
+    google_drive_url TEXT NOT NULL,
+    
+    -- OPSIONAL: Upload biner lokal/S3 jika diaktifkan (Default NULL)
+    file_size_bytes BIGINT CHECK (file_size_bytes IS NULL OR file_size_bytes <= 10485760), -- Opsional Max 10MB
+    mime_type VARCHAR(100) DEFAULT 'application/pdf',
+    storage_bucket VARCHAR(100) DEFAULT 'google-drive',
+    storage_object_key VARCHAR(500), -- Opsional jika disimpan di S3 / Cloud Storage
+    sha256_checksum CHAR(64),        -- Opsional Deduplikasi & Integritas Dokumen
+    
     is_verified BOOLEAN NOT NULL DEFAULT FALSE,
     verified_by_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
     verified_at TIMESTAMPTZ,

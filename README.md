@@ -25,8 +25,8 @@ Sistem ini menjembatani pengumpulan berkas sertifikat dan logbook klinis, penyim
     - **Ranah Pelayanan**: Minimal $35\%$ ($56\text{ SKP}$).
     - **Ranah Pengabdian Masyarakat**: Minimal $5\%$ ($8\text{ SKP}$).
     - **Ranah Fleksibilitas**: Maksimal $15\%$ ($24\text{ SKP}$).
-* **Repositori Berkas Anggota (*Document Vault*)**:
-  * Penyimpanan terstruktur sertifikat simposium, logbook tindakan faskes, dan surat tugas dengan *checksum* SHA-256 dan perlindungan *Presigned URL*.
+* **Repositori Berkas Anggota (*Document Vault*) & Kebijakan Anti-Storage Bloat**:
+  * Pengelolaan arsip berkas sertifikat dan logbook klinis berbasis **URL / Tautan Google Drive Mandatori** guna mencegah server membengkak dan cepat kehabisan kapasitas *storage*, dilengkapi fitur opsional unggah biner fisik (maksimal 10 MB per dokumen, format PDF/JPG/PNG) yang dilindungi *Presigned URL* (berlaku 15 menit) dan verifikasi checksum SHA-256.
 * **Dual-Timestamp Audit Sinkronisasi**:
   * Menampilkan secara transparan waktu pembaruan internal (`Last Update Dashboard`) dan waktu sinkronisasi Kemenkes (`Last Update Kemenkes`).
 * **Otomasi WhatsApp Blast dengan Anti-Ban Jitter**:
@@ -106,7 +106,7 @@ Pastikan server atau mesin pengembangan Anda telah memenuhi spesifikasi minimum 
    REDIS_HOST=127.0.0.1
    REDIS_PORT=6379
 
-   # Storage Vault S3
+   # Storage (Opsional jika ada upload biner; Bukti fisik utama mandatori berbasis Google Drive URL)
    FILESYSTEM_DISK=s3
    AWS_ACCESS_KEY_ID=your_minio_or_s3_key
    AWS_SECRET_ACCESS_KEY=your_minio_or_s3_secret

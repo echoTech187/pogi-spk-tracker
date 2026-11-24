@@ -365,7 +365,8 @@ docs.forEach((d, idx) => {
   const docFileUuid = makeUUIDv7(9, docNum);
   const s3Key = `pogi-medcred-vault/doctors/${d.id}/sertifikat/sertifikat_workshop_usg_${pad(docNum, 3)}.pdf`;
   const sha256 = crypto.createHash('sha256').update(docFileUuid).digest('hex');
-  docFileSqlRows.push(`('${docFileUuid}', '${docUuid}', '${entryUuid1}', 'SERTIFIKAT_PEMBELAJARAN', 'Sertifikat_Workshop_Maternal.pdf', 2485760, 'application/pdf', 'pogi-medcred-vault', '${s3Key}', '${sha256}', TRUE, '${picUuid}', NOW(), '${picUuid}', NOW(), NULL)`);
+  const gdriveUrl = `https://drive.google.com/file/d/1BZIJz9X${pad(docNum, 8)}/view?usp=sharing`;
+  docFileSqlRows.push(`('${docFileUuid}', '${docUuid}', '${entryUuid1}', 'SERTIFIKAT_PEMBELAJARAN', 'Sertifikat_Workshop_Maternal.pdf', '${gdriveUrl}', 2485760, 'application/pdf', 'google-drive', '${s3Key}', '${sha256}', TRUE, '${picUuid}', NOW(), '${picUuid}', NOW(), NULL)`);
 });
 
 sql += `INSERT INTO doctors (id, user_id, npa_pogi, full_name, specialization_title, nik_encrypted, nik_hash, str_number, sip_number, sip_expiry_date, email, whatsapp_number, branch_id, province_id, primary_institution_id, assigned_pic_id, plataran_sehat_username, plataran_sehat_pass_encrypted, status, dashboard_updated_at, kemenkes_updated_at, created_at, updated_at, deleted_at)
@@ -396,7 +397,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- ----------------------------------------------------------------------------
 -- 9. SEED DOCTOR DOCUMENTS (Document Vault)
 -- ----------------------------------------------------------------------------
-INSERT INTO doctor_documents (id, doctor_id, skp_entry_id, document_type, file_name, file_size_bytes, mime_type, storage_bucket, storage_object_key, sha256_checksum, is_verified, verified_by_user_id, verified_at, uploaded_by_user_id, created_at, deleted_at)
+INSERT INTO doctor_documents (id, doctor_id, skp_entry_id, document_type, file_name, google_drive_url, file_size_bytes, mime_type, storage_bucket, storage_object_key, sha256_checksum, is_verified, verified_by_user_id, verified_at, uploaded_by_user_id, created_at, deleted_at)
 VALUES\n` + docFileSqlRows.join(',\n') + `
 ON CONFLICT (id) DO UPDATE SET
   is_verified = EXCLUDED.is_verified;

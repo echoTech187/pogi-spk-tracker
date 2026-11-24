@@ -34,7 +34,7 @@ flowchart TD
     subgraph InfraLayer["4. INFRASTRUCTURE & PERSISTENCE LAYER"]
         Postgres[("PostgreSQL 14+ (RFC 9562 UUIDv7 + Zero-Fullscan Index)")]
         RedisQueue[("Redis Queue / Worker Daemon (BullMQ / Laravel Queue)")]
-        DocVault[("S3-Compatible Document Vault (AWS S3 / MinIO / Cloudflare R2)")]
+        DocVault[("Document Vault (Google Drive Mandatori + Opsional S3/MinIO)")]
         WAGateway["WhatsApp Business Gateway API (Anti-Ban Jitter)"]
     end
 
@@ -193,9 +193,16 @@ erDiagram
         uuid skp_entry_id FK
         enum document_type
         varchar(255) file_name
-        varchar(255) storage_object_key
-        varchar(64) sha256_checksum
+        text google_drive_url "MANDATORI (Mencegah Storage Penuh)"
+        bigint file_size_bytes "Opsional (Max 10MB)"
+        varchar(100) mime_type "Opsional"
+        varchar(100) storage_bucket "google-drive / s3"
+        varchar(500) storage_object_key "Opsional"
+        char(64) sha256_checksum "Opsional"
         boolean is_verified
+        uuid verified_by_user_id FK
+        timestamptz verified_at
+        uuid uploaded_by_user_id FK
     }
 
     monthly_cutoff_snapshots {
@@ -269,7 +276,7 @@ flowchart TD
 
     SYS(("SISTEM MONITORING & MANAJEMEN SKP NASIONAL POGI (MedCred)"))
 
-    DOKTER <-->|Login Mandiri, Upload Bukti, Cek Portofolio| SYS
+    DOKTER <-->|Login Mandiri, Input Tautan GDrive & Bukti, Cek Portofolio| SYS
     CABANG <-->|Verifikasi Berkas Cabangnya, Monitoring Wilayah| SYS
     VERIF <-->|Validasi Dokumen Binaan, Rekalkulasi Ranah, Alasan Tolak| SYS
     PUSAT <-->|Pantau Peta 38 Prov, Monitor SLA Verifikator, Unduh Invoice PDF| SYS
@@ -289,7 +296,7 @@ flowchart TD
     end
 
     subgraph P2["2.0 Repositori Dokumen & Verifikasi SKP"]
-        D2[("Doctor Documents Vault")]
+        D2[("Doctor Documents Vault (Google Drive URLs)")]
         D3[("SKP Entries Logbook")]
         D4[("Doctor SKP Periods")]
     end
@@ -339,18 +346,19 @@ flowchart TD
 sequenceDiagram
     autonumber
     actor Dokter as Dokter / Admin Cabang
-    participant Vault as Document Vault (S3)
+    participant GDrive as Google Drive (Storage Dokter)
     actor Verifikator as Admin POGI
     participant API as Backend (Laravel UseCase)
     participant DB as PostgreSQL 14+
     participant Audit as Audit Trail Service
 
-    Dokter->>Vault: Unggah bukti fisik (PDF/JPG, max 10MB)
-    Dokter->>API: Submit form pengajuan kegiatan SKP
-    API->>DB: INSERT skp_entries (status: 'NOT_SUBMITTED')
+    Dokter->>GDrive: Unggah berkas ke Google Drive dokter/cabang & atur share link
+    Dokter->>API: Submit form SKP + Link Google Drive (Mandatori) & Opsional file biner
+    API->>DB: INSERT skp_entries & doctor_documents (google_drive_url)
     
     Verifikator->>API: Buka halaman verifikasi dokter binaan
     API->>DB: Query skp_entries via Covering Index
+    Verifikator->>GDrive: Buka & periksa keabsahan berkas via tautan Google Drive
     Verifikator->>API: Validasi berkas (Approve / Reject)
     
     alt Keputusan: APPROVE
@@ -441,10 +449,10 @@ sequenceDiagram
 2. **Batasan Rate-Limiting WhatsApp Gateway**:
    * WhatsApp Business Gateway membatasi *throughput* pengiriman maksimal **15 pesan per menit** per nomor resmi.
    * Setiap pesan wajib diproses asinkron menggunakan antrean (*Queue Worker*) dengan delay acak (*jitter*) **1.500 ms – 3.000 ms** untuk mencegah blokir nomor oleh algoritma anti-spam Meta.
-3. **Batasan Repositori Berkas (Document Vault)**:
-   * Ukuran maksimal setiap berkas bukti SKP: **10 MB per dokumen**.
-   * Format berkas yang didukung: **PDF, JPG, PNG**.
-   * Berkas tidak diakses via URL publik, melainkan melalui **Presigned URLs berbatas waktu (maksimal 15 menit)** untuk melindungi privasi anggota.
+3. **Batasan Repositori Berkas (Document Vault) & Kebijakan Anti-Storage Bloat**:
+   * **URL / Tautan Google Drive adalah MANDATORI**: Setiap pengajuan bukti fisik SKP (sertifikat simposium, logbook tindakan, surat tugas) **WAJIB** menyertakan URL tautan Google Drive yang dapat diakses (akses share *view*).
+   * **Pencegahan Pembengkakan Storage Server (*Storage Bloat Prevention*)**: Kebijakan ini diberlakukan secara tegas karena pengurus dan *stakeholder* khawatir kapasitas *storage* server cepat penuh dan membengkak drastis jika menampung puluhan ribu berkas biner (PDF/gambar) dari ribuan dokter spesialis obgyn di seluruh Indonesia.
+   * **Upload Berkas Biner Fisik Langsung Bersifat OPSIONAL**: Sistem tetap menyediakan opsi upload berkas biner langsung ke disk/Object Storage jika sewaktu-waktu dibutuhkan, namun bukan merupakan syarat wajib submit. Jika berkas diunggah, batas maksimal ukuran adalah **10 MB per dokumen** (format PDF, JPG, PNG) dan diamankan dengan *Presigned URL berbatas waktu (maksimal 15 menit)*.
 4. **Batasan Isolasi Multi-Tenant Cabang**:
    * Admin Cabang dibatasi secara ketat hanya dapat melihat dan memverifikasi dokter yang terdaftar di wilayah cabangnya sendiri melalui penerapan **Eloquent Global Scope (`BranchScope`)**. Akses ke dokter cabang lain diblokir otomatis dengan kode HTTP `403 Forbidden`.
 
