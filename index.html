@@ -42,52 +42,14 @@
           </p>
         </div>
 
-        <!-- Segmented Tabs Peran -->
-        <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-600">
-          <button id="tab-admin" type="button" onclick="switchLoginRole('admin')" class="py-2.5 px-2 rounded-lg bg-white text-slate-900 shadow-sm transition">
-            Pengurus Pusat / Tim Data
-          </button>
-          <button id="tab-branch" type="button" onclick="switchLoginRole('branch')" class="py-2.5 px-2 rounded-lg text-slate-500 hover:text-slate-900 transition">
-            Pengurus Cabang / RS Jejaring
-          </button>
-        </div>
-
-        <!-- Quick 1-Click Login Shortcuts (5 Role Resmi Sistem) -->
-        <div class="space-y-2 p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200/80 text-[11px]">
-          <div class="text-[10px] font-extrabold text-[#006948] uppercase tracking-wider flex items-center justify-between">
-            <span>Akses Cepat Pengujian RBAC:</span>
-            <span class="text-[9px] bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded font-bold">5 Role Resmi</span>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-0.5">
-            <button type="button" onclick="fillQuickLogin('super_admin')" class="p-2 rounded-xl bg-white hover:bg-purple-50 border border-purple-200 text-left transition shadow-2xs">
-              <div class="font-bold text-purple-900 text-[11px] leading-tight">👑 Super Admin</div>
-              <div class="text-[9px] text-slate-500 mt-0.5 truncate">Full-access &amp; User</div>
-            </button>
-            <button type="button" onclick="fillQuickLogin('admin_pusat')" class="p-2 rounded-xl bg-white hover:bg-indigo-50 border border-indigo-200 text-left transition shadow-2xs">
-              <div class="font-bold text-indigo-900 text-[11px] leading-tight">🏛️ Admin Pusat</div>
-              <div class="text-[9px] text-slate-500 mt-0.5 truncate">Pantau Admin POGI</div>
-            </button>
-            <button type="button" onclick="fillQuickLogin('admin_pogi')" class="p-2 rounded-xl bg-white hover:bg-emerald-50 border border-emerald-300 text-left transition shadow-2xs">
-              <div class="font-bold text-[#006948] text-[11px] leading-tight">⚡ Admin POGI</div>
-              <div class="text-[9px] text-slate-500 mt-0.5 truncate">Validasi SKP &amp; PJ</div>
-            </button>
-            <button type="button" onclick="fillQuickLogin('admin_cabang')" class="p-2 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-left transition shadow-2xs">
-              <div class="font-bold text-sky-800 text-[11px] leading-tight">🏢 Admin Cabang</div>
-              <div class="text-[9px] text-slate-500 mt-0.5 truncate">Khusus Cabang Jabar</div>
-            </button>
-            <button type="button" onclick="fillQuickLogin('dokter')" class="col-span-2 sm:col-span-1 p-2 rounded-xl bg-white hover:bg-teal-50 border border-teal-300 text-left transition shadow-2xs">
-              <div class="font-bold text-teal-800 text-[11px] leading-tight">🩺 User/Dokter</div>
-              <div class="text-[9px] text-slate-500 mt-0.5 truncate">Progress SKP Saya</div>
-            </button>
-          </div>
-        </div>
-
         <form id="pogiLoginForm" onsubmit="event.preventDefault(); handleLogin();" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5">ID Pengurus / Email Resmi POGI</label>
             <div class="relative">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">person</span>
-              <input id="inputEmail" type="text" required value="sekretariat.pusat@pogi.or.id" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006948] focus:bg-white transition" />
+              <input id="inputEmail" type="text" required placeholder="nama@pogi.or.id" value="sekretariat.pusat@pogi.or.id" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006948] focus:bg-white transition" />
+            </div>
+          </div>
             </div>
           </div>
 

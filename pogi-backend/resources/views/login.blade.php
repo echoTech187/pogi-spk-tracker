@@ -42,75 +42,59 @@
           </p>
         </div>
 
-        <!-- Segmented Tabs Peran -->
-        <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-600">
-          <button id="tab-admin" type="button" onclick="switchLoginRole('admin')" class="py-2.5 px-2 rounded-lg bg-white text-slate-900 shadow-sm transition">
-            Pengurus Pusat / Tim Data
-          </button>
-          <button id="tab-branch" type="button" onclick="switchLoginRole('branch')" class="py-2.5 px-2 rounded-lg text-slate-500 hover:text-slate-900 transition">
-            Pengurus Cabang / RS Jejaring
-          </button>
-        </div>
+        <form id="pogiLoginForm" action="{{ route('login.post') }}" method="POST" class="space-y-4">
+          @csrf
+          @if ($errors->any())
+            <div class="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 space-y-1">
+              @foreach ($errors->all() as $error)
+                <div class="flex items-center gap-1.5 font-semibold">
+                  <span class="material-symbols-outlined text-sm">error</span>
+                  <span>{{ $error }}</span>
+                </div>
+              @endforeach
+            </div>
+          @endif
+          @if (session('error'))
+            <div class="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-1.5 font-semibold">
+              <span class="material-symbols-outlined text-sm">error</span>
+              <span>{{ session('error') }}</span>
+            </div>
+          @endif
+          @if (session('info'))
+            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-[#006948] flex items-center gap-1.5 font-semibold">
+              <span class="material-symbols-outlined text-sm">info</span>
+              <span>{{ session('info') }}</span>
+            </div>
+          @endif
 
-        <!-- Quick 1-Click Login Shortcuts (5 Role Resmi Sistem) -->
-        <div class="space-y-2 p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200/80 text-[11px]">
-          <div class="text-[10px] font-extrabold text-[#006948] uppercase tracking-wider flex items-center justify-between">
-            <span>Akses Cepat Pengujian RBAC:</span>
-            <span class="text-[9px] bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded font-bold">5 Role Resmi</span>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-0.5">
-            <button type="button" onclick="fillQuickLogin('super_admin')" class="p-2 rounded-xl bg-white hover:bg-purple-50 border border-purple-200 text-left transition shadow-2xs">
-              <div class="font-bold text-purple-900 text-[11px] leading-tight">👑 Super Admin</div>
-              <div class="text-[9px] text-slate-500 mt-0.5 truncate">Full-access &amp; User</div>
-            </button>
-            <button type="button" onclick="fillQuickLogin('admin_pusat')" class="p-2 rounded-xl bg-white hover:bg-indigo-50 border border-indigo-200 text-left transition shadow-2xs">
-              <div class="font-bold text-indigo-900 text-[11px] leading-tight">🏛️ Admin Pusat</div>
-              <div class="text-[9px] text-slate-500 mt-0.5 truncate">Pantau Admin POGI</div>
-            </button>
-            <button type="button" onclick="fillQuickLogin('admin_pogi')" class="p-2 rounded-xl bg-white hover:bg-emerald-50 border border-emerald-300 text-left transition shadow-2xs">
-              <div class="font-bold text-[#006948] text-[11px] leading-tight">⚡ Admin POGI</div>
-              <div class="text-[9px] text-slate-500 mt-0.5 truncate">Validasi SKP &amp; PJ</div>
-            </button>
-            <button type="button" onclick="fillQuickLogin('admin_cabang')" class="p-2 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-left transition shadow-2xs">
-              <div class="font-bold text-sky-800 text-[11px] leading-tight">🏢 Admin Cabang</div>
-              <div class="text-[9px] text-slate-500 mt-0.5 truncate">Khusus Cabang Jabar</div>
-            </button>
-            <button type="button" onclick="fillQuickLogin('dokter')" class="col-span-2 sm:col-span-1 p-2 rounded-xl bg-white hover:bg-teal-50 border border-teal-300 text-left transition shadow-2xs">
-              <div class="font-bold text-teal-800 text-[11px] leading-tight">🩺 User/Dokter</div>
-              <div class="text-[9px] text-slate-500 mt-0.5 truncate">Progress SKP Saya</div>
-            </button>
-          </div>
-        </div>
-
-        <form id="pogiLoginForm" onsubmit="event.preventDefault(); handleLogin();" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5">ID Pengurus / Email Resmi POGI</label>
             <div class="relative">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">person</span>
-              <input id="inputEmail" type="text" required value="sekretariat.pusat@pogi.or.id" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006948] focus:bg-white transition" />
+              <input id="inputEmail" name="email" type="text" required placeholder="Contoh: nama@pogi.or.id" value="{{ old('email') }}" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006948] focus:bg-white transition" />
             </div>
           </div>
 
           <div>
             <div class="flex items-center justify-between mb-1.5">
               <label class="text-xs font-bold text-slate-700">Kata Sandi</label>
-              <a href="javascript:void(0)" onclick="alert('Silakan hubungi Sekretariat Pengurus Pusat POGI untuk reset akun data.')" class="text-[11px] text-[#006948] font-semibold hover:underline">Bantuan Akses?</a>
+              <a href="javascript:void(0)" onclick="alert('Silakan hubungi Sekretariat Pengurus Pusat POGI untuk bantuan reset akun.')" class="text-[11px] text-[#006948] font-semibold hover:underline">Bantuan Akses?</a>
             </div>
             <div class="relative">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">lock</span>
-              <input id="inputPassword" type="password" required value="POGI2026!Nasional" class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006948] focus:bg-white transition" />
-              <button type="button" onclick="togglePassVisibility()" class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-base">visibility</button>
+              <input id="inputPassword" name="password" type="password" required placeholder="Masukkan kata sandi akun" class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006948] focus:bg-white transition" />
+              <button type="button" onclick="togglePassVisibility()" class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-base cursor-pointer">visibility</button>
             </div>
           </div>
 
           <div class="flex items-center justify-between text-xs pt-1">
-            <label class="flex items-center gap-2 cursor-pointer text-slate-600 font-medium">
-              <input type="checkbox" checked class="w-4 h-4 rounded text-[#006948] focus:ring-[#006948] border-slate-300" />
+            <label class="flex items-center gap-2 cursor-pointer text-slate-600 font-medium select-none">
+              <input type="checkbox" name="remember" checked class="w-4 h-4 rounded text-[#006948] focus:ring-[#006948] border-slate-300" />
               <span>Ingat sesi pengurus di perangkat ini</span>
             </label>
           </div>
 
-          <button type="submit" class="w-full py-3 px-4 bg-[#006948] hover:bg-[#005439] text-white font-extrabold text-sm rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+          <button type="submit" class="w-full py-3 px-4 bg-[#006948] hover:bg-[#005439] text-white font-extrabold text-sm rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
             <span>Masuk ke Konsol SKP POGI</span>
             <span class="material-symbols-outlined text-base">arrow_forward</span>
           </button>
@@ -208,96 +192,13 @@
   <script src="/js/pogi_state.js"></script>
   <script src="/js/navigation.js"></script>
   <script>
-    let currentSelectedRoleKey = 'SUPER_ADMIN';
-
-    function switchLoginRole(role) {
-      const tabAdmin = document.getElementById('tab-admin');
-      const tabBranch = document.getElementById('tab-branch');
-      const inputEmail = document.getElementById('inputEmail');
-
-      if (role === 'admin') {
-        tabAdmin.className = 'py-2.5 px-2 rounded-lg bg-white text-slate-900 shadow-xs transition';
-        tabBranch.className = 'py-2.5 px-2 rounded-lg text-slate-500 hover:text-slate-900 transition';
-        inputEmail.value = 'sekretariat.pusat@pogi.or.id';
-        currentSelectedRoleKey = 'ADMIN_POGI';
-      } else {
-        tabBranch.className = 'py-2.5 px-2 rounded-lg bg-white text-slate-900 shadow-xs transition';
-        tabAdmin.className = 'py-2.5 px-2 rounded-lg text-slate-500 hover:text-slate-900 transition';
-        inputEmail.value = 'sekretariat.jabar@pogi.or.id';
-        currentSelectedRoleKey = 'ADMIN_CABANG';
-      }
-    }
-
-    function fillQuickLogin(type) {
-      const email = document.getElementById('inputEmail');
-      const pass = document.getElementById('inputPassword');
-      if (type === 'super_admin') {
-        switchLoginRole('admin');
-        email.value = 'super@example.com';
-        pass.value = 'Super2026!Master';
-        currentSelectedRoleKey = 'SUPER_ADMIN';
-      } else if (type === 'admin_pusat') {
-        switchLoginRole('admin');
-        email.value = 'admin.pusat@pogi.or.id';
-        pass.value = 'AdminPusat2026!';
-        currentSelectedRoleKey = 'ADMIN_PUSAT';
-      } else if (type === 'admin_pogi' || type === 'verifikator') {
-        switchLoginRole('admin');
-        email.value = 'sekretariat.pusat@pogi.or.id';
-        pass.value = 'POGI2026!Nasional';
-        currentSelectedRoleKey = 'ADMIN_POGI';
-      } else if (type === 'admin_cabang' || type === 'cabang_jabar') {
-        switchLoginRole('branch');
-        email.value = 'sekretariat.jabar@pogi.or.id';
-        pass.value = 'POGIJabar2026!';
-        currentSelectedRoleKey = 'ADMIN_CABANG';
-      } else if (type === 'dokter') {
-        switchLoginRole('branch');
-        email.value = 'cut.simatupang@pogi.or.id';
-        pass.value = 'DokterCut2026!';
-        currentSelectedRoleKey = 'DOKTER';
-      }
-      showToast('Kredensial peran ' + type.replace('_', ' ').toUpperCase() + ' terisi.', 'info');
-    }
-
     function togglePassVisibility() {
       const p = document.getElementById('inputPassword');
-      p.type = p.type === 'password' ? 'text' : 'password';
-    }
-
-    function handleLogin() {
-      const email = (document.getElementById('inputEmail')?.value || '').toLowerCase().trim();
-      let targetRole = currentSelectedRoleKey || 'SUPER_ADMIN';
-
-      if (email.includes('super')) {
-        targetRole = 'SUPER_ADMIN';
-      } else if (email.includes('admin.pusat')) {
-        targetRole = 'ADMIN_PUSAT';
-      } else if (email.includes('jabar')) {
-        targetRole = 'ADMIN_CABANG';
-      } else if (email.includes('cut') || email.includes('dokter')) {
-        targetRole = 'DOKTER';
-      } else if (email.includes('sekretariat') || email.includes('pusat')) {
-        targetRole = 'ADMIN_POGI';
+      if (p) {
+        p.type = p.type === 'password' ? 'text' : 'password';
       }
-
-      if (typeof PogiStore !== 'undefined') {
-        const roles = PogiStore.getAllRoles();
-        const userObj = roles.find(r => r.role === targetRole) || roles[0];
-        PogiStore.setCurrentUser(userObj);
-        showToast('Berhasil masuk sebagai ' + userObj.roleLabel + '...', 'success');
-      } else {
-        showToast('Berhasil masuk ke Konsol POGI SKP Tracker...', 'success');
-      }
-
-      setTimeout(() => {
-        if (targetRole === 'DOKTER') {
-          window.location.href = 'doctor-detail.html?id=doc-001';
-        } else {
-          window.location.href='/dashboard';
-        }
-      }, 500);
     }
+  </script>
   </script>
 </body>
 </html>
