@@ -1,55 +1,8 @@
-<!DOCTYPE html>
-<html lang="id" class="h-full bg-[#f4f7f6]">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Leaflet.js CDN for Interactive Vector Map -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Core Styles -->
-  <link rel="stylesheet" href="/css/style.css">
-  <style>
-    #interactiveIndonesiaMap {
-      background-color: transparent !important;
-    }
-    .leaflet-container {
-      background: transparent !important;
-      font-family: inherit;
-    }
-    .leaflet-tooltip {
-      background: #0f172a !important;
-      color: #ffffff !important;
-      border: 1px solid rgba(255,255,255,0.2) !important;
-      border-radius: 10px !important;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3) !important;
-      padding: 6px 12px !important;
-      font-size: 11px !important;
-    }
-    .leaflet-tooltip-top:before {
-      border-top-color: #0f172a !important;
-    }
-  </style>
-</head>
-<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
-  <!-- Mobile Backdrop Overlay -->
-  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
+@extends('layouts.app')
 
-  <div class="flex h-screen overflow-hidden">
-    <!-- APP SIDEBAR -->
-    @include('layouts.sidebar')
+@section('title', 'POGI SKP Tracker - Dashboard Pemantauan SKP Nasional')
 
-
-    <!-- MAIN CONTENT AREA -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-      <!-- Top Sticky Header -->
-      @include('layouts.header')
-
-      <!-- Main Body Scrollable View -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in">
-
+@section('content')
         <!-- Welcome Banner -->
         <div class="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#012f22] via-[#005238] to-[#012319] text-white shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div class="space-y-1">
@@ -359,10 +312,6 @@
           </div>
         </div>
 
-      </main>
-    </div>
-  </div>
-
   <!-- Modal Follow-Up Massal -->
   <div id="fuModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
@@ -421,11 +370,11 @@
       </div>
     </div>
   </div>
+@endsection
 
-  <script src="/assets/data/indonesia-38-provinces.js"></script>
-  <script src="/js/pogi_state.js"></script>
-  <script src="/js/navigation.js"></script>
-  <script src="/js/pdf_exporter.js"></script>
+@section('scripts')
+  <script src="{{ asset('assets/data/indonesia-38-provinces.js') }}"></script>
+  <script src="{{ asset('js/pdf_exporter.js') }}"></script>
   <script>
     const POGI_SERVER_DATA = @json($summary->toArray());
     let leafletMap = null;
@@ -711,5 +660,4 @@
       }
     }
   </script>
-</body>
-</html>
+@endsection
