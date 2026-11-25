@@ -30,6 +30,19 @@ class ManageController extends Controller
         ];
 
         // 1. Data Pengguna Sistem
+        $picCounts = DB::table('doctors')
+            ->whereNull('deleted_at')
+            ->whereNotNull('assigned_pic_id')
+            ->select('assigned_pic_id', DB::raw('COUNT(*) as total'))
+            ->groupBy('assigned_pic_id')
+            ->pluck('total', 'assigned_pic_id');
+
+        $auditCounts = DB::table('audit_logs')
+            ->whereNotNull('user_id')
+            ->select('user_id', DB::raw('COUNT(*) as total'))
+            ->groupBy('user_id')
+            ->pluck('total', 'user_id');
+
         $users = DB::table('users')
             ->leftJoin('pogi_branches', 'users.branch_id', '=', 'pogi_branches.id')
             ->select(
@@ -38,15 +51,24 @@ class ManageController extends Controller
                 'users.email',
                 'users.role',
                 'users.phone_number',
+                'users.is_active',
+                'users.email_verified_at',
+                'users.last_login_at',
                 'users.created_at',
                 'pogi_branches.branch_name'
             )
             ->orderBy('users.full_name')
             ->get()
-            ->map(function ($u) use ($roleMap) {
+            ->map(function ($u) use ($roleMap, $picCounts, $auditCounts) {
+                $u->raw_role = $u->role;
                 $u->display_role = $roleMap[$u->role] ?? $u->role;
                 $u->role = $roleMap[$u->role] ?? $u->role;
-                $u->created = $u->created_at ? Carbon::parse($u->created_at)->format('d M Y') : '10 Jan 2026';
+                $u->is_active = (bool) ($u->is_active ?? true);
+                $u->email_verified = !empty($u->email_verified_at);
+                $u->last_login = $u->last_login_at ? Carbon::parse($u->last_login_at)->format('d M Y, H.i') . ' WIB' : 'Belum tercatat';
+                $u->created = $u->created_at ? Carbon::parse($u->created_at)->format('d M Y') : '-';
+                $u->assigned_doctors_count = (int) ($picCounts[$u->id] ?? 0);
+                $u->audit_actions_count = (int) ($auditCounts[$u->id] ?? 0);
                 return $u;
             });
 
