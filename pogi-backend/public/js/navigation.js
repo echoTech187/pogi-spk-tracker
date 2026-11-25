@@ -758,16 +758,6 @@ function applyRbacEnforcement() {
       showToast('Tab Kelola Pengguna hanya dapat diakses oleh Super Admin.', 'warning');
     }
   }
-
-  // 6. Top RBAC Notice Banner
-  function safeInsertBanner(bannerEl) {
-    const mainEl = document.querySelector('main');
-    if (mainEl && mainEl.parentNode) {
-      mainEl.parentNode.insertBefore(bannerEl, mainEl);
-    } else {
-      document.body.prepend(bannerEl);
-    }
-  }
 }
 
 function initRbacRoleSwitcher() {
