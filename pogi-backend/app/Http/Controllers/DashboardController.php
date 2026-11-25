@@ -22,16 +22,20 @@ class DashboardController extends Controller
         $user = $request->user();
         $branchId = null;
 
-        // Multi-tenant automatic branch scoping for Admin Cabang
-        if ($user && $user->role === SystemRole::ADMIN_CABANG) {
+        // Multi-tenant automatic branch scoping for Admin Cabang & PIC scoping for Admin POGI
+        $roleStr = $user?->role instanceof SystemRole ? $user->role->value : strtoupper((string) ($user?->role ?? ''));
+        $picUserId = null;
+        if ($roleStr === 'ADMIN_CABANG') {
             $branchId = $user->branch_id;
+        } elseif ($roleStr === 'ADMIN_POGI') {
+            $picUserId = $user->id;
         } elseif ($request->filled('branch')) {
             $branchId = (string) $request->query('branch');
         } elseif ($request->filled('scope') && $request->query('scope') !== 'all') {
             $branchId = (string) $request->query('scope');
         }
 
-        $summary = $this->getDashboardSummaryUseCase->execute($branchId);
+        $summary = $this->getDashboardSummaryUseCase->execute($branchId, $picUserId);
 
         return view('dashboard', [
             'summary' => $summary,
@@ -61,6 +65,12 @@ class DashboardController extends Controller
             ->leftJoin('provinces', 'doctors.province_id', '=', 'provinces.id')
             ->whereNull('doctors.deleted_at')
             ->where('doctors.status', '!=', 'COMPLETE');
+
+        // Admin POGI hanya mengirim blast ke dokter binaan PIC-nya sendiri
+        $roleStr = $user?->role instanceof SystemRole ? $user->role->value : strtoupper((string) ($user?->role ?? ''));
+        if ($roleStr === 'ADMIN_POGI') {
+            $query->where('doctors.assigned_pic_id', $user->id);
+        }
 
         $targetLabel = 'Semua Dokter Incomplete';
 

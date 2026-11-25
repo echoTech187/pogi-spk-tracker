@@ -12,5 +12,5 @@ interface DashboardRepositoryInterface
      * @param string|null $branchId UUID cabang untuk isolasi multi-tenant Admin Cabang
      * @return DashboardSummaryDto
      */
-    public function getDashboardSummary(?string $branchId = null): DashboardSummaryDto;
+    public function getDashboardSummary(?string $branchId = null, ?string $picUserId = null): DashboardSummaryDto;
 }

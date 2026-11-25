@@ -16,7 +16,7 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
     /**
      * Ambil ringkasan data metrik dashboard langsung dari basis data Eloquent
      */
-    public function getDashboardSummary(?string $branchId = null): DashboardSummaryDto
+    public function getDashboardSummary(?string $branchId = null, ?string $picUserId = null): DashboardSummaryDto
     {
         // Resolve branch if specified (UUID, code, or alias like 'dki' / 'jabar')
         $targetBranch = null;
@@ -29,7 +29,8 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
         $resolvedBranchId = $targetBranch ? $targetBranch->id : $branchId;
 
         $doctorQuery = Doctor::query()
-            ->when($resolvedBranchId, fn($q) => $q->where('branch_id', $resolvedBranchId));
+            ->when($resolvedBranchId, fn($q) => $q->where('branch_id', $resolvedBranchId))
+            ->when($picUserId, fn($q) => $q->where('assigned_pic_id', $picUserId));
 
         $totalDoctors = (clone $doctorQuery)->count();
         $completeCount = (clone $doctorQuery)->where('status', 'COMPLETE')->count();
@@ -40,6 +41,7 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
         $periodAggregates = DB::table('doctor_skp_periods')
             ->join('doctors', 'doctor_skp_periods.doctor_id', '=', 'doctors.id')
             ->when($resolvedBranchId, fn($q) => $q->where('doctors.branch_id', $resolvedBranchId))
+            ->when($picUserId, fn($q) => $q->where('doctors.assigned_pic_id', $picUserId))
             ->where('doctor_skp_periods.is_active', true)
             ->selectRaw('
                 AVG(CASE WHEN target_total_credits > 0 THEN (achieved_total_credits / target_total_credits) * 100 ELSE 0 END) as avg_progress,
@@ -65,7 +67,16 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
 
         // Province Stats for Interactive Map & Ranking
         $provinceRows = DB::table('provinces')
-            ->leftJoin('doctors', 'provinces.id', '=', 'doctors.province_id')
+            ->leftJoin('doctors', function ($join) use ($resolvedBranchId, $picUserId) {
+                $join->on('provinces.id', '=', 'doctors.province_id')
+                     ->whereNull('doctors.deleted_at');
+                if ($resolvedBranchId) {
+                    $join->where('doctors.branch_id', '=', $resolvedBranchId);
+                }
+                if ($picUserId) {
+                    $join->where('doctors.assigned_pic_id', '=', $picUserId);
+                }
+            })
             ->select('provinces.id', 'provinces.name')
             ->selectRaw('COUNT(doctors.id) as doctors_count')
             ->selectRaw("SUM(CASE WHEN doctors.status = 'COMPLETE' THEN 1 ELSE 0 END) as complete_count")
@@ -133,8 +144,8 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
         }
 
         $activeScope = $targetBranch ? $targetBranch->id : ($branchId ?: 'all');
-        $activeScopeLabel = $targetBranch ? $targetBranch->branch_name : 'Semua Wilayah Nasional (38 Provinsi)';
-        $recentActivities = $this->getRecentActivitiesFromDatabase($resolvedBranchId);
+        $activeScopeLabel = $targetBranch ? $targetBranch->branch_name : ($picUserId ? 'Dokter Binaan PIC Saya' : 'Semua Wilayah Nasional (38 Provinsi)');
+        $recentActivities = $this->getRecentActivitiesFromDatabase($resolvedBranchId, $picUserId);
 
         return new DashboardSummaryDto(
             totalDoctors: $totalDoctors,
@@ -165,13 +176,14 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
     /**
      * Ambil aktivitas terbaru dari logbook SKP di basis data
      */
-    private function getRecentActivitiesFromDatabase(?string $branchId): array
+    private function getRecentActivitiesFromDatabase(?string $branchId, ?string $picUserId = null): array
     {
         try {
             $recentRows = DB::table('skp_entries')
                 ->join('doctors', 'skp_entries.doctor_id', '=', 'doctors.id')
                 ->leftJoin('users', 'skp_entries.verified_by_user_id', '=', 'users.id')
                 ->when($branchId, fn($q) => $q->where('doctors.branch_id', $branchId))
+                ->when($picUserId, fn($q) => $q->where('doctors.assigned_pic_id', $picUserId))
                 ->orderByDesc('skp_entries.created_at')
                 ->limit(5)
                 ->select([

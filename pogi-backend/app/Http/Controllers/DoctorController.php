@@ -23,9 +23,13 @@ class DoctorController extends Controller
         $user = $request->user();
         $branchId = null;
 
-        // Isolasi Cabang Otomatis untuk ADMIN_CABANG
-        if ($user && $user->role === SystemRole::ADMIN_CABANG) {
+        // Isolasi Cabang Otomatis untuk ADMIN_CABANG & Isolasi PIC Binaan untuk ADMIN_POGI
+        $roleStr = $user?->role instanceof SystemRole ? $user->role->value : strtoupper((string) ($user?->role ?? ''));
+        $picUserId = null;
+        if ($roleStr === 'ADMIN_CABANG') {
             $branchId = $user->branch_id;
+        } elseif ($roleStr === 'ADMIN_POGI') {
+            $picUserId = $user->id;
         } elseif ($request->filled('branch')) {
             $branchId = (string) $request->query('branch');
         } elseif ($request->filled('scope') && $request->query('scope') !== 'all') {
@@ -92,7 +96,8 @@ class DoctorController extends Controller
                     ->selectRaw('COALESCE(SUM(credit_amount), 0)');
             }, 'pending_credits')
             ->whereNull('doctors.deleted_at')
-            ->when($branchId, fn($q) => $q->where('doctors.branch_id', $branchId));
+            ->when($branchId, fn($q) => $q->where('doctors.branch_id', $branchId))
+            ->when($picUserId, fn($q) => $q->where('doctors.assigned_pic_id', $picUserId));
 
         // Filter status jika ada
         if ($request->filled('status') && $request->query('status') !== 'ALL') {
@@ -269,17 +274,25 @@ class DoctorController extends Controller
                 )
                 ->whereNull('doctors.deleted_at');
 
+            $showRoleStr = $user?->role instanceof SystemRole ? $user->role->value : strtoupper((string) ($user?->role ?? ''));
             if ($user && $user->isAdminCabang() && $user->branch_id) {
                 $fallbackQuery->where('doctors.branch_id', $user->branch_id);
+            } elseif ($showRoleStr === 'ADMIN_POGI') {
+                $fallbackQuery->where('doctors.assigned_pic_id', $user->id);
             }
 
             $doctorRow = $fallbackQuery->first();
         }
 
-        // Isolasi multi-tenant ketat untuk ADMIN_CABANG
+        // Isolasi multi-tenant ketat untuk ADMIN_CABANG & PIC binaan untuk ADMIN_POGI
+        $showRoleStr = $user?->role instanceof SystemRole ? $user->role->value : strtoupper((string) ($user?->role ?? ''));
         if ($user && $user->isAdminCabang()) {
             if ($doctorRow && $doctorRow->branch_id !== $user->branch_id) {
                 abort(403, 'Akses ditolak: Anda hanya berwenang memantau dokter di wilayah cabang Anda sendiri.');
+            }
+        } elseif ($showRoleStr === 'ADMIN_POGI') {
+            if ($doctorRow && $doctorRow->assigned_pic_id !== $user->id) {
+                abort(403, 'Akses ditolak: Anda hanya berwenang memantau dokter binaan PIC Anda sendiri.');
             }
         }
 

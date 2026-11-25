@@ -11,8 +11,8 @@ class GetDashboardSummaryUseCase
         private readonly DashboardRepositoryInterface $dashboardRepository
     ) {}
 
-    public function execute(?string $branchId = null): DashboardSummaryDto
+    public function execute(?string $branchId = null, ?string $picUserId = null): DashboardSummaryDto
     {
-        return $this->dashboardRepository->getDashboardSummary($branchId);
+        return $this->dashboardRepository->getDashboardSummary($branchId, $picUserId);
     }
 }

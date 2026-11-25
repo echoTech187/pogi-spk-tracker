@@ -47,4 +47,30 @@ class RulesComplianceTest extends TestCase
             ->expectsOutputToContain('pogi:wa-process-queue')
             ->assertExitCode(0);
     }
+
+    public function test_admin_pogi_only_sees_assigned_pic_doctors(): void
+    {
+        $anna = User::where('role', 'ADMIN_POGI')->first();
+        $expectedCount = DB::table('doctors')
+            ->whereNull('deleted_at')
+            ->where('assigned_pic_id', $anna->id)
+            ->count();
+
+        $dashboard = $this->actingAs($anna)->get('/dashboard');
+        $dashboard->assertStatus(200);
+        $summary = $dashboard->viewData('summary');
+        $this->assertEquals($expectedCount, $summary->totalDoctors);
+
+        $doctorsPage = $this->actingAs($anna)->get('/doctors');
+        $doctorsPage->assertStatus(200);
+        $this->assertCount($expectedCount, $doctorsPage->viewData('doctors'));
+
+        $otherDoctor = DB::table('doctors')
+            ->whereNull('deleted_at')
+            ->where('assigned_pic_id', '!=', $anna->id)
+            ->first();
+        if ($otherDoctor) {
+            $this->actingAs($anna)->get("/doctor-detail?id={$otherDoctor->id}")->assertStatus(403);
+        }
+    }
 }

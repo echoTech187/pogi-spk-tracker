@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Entities\SystemRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -13,8 +14,22 @@ class ProvinceController extends Controller
      */
     public function index(Request $request): View
     {
+        $user = $request->user();
+        $roleStr = $user?->role instanceof SystemRole ? $user->role->value : strtoupper((string) ($user?->role ?? ''));
+        $picUserId = $roleStr === 'ADMIN_POGI' ? $user->id : null;
+        $branchId = $roleStr === 'ADMIN_CABANG' ? $user->branch_id : null;
+
         $provinceRows = DB::table('provinces')
-            ->leftJoin('doctors', 'provinces.id', '=', 'doctors.province_id')
+            ->leftJoin('doctors', function ($join) use ($picUserId, $branchId) {
+                $join->on('provinces.id', '=', 'doctors.province_id')
+                     ->whereNull('doctors.deleted_at');
+                if ($picUserId) {
+                    $join->where('doctors.assigned_pic_id', '=', $picUserId);
+                }
+                if ($branchId) {
+                    $join->where('doctors.branch_id', '=', $branchId);
+                }
+            })
             ->select('provinces.id', 'provinces.name', 'provinces.region_island')
             ->selectRaw('COUNT(doctors.id) as doctors_count')
             ->selectRaw("SUM(CASE WHEN doctors.status = 'COMPLETE' THEN 1 ELSE 0 END) as complete_count")
