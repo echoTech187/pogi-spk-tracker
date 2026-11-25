@@ -101,7 +101,7 @@
         <div class="p-3 rounded-xl bg-white/5 border border-white/10">
           <div class="text-[10px] text-emerald-200/60 font-bold uppercase tracking-wider">Next Trigger: Pengingat Rutin H-7</div>
           <div class="text-sm font-black text-emerald-300 mt-0.5">24 Nov 2026 &bull; 00:00 WIB</div>
-          <div class="text-[10px] text-emerald-100/60 mt-0.5">Sasaran: 158 Dokter Incomplete (Nasional)</div>
+          <div class="text-[10px] text-emerald-100/60 mt-0.5">Sasaran: {{ $metrics['incomplete_doctors'] ?? 0 }} Dokter Incomplete (Nasional)</div>
         </div>
         <div class="p-3 rounded-xl bg-white/5 border border-white/10">
           <div class="text-[10px] text-amber-200/60 font-bold uppercase tracking-wider">Next Trigger: Deadline Kritis H-2</div>

@@ -201,11 +201,17 @@ class ActivityController extends Controller
             ->whereIn('action', ['REASSIGN_DOCTOR_PIC', 'KEMENKES_PORTAL_ACCESS', 'LOGIN', 'LOGOUT', 'UPDATE_STATUS'])
             ->count();
 
+        $incompleteDoctors = DB::table('doctors')
+            ->whereNull('deleted_at')
+            ->where('status', '!=', 'COMPLETE')
+            ->count();
+
         $metrics = [
             'total_logs' => $totalLogs,
             'today_actions' => $todayActions,
             'unique_users' => $uniqueUsers,
             'security_actions' => $securityActions,
+            'incomplete_doctors' => $incompleteDoctors,
         ];
 
         return view('activity', [

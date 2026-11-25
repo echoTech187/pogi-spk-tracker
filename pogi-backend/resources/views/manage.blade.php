@@ -855,11 +855,11 @@
 
             const initials = d.initials || d.avatar || 'DR';
             const hospital = d.hospital || d.institution || 'RS Jejaring POGI';
-            const total5Year = d.total5YearAchieved || d.totalCredits || (d.pelayananCredits + d.pengabdianCredits + d.pembelajaranCredits) || 88;
-            const pel = d.pelayananCredits !== undefined ? d.pelayananCredits : (d.pelayanan?.achieved || 45);
-            const peng = d.pengabdianCredits !== undefined ? d.pengabdianCredits : (d.pengabdian?.achieved || 15);
-            const pemb = d.pembelajaranCredits !== undefined ? d.pembelajaranCredits : (d.pembelajaran?.achieved || 25);
-            const lastAct = d.lastActivity || ('Sync SATUSEHAT (' + (typeof PogiStore !== 'undefined' ? PogiStore.formatCurrentDate() : 'Hari ini') + ')');
+            const pel = d.pelayananCredits !== undefined ? d.pelayananCredits : (d.pelayanan?.achieved || 0);
+            const peng = d.pengabdianCredits !== undefined ? d.pengabdianCredits : (d.pengabdian?.achieved || 0);
+            const pemb = d.pembelajaranCredits !== undefined ? d.pembelajaranCredits : (d.pembelajaran?.achieved || 0);
+            const total5Year = d.total5YearAchieved ?? d.totalCredits ?? (pel + peng + pemb);
+            const lastAct = d.lastActivity || 'Sync SATUSEHAT';
 
             return `
               <tr class="hover:bg-slate-50/80 transition">
@@ -1444,7 +1444,7 @@
               <td class="py-3 px-4">
                 ${getRoleBadge(usr.role)}
               </td>
-              <td class="py-3 px-4 text-[11px] text-slate-500">${usr.created || (typeof PogiStore !== 'undefined' ? PogiStore.formatCurrentDate() : 'Baru saja')}</td>
+              <td class="py-3 px-4 text-[11px] text-slate-500">${usr.created || '-'}</td>
               <td class="py-3 px-4 text-center">
                 <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold">Aktif</span>
               </td>
@@ -1600,7 +1600,7 @@
             </div>
             <div class="p-2.5 bg-white border border-slate-200 rounded-xl">
               <div class="text-[10px] text-slate-400 font-bold uppercase">PIC Admin POGI</div>
-              <div class="font-bold text-slate-800 mt-0.5">${item.assignedTo || 'Rina Kartika'}</div>
+              <div class="font-bold text-slate-800 mt-0.5">${item.assignedTo || '-'}</div>
             </div>
           </div>
           <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
@@ -1751,7 +1751,7 @@
             <div>
               <label class="font-bold text-slate-700 block mb-1">Provinsi / Cabang</label>
               <select id="editDocProv" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
-                ${((window.LIVE_MANAGE_BRANCHES && window.LIVE_MANAGE_BRANCHES.length > 0) ? window.LIVE_MANAGE_BRANCHES : (typeof PogiStore !== 'undefined' ? PogiStore.getProvinces() : [])).map(p => { const pName = p.name || p; return `<option value="${pName}" ${item.province === pName ? 'selected' : ''}>${pName}</option>`; }).join('')}
+                ${(window.LIVE_MANAGE_BRANCHES || []).map(p => { const pName = p.name || p; return `<option value="${pName}" ${item.province === pName ? 'selected' : ''}>${pName}</option>`; }).join('')}
               </select>
             </div>
             <div><label class="font-bold text-slate-700 block mb-1">Target SKP</label><input type="text" id="editDocSkp" value="${item.skpDisplay || '0 / 32'}" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold" /></div>
@@ -1898,13 +1898,6 @@
         }
       }
 
-      if (typeof PogiStore !== 'undefined' && PogiStore.addActivity) PogiStore.addActivity({
-        actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
-        action: 'Update Data ' + type.toUpperCase(),
-        details: 'Memperbarui data master ' + type + ' ID: ' + id,
-        category: 'Verification'
-      });
-
       closeManageEditModal();
     }
 
@@ -1929,13 +1922,6 @@
         window.LIVE_MANAGE_USERS = (window.LIVE_MANAGE_USERS || []).filter(u => String(u.id) !== String(id));
         renderManageUserTable(null, false);
       }
-
-      if (typeof PogiStore !== 'undefined' && PogiStore.addActivity) PogiStore.addActivity({
-        actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
-        action: 'Hapus Data ' + type.toUpperCase(),
-        details: 'Menghapus data ' + type + ' dari database master ID: ' + id,
-        category: 'Verification'
-      });
 
       showToast('Data ' + type + ' berhasil dihapus dari master!', 'warning');
     }

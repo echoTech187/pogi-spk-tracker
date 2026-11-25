@@ -349,13 +349,11 @@
             <div>
               <label class="block font-bold text-slate-700 mb-1">PIC Admin / Dokter Binaan</label>
               <select id="newDocAssignedTo" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
-                <option value="Anna">Anna (Admin POGI)</option><option value="Vivi">Vivi (Admin POGI)</option><option value="Lily">Lily (Admin POGI)</option>
-                <option value="Dewi Lestari">Dewi Lestari (Admin POGI DKI &amp; Banten)</option>
-                <option value="Wahyu Setiawan">Wahyu Setiawan (Admin POGI Jawa Barat)</option>
-                <option value="Melati Sihombing">Melati Sihombing (Admin POGI Jawa Tengah &amp; DIY)</option>
-                <option value="Rina Kartika">Rina Kartika (Admin POGI Jawa Timur &amp; Bali)</option>
-                <option value="Dimas Saputra">Dimas Saputra (Admin POGI Luar Jawa / Sumatera &amp; Kalimantan)</option>
-                <option value="Fikri Ramadhan">Fikri Ramadhan (Admin POGI Indonesia Timur)</option>
+                @forelse($adminPogiList ?? [] as $adm)
+                  <option value="{{ $adm->full_name }}">{{ $adm->full_name }} (Admin POGI)</option>
+                @empty
+                  <option value="">Belum ada Admin POGI</option>
+                @endforelse
               </select>
             </div>
 
@@ -1120,7 +1118,7 @@
       const str = (document.getElementById('newDocStr')?.value || '').trim();
       let phone = (document.getElementById('newDocPhone')?.value || '').trim();
       const prov = document.getElementById('newDocProv')?.value || 'DKI Jakarta';
-      const inst = document.getElementById('newDocInst')?.value || 'RSUP Dr. Cipto Mangunkusumo';
+      const inst = document.getElementById('newDocInst')?.value || '-';
       const periodStart = (document.getElementById('newDocPeriodStart')?.value || '1 Jan 2026').trim();
       const periodEnd = (document.getElementById('newDocPeriodEnd')?.value || '31 Des 2030').trim();
       const lmsUser = (document.getElementById('newDocLmsUsername')?.value || '').trim();

@@ -132,7 +132,7 @@
             <h3 class="font-extrabold text-sm sm:text-base text-slate-900">Kapasitas &amp; Beban Kerja</h3>
             <span class="material-symbols-outlined text-amber-600 text-lg">pie_chart</span>
           </div>
-          <p class="text-xs text-slate-500">Distribusi 200 dokter binaan ke dalam tim admin operasional.</p>
+          <p class="text-xs text-slate-500">Distribusi {{ $summary['totalAssignedDocs'] ?? 0 }} dokter binaan ke dalam tim admin operasional.</p>
 
           <div class="mt-4 p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
             <div class="flex items-center justify-between text-xs">
