@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ManageController extends Controller
@@ -153,6 +157,12 @@ class ManageController extends Controller
             });
 
         // 7. Acara Ilmiah SKP
+        $eventCompletions = DB::table('skp_entries')
+            ->select('event_id', DB::raw('COUNT(DISTINCT doctor_id) as done_count'))
+            ->whereNotNull('event_id')
+            ->groupBy('event_id')
+            ->pluck('done_count', 'event_id');
+
         $events = DB::table('skp_events')
             ->leftJoin('event_categories', 'skp_events.category_id', '=', 'event_categories.id')
             ->select(
@@ -168,11 +178,12 @@ class ManageController extends Controller
             )
             ->orderBy('skp_events.event_date', 'desc')
             ->get()
-            ->map(function ($e) {
+            ->map(function ($e) use ($eventCompletions) {
+                $doneCount = (int) ($eventCompletions[$e->id] ?? 0);
                 $e->type = $e->type ?? 'Pembelajaran';
                 $e->creditsDisplay = (string) $e->credits;
-                $e->doctors = '45 / 50 selesai';
-                $e->doctorsCompleted = 45;
+                $e->doctors = "{$doneCount} selesai";
+                $e->doctorsCompleted = $doneCount;
                 $e->status = 'Dibuka';
                 return $e;
             });
@@ -186,5 +197,222 @@ class ManageController extends Controller
             'categories' => $categories,
             'events' => $events,
         ]);
+    }
+
+    /**
+     * Simpan data master baru (Dokter, Institusi, Event, Kategori, atau User) ke basis data.
+     */
+    public function store(Request $request): JsonResponse
+    {
+        $entityType = $request->input('entity_type');
+        $now = Carbon::now();
+        $actorId = Auth::id();
+
+        if ($entityType === 'doctor') {
+            $v = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'nik' => ['nullable', 'string', 'max:64'],
+                'province' => ['required', 'string', 'max:120'],
+                'institution' => ['nullable', 'string', 'max:255'],
+                'phone' => ['nullable', 'string', 'max:40'],
+            ]);
+
+            $provinceRow = DB::table('provinces')->where('name', 'like', '%' . $v['province'] . '%')->first()
+                ?? DB::table('provinces')->first();
+            $branchRow = $provinceRow
+                ? (DB::table('pogi_branches')->where('province_id', $provinceRow->id)->first() ?? DB::table('pogi_branches')->first())
+                : DB::table('pogi_branches')->first();
+            $instRow = !empty($v['institution'])
+                ? DB::table('institutions')->where('name', 'like', '%' . $v['institution'] . '%')->first()
+                : null;
+
+            $doctorId = (string) Str::uuid();
+            $npa = '#POGI-' . $now->year . '-' . rand(2000, 9999);
+            $provName = $provinceRow->name ?? $v['province'];
+
+            DB::table('doctors')->insert([
+                'id' => $doctorId,
+                'npa_pogi' => $npa,
+                'nik_encrypted' => $v['nik'] ?: ('ENC_' . rand(3200000000000000, 3299999999999999)),
+                'str_number' => '31.1.2.' . rand(100, 999) . '.1.26',
+                'sip_number' => '446/' . rand(100, 999) . '/SIP/' . $now->year,
+                'full_name' => $v['name'],
+                'specialization_title' => 'Sp.OG',
+                'email' => Str::slug($v['name'], '.') . '@pogi-member.id',
+                'whatsapp_number' => $v['phone'] ?: '+6281200000000',
+                'province_id' => $provinceRow?->id,
+                'branch_id' => $branchRow?->id,
+                'primary_institution_id' => $instRow?->id,
+                'status' => 'INCOMPLETE',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+
+            DB::table('doctor_skp_periods')->insert([
+                'id' => (string) Str::uuid(),
+                'doctor_id' => $doctorId,
+                'period_start_date' => $now->copy()->startOfYear()->toDateString(),
+                'period_end_date' => $now->copy()->addYears(5)->startOfYear()->toDateString(),
+                'target_total_credits' => 160.00,
+                'achieved_total_credits' => 0,
+                'achieved_pelayanan_credits' => 0,
+                'achieved_pengabdian_credits' => 0,
+                'achieved_pembelajaran_credits' => 0,
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+
+            $item = [
+                'id' => $doctorId,
+                'name' => $v['name'],
+                'nik' => $v['nik'] ?: '-',
+                'pogiId' => $npa,
+                'province' => $provName,
+                'institution' => $instRow->name ?? ($v['institution'] ?: '-'),
+                'phone' => $v['phone'] ?: '-',
+                'qTarget' => 8.0,
+                'qAchieved' => 0,
+                'skpDisplay' => '0 / 160',
+                'total5YearAchieved' => 0,
+                'status' => 'Incomplete',
+            ];
+        } elseif ($entityType === 'institution') {
+            $v = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'province' => ['required', 'string', 'max:120'],
+                'address' => ['nullable', 'string', 'max:500'],
+            ]);
+            $provinceRow = DB::table('provinces')->where('name', 'like', '%' . $v['province'] . '%')->first()
+                ?? DB::table('provinces')->first();
+            $instId = (string) Str::uuid();
+            DB::table('institutions')->insert([
+                'id' => $instId,
+                'name' => $v['name'],
+                'province_id' => $provinceRow?->id,
+                'address' => $v['address'] ?: ($v['province'] . ' - RS Jejaring'),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+            $item = [
+                'id' => $instId,
+                'name' => $v['name'],
+                'doctorsCount' => 0,
+                'province' => $provinceRow->name ?? $v['province'],
+                'address' => $v['address'] ?: ($v['province'] . ' - RS Jejaring'),
+                'type' => 'RS Jejaring',
+                'status' => 'Aktif',
+            ];
+        } elseif ($entityType === 'event') {
+            $v = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'type' => ['required', 'string', 'max:50'],
+                'credits' => ['required', 'numeric', 'min:0.5'],
+                'category' => ['nullable', 'string', 'max:120'],
+                'date' => ['nullable', 'string', 'max:60'],
+            ]);
+            $domain = strtoupper($v['type']);
+            $catRow = !empty($v['category'])
+                ? DB::table('event_categories')->where('name', 'like', '%' . $v['category'] . '%')->first()
+                : DB::table('event_categories')->where('domain', $domain)->first();
+            if (!$catRow) {
+                $catRow = DB::table('event_categories')->first();
+            }
+            $eventId = (string) Str::uuid();
+            $eventDate = $now->toDateString();
+            if (!empty($v['date'])) {
+                try {
+                    $eventDate = Carbon::parse($v['date'])->toDateString();
+                } catch (\Throwable $e) {}
+            }
+            DB::table('skp_events')->insert([
+                'id' => $eventId,
+                'category_id' => $catRow?->id,
+                'title' => $v['name'],
+                'event_date' => $eventDate,
+                'credit_value' => (float) $v['credits'],
+                'organizer' => 'PP POGI',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+            $item = [
+                'id' => $eventId,
+                'name' => $v['name'],
+                'title' => $v['name'],
+                'category' => $catRow->name ?? ($v['category'] ?: 'Simposium Ilmiah'),
+                'date' => $eventDate,
+                'type' => ucfirst(strtolower($domain)),
+                'credits' => (float) $v['credits'],
+                'creditsDisplay' => (string) $v['credits'],
+                'doctors' => '0 selesai',
+                'doctorsCompleted' => 0,
+                'status' => 'Dibuka',
+            ];
+        } elseif ($entityType === 'category') {
+            $v = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'type' => ['required', 'string', 'max:50'],
+            ]);
+            $domain = strtoupper($v['type']);
+            $catId = (string) Str::uuid();
+            DB::table('event_categories')->insert([
+                'id' => $catId,
+                'name' => $v['name'],
+                'domain' => $domain,
+                'default_credit_value' => 2.0,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+            $item = [
+                'id' => $catId,
+                'name' => $v['name'],
+                'type' => ucfirst(strtolower($domain)),
+                'standardSkp' => '2 SKP',
+            ];
+        } elseif ($entityType === 'user') {
+            $v = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+                'role' => ['required', 'string', 'max:50'],
+            ]);
+            $roleEnumMap = [
+                'Super Admin' => 'SUPER_ADMIN',
+                'Admin Pusat' => 'ADMIN_PUSAT',
+                'Admin POGI' => 'ADMIN_POGI',
+                'Admin Cabang' => 'ADMIN_CABANG',
+                'User/Dokter' => 'DOKTER',
+            ];
+            $dbRole = $roleEnumMap[$v['role']] ?? strtoupper(str_replace(' ', '_', $v['role']));
+            $userId = (string) Str::uuid();
+            User::create([
+                'id' => $userId,
+                'full_name' => $v['name'],
+                'email' => strtolower(trim($v['email'])),
+                'role' => $dbRole,
+                'password' => Hash::make('password123'),
+                'is_active' => true,
+            ]);
+            $item = [
+                'id' => $userId,
+                'name' => $v['name'],
+                'email' => strtolower(trim($v['email'])),
+                'role' => $v['role'],
+                'created' => $now->format('d M Y'),
+            ];
+        } else {
+            return response()->json(['success' => false, 'message' => 'Tipe entitas tidak valid.'], 422);
+        }
+
+        DB::table('audit_logs')->insert([
+            'id' => (string) Str::uuid(),
+            'user_id' => $actorId,
+            'action' => 'CREATE_' . strtoupper($entityType),
+            'entity_name' => $entityType,
+            'entity_id' => $item['id'],
+            'new_values' => json_encode(['message' => "Menambahkan master {$entityType}: {$item['name']}"]),
+            'created_at' => $now,
+        ]);
+
+        return response()->json(['success' => true, 'item' => $item]);
     }
 }

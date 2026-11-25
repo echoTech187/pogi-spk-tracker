@@ -2038,124 +2038,75 @@
       if (modal) modal.classList.add('hidden');
     }
 
-    function submitManageAdd() {
+    async function submitManageAdd() {
+      const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+      let payload = { entity_type: currentTab };
+
       if (currentTab === 'doctor') {
-        const name = document.getElementById('addDocName').value;
-        const nik = document.getElementById('addDocNik').value;
-        const prov = document.getElementById('addDocProv').value;
-        const inst = document.getElementById('addDocInst').value;
-        const phone = document.getElementById('addDocPhone').value;
-        const skp = document.getElementById('addDocSkp').value;
-
-        const docs = getDefaultListForTab('doctor');
-        docs.unshift({
-          id: 'doc-' + Date.now(),
-          name,
-          nik,
-          pogiId: 'POGI-' + prov.substring(0, 3).toUpperCase() + '-2026',
-          strNumber: '31.1.2.999.1.26',
-          province: prov,
-          institution: inst || 'RSUP Dr. Cipto Mangunkusumo',
-          period: '1 Jan 2026 - 1 Jan 2031',
-          phone: phone || '+628123456789',
-          assignedTo: 'Rina Kartika',
-          qTarget: 32,
-          qAchieved: 0,
-          skpDisplay: skp || '0 / 32',
-          total5YearAchieved: 0,
-          uuid: (typeof PogiStore !== 'undefined' && PogiStore.generateUUIDv7) ? PogiStore.generateUUIDv7() : ('doc-' + Date.now()),
-          pelayanan: { achieved: 0, target: 56 },
-          pengabdian: { achieved: 0, target: 8 },
-          pembelajaran: { achieved: 0, target: 72 },
-          fleksibilitas: { achieved: 0, target: 24 },
-          pendingCredits: 0,
-          status: 'Incomplete',
-          lastActivity: 'Baru ditambahkan',
-          avatar: name.charAt(0) + (name.split(' ')[1] ? name.split(' ')[1].charAt(0) : '')
-        });
-        if (typeof PogiStore !== 'undefined' && PogiStore.saveDoctors) PogiStore.saveDoctors(docs);
-        renderManageDoctorTable(null, true);
-        showToast('Dokter baru berhasil ditambahkan ke master!', 'success');
+        payload.name = document.getElementById('addDocName').value;
+        payload.nik = document.getElementById('addDocNik').value;
+        payload.province = document.getElementById('addDocProv').value;
+        payload.institution = document.getElementById('addDocInst').value;
+        payload.phone = document.getElementById('addDocPhone').value;
       } else if (currentTab === 'institution') {
-        const name = document.getElementById('addInstName').value;
-        const prov = document.getElementById('addInstProv').value;
-        const addr = document.getElementById('addInstAddr').value;
-
-        const list = getDefaultListForTab('institution');
-        list.unshift({
-          id: 'inst-' + Date.now(),
-          name,
-          doctors: 1,
-          province: prov,
-          address: addr || (prov + ' - RS Jejaring')
-        });
-        if (typeof PogiStore !== 'undefined' && PogiStore.saveInstitutions) PogiStore.saveInstitutions(list);
-        renderManageInstTable(null, true);
-        showToast('Institusi baru berhasil ditambahkan!', 'success');
+        payload.name = document.getElementById('addInstName').value;
+        payload.province = document.getElementById('addInstProv').value;
+        payload.address = document.getElementById('addInstAddr').value;
       } else if (currentTab === 'event') {
-        const name = document.getElementById('addEvName').value;
-        const type = document.getElementById('addEvType').value;
-        const credits = document.getElementById('addEvCredits').value;
-        const cat = document.getElementById('addEvCat').value;
-        const date = document.getElementById('addEvDate').value;
-
-        const list = getDefaultListForTab('event');
-        list.unshift({
-          id: 'ev-' + Date.now(),
-          name,
-          title: name,
-          category: cat || 'Simposium Ilmiah',
-          date: date || 'Desember 2026',
-          type,
-          credits: parseFloat(credits) || 1,
-          creditsDisplay: credits,
-          doctors: '0 / 50 done',
-          doctorsCompleted: 0,
-          status: 'Dibuka'
-        });
-        if (typeof PogiStore !== 'undefined' && PogiStore.saveEvents) PogiStore.saveEvents(list);
-        renderManageEventTable(null, true);
-        showToast('SKP Event baru berhasil ditambahkan!', 'success');
+        payload.name = document.getElementById('addEvName').value;
+        payload.type = document.getElementById('addEvType').value;
+        payload.credits = document.getElementById('addEvCredits').value;
+        payload.category = document.getElementById('addEvCat').value;
+        payload.date = document.getElementById('addEvDate').value;
       } else if (currentTab === 'category') {
-        const name = document.getElementById('addCatName').value;
-        const type = document.getElementById('addCatType').value;
-
-        const list = getDefaultListForTab('category');
-        list.unshift({
-          id: 'cat-' + Date.now(),
-          name,
-          type,
-          eventsCount: 1
-        });
-        if (typeof PogiStore !== 'undefined' && PogiStore.saveCategories) PogiStore.saveCategories(list);
-        renderManageCatTable(null, true);
-        showToast('Kategori baru berhasil ditambahkan!', 'success');
+        payload.name = document.getElementById('addCatName').value;
+        payload.type = document.getElementById('addCatType').value;
       } else if (currentTab === 'user') {
-        const name = document.getElementById('addUsrName').value;
-        const email = document.getElementById('addUsrEmail').value;
-        const role = document.getElementById('addUsrRole').value;
-
-        const list = getDefaultListForTab('user');
-        list.unshift({
-          id: 'usr-' + Date.now(),
-          name,
-          email,
-          role,
-          created: (typeof PogiStore !== 'undefined' && PogiStore.formatCurrentDate) ? PogiStore.formatCurrentDate() : 'Hari ini'
-        });
-        if (typeof PogiStore !== 'undefined' && PogiStore.saveUsers) PogiStore.saveUsers(list);
-        renderManageUserTable(null, true);
-        showToast('Pengguna baru berhasil ditambahkan!', 'success');
+        payload.name = document.getElementById('addUsrName').value;
+        payload.email = document.getElementById('addUsrEmail').value;
+        payload.role = document.getElementById('addUsrRole').value;
       }
 
-      if (typeof PogiStore !== 'undefined' && PogiStore.addActivity) PogiStore.addActivity({
-        actor: ((typeof window !== 'undefined' && window.AUTH_USER && window.AUTH_USER.name) ? window.AUTH_USER.name : 'Admin POGI'),
-        action: 'Tambah ' + currentTab.toUpperCase(),
-        details: 'Menambahkan data baru pada tab master: ' + currentTab,
-        category: 'Verification'
-      });
+      try {
+        const res = await fetch('/manage/store', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrf
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          showToast(data.message || 'Gagal menyimpan data ke basis data.', 'error');
+          return;
+        }
 
-      closeManageAddModal();
+        const list = getDefaultListForTab(currentTab);
+        list.unshift(data.item);
+
+        if (currentTab === 'doctor') {
+          renderManageDoctorTable(null, true);
+          showToast('Dokter baru berhasil disimpan ke basis data!', 'success');
+        } else if (currentTab === 'institution') {
+          renderManageInstTable(null, true);
+          showToast('Institusi baru berhasil disimpan ke basis data!', 'success');
+        } else if (currentTab === 'event') {
+          renderManageEventTable(null, true);
+          showToast('SKP Event baru berhasil disimpan ke basis data!', 'success');
+        } else if (currentTab === 'category') {
+          renderManageCatTable(null, true);
+          showToast('Kategori baru berhasil disimpan ke basis data!', 'success');
+        } else if (currentTab === 'user') {
+          renderManageUserTable(null, true);
+          showToast('Pengguna baru berhasil disimpan ke basis data!', 'success');
+        }
+
+        closeManageAddModal();
+      } catch (err) {
+        showToast('Terjadi kesalahan jaringan saat menyimpan data.', 'error');
+      }
     }
   </script>
 @endsection

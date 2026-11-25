@@ -879,7 +879,6 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/js/pogi_state.js"></script>
   <script src="/js/navigation.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
@@ -2722,16 +2721,7 @@
         showVerificationSuccessModal(activeDoctor, addedCredit, prevPemb, newPemb, prevStatus);
       })
       .catch(err => {
-        // Fallback jika request terputus
-        const newPemb = prevPemb + addedCredit;
-        activeDoctor.pendingCredits = 0;
-        activeDoctor.pembelajaranCredits = newPemb;
-        activeDoctor.status = 'Complete';
-        activeDoctor.q4Credits = (activeDoctor.q4Credits || 0) + addedCredit;
-        renderDoctorDetails(activeDoctor);
-        renderDoctorActivities(activeDoctor.id);
-        renderDoctorRepositoryAndDetector(activeDoctor.id);
-        showVerificationSuccessModal(activeDoctor, addedCredit, prevPemb, newPemb, prevStatus);
+        showToast('Gagal menyimpan verifikasi kredit SKP ke server. Silakan coba kembali.', 'error');
       });
     }
 

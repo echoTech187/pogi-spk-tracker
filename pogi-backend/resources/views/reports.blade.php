@@ -522,9 +522,7 @@
     }
   </script>
 
-  <script src="/js/pogi_state.js"></script>
   <script src="/js/navigation.js"></script>
-  <script src="/js/pogi_template_data.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
     let chartMonthInstance = null;
@@ -533,21 +531,7 @@
     let chartStatusInstance = null;
 
     const LIVE_MONTHLY_DATA = @json($monthlyData ?? []);
-    const fallbackMonthlyData = [
-      { name: 'Januari 2026', short: 'Jan', target: 509.33, real: 126.0, complete: 38, pending: 24, pel: 110, peng: 6, pemb: 10, update: '31 Jan 2026, 17:00 WIB' },
-      { name: 'Februari 2026', short: 'Feb', target: 496.00, real: 229.0, complete: 68, pending: 20, pel: 200, peng: 12, pemb: 17, update: '28 Feb 2026, 17:00 WIB' },
-      { name: 'Maret 2026', short: 'Mar', target: 485.33, real: 1039.5, complete: 154, pending: 7, pel: 920, peng: 54, pemb: 65.5, update: '31 Mar 2026, 17:00 WIB' },
-      { name: 'April 2026', short: 'Apr', target: 482.67, real: 283.5, complete: 88, pending: 18, pel: 250, peng: 15, pemb: 18.5, update: '30 Apr 2026, 17:00 WIB' },
-      { name: 'Mei 2026', short: 'Mei', target: 477.33, real: 285.0, complete: 92, pending: 16, pel: 255, peng: 14, pemb: 16, update: '31 Mei 2026, 17:00 WIB' },
-      { name: 'Juni 2026', short: 'Jun', target: 469.33, real: 821.5, complete: 148, pending: 12, pel: 740, peng: 42, pemb: 39.5, update: '30 Jun 2026, 17:00 WIB' },
-      { name: 'Juli 2026', short: 'Jul', target: 469.33, real: 214.5, complete: 64, pending: 22, pel: 190, peng: 11, pemb: 13.5, update: '31 Jul 2026, 17:00 WIB' },
-      { name: 'Agustus 2026', short: 'Agu', target: 461.33, real: 257.0, complete: 80, pending: 20, pel: 230, peng: 13, pemb: 14, update: '31 Agu 2026, 17:00 WIB' },
-      { name: 'September 2026', short: 'Sep', target: 448.00, real: 923.5, complete: 152, pending: 9, pel: 830, peng: 48, pemb: 45.5, update: '30 Sep 2026, 17:00 WIB' },
-      { name: 'Oktober 2026', short: 'Okt', target: 442.67, real: 493.5, complete: 138, pending: 14, pel: 440, peng: 26, pemb: 27.5, update: '31 Okt 2026, 17:00 WIB' },
-      { name: 'November 2026', short: 'Nov', target: 429.33, real: 464.5, complete: 142, pending: 19, pel: 416, peng: 27, pemb: 21.5, update: '20 Nov 2026, 09:14 WIB' },
-      { name: 'Desember 2026', short: 'Des', target: 420.00, real: 0, complete: 0, pending: 0, pel: 0, peng: 0, pemb: 0, update: 'Belum Cutoff (1 Des 2026)' }
-    ];
-    const monthlyData = (Array.isArray(LIVE_MONTHLY_DATA) && LIVE_MONTHLY_DATA.length > 0) ? LIVE_MONTHLY_DATA : fallbackMonthlyData;
+    const monthlyData = Array.isArray(LIVE_MONTHLY_DATA) ? LIVE_MONTHLY_DATA : [];
 
     let currentSelectedMonthIndex = 10; // November
 

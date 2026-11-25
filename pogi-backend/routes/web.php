@@ -110,4 +110,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/manage', [ManageController::class, 'index'])
         ->name('manage')
         ->middleware('role:SUPER_ADMIN');
+    Route::post('/manage/store', [ManageController::class, 'store'])
+        ->name('manage.store')
+        ->middleware('role:SUPER_ADMIN');
 });

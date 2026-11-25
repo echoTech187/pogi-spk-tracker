@@ -534,29 +534,14 @@
           LIVE_SERVER_LOGS.unshift(data.log);
           showToast(`Simulasi Cron ${triggerType} Berhasil: ${data.count} dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
         } else {
-          fallbackSimulation(triggerType);
+          showToast(data?.message || 'Gagal menjalankan cron trigger di server.', 'error');
         }
       } catch (err) {
-        fallbackSimulation(triggerType);
+        showToast('Gagal terhubung ke server untuk menjalankan cron trigger.', 'error');
       }
 
       // Langsung buka tab Otomasi Cron
       filterActivityCategory('Automation');
-    }
-
-    function fallbackSimulation(triggerType) {
-      const newLog = {
-        id: 'cron-sim-' + Date.now(),
-        user_name: 'Sistem Otomasi (Cron Worker)',
-        user_role: 'SYSTEM',
-        action: `CRON_TRIGGER_${triggerType}`,
-        action_name: `Trigger ${triggerType} Pengingat SKP`,
-        details_text: `Eksekusi simulasi trigger ${triggerType}: 157 dokter status Incomplete diproses & antrean pengingat dikirim.`,
-        category: 'Automation',
-        time_text: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB (Simulasi)'
-      };
-      LIVE_SERVER_LOGS.unshift(newLog);
-      showToast(`Simulasi Cron ${triggerType} Berhasil: 157 dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
     }
 
     function refreshActivityLog() {

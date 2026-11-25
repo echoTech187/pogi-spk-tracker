@@ -335,14 +335,10 @@
     });
 
     function loadPerformanceData() {
-      if (LIVE_SERVER_ADMINS && LIVE_SERVER_ADMINS.length > 0 && LIVE_SERVER_SUMMARY) {
-        performanceData = {
-          summary: LIVE_SERVER_SUMMARY,
-          admins: LIVE_SERVER_ADMINS
-        };
-      } else {
-        performanceData = (typeof PogiStore !== 'undefined') ? PogiStore.getAdminPerformanceMetrics() : { summary: {}, admins: [] };
-      }
+      performanceData = {
+        summary: LIVE_SERVER_SUMMARY || { avgTeamSla: 0, avgTeamApproval: 0, totalProcessedDocs: 0, totalCompleteDocs: 0, totalAssignedDocs: 0, teamComplianceRate: 0 },
+        admins: Array.isArray(LIVE_SERVER_ADMINS) ? LIVE_SERVER_ADMINS : []
+      };
       renderExecutiveCards(performanceData.summary);
       renderSlaBars(performanceData.admins);
       renderWorkloadMiniList(performanceData.admins);

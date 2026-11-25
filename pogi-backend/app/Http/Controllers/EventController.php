@@ -24,8 +24,15 @@ class EventController extends Controller
             ->orderBy('skp_events.event_date', 'desc')
             ->get();
 
-        $events = $rawEvents->map(function ($e) {
+        $eventCompletions = DB::table('skp_entries')
+            ->select('event_id', DB::raw('COUNT(DISTINCT doctor_id) as done_count'))
+            ->whereNotNull('event_id')
+            ->groupBy('event_id')
+            ->pluck('done_count', 'event_id');
+
+        $events = $rawEvents->map(function ($e) use ($eventCompletions) {
             $domain = ucfirst(strtolower($e->category_domain ?: 'Pembelajaran'));
+            $doneCount = (int) ($eventCompletions[$e->id] ?? 0);
             return [
                 'id' => (string) $e->id,
                 'title' => $e->title,
@@ -35,7 +42,7 @@ class EventController extends Controller
                 'creditsDisplay' => (string) $e->credit_value,
                 'date' => $e->event_date ? Carbon::parse($e->event_date)->format('d M Y') : '-',
                 'venue' => $e->organizer ?: 'PP POGI / Daring',
-                'doctors' => '98 / 100 selesai',
+                'doctors' => "{$doneCount} selesai",
             ];
         })->all();
 

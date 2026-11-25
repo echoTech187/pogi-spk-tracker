@@ -81,15 +81,12 @@ class AdminPerformanceController extends Controller
                 ->first();
 
             $logsCount = (int) ($perfStats->total_logs ?? 0);
-            $processedDocs = max($totalDbActions, $logsCount, $totalDocs > 0 ? $totalDocs * 3 : 25);
+            $processedDocs = max($totalDbActions, $logsCount);
 
             // Perhitungan rata-rata SLA dalam jam (berdasarkan data riil log verifikasi)
-            if ($perfStats && $perfStats->avg_turnaround && $perfStats->avg_turnaround > 0) {
-                $avgTurnaroundHours = round($perfStats->avg_turnaround / 3600, 1);
-            } else {
-                $baselines = [9.5, 12.0, 11.7, 15.1, 13.6];
-                $avgTurnaroundHours = $baselines[$idx % count($baselines)];
-            }
+            $avgTurnaroundHours = ($perfStats && $perfStats->avg_turnaround && $perfStats->avg_turnaround > 0)
+                ? round($perfStats->avg_turnaround / 3600, 1)
+                : 0.0;
 
             // 4. Akurasi & penolakan berkas dari data riil
             $totalEvaluated = $verifiedSkpCount + $rejectedSkpCount;
@@ -97,14 +94,13 @@ class AdminPerformanceController extends Controller
                 $approvalRate = round(($verifiedSkpCount / $totalEvaluated) * 100, 1);
                 $rejections = $rejectedSkpCount;
             } else {
-                $approvalBaselines = [99.2, 98.4, 98.8, 97.6, 98.2];
-                $approvalRate = $approvalBaselines[$idx % count($approvalBaselines)];
-                $rejections = max(1, (int) round($processedDocs * ((100 - $approvalRate) / 100)));
+                $approvalRate = 0.0;
+                $rejections = 0;
             }
 
             // 5. Formula Skor RULES.md #6.2:
             // Score = (SLA * 0.35) + (Accuracy * 0.30) + (Volume * 0.20) + (Compliance * 0.15)
-            $slaScore = max(0, min(100, (1 - ($avgTurnaroundHours / 24)) * 100));
+            $slaScore = $avgTurnaroundHours > 0 ? max(0, min(100, (1 - ($avgTurnaroundHours / 24)) * 100)) : 0;
             $volScore = min(100, ($totalDocs / 40) * 100);
             $overallScore = round(($slaScore * 0.35) + ($approvalRate * 0.30) + ($volScore * 0.20) + ($complianceRate * 0.15));
 

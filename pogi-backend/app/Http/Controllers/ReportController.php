@@ -58,25 +58,66 @@ class ReportController extends Controller
             9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des'
         ];
 
-        $monthlyData = [];
-        $currentMonth = 11; // November 2026
-        for ($m = 1; $m <= 12; $m++) {
-            $isPast = $m < $currentMonth;
-            $isCurrent = $m === $currentMonth;
-            $mRatio = $m / 12;
+        $now = Carbon::now();
+        $currentYear = (int) $now->year;
+        $currentMonth = (int) $now->month;
 
-            $monthlyData[] = [
-                'name' => "{$monthNames[$m]} 2026",
-                'short' => $monthShorts[$m],
-                'target' => round($totalDoctors * 2.67, 2),
-                'real' => $isCurrent ? $totalSkp : ($isPast ? round($totalSkp * ($mRatio * 0.9), 1) : 0),
-                'complete' => $isCurrent ? $completeDoctors : ($isPast ? (int) round($completeDoctors * ($mRatio * 0.9)) : 0),
-                'pending' => $isCurrent ? $pendingDoctors : ($isPast ? 12 : 0),
-                'pel' => $isCurrent ? $pelSkp : ($isPast ? round($pelSkp * $mRatio, 1) : 0),
-                'peng' => $isCurrent ? $pengSkp : ($isPast ? round($pengSkp * $mRatio, 1) : 0),
-                'pemb' => $isCurrent ? $pembSkp : ($isPast ? round($pembSkp * $mRatio, 1) : 0),
-                'update' => $isCurrent ? Carbon::now()->format('d M Y, H:i') . ' WIB' : ($isPast ? "30 {$monthShorts[$m]} 2026, 17:00 WIB" : "Belum Cutoff (1 {$monthShorts[$m]} 2026)"),
-            ];
+        $snapshotByMonth = $snapshots
+            ->where('period_year', $currentYear)
+            ->keyBy('period_month');
+
+        $monthlyData = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $snap = $snapshotByMonth->get($m);
+            $isCurrent = $m === $currentMonth;
+            $targetCredits = round($totalDoctors * 2.67, 2);
+
+            if ($snap) {
+                $snapComplete = (int) ($snap->complete_doctors ?? 0);
+                $snapIncomplete = (int) ($snap->incomplete_doctors ?? max(0, (int) ($snap->total_doctors ?? $totalDoctors) - $snapComplete));
+                $snapUpdate = $snap->created_at
+                    ? Carbon::parse($snap->created_at)->format('d M Y, H:i') . ' WIB'
+                    : "Snapshot {$monthShorts[$m]} {$currentYear}";
+
+                $monthlyData[] = [
+                    'name' => "{$monthNames[$m]} {$currentYear}",
+                    'short' => $monthShorts[$m],
+                    'target' => $targetCredits,
+                    'real' => $isCurrent ? $totalSkp : (float) ($snap->total_verified_skp ?? 0),
+                    'complete' => $snapComplete,
+                    'pending' => $snapIncomplete,
+                    'pel' => $isCurrent ? $pelSkp : 0,
+                    'peng' => $isCurrent ? $pengSkp : 0,
+                    'pemb' => $isCurrent ? $pembSkp : 0,
+                    'update' => $snapUpdate,
+                ];
+            } elseif ($isCurrent) {
+                $monthlyData[] = [
+                    'name' => "{$monthNames[$m]} {$currentYear}",
+                    'short' => $monthShorts[$m],
+                    'target' => $targetCredits,
+                    'real' => $totalSkp,
+                    'complete' => $completeDoctors,
+                    'pending' => $pendingDoctors,
+                    'pel' => $pelSkp,
+                    'peng' => $pengSkp,
+                    'pemb' => $pembSkp,
+                    'update' => $now->format('d M Y, H:i') . ' WIB',
+                ];
+            } else {
+                $monthlyData[] = [
+                    'name' => "{$monthNames[$m]} {$currentYear}",
+                    'short' => $monthShorts[$m],
+                    'target' => $targetCredits,
+                    'real' => 0,
+                    'complete' => 0,
+                    'pending' => 0,
+                    'pel' => 0,
+                    'peng' => 0,
+                    'pemb' => 0,
+                    'update' => $m < $currentMonth ? 'Belum Ada Snapshot' : "Belum Cutoff (1 {$monthShorts[$m]} {$currentYear})",
+                ];
+            }
         }
 
         $metrics = [
