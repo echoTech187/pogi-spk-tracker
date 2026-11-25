@@ -11,47 +11,44 @@ Sistem dibangun menggunakan pendekatan **Clean Architecture (Hexagonal Architect
 ```mermaid
 flowchart TD
     subgraph ClientLayer["1. PRESENTATION LAYER (CLIENT & DELIVERY)"]
-        WebAdmin["Web Console Admin (Laravel Blade + Tailwind CSS + Alpine.js)"]
+        WebAdmin["Web Console Admin (Laravel 12 Blade + Tailwind CSS + Vanilla JS)"]
         PortalDokter["Portal Dokter Mandiri (Mobile-Responsive Web)"]
         RoleSwitcher["Active Role Context (5 Official RBAC Roles)"]
     end
 
-    subgraph AppLayer["2. APPLICATION LAYER (USE CASES)"]
-        MW["Auth & RBAC Middleware"]
-        Scope["BranchScope (Isolasi Cabang Otomatis)"]
-        Controllers["Slim Controllers (Maksimal 3-5 Baris/Method)"]
-        UseCases["Use Cases: VerifySkp, RecalculateCredits, CutoffJob, WaBlastJob"]
-        DTOs["Readonly Data Transfer Objects (PHP 8.2 Strict Types)"]
+    subgraph AppLayer["2. APPLICATION LAYER (CONTROLLERS, USE CASES & SCHEDULER)"]
+        MW["Auth, RBAC, TrustProxies & Cookie Session"]
+        Scope["EnsureBranchAccess (Isolasi Cabang Otomatis)"]
+        Controllers["Laravel 12 Controllers (Dashboard, Doctor, Province, Event, Activity, Report, AdminPerformance, Manage)"]
+        UseCases["Use Cases & Security: GetDashboardSummaryUseCase, NikCipher (AES-256-GCM)"]
+        Commands["Artisan Scheduler: pogi:monthly-cutoff, pogi:wa-reminder, pogi:wa-process-queue"]
     end
 
     subgraph DomainLayer["3. DOMAIN LAYER (CORE BUSINESS RULES)"]
-        Entities["Domain Entities: Doctor, SkpPeriod, SkpEntry, Document"]
-        ValueObjects["Value Objects: Nik, SkpCredit, PhoneNumber"]
-        Contracts["Repository Interfaces & Service Contracts"]
-        Events["Domain Events: SkpVerified, CutoffLocked"]
+        Entities["Domain Entities: Doctor, SkpPeriod, SkpEntry, Document, SystemRole"]
+        Contracts["Repository Interfaces (DashboardRepositoryInterface)"]
+        Rules["Aturan Bisnis: 160 SKP / 5 Tahun, SLA Score, Anti-Storage Bloat"]
     end
 
     subgraph InfraLayer["4. INFRASTRUCTURE & PERSISTENCE LAYER"]
-        Postgres[("PostgreSQL 14+ (RFC 9562 UUIDv7 + Zero-Fullscan Index)")]
-        RedisQueue[("Redis Queue / Worker Daemon (BullMQ / Laravel Queue)")]
-        DocVault[("Document Vault (Google Drive Mandatori + Opsional S3/MinIO)")]
-        WAGateway["WhatsApp Business Gateway API (Anti-Ban Jitter)"]
+        TiDB[("TiDB Cloud Serverless / MySQL 8+ (TLS/SSL + 16 Tabel 3NF)")]
+        Vercel[("Vercel Serverless Runtime (vercel-php@0.7.4 + /tmp Storage)")]
+        DocVault[("Document Vault (Google Drive URL Mandatori + SHA-256)")]
+        WAGateway["WhatsApp Business Gateway API (Anti-Ban Jitter 1500-3000ms)"]
     end
 
     ClientLayer --> MW
     MW --> Scope
     Scope --> Controllers
     Controllers --> UseCases
-    UseCases --> DTOs
+    Controllers --> TiDB
     UseCases --> Contracts
     UseCases --> Entities
-    UseCases --> ValueObjects
-    UseCases --> Events
     Contracts -.->|implemented by| InfraLayer
-    UseCases --> RedisQueue
-    RedisQueue --> WAGateway
-    UseCases --> Postgres
-    UseCases --> DocVault
+    Commands --> TiDB
+    Commands --> WAGateway
+    Controllers --> DocVault
+    Vercel --> ClientLayer
 ```
 
 ---
@@ -128,7 +125,7 @@ erDiagram
         varchar(150) full_name
         varchar(150) email UK
         varchar(30) phone_number
-        varchar(255) password_hash "Argon2id"
+        varchar(255) password_hash "Bcrypt"
         uuid branch_id FK "Isolasi Cabang"
         boolean is_active
     }
@@ -349,7 +346,7 @@ sequenceDiagram
     participant GDrive as Google Drive (Storage Dokter)
     actor Verifikator as Admin POGI
     participant API as Backend (Laravel UseCase)
-    participant DB as PostgreSQL 14+
+    participant DB as MySQL 8+ / TiDB Cloud Serverless
     participant Audit as Audit Trail Service
 
     Dokter->>GDrive: Unggah berkas ke Google Drive dokter/cabang & atur share link
@@ -384,7 +381,7 @@ sequenceDiagram
     autonumber
     participant Cron as Laravel Task Scheduler
     participant Worker as Monthly Cutoff Worker
-    participant DB as PostgreSQL 14+
+    participant DB as MySQL 8+ / TiDB Cloud Serverless
     participant PDF as PDF Renderer (WeasyPrint/Puppeteer)
     participant Storage as Object Storage (S3)
     actor Pusat as Pengurus Pusat POGI
@@ -521,20 +518,18 @@ Untuk menjamin latensi respon server tetap **< 50ms** saat data bertumbuh, arsit
 
 ```mermaid
 flowchart TD
-    subgraph Indexes["Arsitektur Indeks Zero-Fullscan (PostgreSQL 14+)"]
-        I1["Covering Index: idx_skp_entries_doc_period_domain (doctor_id, period_id, domain, status) INCLUDE (credit_amount)"]
-        I2["GIN Trigram Index: idx_doctors_trgm_search ON doctors USING gin(full_name gin_trgm_ops, npa_pogi gin_trgm_ops, str_number gin_trgm_ops)"]
-        I3["Composite Partial Index: idx_doctors_branch_status ON doctors(branch_id, status)"]
-        I4["Composite Partial Index: idx_doctors_pic_status ON doctors(assigned_pic_id, status)"]
-        I5["Partial Queue Index: idx_wa_queue_pending ON wa_message_queue(scheduled_at) WHERE status = 'QUEUED'"]
-        I6["Materialized View: mv_province_compliance_summary (Peta 38 Provinsi Caching)"]
+    subgraph Indexes["Arsitektur Indeks (MySQL 8+ / TiDB Cloud)"]
+        I1["Index SKP Entries: (doctor_id, period_id, domain, status)"]
+        I2["Index Pencarian Dokter: full_name, npa_pogi, str_number, nik_hash"]
+        I3["Composite Index: (branch_id, status) pada tabel doctors"]
+        I4["Composite Index: (assigned_pic_id, status) pada tabel doctors"]
+        I5["Queue Index: (status, created_at) pada tabel wa_message_queue"]
+        I6["Agregasi Provinsi: Query langsung provinces + doctors + doctor_skp_periods"]
     end
 ```
 
-* **Covering Index (`INCLUDE`)**: Query agregasi dan penghitungan pemenuhan ranah SKP menghasilkan **Index-Only Scan** (*zero heap read*) karena kolom `credit_amount` tersimpan langsung di dalam daun pohon B-Tree indeks.
-* **Pencarian Cepat GIN Trigram**: Pencarian dokter berdasarkan nama, NPA POGI, atau nomor STR memanfaatkan ekstensi `pg_trgm` pada indeks GIN, membebaskan CPU dari *sequential table scan*.
-* **Pencegahan N+1 Query**: Wajib memuat relasi relasional menggunakan *Eager Loading* (`with(['branch', 'province', 'activePeriod'])`).
-* **Materialized View Caching**: Peta kepatuhan 38 provinsi di-cache pada `mv_province_compliance_summary` dan diperbarui secara berkala / terpicu transaksi.
+* **Indeks Relasional & Lookup Tanpa Dekripsi**: Pencarian dan agregasi menggunakan indeks relasional B-Tree serta kolom `nik_hash` (HMAC-SHA256) untuk lookup deterministik tanpa mendekripsi seluruh tabel.
+* **Agregasi Langsung 38 Provinsi**: Peta kepatuhan dihitung langsung dari data riil tabel `provinces`, `doctors`, dan `doctor_skp_periods` melalui [`ProvinceController.php`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/pogi-backend/app/Http/Controllers/ProvinceController.php).
 
 ---
 
@@ -548,9 +543,9 @@ sequenceDiagram
     actor Admin as Admin POGI / Super Admin
     participant Route as Laravel Router (web.php)
     participant Ctrl as Dedicated Controller (e.g. DoctorController)
-    participant DB as MySQL Database (3NF Relational)
+    participant DB as TiDB Cloud / MySQL 8+ (3NF Relational)
     participant Blade as Blade SSR View Engine
-    participant Browser as Client Browser (Alpine.js / JS UI)
+    participant Browser as Client Browser (Vanilla JS UI)
 
     Admin->>Route: GET /doctors
     Route->>Ctrl: invoke index(Request)
@@ -564,6 +559,21 @@ sequenceDiagram
 ```
 
 ### Keunggulan Arsitektur Dual-Hydration:
-1. **Zero Layout Shift & Instant First Contentful Paint (FCP)**: Halaman tiba di browser pengguna sudah dalam keadaan terisi data riil dari database MySQL, meniadakan kedipan (*flickering*) atau skeleton loader berlebih.
+1. **Zero Layout Shift & Instant First Contentful Paint (FCP)**: Halaman tiba di browser pengguna sudah dalam keadaan terisi data riil dari database TiDB Cloud / MySQL, meniadakan kedipan (*flickering*) atau skeleton loader berlebih.
 2. **Eliminasi Total Mock Fallback**: Variabel state klien tidak lagi merujuk pada `pogi_state.js` atau array tiruan, melainkan dihidrasi dari basis data server melalui `window.LIVE_* = @json($data)`.
 3. **Respon Pencarian & Paginasi Sub-Milidetik**: Setelah data server tiba, operasi pencarian teks, pemilihan provinsi, dan penggantian halaman ditangani secara instan pada memori browser tanpa harus bolak-balik menembak round-trip HTTP request berulang kali.
+
+---
+
+## 8. Arsitektur Deployment Produksi (Vercel Serverless + TiDB Cloud)
+
+Aplikasi produksi di-host secara *serverless* di **Vercel** (`console-pogi.vercel.app`) dan terhubung ke klaster **TiDB Cloud Serverless** (`ap-northeast-1`, port `4000`, database `pogi_skp_tracker`):
+
+| Komponen | Implementasi Produksi | Lokasi File |
+|:---|:---|:---|
+| **Serverless Runtime** | `vercel-php@0.7.4` (PHP 8.3.8) + routing asset statis | [`pogi-backend/vercel.json`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/pogi-backend/vercel.json) |
+| **Entrypoint & `/tmp` Storage** | Pembuatan direktori `/tmp/storage` & cache bootstrap di `/tmp` (filesystem Vercel *read-only*) | [`pogi-backend/api/index.php`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/pogi-backend/api/index.php), [`pogi-backend/bootstrap/app.php`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/pogi-backend/bootstrap/app.php) |
+| **Proxy HTTPS & Session** | `$middleware->trustProxies(at: '*')` & `SESSION_DRIVER=cookie` | [`pogi-backend/bootstrap/app.php`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/pogi-backend/bootstrap/app.php) |
+| **Koneksi TLS TiDB Cloud** | Auto-deteksi sertifikat SSL CA (`config/cacert.pem`) untuk koneksi aman `tidbcloud.com` | [`pogi-backend/config/database.php`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/pogi-backend/config/database.php) |
+| **Enkripsi NIK (UU PDP)** | AES-256-GCM + HMAC-SHA256 deterministik | [`pogi-backend/app/Infrastructure/Security/NikCipher.php`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/pogi-backend/app/Infrastructure/Security/NikCipher.php) |
+| **Scheduler Otomatis** | `pogi:monthly-cutoff` (tgl 1), `pogi:wa-reminder` (tgl 24 & 28), `pogi:wa-process-queue` | [`pogi-backend/routes/console.php`](file:///c:/Users/Pongo/Downloads/pogi-spk-tracker/pogi-backend/routes/console.php) |
