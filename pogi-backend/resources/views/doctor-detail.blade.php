@@ -1573,7 +1573,12 @@
       const category = catSelect ? catSelect.value : 'Pembelajaran';
       const skpValue = (skpInput && skpInput.value !== '') ? parseFloat(skpInput.value) : 0;
       const driveUrl = (driveInput && driveInput.value.trim()) ? driveInput.value.trim() : '';
-      const sizeStr = selectedUploadFile ? ((selectedUploadFile.size / (1024 * 1024)).toFixed(1) + ' MB') : (driveUrl ? 'Cloud (Drive)' : '1.8 MB');
+      if (!driveUrl) {
+        showToast('Tautan Google Drive wajib diisi sesuai kebijakan Anti-Storage Bloat!', 'warning');
+        if (driveInput) driveInput.focus();
+        return;
+      }
+      const sizeStr = selectedUploadFile ? ((selectedUploadFile.size / (1024 * 1024)).toFixed(1) + ' MB') : 'Cloud (Drive)';
 
       if (!activeDoctor) return;
 
@@ -1581,7 +1586,7 @@
         filename: filename,
         category: category,
         skp_value: skpValue,
-        google_drive_url: driveUrl || null
+        google_drive_url: driveUrl
       };
 
       fetch(`/doctors/${activeDoctor.id}/documents`, {

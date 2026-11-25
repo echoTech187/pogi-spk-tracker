@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Entities\SystemRole;
+use App\Infrastructure\Security\NikCipher;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -490,14 +491,16 @@ class DoctorController extends Controller
 
         $randomNpa = '#POGI-2026-' . rand(2000, 9999);
 
+        $rawNik = (string) ($request->input('nik') ?: $request->input('str'));
+
         DB::table('doctors')->insert([
             'id' => $doctorId,
             'user_id' => null,
             'npa_pogi' => $randomNpa,
             'full_name' => $request->input('name'),
             'specialization_title' => 'Sp.OG',
-            'nik_encrypted' => 'ENC_' . rand(3200000000000000, 3299999999999999),
-            'nik_hash' => hash('sha256', $request->input('str')),
+            'nik_encrypted' => NikCipher::encrypt($rawNik),
+            'nik_hash' => NikCipher::hash($rawNik),
             'str_number' => $request->input('str'),
             'sip_number' => 'SIP.01.2026/' . rand(1000, 9999),
             'sip_expiry_date' => Carbon::now()->addYears(5)->toDateString(),
@@ -616,6 +619,11 @@ class DoctorController extends Controller
 
         $totalSum = $pelayananSum + $pengabdianSum + $pembelajaranSum;
 
+        $isPeriodComplete = ($totalSum >= 160.0)
+            && ($pembelajaranSum >= 72.0)
+            && ($pelayananSum >= 56.0)
+            && ($pengabdianSum >= 8.0);
+
         // Update period
         DB::table('doctor_skp_periods')
             ->where('doctor_id', $id)
@@ -625,12 +633,12 @@ class DoctorController extends Controller
                 'achieved_pengabdian_credits' => $pengabdianSum,
                 'achieved_pembelajaran_credits' => $pembelajaranSum,
                 'achieved_total_credits' => $totalSum,
-                'is_completed' => ($totalSum >= 160.0),
+                'is_completed' => $isPeriodComplete,
                 'updated_at' => $now,
             ]);
 
-        // 4. Update doctor status
-        $newDocStatus = ($totalSum >= 160.0 || $doctor->status === 'COMPLETE') ? 'COMPLETE' : ($totalSum >= 40.0 ? 'COMPLETE' : 'INCOMPLETE');
+        // 4. Update doctor status sesuai RULES.md #2.4
+        $newDocStatus = $isPeriodComplete ? 'COMPLETE' : 'INCOMPLETE';
         DB::table('doctors')
             ->where('id', $id)
             ->update([
@@ -705,7 +713,10 @@ class DoctorController extends Controller
             'filename' => 'required|string|max:255',
             'category' => 'required|string|in:Pembelajaran,Pelayanan,Pengabdian,Administrasi',
             'skp_value' => 'nullable|numeric|min:0',
-            'google_drive_url' => 'nullable|url',
+            'google_drive_url' => 'required|url',
+        ], [
+            'google_drive_url.required' => 'Tautan Google Drive wajib diisi sesuai kebijakan Anti-Storage Bloat (RULES.md Bab 8).',
+            'google_drive_url.url' => 'Format tautan Google Drive tidak valid.',
         ]);
 
         $now = Carbon::now();
@@ -767,7 +778,7 @@ class DoctorController extends Controller
 
         // 2. Insert Doctor Document
         $docId = (string) Str::uuid();
-        $driveUrl = $request->input('google_drive_url') ?: 'https://drive.google.com/drive/folders/pogi-vault-' . substr($id, 0, 8);
+        $driveUrl = (string) $request->input('google_drive_url');
         DB::table('doctor_documents')->insert([
             'id' => $docId,
             'doctor_id' => $id,

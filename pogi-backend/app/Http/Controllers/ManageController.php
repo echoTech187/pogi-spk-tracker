@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Infrastructure\Security\NikCipher;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -230,10 +232,13 @@ class ManageController extends Controller
             $npa = '#POGI-' . $now->year . '-' . rand(2000, 9999);
             $provName = $provinceRow->name ?? $v['province'];
 
+            $rawNik = (string) ($v['nik'] ?: $npa);
+
             DB::table('doctors')->insert([
                 'id' => $doctorId,
                 'npa_pogi' => $npa,
-                'nik_encrypted' => $v['nik'] ?: ('ENC_' . rand(3200000000000000, 3299999999999999)),
+                'nik_encrypted' => NikCipher::encrypt($rawNik),
+                'nik_hash' => NikCipher::hash($rawNik),
                 'str_number' => '31.1.2.' . rand(100, 999) . '.1.26',
                 'sip_number' => '446/' . rand(100, 999) . '/SIP/' . $now->year,
                 'full_name' => $v['name'],
