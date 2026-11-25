@@ -20,8 +20,8 @@ if (typeof window !== 'undefined') {
     }
     return {
       id: 'auth-user',
-      name: 'Pengguna',
-      email: 'user@example.com',
+      name: 'Super Admin',
+      email: 'super@example.com',
       role: 'SUPER_ADMIN',
       branch: 'Pusat'
     };
@@ -616,7 +616,7 @@ function applyRbacEnforcement() {
         profileCard.querySelector('.text-slate-900') ||
         profileCard.querySelector('.text-slate-800');
       if (nameEl) {
-        nameEl.innerText = user.name || user.displayName || 'Pengguna';
+        nameEl.innerText = user.name || user.displayName || 'Super Admin';
       }
       const roleEl = document.getElementById('sidebarUserRole') ||
         document.getElementById('sidebarUserEmail') ||
@@ -668,7 +668,7 @@ function applyRbacEnforcement() {
       topUserBtn.innerText = userInitials;
     }
     topUserBtn.className = 'w-9 h-9 rounded-full ' + userBgClass + ' font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20';
-    topUserBtn.title = 'Profil Pengguna: ' + (user.name || 'Pengguna');
+    topUserBtn.title = 'Profil: ' + (user.name || 'Super Admin');
   }
 
   const ddAvatar = document.getElementById('headerDropdownAvatar') ||
@@ -680,7 +680,7 @@ function applyRbacEnforcement() {
   const ddName = document.getElementById('headerDropdownName') ||
                  document.querySelector('#topUserDropdown .text-slate-900');
   if (ddName) {
-    ddName.innerText = user.name || user.displayName || 'Pengguna';
+    ddName.innerText = user.name || user.displayName || 'Super Admin';
   }
   const ddRole = document.getElementById('headerDropdownRole') ||
                  document.querySelector('#topUserDropdown .text-slate-500');

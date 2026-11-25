@@ -43,10 +43,9 @@ foreach ($entries as $e) {
 echo "[export_dist] Public assets copied.\n";
 
 // 2. Set Super Admin session for full data access
-$user = App\Models\User::first() ?? new App\Models\User([
+$user = App\Models\User::where('role', 'SUPER_ADMIN')->first() ?? App\Models\User::first() ?? new App\Models\User([
     'id' => 'auth-user',
-    'full_name' => 'Dian (Super Admin)',
-    'name' => 'Dian',
+    'full_name' => 'Dian Ratnasari',
     'email' => 'super@example.com',
     'role' => 'SUPER_ADMIN',
     'branch' => 'Pusat'
@@ -66,7 +65,7 @@ $pages = [
     'manage' => [App\Http\Controllers\ManageController::class, 'index'],
 ];
 
-// 4. Render Login view specifically
+// 4. Render Login view specifically (logout temporarily, then re-login)
 try {
     Auth::logout();
     $loginHtml = view('login', ['errors' => new Illuminate\Support\ViewErrorBag()])->render();
@@ -76,6 +75,9 @@ try {
 } catch (Throwable $e) {
     echo "  [FAIL] login: " . $e->getMessage() . "\n";
 }
+
+// Re-login Super Admin after logout (critical: without this, AUTH_USER.name = 'Pengguna')
+Auth::login($user);
 
 $req = Illuminate\Http\Request::create('/', 'GET');
 

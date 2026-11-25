@@ -88,10 +88,10 @@
 
   <script>
     window.AUTH_USER = {!! json_encode([
-      'id' => Auth::id() ?? 'auth-user',
-      'name' => Auth::user()?->name ?? 'Pengguna',
-      'email' => Auth::user()?->email ?? '',
-      'role' => Auth::user()?->role ?? 'SUPER_ADMIN',
+      'id'     => Auth::id() ?? 'auth-user',
+      'name'   => Auth::user()?->full_name ?? Auth::user()?->name ?? 'Super Admin',
+      'email'  => Auth::user()?->email ?? '',
+      'role'   => Auth::user()?->role ?? 'SUPER_ADMIN',
       'branch' => Auth::user()?->branch ?? 'Pusat'
     ]) !!};
   </script>
