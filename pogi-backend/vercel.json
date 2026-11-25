@@ -24,7 +24,7 @@
   "env": {
     "APP_NAME": "POGI SKP Tracker",
     "APP_ENV": "production",
-    "APP_DEBUG": "true",
+    "APP_DEBUG": "false",
     "APP_TIMEZONE": "Asia/Jakarta",
     "APP_LOCALE": "id",
     "APP_FALLBACK_LOCALE": "en",

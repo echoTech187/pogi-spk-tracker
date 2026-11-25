@@ -455,11 +455,7 @@ function performLogout() {
       sessionStorage.clear();
     } catch (e) { }
 
-    if (window.location.hostname.includes('vercel.app')) {
-      window.location.href = '/login';
-    } else {
-      window.location.href = '/logout';
-    }
+    window.location.href = '/logout';
   }
 }
 
