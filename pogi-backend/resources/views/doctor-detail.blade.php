@@ -15,10 +15,31 @@
         <span>Kembali </span>
       </a>
       <div class="text-[11px] text-slate-500 font-medium">
-        Monitoring SKP Dokter Obgyn &bull; <strong id="breadcrumbDoctorName">{{ $doctor->full_name ?? 'Detail Dokter' }}</strong>
+        Monitoring SKP Dokter Obgyn &bull; <strong id="breadcrumbDoctorName">{{ $doctor?->full_name ?? 'Data Tidak Ditemukan' }}</strong>
       </div>
     </div>
 
+    @if(!$doctor)
+      <!-- Empty State: Data Dokter Tidak Ditemukan -->
+      <div class="p-10 sm:p-14 rounded-3xl bg-white border border-slate-200/90 shadow-2xs text-center space-y-4">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center">
+          <span class="material-symbols-outlined text-4xl">person_off</span>
+        </div>
+        <div class="space-y-1.5 max-w-md mx-auto">
+          <h2 class="text-lg font-black text-slate-900">Data Dokter Tidak Ditemukan</h2>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            Data dokter yang Anda cari tidak tersedia, telah dihapus, atau belum ada dokter yang terdaftar di dalam basis data.
+          </p>
+        </div>
+        <div class="pt-2">
+          <a href="/doctors"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition">
+            <span class="material-symbols-outlined text-base">groups</span>
+            <span>Kembali ke Direktori Dokter</span>
+          </a>
+        </div>
+      </div>
+    @else
     @php
       $cleanName = preg_replace('/dr\.\s*|drg\.\s*|Prof\.|Sp\.OG|\,/i', '', $doctor->full_name ?? '');
       $parts = array_values(array_filter(explode(' ', trim($cleanName))));
@@ -441,6 +462,7 @@
         </div>
       </div>
     </div>
+    @endif
 
   </main>
 
