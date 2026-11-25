@@ -45,7 +45,7 @@
       $pctPeng = min(100, round(($peng / $targetPeng) * 100));
       $pctPemb = min(100, round(($pemb / $targetPemb) * 100));
       $pctFleks = min(100, round(($achievedFleks / $targetFleks) * 100));
-      $nikFormatted = $doctor->nik_hash ? '32' . substr($doctor->nik_hash, 0, 14) : ($doctor->str_number ?? '-');
+      $nikFormatted = $doctor?->nik_hash ? '32' . substr($doctor->nik_hash, 0, 14) : ($doctor?->str_number ?? '-');
     @endphp
 
     <!-- DOCTOR PROFILE HERO CARD -->
@@ -97,7 +97,7 @@
         <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
           <div class="text-[10px] text-slate-400 font-bold uppercase">Nomor STR (Kemenkes)</div>
           <div id="doctorStr" class="font-extrabold text-slate-900 mt-1 font-mono">{{ $doctor->str_number ?? '-' }}</div>
-          <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">&bull; Habis: {{ $doctor->sip_expiry_date ? \Carbon\Carbon::parse($doctor->sip_expiry_date)->format('d M Y') : '11 Nov 2029' }}</div>
+          <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">&bull; Habis: {{ $doctor?->sip_expiry_date ? \Carbon\Carbon::parse($doctor->sip_expiry_date)->format('d M Y') : '-' }}</div>
         </div>
         <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
           <div class="text-[10px] text-slate-400 font-bold uppercase">NIK / Kependudukan</div>
@@ -152,12 +152,12 @@
           <div>
             <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Internal Updated
               (Energi Cipta)</span>
-            <span id="tsInternal" class="font-mono font-bold text-slate-800">{{ $doctor->dashboard_updated_at ? \Carbon\Carbon::parse($doctor->dashboard_updated_at)->format('d M Y, H.i') . ' WIB' : 'Baru saja' }}</span>
+            <span id="tsInternal" class="font-mono font-bold text-slate-800">{{ $doctor?->dashboard_updated_at ? \Carbon\Carbon::parse($doctor->dashboard_updated_at)->format('d M Y, H.i') . ' WIB' : '-' }}</span>
           </div>
           <div>
             <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Kemenkes Synced (Portal
               Plataran)</span>
-            <span id="tsKemenkes" class="font-mono font-bold text-emerald-700">{{ $doctor->kemenkes_updated_at ? \Carbon\Carbon::parse($doctor->kemenkes_updated_at)->format('d M Y, H.i') . ' WIB' : 'Menunggu Sinkronisasi' }}</span>
+            <span id="tsKemenkes" class="font-mono font-bold text-emerald-700">{{ $doctor?->kemenkes_updated_at ? \Carbon\Carbon::parse($doctor->kemenkes_updated_at)->format('d M Y, H.i') . ' WIB' : 'Menunggu Sinkronisasi' }}</span>
           </div>
         </div>
       </div>
