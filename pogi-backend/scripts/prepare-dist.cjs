@@ -1,19 +1,30 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 const backendDir = path.resolve(__dirname, '..');
 const rootDir = path.resolve(backendDir, '..');
-const prototypeDir = path.join(rootDir, 'prototype');
 const distDir = path.join(backendDir, 'dist');
+const rootDistDir = path.join(rootDir, 'dist');
 const publicDir = path.join(backendDir, 'public');
 
 console.log('[prepare-dist] Preparing dist directory for Vercel deployment...');
 
-// Ensure dist directory exists and is clean
-if (fs.existsSync(distDir)) {
-  fs.rmSync(distDir, { recursive: true, force: true });
+// 1. Try running export_dist.php if PHP is available to refresh HTML from Blade views
+try {
+  const exportScript = path.join(__dirname, 'export_dist.php');
+  if (fs.existsSync(exportScript)) {
+    console.log('[prepare-dist] Running Blade view export via PHP...');
+    execSync(`php "${exportScript}"`, { stdio: 'inherit' });
+  }
+} catch (e) {
+  console.log('[prepare-dist] PHP export skipped or not available:', e.message);
 }
-fs.mkdirSync(distDir, { recursive: true });
+
+// Ensure dist directory exists
+if (!fs.existsSync(distDir)) {
+  fs.mkdirSync(distDir, { recursive: true });
+}
 
 // Helper to copy recursively
 function copyDirSync(src, dest) {
@@ -31,7 +42,7 @@ function copyDirSync(src, dest) {
   }
 }
 
-// 1. Copy public assets (css, js, assets, build) to dist
+// 2. Sync public assets (css, js, assets, images) to dist
 if (fs.existsSync(publicDir)) {
   const publicEntries = fs.readdirSync(publicDir, { withFileTypes: true });
   for (const entry of publicEntries) {
@@ -46,47 +57,18 @@ if (fs.existsSync(publicDir)) {
   }
 }
 
-// 2. Also ensure prototype css/js/assets are synced to dist if present
-if (fs.existsSync(prototypeDir)) {
-  ['assets', 'css', 'js'].forEach(dirName => {
-    const pSub = path.join(prototypeDir, dirName);
-    const dSub = path.join(distDir, dirName);
-    if (fs.existsSync(pSub)) {
-      copyDirSync(pSub, dSub);
-    }
-  });
+// 3. Ensure index.html exists
+const indexFile = path.join(distDir, 'index.html');
+const dashFile = path.join(distDir, 'dashboard.html');
+if (!fs.existsSync(indexFile) && fs.existsSync(dashFile)) {
+  fs.copyFileSync(dashFile, indexFile);
 }
 
-// 3. Copy HTML pages (checks prototype/ first, then rootDir)
-const htmlFiles = [
-  'index.html',
-  'dashboard.html',
-  'doctors.html',
-  'provinces.html',
-  'events.html',
-  'activity.html',
-  'reports.html',
-  'admin-performance.html',
-  'manage.html',
-  'doctor-detail.html'
-];
-
-for (const file of htmlFiles) {
-  const protoPath = path.join(prototypeDir, file);
-  const rootPath = path.join(rootDir, file);
-  if (fs.existsSync(protoPath)) {
-    fs.copyFileSync(protoPath, path.join(distDir, file));
-  } else if (fs.existsSync(rootPath)) {
-    fs.copyFileSync(rootPath, path.join(distDir, file));
-  }
+// 4. Mirror dist to root dist so root-level Vercel builds also find it
+try {
+  copyDirSync(distDir, rootDistDir);
+} catch (e) {
+  // ignore
 }
 
-// Ensure dist/index.html exists
-if (!fs.existsSync(path.join(distDir, 'index.html'))) {
-  const dashFile = path.join(distDir, 'dashboard.html');
-  if (fs.existsSync(dashFile)) {
-    fs.copyFileSync(dashFile, path.join(distDir, 'index.html'));
-  }
-}
-
-console.log('[prepare-dist] Successfully created dist directory with all assets and pages for Vercel!');
+console.log('[prepare-dist] Successfully prepared dist directory with all pages and assets!');

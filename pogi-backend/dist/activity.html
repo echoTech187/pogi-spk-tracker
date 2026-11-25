@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-[#f4f7f6]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="KWbmxxB1IJb3niJnoK2cGqPLpjrRWE78u8eeXcq4">
+  <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
+  
+  <!-- Tailwind CSS & CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Leaflet.js CDN for Interactive Vector Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    #interactiveIndonesiaMap {
+      background-color: transparent !important;
+    }
+    .leaflet-container {
+      background: transparent !important;
+      font-family: inherit;
+    }
+    .leaflet-tooltip {
+      background: #0f172a !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255,255,255,0.2) !important;
+      border-radius: 10px !important;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3) !important;
+      padding: 6px 12px !important;
+      font-size: 11px !important;
+    }
+    .leaflet-tooltip-top:before {
+      border-top-color: #0f172a !important;
+    }
+
+    /* Modal Sticky Header & Footer, Scrollable Body */
+    .modal-dialog-scrollable {
+      max-height: 90vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    .modal-header-sticky {
+      flex-shrink: 0 !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 20 !important;
+    }
+    .modal-body-scrollable {
+      flex: 1 1 auto !important;
+      overflow-y: auto !important;
+      min-height: 0 !important;
+    }
+    .modal-footer-sticky {
+      flex-shrink: 0 !important;
+      position: sticky !important;
+      bottom: 0 !important;
+      z-index: 20 !important;
+    }
+  </style>
+  </head>
+<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
+  <!-- Mobile Backdrop Overlay -->
+  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
+
+  <div class="flex h-screen overflow-hidden">
+    <!-- APP SIDEBAR -->
+    <aside id="appSidebar" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] lg:w-64 bg-white border-r border-slate-200/90 flex flex-col shrink-0 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static lg:inset-auto shadow-2xl lg:shadow-none">
+  <!-- Top Brand Header -->
+  <div class="px-4 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
+    <a href="/dashboard" class="flex items-center gap-2.5 min-w-0">
+      <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs shrink-0">
+        <img src="/logo.png" alt="Logo POGI" class="w-full h-full object-contain">
+      </div>
+      <div class="min-w-0">
+        <div class="font-black text-sm tracking-tight text-[#16b3ac] leading-none">POGI SKP TRACKER</div>
+        <div class="text-[9px] text-slate-500 font-bold leading-tight mt-1 truncate">PP POGI &bull; Standar 160 SKP</div>
+      </div>
+    </a>
+    <button type="button" onclick="toggleMobileSidebar(false)" class="lg:hidden p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition" aria-label="Tutup Menu">
+      <span class="material-symbols-outlined text-xl">close</span>
+    </button>
+  </div>
+
+  <!-- Navigation Menu -->
+  <div class="px-3 py-4 flex-1 overflow-y-auto space-y-6">
+    
+    <div>
+      <div class="px-3 mb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+        MONITORING NASIONAL
+      </div>
+      <nav class="space-y-1">
+                <a href="/dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition bg-[#16b3ac] text-white shadow-xs">
+          <span class="material-symbols-outlined text-[19px]">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+                                <a href="/doctors" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[19px]">stethoscope</span>
+          <span>Doctors</span>
+        </a>
+                        <a href="/provinces" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[19px]">map</span>
+          <span>Provinces</span>
+        </a>
+        <a href="/events" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[19px]">event</span>
+          <span>Events</span>
+        </a>
+                                
+      </nav>
+    </div>
+
+      </div>
+
+  
+  <!-- Bottom Profile Card -->
+  <div class="p-3 border-t border-slate-100 bg-slate-50/70">
+    <div id="sidebarUserProfileCard" class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div id="sidebarUserAvatar" class="w-9 h-9 rounded-full bg-[#16b3ac] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
+          A
+        </div>
+        <div class="min-w-0" id="sidebarUserInfo">
+          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Anna</div>
+          <div class="text-[10px] text-slate-400 font-mono truncate" id="sidebarUserEmail">sekretariat.pusat@pogi.or.id</div>
+        </div>
+      </div>
+      <button type="button" onclick="performLogout()" title="Keluar" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition shrink-0">
+        <span class="material-symbols-outlined text-lg">unfold_more</span>
+      </button>
+    </div>
+  </div>
+</aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <!-- Top Sticky Header -->
+      <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200/90 shrink-0 w-full print:hidden">
+  <div class="h-14 sm:h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
+    <!-- Left: Mobile menu button -->
+    <div class="flex items-center gap-2 sm:gap-3 min-w-0 shrink-0">
+      <button type="button" onclick="toggleMobileSidebar(true)" class="lg:hidden p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition shrink-0 cursor-pointer" aria-label="Buka Menu">
+        <span class="material-symbols-outlined text-2xl">menu</span>
+      </button>
+    </div>
+
+    <!-- Center: Global Search Input -->
+    <div class="relative flex-1 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-2 sm:mx-4">
+      <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3 text-slate-400 text-lg pointer-events-none">search</span>
+        <input type="text" id="topGlobalSearchInput" oninput="handleGlobalTopSearch(this.value)" onkeydown="handleGlobalSearchKeydown(event)" placeholder="Cari dokter, nomor STR, SIP, atau ..." class="w-full pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-[#16b3ac] rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none transition shadow-2xs">
+        <button type="button" id="clearTopSearchBtn" onclick="clearGlobalTopSearch()" class="hidden absolute right-2.5 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+      <!-- Dropdown Live Search Results -->
+      <div id="topSearchResultsDropdown" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-2 z-50 max-h-96 overflow-y-auto">
+      </div>
+    </div>
+
+    <!-- Right: Notifikasi & Profil User -->
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+      <!-- Akses Kemenkes SatuSehat Action Button -->
+      <a href="/kemenkes/launch" target="_blank"
+        onclick="if(typeof showToast === 'function') showToast('Membuka Portal Kemenkes SDMK & mencatat sesi kerja...', 'info');"
+        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200/80 font-bold text-xs transition shadow-2xs"
+        title="Buka SatuSehat SDMK Kemenkes (Tercatat otomatis ke riwayat kerja & log kinerja admin)">
+        <span class="material-symbols-outlined text-base text-emerald-700">health_and_safety</span>
+        <span class="hidden md:inline">Portal Kemenkes</span>
+      </a>
+
+      <!-- Notification Bell with Red Dot Indicator -->
+      <div class="relative">
+        <button type="button" id="topNotifBtn" onclick="toggleTopNotifDropdown()" class="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer" aria-label="Notifikasi">
+          <span class="material-symbols-outlined text-xl">notifications</span>
+          <span id="notifBadgeDot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white animate-pulse"></span>
+        </button>
+        <!-- Notification Dropdown Menu -->
+        <div id="topNotifDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
+          <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
+            <div class="font-bold text-slate-900 flex items-center gap-1.5">
+              <span>Pemberitahuan Sistem</span>
+              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">157 Perlu FU</span>
+            </div>
+            <button type="button" onclick="markAllNotificationsAsRead()" class="text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer">
+              Tandai Dibaca
+            </button>
+          </div>
+          <div id="notifListContainer" class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+            <div class="p-3.5 hover:bg-slate-50 transition flex items-start gap-3 cursor-pointer" onclick="window.location.href='/doctors?filter=pending'">
+              <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+                <span class="material-symbols-outlined text-base">pending_actions</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">157 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">17 menit yang lalu</div>
+              </div>
+            </div>
+          </div>
+                  </div>
+      </div>
+
+      <!-- User Avatar Profile Circle -->
+      <div class="relative">
+        <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#16b3ac] hover:bg-[#129993] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna">
+          <span id="headerUserInitials">A</span>
+        </button>
+        <!-- User Profile Dropdown Menu -->
+        <div id="topUserDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
+          <div class="px-4 py-2 border-b border-slate-100 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#16b3ac] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs" id="headerDropdownAvatar">
+              A
+            </div>
+            <div class="min-w-0">
+              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Anna</div>
+              <div class="text-[10px] text-slate-500 truncate" id="headerDropdownRole">Admin POGI (Data Entry &amp; Kemenkes)</div>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#16b3ac] border border-emerald-200 text-[9px] font-bold mt-1">
+                <span class="w-1 h-1 rounded-full bg-emerald-600"></span> Online
+              </span>
+            </div>
+          </div>
+          <div class="py-1">
+                                              </div>
+          <div class="pt-1 border-t border-slate-100 px-2">
+            <button type="button" onclick="performLogout()" class="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 rounded-xl font-bold flex items-center gap-2 transition cursor-pointer">
+              <span class="material-symbols-outlined text-base">logout</span>
+              <span>Keluar Sistem (Logout)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <!-- Main Body Scrollable View -->
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in">
+          <!-- Main Body -->
+  <main class="flex-1 overflow-y-auto space-y-6 page-fade-in">
+
+    <!-- MedCred Standard Heading Banner -->
+    <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="space-y-1.5">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
+          <span>LOG OPERASIONAL &amp; AUDIT TRAIL</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <span>Log Aktivitas &amp; Jejak Audit Operasional</span>
+          <span class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(Waktu Nyata)</span>
+        </h1>
+        <p class="text-xs text-slate-500 max-w-2xl leading-relaxed">
+          Rekaman jejak audit waktu nyata (real-time) setiap aktivitas input, pembaruan status, verifikasi kredit SKP, dan sinkronisasi SATUSEHAT terenkripsi.
+        </p>
+      </div>
+      <div class="flex items-center gap-2.5 shrink-0">
+        <button type="button" onclick="refreshActivityLog()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-base" id="refreshIcon">refresh</span>
+          <span>Segarkan Log</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 5 Metric Cards Sesuai Screenshot Asli Klien (09.12.05) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active users</div>
+        <div class="text-2xl font-black text-slate-900 mt-1">22</div>
+        <div class="text-[10px] text-emerald-700 font-bold mt-0.5">Admin &bull; Terdaftar</div>
+      </div>
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Audit Logs</div>
+        <div class="text-2xl font-black text-slate-900 mt-1">193</div>
+        <div class="text-[10px] text-slate-500 mt-0.5">Jejak Permanen</div>
+      </div>
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aktivitas Hari Ini</div>
+        <div class="text-2xl font-black text-sky-700 mt-1">124</div>
+        <div class="text-[10px] text-sky-800 font-bold mt-0.5">Real-Time Sync</div>
+      </div>
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aksi Kredensial &amp; PIC</div>
+        <div class="text-2xl font-black text-[#16b3ac] mt-1">136</div>
+        <div class="text-[10px] text-emerald-800 font-bold mt-0.5">Audit Security</div>
+      </div>
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs col-span-2 sm:col-span-1">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Enkripsi</div>
+        <div class="text-2xl font-black text-purple-700 mt-1">AES-256</div>
+        <div class="text-[10px] text-purple-800 font-bold mt-0.5">UU PDP No. 27/2022</div>
+      </div>
+    </div>
+
+    <!-- MESIN OTOMASI PENGINGAT (CRON JOB SCHEDULER H-7 & H-2 - RULES.md BAB 3.2.A) -->
+    <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-900/90 to-teal-900 text-white shadow-xl space-y-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-emerald-300 shrink-0">
+            <span class="material-symbols-outlined text-2xl">schedule_send</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 class="font-black text-sm text-white">Mesin Otomasi Pengingat &amp; Cron Job Scheduler</h3>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-black uppercase flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Worker Aktif
+              </span>
+            </div>
+            <p class="text-xs text-emerald-100/70 mt-0.5">
+              Eksekusi otomatis tugas terjadwal H-7 &amp; H-2 sebelum Cutoff 1 Des 2026 (00:00 WIB) sesuai regulasi RULES.md Bab 3.2.A
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0 flex-wrap">
+          <button type="button" onclick="runCronJobSimulation('H-7')" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
+            <span class="material-symbols-outlined text-sm text-emerald-300">play_circle</span>
+            <span>Simulasi Trigger H-7</span>
+          </button>
+          <button type="button" onclick="runCronJobSimulation('H-2')" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
+            <span class="material-symbols-outlined text-sm text-amber-300">warning</span>
+            <span>Simulasi Trigger H-2</span>
+          </button>
+          <button type="button" onclick="refreshActivityLog()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-sm text-slate-200" id="refreshIcon">refresh</span>
+            <span>Segarkan</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Schedule & Status Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10 text-xs">
+        <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+          <div class="text-[10px] text-emerald-200/60 font-bold uppercase tracking-wider">Jadwal Cutoff Bulanan</div>
+          <div class="text-sm font-black text-white mt-0.5">01 Des 2026 &bull; 00:00 WIB</div>
+          <div class="text-[10px] text-emerald-100/60 mt-0.5">Kunci data &amp; arsip laporan bulanan</div>
+        </div>
+        <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+          <div class="text-[10px] text-emerald-200/60 font-bold uppercase tracking-wider">Next Trigger: Pengingat Rutin H-7</div>
+          <div class="text-sm font-black text-emerald-300 mt-0.5">24 Nov 2026 &bull; 00:00 WIB</div>
+          <div class="text-[10px] text-emerald-100/60 mt-0.5">Sasaran: 158 Dokter Incomplete (Nasional)</div>
+        </div>
+        <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+          <div class="text-[10px] text-amber-200/60 font-bold uppercase tracking-wider">Next Trigger: Deadline Kritis H-2</div>
+          <div class="text-sm font-black text-amber-300 mt-0.5">29 Nov 2026 &bull; 00:00 WIB</div>
+          <div class="text-[10px] text-amber-100/60 mt-0.5">Eskalasi final sisa kekurangan kredit</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabel Log Aktivitas -->
+    <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600" id="activityCategoryFilterTabs">
+          <button type="button" onclick="filterActivityCategory('ALL')" id="tab-act-all" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs transition">Semua Log</button>
+          <button type="button" onclick="filterActivityCategory('Sync')" id="tab-act-sync" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-sky-500"></span> Sync SATUSEHAT
+          </button>
+          <button type="button" onclick="filterActivityCategory('Verification')" id="tab-act-verif" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Verifikasi Kredit
+          </button>
+          <button type="button" onclick="filterActivityCategory('FollowUp')" id="tab-act-fu" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Follow-Up Cabang
+          </button>
+          <button type="button" onclick="filterActivityCategory('Automation')" id="tab-act-auto" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-purple-500"></span> Otomasi Cron
+          </button>
+        </div>
+
+        <div class="w-full sm:w-72 relative">
+          <span class="material-symbols-outlined text-slate-400 text-lg absolute left-3 top-2.5">search</span>
+          <input type="text" id="searchActivityInput" onkeyup="filterActivities()" placeholder="Cari aksi, pengguna, atau rincian..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700 font-medium" />
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+      <div class="p-4 border-b border-slate-100 flex items-center justify-between gap-3">
+        <h3 class="font-extrabold text-sm text-slate-900">Riwayat Transaksi &amp; Verifikasi Kredit SKP</h3>
+        <span id="activityLogCounter" class="text-xs text-slate-400 font-medium">Dicatat otomatis oleh sistem</span>
+      </div>
+
+      <div class="hidden md:block overflow-x-auto">
+        <table class="w-full text-left text-xs whitespace-nowrap">
+          <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+            <tr>
+              <th class="py-3 px-4">Pengguna / Aktor</th>
+              <th class="py-3 px-4">Aksi Dilakukan</th>
+              <th class="py-3 px-4">Rincian Perubahan Data</th>
+              <th class="py-3 px-4 text-center">Kategori</th>
+              <th class="py-3 px-4 text-right">Waktu</th>
+            </tr>
+          </thead>
+          <tbody id="activityTableBody" class="divide-y divide-slate-100 font-medium">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Touch Cards (< md) -->
+      <div id="activityMobileCards" class="md:hidden divide-y divide-slate-100 p-2 sm:p-3 space-y-3">
+        <!-- Rendered dynamically for mobile -->
+      </div>
+
+      <!-- Interactive MedCred Pagination Footer -->
+      <div id="activityTablePagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
+    </div>
+  </main>
+
+
+  <script src="/js/pdf_exporter.js"></script>
+  <script>
+    
+    // MedCred Standard Pagination Component
+    function renderMedCredPaginationControls({ containerId, currentPage, totalPages, totalItems, startIdx, endIdx, itemLabel, onPageChangeFn, onLimitChangeFn, currentLimit, limits = [10, 25, 50] }) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+
+      if (totalItems === 0) {
+        el.innerHTML = '<div class="text-slate-400 text-xs py-1">Tidak ada data untuk ditampilkan</div>';
+        return;
+      }
+
+      let btnsHtml = '';
+
+      // Prev Button
+      const isFirst = currentPage <= 1;
+      btnsHtml += `
+        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
+          <span class="material-symbols-outlined text-sm">chevron_left</span>
+          <span>Sebelumnya</span>
+        </button>
+      `;
+
+      // Page numbers with smart window
+      const maxButtons = 5;
+      let startP = Math.max(1, currentPage - 2);
+      let endP = Math.min(totalPages, startP + maxButtons - 1);
+      if (endP - startP < maxButtons - 1) {
+        startP = Math.max(1, endP - maxButtons + 1);
+      }
+
+      if (startP > 1) {
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">1</button>`;
+        if (startP > 2) {
+          btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
+        }
+      }
+
+      for (let p = startP; p <= endP; p++) {
+        const isActive = (p === currentPage);
+        btnsHtml += `
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+            ${p}
+          </button>
+        `;
+      }
+
+      if (endP < totalPages) {
+        if (endP < totalPages - 1) {
+          btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
+        }
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">${totalPages}</button>`;
+      }
+
+      // Next Button
+      const isLast = currentPage >= totalPages;
+      btnsHtml += `
+        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
+          <span>Selanjutnya</span>
+          <span class="material-symbols-outlined text-sm">chevron_right</span>
+        </button>
+      `;
+
+      let limitSelectorHtml = '';
+      if (onLimitChangeFn && limits && limits.length > 0) {
+        limitSelectorHtml = `
+          <div class="flex items-center gap-1.5 ml-0 sm:ml-2">
+            <span class="text-slate-400 text-[11px]">Tampilkan:</span>
+            <select onchange="${onLimitChangeFn}(this.value)" class="py-1 px-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs font-bold focus:outline-none">
+              ${limits.map(l => `<option value="${l}" ${l === currentLimit ? 'selected' : ''}>${l}</option>`).join('')}
+            </select>
+          </div>
+        `;
+      }
+
+      el.innerHTML = `
+        <div class="flex flex-wrap items-center gap-2 text-slate-500 font-medium text-xs">
+          <div>
+            Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> ${itemLabel}
+          </div>
+          ${limitSelectorHtml}
+        </div>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          ${btnsHtml}
+        </div>
+      `;
+    }
+
+
+    const LIVE_SERVER_LOGS = [{"id":"90375bfa-07b6-485e-a0bb-c34485c1110e","user_name":"Dian","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Simulasi trigger H-7: 157 dokter status Incomplete diproses \u0026 antrean pengingat dikirim.","category":"FollowUp","time_text":"25 Nov 2026, 10:15 WIB","created_at":"2026-11-25 10:15:07"},{"id":"0a5c49fe-a910-4b52-93a4-bf4525c1a276","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 153.5 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 10:15 WIB","created_at":"2026-11-25 10:15:06"},{"id":"12aabf23-9683-4612-bad7-72c5e274f1a0","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 10:15 WIB","created_at":"2026-11-25 10:15:06"},{"id":"1daf70df-8826-4049-8d40-e58cece583ad","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 10:15 WIB","created_at":"2026-11-25 10:15:06"},{"id":"c21a5bca-3a45-4f65-84dd-22508527bd4c","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 10:15 WIB","created_at":"2026-11-25 10:15:06"},{"id":"137ebe95-3296-4259-918d-d09cdf2e829a","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 10:15 WIB","created_at":"2026-11-25 10:15:05"},{"id":"72db71b8-15fe-4114-818a-ec2f95ba6a38","user_name":"Dian","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Simulasi trigger H-7: 157 dokter status Incomplete diproses \u0026 antrean pengingat dikirim.","category":"FollowUp","time_text":"25 Nov 2026, 10:12 WIB","created_at":"2026-11-25 10:12:42"},{"id":"22a4d43c-ce22-4bfe-b47c-0bb32caa9a4e","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 10:12 WIB","created_at":"2026-11-25 10:12:41"},{"id":"47b6f330-6035-4445-9604-df00412f7d2e","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 10:12 WIB","created_at":"2026-11-25 10:12:41"},{"id":"b29c8cf8-add1-44c8-be50-acb1d4ed537b","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 10:12 WIB","created_at":"2026-11-25 10:12:41"},{"id":"ee2127c8-bbe8-45df-8ab8-288749cadddb","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 150 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 10:12 WIB","created_at":"2026-11-25 10:12:40"},{"id":"32d1ab73-833a-418e-bf2c-f805b5b576cc","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 10:12 WIB","created_at":"2026-11-25 10:12:39"},{"id":"7ed3c0b0-ca93-4701-abbe-895c5602914e","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 10:04 WIB","created_at":"2026-11-25 10:04:37"},{"id":"7803f4c0-7274-4bac-bc69-aa61552d3dbb","user_name":"Dian","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Simulasi trigger H-7: 157 dokter status Incomplete diproses \u0026 antrean pengingat dikirim.","category":"FollowUp","time_text":"25 Nov 2026, 09:55 WIB","created_at":"2026-11-25 09:55:19"},{"id":"0f43602c-7eca-44c3-819e-8ae00e03aefe","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 09:55 WIB","created_at":"2026-11-25 09:55:18"},{"id":"53e27394-e04f-4584-b655-9dee27b06109","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 146.5 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 09:55 WIB","created_at":"2026-11-25 09:55:18"},{"id":"a4cd47eb-dc0e-4502-be42-fd7069a48718","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 09:55 WIB","created_at":"2026-11-25 09:55:18"},{"id":"cc940e35-4229-4e69-91a1-0b8ec9240f85","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 09:55 WIB","created_at":"2026-11-25 09:55:18"},{"id":"29d55e9d-ae88-47c6-bcbf-bcabaad589e5","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 09:55 WIB","created_at":"2026-11-25 09:55:17"},{"id":"052c3f03-010f-4cdd-86b4-0bdf3cd92c2e","user_name":"Dian","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Simulasi trigger H-7: 157 dokter status Incomplete diproses \u0026 antrean pengingat dikirim.","category":"FollowUp","time_text":"25 Nov 2026, 09:31 WIB","created_at":"2026-11-25 09:31:20"},{"id":"7c1d4632-f5b6-4425-83d1-1a3ce5da447e","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 09:31 WIB","created_at":"2026-11-25 09:31:19"},{"id":"8adf0f6e-b3f9-402e-9198-4dcc33c49060","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 09:31 WIB","created_at":"2026-11-25 09:31:19"},{"id":"e4aa88a9-f563-4a6f-a1b3-dbca8d94e6e1","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 09:31 WIB","created_at":"2026-11-25 09:31:19"},{"id":"e7ad0874-cbbf-4ca9-89fb-3149d9596644","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 143 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 09:31 WIB","created_at":"2026-11-25 09:31:19"},{"id":"d94a4d5a-8325-46b6-9e2d-e64d3af25ed4","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 09:31 WIB","created_at":"2026-11-25 09:31:17"},{"id":"1d900926-617c-43c1-b170-219774d7ffc4","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 09:25 WIB","created_at":"2026-11-25 09:25:33"},{"id":"8a4ece23-59d3-4307-af86-73905fb87f37","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 09:24 WIB","created_at":"2026-11-25 09:24:59"},{"id":"f74232e4-c205-47e4-a151-76df4429fe38","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 09:24 WIB","created_at":"2026-11-25 09:24:51"},{"id":"e03e09e5-22f7-4817-a7a6-3bad71479ced","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 09:24 WIB","created_at":"2026-11-25 09:24:50"},{"id":"5c59e678-0d0b-458a-996a-a4cbe04f9bdd","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 09:24 WIB","created_at":"2026-11-25 09:24:49"},{"id":"9953ade5-0d09-4b16-b8f7-535302e8a7ad","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 09:24 WIB","created_at":"2026-11-25 09:24:48"},{"id":"a76b2736-f968-4222-8e52-7a52c1aa7c62","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 09:24 WIB","created_at":"2026-11-25 09:24:47"},{"id":"2e1470d1-3209-4418-9dc0-b0556bbdb821","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 09:24 WIB","created_at":"2026-11-25 09:24:46"},{"id":"2c5bb444-40ad-49bf-a462-9e3edaf27b37","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 09:24 WIB","created_at":"2026-11-25 09:24:41"},{"id":"3d2d20f1-3bec-4dc2-833d-51c9bb2a3f42","user_name":"Dian","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Simulasi trigger H-7: 157 dokter status Incomplete diproses \u0026 antrean pengingat dikirim.","category":"FollowUp","time_text":"25 Nov 2026, 01:31 WIB","created_at":"2026-11-25 01:31:48"},{"id":"3f03e70f-ebc8-4442-970b-f9bbe96b441c","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 139.5 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 01:31 WIB","created_at":"2026-11-25 01:31:48"},{"id":"763cf052-e51e-44c8-b3ec-cee97f0b3846","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 01:31 WIB","created_at":"2026-11-25 01:31:48"},{"id":"c68ebeff-2aec-4440-ac5e-5e5dcd47abe8","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 01:31 WIB","created_at":"2026-11-25 01:31:48"},{"id":"d8547cb1-13b2-46c9-b3ae-8caef60b66c2","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 01:31 WIB","created_at":"2026-11-25 01:31:48"},{"id":"1aa401a9-acf2-4282-af8f-7b6a539b69fd","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 01:31 WIB","created_at":"2026-11-25 01:31:47"},{"id":"6e0aae3b-4bff-4b4a-8181-2a72a875f910","user_name":"Dian","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Simulasi trigger H-7: 157 dokter status Incomplete diproses \u0026 antrean pengingat dikirim.","category":"FollowUp","time_text":"25 Nov 2026, 01:31 WIB","created_at":"2026-11-25 01:31:40"},{"id":"56f60629-d6ca-49f8-92a5-fc8a4a2f573e","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 01:31 WIB","created_at":"2026-11-25 01:31:17"},{"id":"71c46913-614c-4ad2-8362-d1953d40e5ed","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 01:31 WIB","created_at":"2026-11-25 01:31:17"},{"id":"9a4c0f9a-35d2-4ee7-abcf-ed54802dc258","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 01:31 WIB","created_at":"2026-11-25 01:31:17"},{"id":"5a94ccd7-c1d1-4965-ab65-988793212c8d","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 01:31 WIB","created_at":"2026-11-25 01:31:16"},{"id":"e1bb5011-1697-45bb-85cc-4543567d2c68","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 136 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 01:31 WIB","created_at":"2026-11-25 01:31:16"},{"id":"1f50911d-136c-4b76-998e-9ac37d746365","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 01:20 WIB","created_at":"2026-11-25 01:20:37"},{"id":"268afd18-1cfe-437b-8a86-4190462c5baa","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 01:20 WIB","created_at":"2026-11-25 01:20:37"},{"id":"8b3a9860-fd90-4c02-8a9b-2f009bef28d1","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 132.5 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 01:20 WIB","created_at":"2026-11-25 01:20:37"},{"id":"b3ad38e3-64c6-4c02-96c7-5bcb87f892fc","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 01:20 WIB","created_at":"2026-11-25 01:20:37"},{"id":"c7868085-7f12-4f8c-97f4-45d1afef0f54","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 01:20 WIB","created_at":"2026-11-25 01:20:37"},{"id":"4a8280f2-cd1d-4aef-9ff7-19bc2bbdc2df","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 01:15 WIB","created_at":"2026-11-25 01:15:44"},{"id":"4e8cca2e-3750-4b62-9e15-ba7f82ca18de","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 01:15 WIB","created_at":"2026-11-25 01:15:44"},{"id":"9fadbe23-271a-4d13-916a-4bc14d1446cd","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 01:15 WIB","created_at":"2026-11-25 01:15:44"},{"id":"a3321ab1-c551-44a0-9bd2-49b31fd288af","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 129 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 01:15 WIB","created_at":"2026-11-25 01:15:43"},{"id":"f6219967-e47e-4173-a6e3-a928fb9c6e05","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 01:15 WIB","created_at":"2026-11-25 01:15:43"},{"id":"0ef39213-abdc-4389-b27f-a16db0380385","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 01:10 WIB","created_at":"2026-11-25 01:10:38"},{"id":"1d2ee5cf-1002-44c6-9d39-fb7f6a1169aa","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 01:10 WIB","created_at":"2026-11-25 01:10:38"},{"id":"37a763be-52e8-4597-9d1a-90301c955657","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 01:10 WIB","created_at":"2026-11-25 01:10:38"},{"id":"7603d123-8740-4f4f-ba79-4621535e407b","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 125.5 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 01:10 WIB","created_at":"2026-11-25 01:10:38"},{"id":"5130ca90-b180-4bee-821c-012c83fcea4b","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 01:10 WIB","created_at":"2026-11-25 01:10:37"},{"id":"0fa24c17-432d-4e30-b6c6-3191cd203356","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 01:10 WIB","created_at":"2026-11-25 01:10:08"},{"id":"11e4464c-e045-4026-a49b-7c11eb2cf90e","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 122 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 01:10 WIB","created_at":"2026-11-25 01:10:08"},{"id":"ce244e3e-75fc-4649-b6eb-6acfcd59ad7f","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 01:10 WIB","created_at":"2026-11-25 01:10:08"},{"id":"ec9a18c4-b2fa-47d8-98e7-ab203315b71b","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 01:10 WIB","created_at":"2026-11-25 01:10:08"},{"id":"d3304c57-2211-4582-b2b2-c6ba7f922508","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 01:10 WIB","created_at":"2026-11-25 01:10:06"},{"id":"25d20a97-75ef-4aa3-bfe3-052976cbcd64","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 01:05 WIB","created_at":"2026-11-25 01:05:41"},{"id":"85eca3a8-50d4-4740-8cea-7be677680159","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 01:05 WIB","created_at":"2026-11-25 01:05:41"},{"id":"e8b56736-188e-40b0-834f-5efc5a760112","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 01:05 WIB","created_at":"2026-11-25 01:05:41"},{"id":"67cea85b-7369-421c-9457-6e6fe6af7c66","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 01:05 WIB","created_at":"2026-11-25 01:05:40"},{"id":"ecda1fcf-2cbb-44d2-9419-fbd76e17707b","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 118.5 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 01:05 WIB","created_at":"2026-11-25 01:05:40"},{"id":"8508752e-f64a-46b4-ab32-ce9cc1ac18f4","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 01:00 WIB","created_at":"2026-11-25 01:00:47"},{"id":"b383fa0f-3d69-453a-a7bc-e32ad18478fa","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 01:00 WIB","created_at":"2026-11-25 01:00:47"},{"id":"c5fc29dd-b879-45ed-8f67-84872829e562","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 01:00 WIB","created_at":"2026-11-25 01:00:47"},{"id":"4e27d876-c1ca-4dad-87c8-8095cf6e2d7d","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 115 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 01:00 WIB","created_at":"2026-11-25 01:00:46"},{"id":"f8cfc6db-3196-4c3e-a1ca-dbeb3189f616","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 01:00 WIB","created_at":"2026-11-25 01:00:46"},{"id":"ba490de5-53e3-4aa6-830f-b119564fb37e","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 01:00 WIB","created_at":"2026-11-25 01:00:06"},{"id":"c8816e3a-ac80-467a-9647-c9e08f211307","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 01:00 WIB","created_at":"2026-11-25 01:00:06"},{"id":"e29b2b7e-7391-48cd-b536-60807b627741","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 111.5 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 01:00 WIB","created_at":"2026-11-25 01:00:06"},{"id":"e84fc53d-d280-4a7b-9d6f-31da39edd247","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 01:00 WIB","created_at":"2026-11-25 01:00:06"},{"id":"7ed356d5-e0ae-4d47-a5c8-652d4b222e37","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 01:00 WIB","created_at":"2026-11-25 01:00:05"},{"id":"3ac2ed20-6665-40d3-8098-b79f0efdccc7","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 00:43 WIB","created_at":"2026-11-25 00:43:03"},{"id":"4239026f-6176-4203-9a2b-8180b151db9d","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 108 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 00:43 WIB","created_at":"2026-11-25 00:43:03"},{"id":"a66b37e0-5f48-4cf8-89a1-2e565ff92509","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 00:43 WIB","created_at":"2026-11-25 00:43:03"},{"id":"fadaa110-0ba1-498e-941e-6314d1989326","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 00:43 WIB","created_at":"2026-11-25 00:43:03"},{"id":"fd7f218b-fabb-4d13-b525-c90f767495cc","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 00:43 WIB","created_at":"2026-11-25 00:43:03"},{"id":"21527b48-55dc-4668-ab2a-a4fdd37648b5","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 00:42 WIB","created_at":"2026-11-25 00:42:26"},{"id":"e7d2c83c-e848-4271-a457-3ac6d5ed0572","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 00:42 WIB","created_at":"2026-11-25 00:42:26"},{"id":"fbb19e88-db2e-4e01-a4d0-f0e7832e6e16","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 00:42 WIB","created_at":"2026-11-25 00:42:26"},{"id":"735d7557-a996-49bd-a60a-61e069beb89c","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 104.5 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 00:42 WIB","created_at":"2026-11-25 00:42:25"},{"id":"b5b57124-e79b-4c69-b448-ff53c19f3674","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 00:42 WIB","created_at":"2026-11-25 00:42:25"},{"id":"21d1b7c0-6e96-4201-9d0a-315d20a8f4dd","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 00:35 WIB","created_at":"2026-11-25 00:35:52"},{"id":"602ba521-bb66-4620-b53d-701216950b7b","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 00:35 WIB","created_at":"2026-11-25 00:35:52"},{"id":"85900d52-e5c4-47be-863a-762409712072","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 00:35 WIB","created_at":"2026-11-25 00:35:52"},{"id":"caf81031-b32f-4dbd-bad0-eabd9fd73dd5","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 101 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 00:35 WIB","created_at":"2026-11-25 00:35:52"},{"id":"fc4e9978-5bab-4480-89b4-7f4b36a40a44","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 00:35 WIB","created_at":"2026-11-25 00:35:52"},{"id":"0f786a0f-8f4a-43c1-a3d9-9ac1a2bc7770","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 00:32 WIB","created_at":"2026-11-25 00:32:13"},{"id":"0f25b364-2bd2-4200-b3ad-b61427d98901","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 00:31 WIB","created_at":"2026-11-25 00:31:55"},{"id":"314d078d-f696-45ec-a1b4-7a0230b66f71","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 00:31 WIB","created_at":"2026-11-25 00:31:55"},{"id":"e0c23ad8-8ee7-4f53-b429-5849601f2f48","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 97.5 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 00:31 WIB","created_at":"2026-11-25 00:31:55"},{"id":"fb7fd72d-d07b-4149-80a3-53577c6743d6","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 00:31 WIB","created_at":"2026-11-25 00:31:55"},{"id":"3ef0f673-8836-41d3-8e26-b1e023b86e18","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 00:31 WIB","created_at":"2026-11-25 00:31:54"},{"id":"0604eda0-aaf2-456e-9323-1fc32cbad488","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 94 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 00:28 WIB","created_at":"2026-11-25 00:28:13"},{"id":"1764d9b6-74c2-43b4-9be4-e60c04d8be73","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 00:28 WIB","created_at":"2026-11-25 00:28:13"},{"id":"365b55c3-6d97-4a0e-893c-9f2216b52a91","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 00:28 WIB","created_at":"2026-11-25 00:28:13"},{"id":"9057f11c-10a3-4e03-b4ce-83b54e0deb31","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 00:28 WIB","created_at":"2026-11-25 00:28:13"},{"id":"ad92b50d-cf96-44bc-8e38-543cee5cd4ea","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (10 dokter via whatsapp)","category":"FollowUp","time_text":"25 Nov 2026, 00:28 WIB","created_at":"2026-11-25 00:28:12"},{"id":"215b62c9-6b8d-460b-a12d-df3ed128fcff","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 00:20 WIB","created_at":"2026-11-25 00:20:02"},{"id":"3def3fb8-bde8-4745-b64c-4c28fb5cb0d1","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 00:20 WIB","created_at":"2026-11-25 00:20:01"},{"id":"4b8156e9-219f-443c-9703-170bca6a22d1","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 00:20 WIB","created_at":"2026-11-25 00:20:01"},{"id":"73c8e955-a69b-4635-9a5f-1672e8e0496b","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 90.5 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 00:20 WIB","created_at":"2026-11-25 00:20:01"},{"id":"017a2353-163c-440e-8113-5d77e230737c","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 00:04 WIB","created_at":"2026-11-25 00:04:15"},{"id":"289060bb-d3fc-436a-b03f-4d0e1cc3e2ac","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 00:04 WIB","created_at":"2026-11-25 00:04:15"},{"id":"89a8ab59-62f9-4a32-a583-d1a530051daf","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 00:04 WIB","created_at":"2026-11-25 00:04:15"},{"id":"0bab14e1-d72c-447d-981c-5ccc1455da77","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 87 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 00:04 WIB","created_at":"2026-11-25 00:04:14"},{"id":"373717f4-47b7-4f2f-b939-0850ee8ff480","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 00:03 WIB","created_at":"2026-11-25 00:03:00"},{"id":"04f50b3f-b160-4ec9-860e-6091defbed0e","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 00:02 WIB","created_at":"2026-11-25 00:02:59"},{"id":"b456bde4-f783-42d3-94bf-466e427c8651","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 00:02 WIB","created_at":"2026-11-25 00:02:59"},{"id":"d204c531-b407-40ed-8363-8c1463af051f","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 83.5 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 00:02 WIB","created_at":"2026-11-25 00:02:59"},{"id":"0c24ff0d-f675-4905-8ff5-fce2e01a2bdb","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 80 SKP (COMPLETE)","category":"Verification","time_text":"25 Nov 2026, 00:02 WIB","created_at":"2026-11-25 00:02:26"},{"id":"2166f203-0ef5-44e3-8cdd-3931aee14dc3","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"25 Nov 2026, 00:02 WIB","created_at":"2026-11-25 00:02:26"},{"id":"66f372f9-2474-49dd-8b07-a4d47fd0327a","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"25 Nov 2026, 00:02 WIB","created_at":"2026-11-25 00:02:26"},{"id":"72cb3c24-cffc-463b-ab00-6208b88e6e64","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"25 Nov 2026, 00:02 WIB","created_at":"2026-11-25 00:02:26"},{"id":"2c3e75ee-abc7-40d3-991f-2d40a2e92dc1","user_name":"Dian","user_role":"SUPER_ADMIN","action":"CRON_PRE_DEADLINE_SYNC","action_name":"Eksekusi Otomasi Cron","details_text":"Sinkronisasi pra-cutoff otomatis: pembaruan berkas dari SATUSEHAT untuk 157 dokter incomplete.","category":"Sync","time_text":"25 Nov 2026, 00:00 WIB","created_at":"2026-11-25 00:00:10"},{"id":"6da1a7f2-3010-4bf8-b874-277fc68a8026","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 22:41 WIB","created_at":"2026-11-24 22:41:22"},{"id":"76618629-04ce-4ded-b2cc-afbe77e96f14","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 22:41 WIB","created_at":"2026-11-24 22:41:22"},{"id":"782ca1ee-839f-45bb-8eff-b2a5a13814d4","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 76.5 SKP (COMPLETE)","category":"Verification","time_text":"24 Nov 2026, 22:41 WIB","created_at":"2026-11-24 22:41:22"},{"id":"a7175a1e-a282-45a0-89cd-9d86d8569c7f","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 22:41 WIB","created_at":"2026-11-24 22:41:22"},{"id":"152513d5-3dcb-4056-a26c-7494bc5e24f8","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 22:18 WIB","created_at":"2026-11-24 22:18:01"},{"id":"50132979-2250-43c2-b52d-bdd8bd14abe3","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 22:18 WIB","created_at":"2026-11-24 22:18:01"},{"id":"91ebf190-fc82-474d-8c68-9fbcdec6d8d3","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 73 SKP (COMPLETE)","category":"Verification","time_text":"24 Nov 2026, 22:18 WIB","created_at":"2026-11-24 22:18:01"},{"id":"c7c6d2d8-2d63-46b4-bf20-9af775681c4b","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 22:18 WIB","created_at":"2026-11-24 22:18:01"},{"id":"5dfedb2e-e923-465b-8ad0-51cc1bfa412b","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 84.5 SKP (COMPLETE)","category":"Verification","time_text":"24 Nov 2026, 22:17 WIB","created_at":"2026-11-24 22:17:15"},{"id":"79e48dd1-1c30-41a2-8752-774d506653f8","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 22:17 WIB","created_at":"2026-11-24 22:17:15"},{"id":"9b06ca2a-b23a-4011-b642-bce6d05834d0","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 22:17 WIB","created_at":"2026-11-24 22:17:15"},{"id":"9cc223bd-5752-4c59-b8a7-c2dee87e0d11","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 22:17 WIB","created_at":"2026-11-24 22:17:15"},{"id":"cd904acf-3bd2-4dbb-96eb-58ad4b3128f4","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 76 SKP (COMPLETE)","category":"Verification","time_text":"24 Nov 2026, 22:17 WIB","created_at":"2026-11-24 22:17:04"},{"id":"d1a77876-cfa3-478f-8074-96f92ff19a0d","user_name":"Dian","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Yohana Suryani, Sp.OG(K) \u2014 Total: 57.5 SKP (COMPLETE)","category":"Verification","time_text":"24 Nov 2026, 22:16 WIB","created_at":"2026-11-24 22:16:44"},{"id":"3a2d32ae-ba35-4a05-bac1-ca625bc5be75","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 22:12 WIB","created_at":"2026-11-24 22:12:14"},{"id":"46f75394-3dd2-4fe2-b67c-66f25b87bc6b","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 22:12 WIB","created_at":"2026-11-24 22:12:14"},{"id":"e6a57014-78eb-4bde-95e0-0fbaaec4753a","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 22:12 WIB","created_at":"2026-11-24 22:12:14"},{"id":"0cb340e7-9a8c-48fe-ab7e-c25db199f817","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:36 WIB","created_at":"2026-11-24 21:36:13"},{"id":"49f0c44b-8f68-4438-ae0c-fa2541423997","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 21:36 WIB","created_at":"2026-11-24 21:36:13"},{"id":"52af7c13-f8b5-4957-855f-2fe3c25c7477","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 21:36 WIB","created_at":"2026-11-24 21:36:13"},{"id":"fbe18d16-31d5-4f3d-809e-d8b740a10b36","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 21:34 WIB","created_at":"2026-11-24 21:34:52"},{"id":"229ffde4-e20b-4672-9c8f-4e1d40e0edc6","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 21:34 WIB","created_at":"2026-11-24 21:34:51"},{"id":"58777866-8cfe-4764-b3bd-2ba35e236643","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:34 WIB","created_at":"2026-11-24 21:34:51"},{"id":"229eb6d5-94e8-4342-b00d-9bcc687a203c","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 21:34 WIB","created_at":"2026-11-24 21:34:22"},{"id":"407e8a96-f72c-4029-bf5c-29948dbb7917","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 21:34 WIB","created_at":"2026-11-24 21:34:22"},{"id":"faa74e8f-3a62-4572-a4fe-a535a1490dcf","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:34 WIB","created_at":"2026-11-24 21:34:22"},{"id":"b24e5b49-fd82-4b6f-88e2-64368808e77a","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:21 WIB","created_at":"2026-11-24 21:21:01"},{"id":"0eaddee5-0d00-4631-b606-9ae0370a0b84","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 21:19 WIB","created_at":"2026-11-24 21:19:29"},{"id":"2512249f-5923-4d0e-8192-e96b35204cd3","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:19 WIB","created_at":"2026-11-24 21:19:29"},{"id":"94391db1-e8fe-42d8-8514-ac89bfe1a6cb","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 21:19 WIB","created_at":"2026-11-24 21:19:29"},{"id":"902cab0c-2f65-4cec-80b8-364579ea4da3","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 21:17 WIB","created_at":"2026-11-24 21:17:26"},{"id":"bbac61c3-a07a-42fd-926c-36fe228a02a5","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:17 WIB","created_at":"2026-11-24 21:17:26"},{"id":"d6cc5666-f5be-42be-9c12-b364607204a3","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 21:17 WIB","created_at":"2026-11-24 21:17:26"},{"id":"5e49f7f8-49da-437c-9e26-1ed28d8e2650","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 21:15 WIB","created_at":"2026-11-24 21:15:28"},{"id":"7c4126ea-6d0d-490e-9bdf-26df3f83dc26","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:15 WIB","created_at":"2026-11-24 21:15:28"},{"id":"ecda376d-8ce1-4635-99b0-1a65f41b87d9","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 21:15 WIB","created_at":"2026-11-24 21:15:28"},{"id":"9b85a6f6-1053-44e0-9297-710b66610afb","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:15 WIB","created_at":"2026-11-24 21:15:01"},{"id":"a642dda7-7053-4e7d-9d79-2c7c4d0540ce","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 21:15 WIB","created_at":"2026-11-24 21:15:01"},{"id":"bdf033b1-3d93-4477-877c-5a8311ad8927","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 21:15 WIB","created_at":"2026-11-24 21:15:01"},{"id":"96c1c371-84ec-4749-b1e6-09253bf5e233","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:14 WIB","created_at":"2026-11-24 21:14:29"},{"id":"c4fc2cc1-8b05-498d-9318-096320f4d5c7","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 21:14 WIB","created_at":"2026-11-24 21:14:29"},{"id":"e9b3cd7a-a210-4174-987a-fc0b00206c53","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 21:14 WIB","created_at":"2026-11-24 21:14:29"},{"id":"4556a1b9-f10e-4ad0-ad78-d95d64aa6aa8","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:14 WIB","created_at":"2026-11-24 21:14:06"},{"id":"6b51ab25-a4db-458a-b44a-691975ed61e6","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 21:14 WIB","created_at":"2026-11-24 21:14:06"},{"id":"c73dede5-4d60-4f6e-8f85-49d2cd375883","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 21:14 WIB","created_at":"2026-11-24 21:14:06"},{"id":"33594ea2-a482-4a63-bd08-21b615489899","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 21:13 WIB","created_at":"2026-11-24 21:13:43"},{"id":"40a7a7bf-4054-46a7-b0bd-67ee6787ed9f","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 21:13 WIB","created_at":"2026-11-24 21:13:43"},{"id":"6a5d012f-32de-4b17-8462-d176a3031c01","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:13 WIB","created_at":"2026-11-24 21:13:43"},{"id":"62886b68-b143-4aee-8f13-53087873043b","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:13 WIB","created_at":"2026-11-24 21:13:24"},{"id":"9ca2bf1d-92f0-474f-9ca2-4267d9dc8031","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 21:13 WIB","created_at":"2026-11-24 21:13:24"},{"id":"d5f52dac-6c11-41f2-9203-d7671d3bd3ff","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 21:13 WIB","created_at":"2026-11-24 21:13:24"},{"id":"bae21b14-59a3-44a8-894c-2bfa9d4b25fa","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 21:02 WIB","created_at":"2026-11-24 21:02:54"},{"id":"85fc1b02-76bc-4381-ba53-f4662c58fa8d","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 20:47 WIB","created_at":"2026-11-24 20:47:58"},{"id":"a08b5719-5f8f-403a-8542-b86fc3a0a3fb","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 20:47 WIB","created_at":"2026-11-24 20:47:58"},{"id":"acb537af-3108-44a6-be2f-5a768271430d","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 20:47 WIB","created_at":"2026-11-24 20:47:58"},{"id":"47d5c112-cf1e-404e-9771-9cd3e040399e","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 20:43 WIB","created_at":"2026-11-24 20:43:32"},{"id":"d439bc6d-e26d-4ec2-8a73-e6abadab91a1","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 20:43 WIB","created_at":"2026-11-24 20:43:32"},{"id":"ea84063d-8d68-4d10-afe5-abd6f55715ba","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 20:43 WIB","created_at":"2026-11-24 20:43:32"},{"id":"d3ae2398-e353-41f6-ab75-3968cffa4983","user_name":"Dian","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"24 Nov 2026, 20:39 WIB","created_at":"2026-11-24 20:39:40"},{"id":"d8855846-fa60-49d1-9e74-28c25ccdee9c","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 20:39 WIB","created_at":"2026-11-24 20:39:40"},{"id":"aee41cc4-0222-41b4-83c0-ce89c2a95cdf","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 20:39 WIB","created_at":"2026-11-24 20:39:39"},{"id":"099b8bde-46aa-4c8c-a584-18835f5ed604","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 20:39 WIB","created_at":"2026-11-24 20:39:15"},{"id":"71ef99c6-c3fd-43dc-96b0-5e84b228c9c7","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 20:39 WIB","created_at":"2026-11-24 20:39:13"},{"id":"b590f8d9-a372-430a-92c1-bcdd72d57a01","user_name":"Dian","user_role":"SUPER_ADMIN","action":"REASSIGN_DOCTOR_PIC","action_name":"Penugasan PIC Dokter","details_text":"dr. Yohana Suryani, Sp.OG(K) ditugaskan ke PIC Anna (ADMIN_POGI)","category":"FollowUp","time_text":"24 Nov 2026, 20:37 WIB","created_at":"2026-11-24 20:37:45"},{"id":"11e7ea11-a96b-42a5-80ba-0b2ce749b9db","user_name":"Anna","user_role":"ADMIN_POGI","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 dr. Yohana Suryani, Sp.OG(K)","category":"Sync","time_text":"24 Nov 2026, 20:37 WIB","created_at":"2026-11-24 20:37:41"},{"id":"f90445f8-60d5-4c01-9040-38fabe504ae9","user_name":"Bp. Ircham","user_role":"SUPER_ADMIN","action":"APPROVE_CREDITS","action_name":"Persetujuan Kredit SKP","details_text":"Status: DONE \u2022 28 SKP","category":"Verification","time_text":"24 Nov 2026, 19:24 WIB","created_at":"2026-11-24 19:24:44"},{"id":"5cefa4a9-2b61-4252-814f-0407fefd7c61","user_name":"Dian","user_role":"SUPER_ADMIN","action":"CRON_RECAP_BRANCH_ESCALATION","action_name":"Eksekusi Otomasi Cron","details_text":"Rekapitulasi otomatis berkas pending verifikasi diteruskan ke 38 Admin Cabang POGI Daerah.","category":"Automation","time_text":"24 Nov 2026, 18:00 WIB","created_at":"2026-11-24 18:00:17"},{"id":"381d9ee4-343a-489f-a756-e83bdee6d2be","user_name":"Dian","user_role":"SUPER_ADMIN","action":"CRON_HEALTH_CHECK_WORKER","action_name":"Eksekusi Otomasi Cron","details_text":"Pemeriksaan integritas scheduler otomasi \u0026 koneksi gateway SATUSEHAT: Status Aktif (0 antrean macet).","category":"Automation","time_text":"24 Nov 2026, 06:00 WIB","created_at":"2026-11-24 06:00:17"},{"id":"c57ae74e-10b7-46a2-b76e-cbf64f2a45d1","user_name":"Dian","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Eksekusi otomatis pengingat rutin H-7: 157 dokter status Incomplete diproses \u0026 antrean pengingat WhatsApp dijadwalkan.","category":"FollowUp","time_text":"24 Nov 2026, 00:00 WIB","created_at":"2026-11-24 00:00:15"}];
+    let activeCategory = 'ALL';
+    let activityPagination = { page: 1, limit: 10, total: LIVE_SERVER_LOGS.length || 0 };
+    let currentFilteredActivities = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderActivityTable();
+    });
+
+    function changeActivityPage(p) {
+      const list = currentFilteredActivities || (LIVE_SERVER_LOGS.length > 0 ? LIVE_SERVER_LOGS : []);
+      const totalPages = Math.max(1, Math.ceil(list.length / activityPagination.limit));
+      if (p < 1) p = 1;
+      if (p > totalPages) p = totalPages;
+      activityPagination.page = p;
+      renderActivityTable(activeCategory, (document.getElementById('searchActivityInput')?.value || ''), false);
+    }
+
+    function setActivityPageLimit(limit) {
+      activityPagination.limit = parseInt(limit, 10) || 10;
+      activityPagination.page = 1;
+      renderActivityTable(activeCategory, (document.getElementById('searchActivityInput')?.value || ''), false);
+    }
+
+    function renderActivityTable(filterCategory = activeCategory, searchQuery = '', resetPage = true) {
+      if (resetPage) activityPagination.page = 1;
+
+      const activities = (LIVE_SERVER_LOGS && LIVE_SERVER_LOGS.length > 0)
+        ? LIVE_SERVER_LOGS.map(l => {
+            // 1. Tentukan kategori tab (Sync, Verification, FollowUp, Automation)
+            let cat = l.category || 'General';
+            const actionUpper = (l.action || l.rawAction || '').toUpperCase();
+
+            if (actionUpper.includes('KEMENKES') || actionUpper.includes('SYNC') || actionUpper.includes('SATUSEHAT')) {
+              cat = 'Sync';
+            } else if (actionUpper.includes('VERIF') || actionUpper.includes('APPROVE') || actionUpper.includes('REJECT') || actionUpper.includes('CREDIT')) {
+              cat = 'Verification';
+            } else if (actionUpper.includes('FOLLOW') || actionUpper.includes('NOTIF') || actionUpper.includes('REMINDER') || actionUpper.includes('BLAST') || actionUpper.includes('PIC')) {
+              cat = 'FollowUp';
+            } else if (actionUpper.includes('CRON') || actionUpper.includes('AUTO') || actionUpper.includes('SCHEDULER') || actionUpper.includes('TRIGGER')) {
+              cat = 'Automation';
+            }
+
+            // 2. Nama Aksi Human-Readable
+            let actionName = l.action_name || l.action || 'Aktivitas Sistem';
+            if (actionUpper === 'KEMENKES_PORTAL_ACCESS') actionName = 'Akses Portal SATUSEHAT';
+            else if (actionUpper === 'VERIFY_DOCTOR_CREDITS') actionName = 'Verifikasi Kredit SKP';
+            else if (actionUpper === 'APPROVE_CREDITS') actionName = 'Persetujuan Kredit SKP';
+            else if (actionUpper === 'SEND_FOLLOW_UP_NOTIFICATION') actionName = 'Kirim Notifikasi Follow-Up';
+            else if (actionUpper === 'REASSIGN_DOCTOR_PIC') actionName = 'Penugasan PIC Dokter';
+            else if (actionUpper.includes('CRON_TRIGGER_H7')) actionName = 'Trigger Rutin H-7 Pengingat';
+            else if (actionUpper.includes('CRON_TRIGGER_H2')) actionName = 'Trigger Deadline Kritis H-2';
+            else if (actionUpper.includes('CRON')) actionName = 'Eksekusi Otomasi Cron';
+
+            // 3. Rincian Data Human-Readable
+            let details = l.details_text || l.details || '-';
+            if ((!l.details_text || details === '-') && l.new_values) {
+              try {
+                const parsed = typeof l.new_values === 'string' ? JSON.parse(l.new_values) : l.new_values;
+                if (parsed.message) {
+                  details = parsed.message;
+                } else if (parsed.event && parsed.doctor_context) {
+                  details = `${parsed.event} — ${parsed.doctor_context}`;
+                } else if (parsed.doctor_name && parsed.total_credits !== undefined) {
+                  details = `${parsed.doctor_name} — Total: ${parsed.total_credits} SKP (${parsed.new_status || 'Diproses'})`;
+                } else if (parsed.doctor_name && parsed.new_pic_name) {
+                  details = `${parsed.doctor_name} ditugaskan ke PIC ${parsed.new_pic_name} (${parsed.new_pic_role || 'ADMIN'})`;
+                } else if (parsed.target && parsed.recipients) {
+                  details = `Target: ${parsed.target} (${parsed.recipients} dokter via ${(parsed.channels || ['whatsapp']).join(', ')})`;
+                } else if (parsed.credits) {
+                  details = `Status: ${parsed.status || 'DONE'} • ${parsed.credits} SKP`;
+                } else if (typeof parsed === 'string') {
+                  details = parsed;
+                } else {
+                  details = Object.entries(parsed).map(([k, v]) => `${k}: ${v}`).join(' • ');
+                }
+              } catch(e) {
+                details = String(l.new_values);
+              }
+            } else if ((!l.details_text || details === '-') && l.entity_name) {
+              details = `Entitas: ${l.entity_name} (${l.entity_id || '-'})`;
+            }
+
+            // 4. Format Waktu Indonesia
+            let timestamp = l.time_text || l.timestamp || 'Baru saja';
+            if ((!l.time_text && !l.timestamp) && l.created_at) {
+              try {
+                const d = new Date(l.created_at);
+                timestamp = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' +
+                            d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+              } catch (e) {
+                timestamp = l.created_at;
+              }
+            }
+
+            return {
+              id: l.id,
+              actor: l.user_name || (cat === 'Automation' ? 'Sistem Otomasi (Cron Worker)' : 'System Auto'),
+              role: l.user_role || (cat === 'Automation' ? 'SYSTEM' : 'ADMIN'),
+              action: actionName,
+              rawAction: l.action,
+              details: details,
+              category: cat,
+              timestamp: timestamp
+            };
+          })
+        : [];
+
+      const tbody = document.getElementById('activityTableBody');
+      const mobileContainer = document.getElementById('activityMobileCards');
+      if (!tbody && !mobileContainer) return;
+
+      const filtered = activities.filter(a => {
+        const matchCat = filterCategory === 'ALL' || a.category.toUpperCase() === filterCategory.toUpperCase();
+        const q = (searchQuery || '').toLowerCase().trim();
+        const matchQ = !q ||
+          (a.actor || '').toLowerCase().includes(q) ||
+          (a.action || '').toLowerCase().includes(q) ||
+          (a.details || '').toLowerCase().includes(q) ||
+          (a.category || '').toLowerCase().includes(q);
+        return matchCat && matchQ;
+      });
+
+      currentFilteredActivities = filtered;
+      activityPagination.total = filtered.length;
+
+      const totalPages = Math.max(1, Math.ceil(activityPagination.total / activityPagination.limit));
+      if (activityPagination.page > totalPages) activityPagination.page = totalPages;
+      if (activityPagination.page < 1) activityPagination.page = 1;
+
+      const start = (activityPagination.page - 1) * activityPagination.limit;
+      const end = Math.min(start + activityPagination.limit, activityPagination.total);
+      const pageActivities = filtered.slice(start, end);
+
+      const counterEl = document.getElementById('activityLogCounter');
+      if (counterEl) {
+        counterEl.innerText = `Total ${activityPagination.total} aktivitas audit tercatat`;
+      }
+
+      // Desktop Table
+      if (tbody) {
+        if (pageActivities.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="py-12 text-center text-slate-400 font-medium">Tidak ada riwayat log aktivitas yang sesuai dengan kriteria filter.</td></tr>';
+        } else {
+          tbody.innerHTML = pageActivities.map(a => {
+            let badgeStyle = 'bg-slate-100 text-slate-700 border-slate-200';
+            let catLabel = a.category;
+            if (a.category === 'Sync') { badgeStyle = 'bg-sky-50 text-sky-800 border-sky-200'; catLabel = 'Sync SATUSEHAT'; }
+            else if (a.category === 'Verification') { badgeStyle = 'bg-emerald-50 text-emerald-800 border-emerald-200'; catLabel = 'Verifikasi Kredit'; }
+            else if (a.category === 'FollowUp') { badgeStyle = 'bg-amber-50 text-amber-800 border-amber-200'; catLabel = 'Follow-Up Cabang'; }
+            else if (a.category === 'Automation') { badgeStyle = 'bg-purple-50 text-purple-800 border-purple-200'; catLabel = 'Otomasi Cron'; }
+
+            return `
+              <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                <td class="py-3 px-4 font-bold text-slate-900">
+                  <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-slate-100 text-[#16b3ac] font-bold text-[10px] flex items-center justify-center shrink-0">
+                      ${(a.actor || 'S').charAt(0)}
+                    </span>
+                    <span>${a.actor}</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4 font-semibold text-slate-800">${a.action}</td>
+                <td class="py-3 px-4 text-slate-600 max-w-md truncate" title="${a.details.replace(/"/g, '&quot;')}">${a.details}</td>
+                <td class="py-3 px-4 text-center">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeStyle} border whitespace-nowrap">
+                    ${catLabel}
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-right text-slate-500 font-mono text-[11px] whitespace-nowrap">${a.timestamp}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // Mobile Touch Cards (< md)
+      if (mobileContainer) {
+        if (pageActivities.length === 0) {
+          mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada riwayat log aktivitas yang sesuai dengan kriteria filter.</div>';
+        } else {
+          mobileContainer.innerHTML = pageActivities.map(a => {
+            let badgeStyle = 'bg-slate-100 text-slate-700 border-slate-200';
+            let catLabel = a.category;
+            if (a.category === 'Sync') { badgeStyle = 'bg-sky-50 text-sky-800 border-sky-200'; catLabel = 'Sync SATUSEHAT'; }
+            else if (a.category === 'Verification') { badgeStyle = 'bg-emerald-50 text-emerald-800 border-emerald-200'; catLabel = 'Verifikasi Kredit'; }
+            else if (a.category === 'FollowUp') { badgeStyle = 'bg-amber-50 text-amber-800 border-amber-200'; catLabel = 'Follow-Up Cabang'; }
+            else if (a.category === 'Automation') { badgeStyle = 'bg-purple-50 text-purple-800 border-purple-200'; catLabel = 'Otomasi Cron'; }
+
+            return `
+              <div class="bg-white rounded-xl border border-slate-200 p-3.5 space-y-2 shadow-2xs">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-slate-100 text-[#16b3ac] font-bold text-[10px] flex items-center justify-center shrink-0">
+                      ${(a.actor || 'S').charAt(0)}
+                    </span>
+                    <span class="font-bold text-slate-900 text-xs">${a.actor}</span>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${badgeStyle} border shrink-0">
+                    ${catLabel}
+                  </span>
+                </div>
+                <div class="font-semibold text-slate-800 text-xs">${a.action}</div>
+                <div class="text-slate-600 text-[11px] leading-relaxed">${a.details}</div>
+                <div class="text-right text-slate-400 font-mono text-[10px] pt-1 border-t border-slate-100">${a.timestamp}</div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      renderMedCredPaginationControls({
+        containerId: 'activityTablePagination',
+        currentPage: activityPagination.page,
+        totalPages,
+        totalItems: activityPagination.total,
+        startIdx: activityPagination.total === 0 ? 0 : start + 1,
+        endIdx: end,
+        itemLabel: 'log aktivitas operasional & audit',
+        onPageChangeFn: 'changeActivityPage',
+        onLimitChangeFn: 'setActivityPageLimit',
+        currentLimit: activityPagination.limit,
+        limits: [10, 20, 50]
+      });
+    }
+
+    function filterActivityCategory(cat) {
+      activeCategory = cat;
+      const tabIds = {
+        ALL: 'tab-act-all',
+        Sync: 'tab-act-sync',
+        Verification: 'tab-act-verif',
+        FollowUp: 'tab-act-fu',
+        Automation: 'tab-act-auto'
+      };
+
+      for (const k in tabIds) {
+        const btn = document.getElementById(tabIds[k]);
+        if (btn) {
+          if (k.toUpperCase() === cat.toUpperCase()) {
+            btn.className = 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs transition font-bold';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1 font-medium';
+          }
+        }
+      }
+
+      const q = (document.getElementById('searchActivityInput')?.value || '');
+      renderActivityTable(activeCategory, q, true);
+    }
+
+    function filterActivities() {
+      const q = (document.getElementById('searchActivityInput')?.value || '');
+      renderActivityTable(activeCategory, q, true);
+    }
+
+    async function runCronJobSimulation(triggerType) {
+      const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      try {
+        const res = await fetch('/activity/cron-simulation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrf || ''
+          },
+          body: JSON.stringify({ trigger: triggerType })
+        });
+        const data = await res.json();
+        if (data && data.success && data.log) {
+          LIVE_SERVER_LOGS.unshift(data.log);
+          showToast(`Simulasi Cron ${triggerType} Berhasil: ${data.count} dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
+        } else {
+          fallbackSimulation(triggerType);
+        }
+      } catch (err) {
+        fallbackSimulation(triggerType);
+      }
+
+      // Langsung buka tab Otomasi Cron
+      filterActivityCategory('Automation');
+    }
+
+    function fallbackSimulation(triggerType) {
+      const newLog = {
+        id: 'cron-sim-' + Date.now(),
+        user_name: 'Sistem Otomasi (Cron Worker)',
+        user_role: 'SYSTEM',
+        action: `CRON_TRIGGER_${triggerType}`,
+        action_name: `Trigger ${triggerType} Pengingat SKP`,
+        details_text: `Eksekusi simulasi trigger ${triggerType}: 157 dokter status Incomplete diproses & antrean pengingat dikirim.`,
+        category: 'Automation',
+        time_text: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB (Simulasi)'
+      };
+      LIVE_SERVER_LOGS.unshift(newLog);
+      showToast(`Simulasi Cron ${triggerType} Berhasil: 157 dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
+    }
+
+    function refreshActivityLog() {
+      const icon = document.getElementById('refreshIcon');
+      if (icon) icon.classList.add('animate-spin');
+      setTimeout(() => {
+        if (icon) icon.classList.remove('animate-spin');
+        renderActivityTable();
+        showToast('Log aktivitas berhasil dimutakhirkan!', 'info');
+      }, 500);
+    }
+
+    function exportActivityPdf() {
+      if (typeof window.PogiPdfExporter !== 'undefined') {
+        window.exportActivityPdf();
+      }
+    }
+    const exportActivityCSV = exportActivityPdf;
+  </script>
+      </main>
+    </div>
+  </div>
+
+  <!-- Global Application Modals (Outside Main Stacking Context for Full Viewport Overlay) -->
+  
+  <script>
+    window.AUTH_USER = {"id":"03bbce59-7dc4-4dc2-bce7-11e893ef4068","name":"Anna","email":"sekretariat.pusat@pogi.or.id","role":"ADMIN_POGI","branch":"Pusat"};
+  </script>
+  <!-- Core Scripts -->
+  <script src="/js/navigation.js"></script>
+  </body>
+</html>

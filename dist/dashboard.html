@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-[#f4f7f6]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="KWbmxxB1IJb3niJnoK2cGqPLpjrRWE78u8eeXcq4">
+  <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
+  
+  <!-- Tailwind CSS & CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Leaflet.js CDN for Interactive Vector Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    #interactiveIndonesiaMap {
+      background-color: transparent !important;
+    }
+    .leaflet-container {
+      background: transparent !important;
+      font-family: inherit;
+    }
+    .leaflet-tooltip {
+      background: #0f172a !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255,255,255,0.2) !important;
+      border-radius: 10px !important;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3) !important;
+      padding: 6px 12px !important;
+      font-size: 11px !important;
+    }
+    .leaflet-tooltip-top:before {
+      border-top-color: #0f172a !important;
+    }
+
+    /* Modal Sticky Header & Footer, Scrollable Body */
+    .modal-dialog-scrollable {
+      max-height: 90vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    .modal-header-sticky {
+      flex-shrink: 0 !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 20 !important;
+    }
+    .modal-body-scrollable {
+      flex: 1 1 auto !important;
+      overflow-y: auto !important;
+      min-height: 0 !important;
+    }
+    .modal-footer-sticky {
+      flex-shrink: 0 !important;
+      position: sticky !important;
+      bottom: 0 !important;
+      z-index: 20 !important;
+    }
+  </style>
+  </head>
+<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
+  <!-- Mobile Backdrop Overlay -->
+  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
+
+  <div class="flex h-screen overflow-hidden">
+    <!-- APP SIDEBAR -->
+    <aside id="appSidebar" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] lg:w-64 bg-white border-r border-slate-200/90 flex flex-col shrink-0 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static lg:inset-auto shadow-2xl lg:shadow-none">
+  <!-- Top Brand Header -->
+  <div class="px-4 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
+    <a href="/dashboard" class="flex items-center gap-2.5 min-w-0">
+      <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs shrink-0">
+        <img src="/logo.png" alt="Logo POGI" class="w-full h-full object-contain">
+      </div>
+      <div class="min-w-0">
+        <div class="font-black text-sm tracking-tight text-[#16b3ac] leading-none">POGI SKP TRACKER</div>
+        <div class="text-[9px] text-slate-500 font-bold leading-tight mt-1 truncate">PP POGI &bull; Standar 160 SKP</div>
+      </div>
+    </a>
+    <button type="button" onclick="toggleMobileSidebar(false)" class="lg:hidden p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition" aria-label="Tutup Menu">
+      <span class="material-symbols-outlined text-xl">close</span>
+    </button>
+  </div>
+
+  <!-- Navigation Menu -->
+  <div class="px-3 py-4 flex-1 overflow-y-auto space-y-6">
+    
+    <div>
+      <div class="px-3 mb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+        MONITORING NASIONAL
+      </div>
+      <nav class="space-y-1">
+                <a href="/dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition bg-[#16b3ac] text-white shadow-xs">
+          <span class="material-symbols-outlined text-[19px]">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+                                <a href="/doctors" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[19px]">stethoscope</span>
+          <span>Doctors</span>
+        </a>
+                        <a href="/provinces" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[19px]">map</span>
+          <span>Provinces</span>
+        </a>
+        <a href="/events" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[19px]">event</span>
+          <span>Events</span>
+        </a>
+                                
+      </nav>
+    </div>
+
+      </div>
+
+  
+  <!-- Bottom Profile Card -->
+  <div class="p-3 border-t border-slate-100 bg-slate-50/70">
+    <div id="sidebarUserProfileCard" class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div id="sidebarUserAvatar" class="w-9 h-9 rounded-full bg-[#16b3ac] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
+          A
+        </div>
+        <div class="min-w-0" id="sidebarUserInfo">
+          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Anna</div>
+          <div class="text-[10px] text-slate-400 font-mono truncate" id="sidebarUserEmail">sekretariat.pusat@pogi.or.id</div>
+        </div>
+      </div>
+      <button type="button" onclick="performLogout()" title="Keluar" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition shrink-0">
+        <span class="material-symbols-outlined text-lg">unfold_more</span>
+      </button>
+    </div>
+  </div>
+</aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <!-- Top Sticky Header -->
+      <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200/90 shrink-0 w-full print:hidden">
+  <div class="h-14 sm:h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
+    <!-- Left: Mobile menu button -->
+    <div class="flex items-center gap-2 sm:gap-3 min-w-0 shrink-0">
+      <button type="button" onclick="toggleMobileSidebar(true)" class="lg:hidden p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition shrink-0 cursor-pointer" aria-label="Buka Menu">
+        <span class="material-symbols-outlined text-2xl">menu</span>
+      </button>
+    </div>
+
+    <!-- Center: Global Search Input -->
+    <div class="relative flex-1 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-2 sm:mx-4">
+      <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3 text-slate-400 text-lg pointer-events-none">search</span>
+        <input type="text" id="topGlobalSearchInput" oninput="handleGlobalTopSearch(this.value)" onkeydown="handleGlobalSearchKeydown(event)" placeholder="Cari dokter, nomor STR, SIP, atau ..." class="w-full pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-[#16b3ac] rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none transition shadow-2xs">
+        <button type="button" id="clearTopSearchBtn" onclick="clearGlobalTopSearch()" class="hidden absolute right-2.5 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+      <!-- Dropdown Live Search Results -->
+      <div id="topSearchResultsDropdown" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-2 z-50 max-h-96 overflow-y-auto">
+      </div>
+    </div>
+
+    <!-- Right: Notifikasi & Profil User -->
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+      <!-- Akses Kemenkes SatuSehat Action Button -->
+      <a href="/kemenkes/launch" target="_blank"
+        onclick="if(typeof showToast === 'function') showToast('Membuka Portal Kemenkes SDMK & mencatat sesi kerja...', 'info');"
+        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200/80 font-bold text-xs transition shadow-2xs"
+        title="Buka SatuSehat SDMK Kemenkes (Tercatat otomatis ke riwayat kerja & log kinerja admin)">
+        <span class="material-symbols-outlined text-base text-emerald-700">health_and_safety</span>
+        <span class="hidden md:inline">Portal Kemenkes</span>
+      </a>
+
+      <!-- Notification Bell with Red Dot Indicator -->
+      <div class="relative">
+        <button type="button" id="topNotifBtn" onclick="toggleTopNotifDropdown()" class="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer" aria-label="Notifikasi">
+          <span class="material-symbols-outlined text-xl">notifications</span>
+          <span id="notifBadgeDot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white animate-pulse"></span>
+        </button>
+        <!-- Notification Dropdown Menu -->
+        <div id="topNotifDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
+          <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
+            <div class="font-bold text-slate-900 flex items-center gap-1.5">
+              <span>Pemberitahuan Sistem</span>
+              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">157 Perlu FU</span>
+            </div>
+            <button type="button" onclick="markAllNotificationsAsRead()" class="text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer">
+              Tandai Dibaca
+            </button>
+          </div>
+          <div id="notifListContainer" class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+            <div class="p-3.5 hover:bg-slate-50 transition flex items-start gap-3 cursor-pointer" onclick="window.location.href='/doctors?filter=pending'">
+              <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+                <span class="material-symbols-outlined text-base">pending_actions</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">157 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">17 menit yang lalu</div>
+              </div>
+            </div>
+          </div>
+                  </div>
+      </div>
+
+      <!-- User Avatar Profile Circle -->
+      <div class="relative">
+        <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#16b3ac] hover:bg-[#129993] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna">
+          <span id="headerUserInitials">A</span>
+        </button>
+        <!-- User Profile Dropdown Menu -->
+        <div id="topUserDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
+          <div class="px-4 py-2 border-b border-slate-100 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#16b3ac] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs" id="headerDropdownAvatar">
+              A
+            </div>
+            <div class="min-w-0">
+              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Anna</div>
+              <div class="text-[10px] text-slate-500 truncate" id="headerDropdownRole">Admin POGI (Data Entry &amp; Kemenkes)</div>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#16b3ac] border border-emerald-200 text-[9px] font-bold mt-1">
+                <span class="w-1 h-1 rounded-full bg-emerald-600"></span> Online
+              </span>
+            </div>
+          </div>
+          <div class="py-1">
+                                              </div>
+          <div class="pt-1 border-t border-slate-100 px-2">
+            <button type="button" onclick="performLogout()" class="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 rounded-xl font-bold flex items-center gap-2 transition cursor-pointer">
+              <span class="material-symbols-outlined text-base">logout</span>
+              <span>Keluar Sistem (Logout)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <!-- Main Body Scrollable View -->
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in">
+                <!-- Welcome Banner -->
+        <div class="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#0a4c49] via-[#0e6864] to-[#052625] text-white shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/10 text-emerald-300 text-[11px] font-bold border border-white/10">
+              <span class="material-symbols-outlined text-xs">verified</span> Standardisasi Mandatori 160 SKP / 5 Tahun
+            </div>
+            <h1 class="text-xl sm:text-2xl font-black tracking-tight">Monitoring Pemenuhan SKP Dokter Spesialis Obgyn</h1>
+            <p class="text-xs text-emerald-100/80 max-w-2xl leading-relaxed">
+              Memantau ketercapaian kredit SKP di 3 Subbidang (Pelayanan, Pengabdian, Pembelajaran) untuk dokter Obgyn se-Indonesia. Lakukan tindak lanjut (FU) kepada Rumah Sakit jejaring dan Pengurus Cabang di daerah.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <button type="button" onclick="launchKemenkesPortal()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5 border border-emerald-400/40 cursor-pointer" title="Otomatis catat jam kerja/sesi Kemenkes ke log kinerja admin">
+              <span class="material-symbols-outlined text-base">open_in_new</span>
+              <span>Akses Portal Kemenkes</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Primary Metric Cards (Sesuai Dashboard Asli Klien) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+          <!-- Total Doctors -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider">Total Doctors</span>
+              <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700">
+                <span class="material-symbols-outlined text-lg">group</span>
+              </div>
+            </div>
+            <div id="metricTotalDoctors" class="text-2xl sm:text-3xl font-black text-slate-900">200</div>
+            <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+              <span class="text-emerald-700 font-bold">100% Sp.OG</span> terdaftar aktif
+            </div>
+          </div>
+
+          <!-- Average Progress Q4 2026 -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider">Average Progress Q4</span>
+              <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#16b3ac] flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">trending_up</span>
+              </div>
+            </div>
+            <div id="metricAvgProgress" class="text-2xl sm:text-3xl font-black text-emerald-800">42%</div>
+            <div class="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
+              <div id="metricAvgProgressBar" class="bg-[#16b3ac] h-2 rounded-full" style="width: 42%"></div>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">Target Kuartal: 8.0 SKP / dokter</div>
+          </div>
+
+          <!-- Complete -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider">Complete</span>
+              <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">check_circle</span>
+              </div>
+            </div>
+            <div id="metricComplete" class="text-2xl sm:text-3xl font-black text-emerald-700">43</div>
+            <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+              <span class="font-bold text-emerald-800">22%</span> telah penuhi target periode
+            </div>
+          </div>
+
+          <!-- Incomplete (Needs Follow-Up) -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider">Incomplete</span>
+              <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">warning</span>
+              </div>
+            </div>
+            <div id="metricIncomplete" class="text-2xl sm:text-3xl font-black text-amber-600">157</div>
+            <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+              <span class="font-bold text-amber-800">79%</span> butuh follow-up ke RS/Cabang
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Subbidang Mandatory Progress Breakdown -->
+        <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <h2 class="text-base font-extrabold text-slate-900">Standarisasi 3 Subbidang SKP POGI (Total 160 SKP / 5 Tahun)</h2>
+              <p class="text-xs text-slate-500">Kewajiban pemenuhan kredit dokter Obgyn harus proporsional di seluruh 3 subbidang wajib.</p>
+            </div>
+            <span class="text-xs font-bold text-[#16b3ac] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+              Rata-rata Akumulasi: 82.5%
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Pelayanan -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-sky-600 text-lg">medical_services</span>
+                  <span class="font-extrabold text-xs text-slate-900">1. Pelayanan</span>
+                </div>
+                <span class="text-[11px] font-bold text-sky-800 bg-sky-100 px-2 py-0.5 rounded">Min 56 SKP</span>
+              </div>
+              <div class="text-xl font-black text-slate-900">60.1% <span class="text-xs font-normal text-slate-500">(rata-rata)</span></div>
+              <div class="w-full bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
+                <div class="progress-bar-pelayanan h-2 rounded-full" style="width: 60.1%"></div>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-2">Praktik rawat inap/jalan, bedah sectio caesarea, jaga IGD maternal</div>
+            </div>
+
+            <!-- Pengabdian -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-amber-600 text-lg">volunteer_activism</span>
+                  <span class="font-extrabold text-xs text-slate-900">2. Pengabdian</span>
+                </div>
+                <span class="text-[11px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded">Min 8 SKP</span>
+              </div>
+              <div class="text-xl font-black text-slate-900">158.7% <span class="text-xs font-normal text-slate-500">(rata-rata)</span></div>
+              <div class="w-full bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
+                <div class="progress-bar-pengabdian h-2 rounded-full" style="width: 100%"></div>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-2">Bakti sosial IVA, skrining ca serviks masal, edukasi reproduksi</div>
+            </div>
+
+            <!-- Pembelajaran -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-emerald-600 text-lg">school</span>
+                  <span class="font-extrabold text-xs text-slate-900">3. Pembelajaran</span>
+                </div>
+                <span class="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Min 72 SKP</span>
+              </div>
+              <div class="text-xl font-black text-slate-900">28.6% <span class="text-xs font-normal text-slate-500">(rata-rata)</span></div>
+              <div class="w-full bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
+                <div class="progress-bar-pembelajaran h-2 rounded-full" style="width: 28.6%"></div>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-2">PIT POGI, simposium ilmiah, workshop USG terakreditasi</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completion by province Card (Lowest & Highest - Persis Screenshot Klien) -->
+        <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-5">
+          <!-- Card Header & Toggle -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <div>
+              <h2 class="text-base font-extrabold text-slate-900">Completion by province</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Complete for Q4 2026</p>
+            </div>
+            <!-- Toggle Metric: Percentage vs Number of doctors -->
+            <div class="inline-flex items-center p-1 bg-slate-100 rounded-xl text-xs border border-slate-200/80 self-start sm:self-auto">
+              <button id="toggleMetricPct" type="button" onclick="setCompletionMetric('percentage')" class="px-3.5 py-1.5 rounded-lg bg-white text-slate-900 font-extrabold shadow-2xs transition">
+                Percentage
+              </button>
+              <button id="toggleMetricNum" type="button" onclick="setCompletionMetric('number')" class="px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-900 font-bold transition">
+                Number of doctors
+              </button>
+            </div>
+          </div>
+
+          <!-- Two Columns: Lowest & Highest -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6">
+            <!-- Left Column: Lowest -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-between text-xs font-bold text-slate-500 pb-1">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-base text-slate-400">trending_down</span>
+                  <span class="font-bold text-slate-600">Lowest</span>
+                </div>
+                <button type="button" onclick="openFollowUpModal('lowest')" class="text-[11px] text-[#16b3ac] hover:text-[#129993] font-bold flex items-center gap-1 hover:underline rbac-operational cursor-pointer">
+                  <span class="material-symbols-outlined text-xs">notifications_active</span>
+                  <span>Follow-Up 5 Terendah</span>
+                </button>
+              </div>
+
+                              <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">Jawa Barat</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-slate-400 font-medium text-[11px] stat-count">0 / 8 complete</span>
+                      <span class="font-black text-slate-900 w-10 text-right stat-pct">0%</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-slate-300 h-1.5 rounded-full" style="width: 0%"></div>
+                  </div>
+                </div>
+                              <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">Nusa Tenggara Timur</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-slate-400 font-medium text-[11px] stat-count">0 / 7 complete</span>
+                      <span class="font-black text-slate-900 w-10 text-right stat-pct">0%</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-slate-300 h-1.5 rounded-full" style="width: 0%"></div>
+                  </div>
+                </div>
+                              <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">Papua</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-slate-400 font-medium text-[11px] stat-count">0 / 4 complete</span>
+                      <span class="font-black text-slate-900 w-10 text-right stat-pct">0%</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-slate-300 h-1.5 rounded-full" style="width: 0%"></div>
+                  </div>
+                </div>
+                              <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">Aceh</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-slate-400 font-medium text-[11px] stat-count">0 / 3 complete</span>
+                      <span class="font-black text-slate-900 w-10 text-right stat-pct">0%</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-slate-300 h-1.5 rounded-full" style="width: 0%"></div>
+                  </div>
+                </div>
+                              <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">Bengkulu</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-slate-400 font-medium text-[11px] stat-count">0 / 3 complete</span>
+                      <span class="font-black text-slate-900 w-10 text-right stat-pct">0%</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-slate-300 h-1.5 rounded-full" style="width: 0%"></div>
+                  </div>
+                </div>
+                          </div>
+
+            <!-- Right Column: Highest -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 pb-1">
+                <span class="material-symbols-outlined text-base text-[#16b3ac]">trending_up</span>
+                <span class="font-bold text-slate-600">Highest</span>
+              </div>
+
+                              <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">Kalimantan Utara</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-slate-400 font-medium text-[11px] stat-count">2 / 3 complete</span>
+                      <span class="font-black text-slate-900 w-10 text-right stat-pct">67%</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-[#16b3ac] h-1.5 rounded-full" style="width: 67%"></div>
+                  </div>
+                </div>
+                              <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">Sulawesi Utara</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-slate-400 font-medium text-[11px] stat-count">2 / 3 complete</span>
+                      <span class="font-black text-slate-900 w-10 text-right stat-pct">67%</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-[#16b3ac] h-1.5 rounded-full" style="width: 67%"></div>
+                  </div>
+                </div>
+                              <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">Sumatera Barat</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-slate-400 font-medium text-[11px] stat-count">2 / 4 complete</span>
+                      <span class="font-black text-slate-900 w-10 text-right stat-pct">50%</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-[#16b3ac] h-1.5 rounded-full" style="width: 50%"></div>
+                  </div>
+                </div>
+                              <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">Jawa Tengah</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-slate-400 font-medium text-[11px] stat-count">5 / 11 complete</span>
+                      <span class="font-black text-slate-900 w-10 text-right stat-pct">46%</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-[#16b3ac] h-1.5 rounded-full" style="width: 46%"></div>
+                  </div>
+                </div>
+                              <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">Jambi</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-slate-400 font-medium text-[11px] stat-count">3 / 7 complete</span>
+                      <span class="font-black text-slate-900 w-10 text-right stat-pct">43%</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-[#16b3ac] h-1.5 rounded-full" style="width: 43%"></div>
+                  </div>
+                </div>
+                          </div>
+          </div>
+
+          <!-- Card Footer Link -->
+          <div class="flex justify-end pt-3 border-t border-slate-100">
+            <a href="/provinces" class="inline-flex items-center gap-1 text-xs font-extrabold text-slate-700 hover:text-[#16b3ac] transition">
+              <span>View all provinces</span>
+              <span class="material-symbols-outlined text-sm">chevron_right</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Doctors by province Map Card (Persis Screenshot Klien) -->
+        <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#16b3ac] text-xl">map</span>
+                <h2 class="text-base font-extrabold text-slate-900">Doctors by province</h2>
+              </div>
+              <p id="mapSubTitle" class="text-xs text-slate-500 mt-0.5">200 doctors in 38 provinces.</p>
+            </div>
+            <a href="/provinces" class="text-xs font-bold text-[#16b3ac] hover:underline flex items-center gap-1">
+              <span>Monitoring 38 Cabang</span>
+              <span class="material-symbols-outlined text-sm">open_in_new</span>
+            </a>
+          </div>
+
+          <!-- Map & Top Provinces Layout -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <!-- Left/Center Interactive Leaflet Vector Map Visualization -->
+            <div class="lg:col-span-8 flex flex-col p-3 rounded-2xl bg-slate-50/60 border border-slate-100 relative">
+              <div id="interactiveIndonesiaMap" class="w-full h-72 sm:h-80 md:h-96 rounded-xl bg-transparent"></div>
+
+              <!-- Map Legend (Sesuai Permintaan Pengguna: Merah, Hijau, Kuning) -->
+              <div class="pt-3 border-t border-slate-200/80 mt-3 flex flex-wrap items-center justify-between text-[11px] text-slate-600 gap-3">
+                <div class="flex flex-wrap items-center gap-3">
+                  <div class="flex items-center gap-1.5 font-semibold">
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#dc2626] inline-block shadow-2xs"></span>
+                    <span class="text-slate-800 font-extrabold">Merah:</span>
+                    <span>Sangat Kurang (&lt;50%)</span>
+                  </div>
+                  <span class="text-slate-300">|</span>
+                  <div class="flex items-center gap-1.5 font-semibold">
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#16a34a] inline-block shadow-2xs"></span>
+                    <span class="text-slate-800 font-extrabold">Hijau:</span>
+                    <span>Hampir Memenuhi (50% — 84%)</span>
+                  </div>
+                  <span class="text-slate-300">|</span>
+                  <div class="flex items-center gap-1.5 font-semibold">
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#eab308] inline-block shadow-2xs"></span>
+                    <span class="text-slate-800 font-extrabold">Kuning:</span>
+                    <span>Terpenuhi (&ge;85%)</span>
+                  </div>
+                  <span class="text-slate-300">|</span>
+                  <div class="flex items-center gap-1.5 text-slate-500">
+                    <span class="w-3 h-3 rounded-full bg-[#94a3b8] inline-block shadow-2xs"></span>
+                    <span>Tidak Ada Dokter</span>
+                  </div>
+                </div>
+                <div class="text-[10px] text-slate-400 font-semibold">
+                  POGI 38 Cabang Provinsi
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Ranked List: Top provinces -->
+            <div class="lg:col-span-4 space-y-2 border-t lg:border-t-0 lg:border-l border-slate-100 lg:pl-6">
+              <div class="text-xs font-black uppercase tracking-wider text-slate-700 pb-1">
+                Top provinces
+              </div>
+              <div id="topProvincesList" class="space-y-1.5 text-xs font-medium">
+                                                    <div class="flex items-center justify-between py-1.5 px-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-200"
+                       onmouseenter="highlightMapProvince('DKI Jakarta')"
+                       onmouseleave="resetMapProvince('DKI Jakarta')"
+                       onclick="window.location.href='/doctors?province=DKI+Jakarta'">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="w-2.5 h-2.5 rounded-full bg-[#dc2626] shrink-0 shadow-2xs"></span>
+                      <span class="font-bold text-slate-800 truncate text-xs">DKI Jakarta</span>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="text-[10px] text-slate-400 font-semibold">22 Dokter</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold border bg-red-50 text-red-700 border-red-200">
+                        32%
+                      </span>
+                    </div>
+                  </div>
+                                                    <div class="flex items-center justify-between py-1.5 px-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-200"
+                       onmouseenter="highlightMapProvince('Sulawesi Selatan')"
+                       onmouseleave="resetMapProvince('Sulawesi Selatan')"
+                       onclick="window.location.href='/doctors?province=Sulawesi+Selatan'">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="w-2.5 h-2.5 rounded-full bg-[#dc2626] shrink-0 shadow-2xs"></span>
+                      <span class="font-bold text-slate-800 truncate text-xs">Sulawesi Selatan</span>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="text-[10px] text-slate-400 font-semibold">12 Dokter</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold border bg-red-50 text-red-700 border-red-200">
+                        33%
+                      </span>
+                    </div>
+                  </div>
+                                                    <div class="flex items-center justify-between py-1.5 px-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-200"
+                       onmouseenter="highlightMapProvince('Jawa Tengah')"
+                       onmouseleave="resetMapProvince('Jawa Tengah')"
+                       onclick="window.location.href='/doctors?province=Jawa+Tengah'">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="w-2.5 h-2.5 rounded-full bg-[#dc2626] shrink-0 shadow-2xs"></span>
+                      <span class="font-bold text-slate-800 truncate text-xs">Jawa Tengah</span>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="text-[10px] text-slate-400 font-semibold">11 Dokter</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold border bg-red-50 text-red-700 border-red-200">
+                        46%
+                      </span>
+                    </div>
+                  </div>
+                                                    <div class="flex items-center justify-between py-1.5 px-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-200"
+                       onmouseenter="highlightMapProvince('Bali')"
+                       onmouseleave="resetMapProvince('Bali')"
+                       onclick="window.location.href='/doctors?province=Bali'">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="w-2.5 h-2.5 rounded-full bg-[#dc2626] shrink-0 shadow-2xs"></span>
+                      <span class="font-bold text-slate-800 truncate text-xs">Bali</span>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="text-[10px] text-slate-400 font-semibold">10 Dokter</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold border bg-red-50 text-red-700 border-red-200">
+                        10%
+                      </span>
+                    </div>
+                  </div>
+                                                    <div class="flex items-center justify-between py-1.5 px-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-200"
+                       onmouseenter="highlightMapProvince('Sumatera Utara')"
+                       onmouseleave="resetMapProvince('Sumatera Utara')"
+                       onclick="window.location.href='/doctors?province=Sumatera+Utara'">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="w-2.5 h-2.5 rounded-full bg-[#dc2626] shrink-0 shadow-2xs"></span>
+                      <span class="font-bold text-slate-800 truncate text-xs">Sumatera Utara</span>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="text-[10px] text-slate-400 font-semibold">10 Dokter</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold border bg-red-50 text-red-700 border-red-200">
+                        30%
+                      </span>
+                    </div>
+                  </div>
+                                                    <div class="flex items-center justify-between py-1.5 px-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-200"
+                       onmouseenter="highlightMapProvince('Banten')"
+                       onmouseleave="resetMapProvince('Banten')"
+                       onclick="window.location.href='/doctors?province=Banten'">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="w-2.5 h-2.5 rounded-full bg-[#dc2626] shrink-0 shadow-2xs"></span>
+                      <span class="font-bold text-slate-800 truncate text-xs">Banten</span>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="text-[10px] text-slate-400 font-semibold">8 Dokter</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold border bg-red-50 text-red-700 border-red-200">
+                        13%
+                      </span>
+                    </div>
+                  </div>
+                                                    <div class="flex items-center justify-between py-1.5 px-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-200"
+                       onmouseenter="highlightMapProvince('Jawa Barat')"
+                       onmouseleave="resetMapProvince('Jawa Barat')"
+                       onclick="window.location.href='/doctors?province=Jawa+Barat'">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="w-2.5 h-2.5 rounded-full bg-[#dc2626] shrink-0 shadow-2xs"></span>
+                      <span class="font-bold text-slate-800 truncate text-xs">Jawa Barat</span>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="text-[10px] text-slate-400 font-semibold">8 Dokter</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold border bg-red-50 text-red-700 border-red-200">
+                        0%
+                      </span>
+                    </div>
+                  </div>
+                                                    <div class="flex items-center justify-between py-1.5 px-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-200"
+                       onmouseenter="highlightMapProvince('Jawa Timur')"
+                       onmouseleave="resetMapProvince('Jawa Timur')"
+                       onclick="window.location.href='/doctors?province=Jawa+Timur'">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="w-2.5 h-2.5 rounded-full bg-[#dc2626] shrink-0 shadow-2xs"></span>
+                      <span class="font-bold text-slate-800 truncate text-xs">Jawa Timur</span>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="text-[10px] text-slate-400 font-semibold">8 Dokter</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold border bg-red-50 text-red-700 border-red-200">
+                        25%
+                      </span>
+                    </div>
+                  </div>
+                              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Activity Log Teaser -->
+        <div class="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#16b3ac] text-lg">update</span>
+                Aktivitas Verifikasi &amp; Pengelolaan Data Terbaru
+              </h3>
+              <p class="text-[11px] text-slate-500">Pencatatan real-time verifikasi kredit oleh tim data pusat &amp; cabang</p>
+            </div>
+            <a href="/activity" class="text-xs font-bold text-[#16b3ac] hover:underline">Semua Log Aktivitas &rarr;</a>
+          </div>
+
+          <div id="recentActivityList" class="space-y-2.5">
+                          <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-base">task_alt</span>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="font-bold text-slate-900">Pengajuan Berkas SKP &bull; <span class="text-slate-500 font-normal">dr. Yohana Suryani, Sp.OG(K)</span></div>
+                    <div class="text-[11px] text-slate-600 truncate mt-0.5">Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf (3.50 SKP PELAYANAN) - dr. Yohana Suryani, Sp.OG(K)</div>
+                  </div>
+                </div>
+                <div class="text-[10px] text-slate-400 font-medium shrink-0">9 menit yang lalu</div>
+              </div>
+                          <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-base">task_alt</span>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="font-bold text-slate-900">Verifikasi Kredit SKP &bull; <span class="text-slate-500 font-normal">Dian</span></div>
+                    <div class="text-[11px] text-slate-600 truncate mt-0.5">Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf (3.50 SKP PELAYANAN) - dr. Yohana Suryani, Sp.OG(K)</div>
+                  </div>
+                </div>
+                <div class="text-[10px] text-slate-400 font-medium shrink-0">11 menit yang lalu</div>
+              </div>
+                          <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-base">task_alt</span>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="font-bold text-slate-900">Verifikasi Kredit SKP &bull; <span class="text-slate-500 font-normal">Dian</span></div>
+                    <div class="text-[11px] text-slate-600 truncate mt-0.5">Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf (3.50 SKP PELAYANAN) - dr. Yohana Suryani, Sp.OG(K)</div>
+                  </div>
+                </div>
+                <div class="text-[10px] text-slate-400 font-medium shrink-0">28 menit yang lalu</div>
+              </div>
+                          <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-base">task_alt</span>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="font-bold text-slate-900">Verifikasi Kredit SKP &bull; <span class="text-slate-500 font-normal">Dian</span></div>
+                    <div class="text-[11px] text-slate-600 truncate mt-0.5">Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf (3.50 SKP PELAYANAN) - dr. Yohana Suryani, Sp.OG(K)</div>
+                  </div>
+                </div>
+                <div class="text-[10px] text-slate-400 font-medium shrink-0">52 menit yang lalu</div>
+              </div>
+                          <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-base">task_alt</span>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="font-bold text-slate-900">Verifikasi Kredit SKP &bull; <span class="text-slate-500 font-normal">Dian</span></div>
+                    <div class="text-[11px] text-slate-600 truncate mt-0.5">Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf (3.50 SKP PELAYANAN) - dr. Yohana Suryani, Sp.OG(K)</div>
+                  </div>
+                </div>
+                <div class="text-[10px] text-slate-400 font-medium shrink-0">8 jam yang lalu</div>
+              </div>
+                      </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Global Application Modals (Outside Main Stacking Context for Full Viewport Overlay) -->
+    <!-- Modal Follow-Up Massal (Terhubung ke MySQL Live - Full Viewport Overlay z-[9999]) -->
+  <div id="fuModal" onclick="if(event.target.id === 'fuModal') closeFollowUpModal()" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-in fade-in zoom-in duration-150">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-teal-50 text-[#16b3ac] flex items-center justify-center">
+            <span class="material-symbols-outlined text-2xl">forward_to_inbox</span>
+          </div>
+          <div>
+            <h3 class="font-black text-slate-900 text-base">Kirim Follow-Up (FU) Pemenuhan SKP</h3>
+            <p class="text-xs text-slate-500">Notifikasi otomatis ke Rumah Sakit Jejaring &amp; Admin Cabang POGI</p>
+          </div>
+        </div>
+        <button onclick="closeFollowUpModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 py-4 flex-1 overflow-y-auto space-y-3 text-xs">
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Target Penerima Follow-Up:</label>
+          <select id="fuTarget" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
+                          <option value="lowest_5" selected>5 Cabang Kepatuhan Terendah (Jawa Barat, Nusa Tenggara Timur, Papua, Aceh, Bengkulu)</option>
+                        <option value="all_incomplete">Semua 157 Dokter Incomplete (Semua Wilayah Nasional (38 Provinsi))</option>
+                          <option value="dki-jakarta">Khusus Cabang DKI Jakarta (22 Dokter Terdata)</option>
+                          <option value="sulawesi-selatan">Khusus Cabang Sulawesi Selatan (12 Dokter Terdata)</option>
+                          <option value="jawa-tengah">Khusus Cabang Jawa Tengah (11 Dokter Terdata)</option>
+                          <option value="bali">Khusus Cabang Bali (10 Dokter Terdata)</option>
+                      </select>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Kanal Pengiriman Notifikasi:</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="p-2.5 rounded-xl border border-teal-300 bg-teal-50/50 flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="fuChannelWa" checked class="rounded text-[#16b3ac] focus:ring-[#16b3ac]" />
+              <span class="font-bold text-slate-800">WhatsApp Gateway</span>
+            </label>
+            <label class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="fuChannelEmail" checked class="rounded text-[#16b3ac] focus:ring-[#16b3ac]" />
+              <span class="font-bold text-slate-800">Email Resmi Cabang</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Pesan Pengingat Standar POGI:</label>
+          <textarea id="fuMessage" rows="3" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">Yth. Pengurus Cabang POGI & Direksi RS Jejaring. Berdasarkan pemantauan sistem kepatuhan SKP terkini, mohon bantuan percepatan pengajuan logbook Pelayanan, Pengabdian, dan Pembelajaran dokter spesialis Obgyn agar memenuhi standar wajib 160 SKP Kemenkes RI.</textarea>
+        </div>
+      </div>
+
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeFollowUpModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">Batal</button>
+        <button type="button" id="btnSendFuSubmit" onclick="sendFollowUpAction()" class="px-4 py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1.5 rbac-operational cursor-pointer">
+          <span class="material-symbols-outlined text-sm">send</span>
+          <span>Kirimkan Notifikasi FU Sekarang</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.AUTH_USER = {"id":"03bbce59-7dc4-4dc2-bce7-11e893ef4068","name":"Anna","email":"sekretariat.pusat@pogi.or.id","role":"ADMIN_POGI","branch":"Pusat"};
+  </script>
+  <!-- Core Scripts -->
+  <script src="/js/navigation.js"></script>
+    <script src="/assets/data/indonesia-38-provinces.js"></script>
+  <script src="/js/pdf_exporter.js"></script>
+  <script>
+    const POGI_SERVER_DATA = {"totalDoctors":200,"avgProgressPct":42,"completeCount":43,"incompleteCount":157,"pendingCount":0,"completePct":22,"incompletePct":79,"avgPelayananPct":60.1,"avgPengabdianPct":158.7,"avgPembelajaranPct":28.6,"avgAccumulationPct":82.5,"lowestProvinces":[{"name":"Jawa Barat","total":8,"complete":0,"pct":0},{"name":"Nusa Tenggara Timur","total":7,"complete":0,"pct":0},{"name":"Papua","total":4,"complete":0,"pct":0},{"name":"Aceh","total":3,"complete":0,"pct":0},{"name":"Bengkulu","total":3,"complete":0,"pct":0}],"highestProvinces":[{"name":"Kalimantan Utara","total":3,"complete":2,"pct":67},{"name":"Sulawesi Utara","total":3,"complete":2,"pct":67},{"name":"Sumatera Barat","total":4,"complete":2,"pct":50},{"name":"Jawa Tengah","total":11,"complete":5,"pct":46},{"name":"Jambi","total":7,"complete":3,"pct":43}],"provincesData":[{"id":"11","name":"Aceh","doctors":3,"complete":0,"incomplete":3,"completionRate":0},{"id":"51","name":"Bali","doctors":10,"complete":1,"incomplete":9,"completionRate":10},{"id":"36","name":"Banten","doctors":8,"complete":1,"incomplete":7,"completionRate":12.5},{"id":"17","name":"Bengkulu","doctors":3,"complete":0,"incomplete":3,"completionRate":0},{"id":"34","name":"DI Yogyakarta","doctors":7,"complete":2,"incomplete":5,"completionRate":28.6},{"id":"31","name":"DKI Jakarta","doctors":22,"complete":7,"incomplete":15,"completionRate":31.8},{"id":"75","name":"Gorontalo","doctors":2,"complete":0,"incomplete":2,"completionRate":0},{"id":"15","name":"Jambi","doctors":7,"complete":3,"incomplete":4,"completionRate":42.9},{"id":"32","name":"Jawa Barat","doctors":8,"complete":0,"incomplete":8,"completionRate":0},{"id":"33","name":"Jawa Tengah","doctors":11,"complete":5,"incomplete":6,"completionRate":45.5},{"id":"35","name":"Jawa Timur","doctors":8,"complete":2,"incomplete":6,"completionRate":25},{"id":"61","name":"Kalimantan Barat","doctors":5,"complete":1,"incomplete":4,"completionRate":20},{"id":"63","name":"Kalimantan Selatan","doctors":4,"complete":1,"incomplete":3,"completionRate":25},{"id":"62","name":"Kalimantan Tengah","doctors":3,"complete":0,"incomplete":3,"completionRate":0},{"id":"64","name":"Kalimantan Timur","doctors":6,"complete":1,"incomplete":5,"completionRate":16.7},{"id":"65","name":"Kalimantan Utara","doctors":3,"complete":2,"incomplete":1,"completionRate":66.7},{"id":"19","name":"Kepulauan Bangka Belitung","doctors":3,"complete":0,"incomplete":3,"completionRate":0},{"id":"21","name":"Kepulauan Riau","doctors":3,"complete":1,"incomplete":2,"completionRate":33.3},{"id":"18","name":"Lampung","doctors":5,"complete":1,"incomplete":4,"completionRate":20},{"id":"81","name":"Maluku","doctors":2,"complete":0,"incomplete":2,"completionRate":0},{"id":"82","name":"Maluku Utara","doctors":2,"complete":0,"incomplete":2,"completionRate":0},{"id":"52","name":"Nusa Tenggara Barat","doctors":4,"complete":1,"incomplete":3,"completionRate":25},{"id":"53","name":"Nusa Tenggara Timur","doctors":7,"complete":0,"incomplete":7,"completionRate":0},{"id":"92","name":"Papua","doctors":4,"complete":0,"incomplete":4,"completionRate":0},{"id":"91","name":"Papua Barat","doctors":2,"complete":0,"incomplete":2,"completionRate":0},{"id":"96","name":"Papua Barat Daya","doctors":1,"complete":0,"incomplete":1,"completionRate":0},{"id":"95","name":"Papua Pegunungan","doctors":6,"complete":1,"incomplete":5,"completionRate":16.7},{"id":"93","name":"Papua Selatan","doctors":1,"complete":0,"incomplete":1,"completionRate":0},{"id":"94","name":"Papua Tengah","doctors":1,"complete":0,"incomplete":1,"completionRate":0},{"id":"14","name":"Riau","doctors":6,"complete":1,"incomplete":5,"completionRate":16.7},{"id":"76","name":"Sulawesi Barat","doctors":2,"complete":0,"incomplete":2,"completionRate":0},{"id":"73","name":"Sulawesi Selatan","doctors":12,"complete":4,"incomplete":8,"completionRate":33.3},{"id":"72","name":"Sulawesi Tengah","doctors":3,"complete":0,"incomplete":3,"completionRate":0},{"id":"74","name":"Sulawesi Tenggara","doctors":3,"complete":0,"incomplete":3,"completionRate":0},{"id":"71","name":"Sulawesi Utara","doctors":3,"complete":2,"incomplete":1,"completionRate":66.7},{"id":"13","name":"Sumatera Barat","doctors":4,"complete":2,"incomplete":2,"completionRate":50},{"id":"16","name":"Sumatera Selatan","doctors":6,"complete":1,"incomplete":5,"completionRate":16.7},{"id":"12","name":"Sumatera Utara","doctors":10,"complete":3,"incomplete":7,"completionRate":30}],"topProvinces":[{"name":"DKI Jakarta","doctors":22,"completionRate":31.8},{"name":"Sulawesi Selatan","doctors":12,"completionRate":33.3},{"name":"Jawa Tengah","doctors":11,"completionRate":45.5},{"name":"Bali","doctors":10,"completionRate":10},{"name":"Sumatera Utara","doctors":10,"completionRate":30},{"name":"Banten","doctors":8,"completionRate":12.5},{"name":"Jawa Barat","doctors":8,"completionRate":0},{"name":"Jawa Timur","doctors":8,"completionRate":25}],"scopeOptions":[{"id":"all","name":"Semua Wilayah Nasional (38 Provinsi)","count":200},{"id":"3185af45-9695-43bd-8125-25734c9e98a8","name":"POGI Cabang Aceh","count":3},{"id":"9eb234ac-31c8-44c1-a45d-96162a05ae6d","name":"POGI Cabang Bali","count":10},{"id":"69b38169-01b4-4bbc-831e-e5084389e405","name":"POGI Cabang Banten","count":8},{"id":"6d1b7399-8978-4616-a120-38d48b154c76","name":"POGI Cabang Bengkulu","count":3},{"id":"3dc69eda-cc0d-498b-9cee-32aa12283891","name":"POGI Cabang DI Yogyakarta","count":7},{"id":"b800841f-8173-44eb-a99e-3eea6b954ae1","name":"POGI Cabang DKI Jakarta","count":22},{"id":"792b3a9d-fc49-4c1d-986c-2985614595ed","name":"POGI Cabang Gorontalo","count":2},{"id":"22919d7f-ed31-48c1-a8be-c237b262c426","name":"POGI Cabang Jambi","count":7},{"id":"adcaebb5-2733-4f51-8a87-54ff5fec1f30","name":"POGI Cabang Jawa Barat","count":8},{"id":"dfb0b922-47e2-4356-8bba-93fbb3697bf1","name":"POGI Cabang Jawa Tengah","count":11},{"id":"3002f685-d938-427d-a8df-1ffeb1962b04","name":"POGI Cabang Jawa Timur","count":8},{"id":"d1d7c1da-fe02-4d86-af2d-7688816b22fc","name":"POGI Cabang Kalimantan Barat","count":5},{"id":"9d15f886-14fb-4794-be2c-ef426857f3da","name":"POGI Cabang Kalimantan Selatan","count":4},{"id":"c53cc695-7b72-42cf-a06c-b04937c34af8","name":"POGI Cabang Kalimantan Tengah","count":3},{"id":"7c6a767e-0b29-47f5-ac14-251145f44514","name":"POGI Cabang Kalimantan Timur","count":6},{"id":"f893b502-10cc-41bc-939c-9a9deb2eeb00","name":"POGI Cabang Kalimantan Utara","count":3},{"id":"b7ce2997-c743-47d0-a9da-87783a948e19","name":"POGI Cabang Kepulauan Bangka Belitung","count":3},{"id":"e8c25f48-0134-493d-914a-eb29af710544","name":"POGI Cabang Kepulauan Riau","count":3},{"id":"ff8ddb5c-ac4c-48d9-901f-1b21cd36b290","name":"POGI Cabang Lampung","count":5},{"id":"3d0ef5d0-9cfb-469f-8602-790ad7e6547a","name":"POGI Cabang Maluku","count":2},{"id":"263205a2-1242-487f-8bb5-e61b8891f3ce","name":"POGI Cabang Maluku Utara","count":2},{"id":"c7e32d2f-05b8-4758-8011-15f69c24bbe4","name":"POGI Cabang Nusa Tenggara Barat","count":4},{"id":"5ce3bfca-9bfe-40c0-bb75-5b242dd7bd8e","name":"POGI Cabang Nusa Tenggara Timur","count":7},{"id":"392b0e4c-193d-476c-8514-81f967b3ca51","name":"POGI Cabang Papua","count":4},{"id":"0abe6c30-13c3-4d85-8929-0a8e2b9fd640","name":"POGI Cabang Papua Barat","count":2},{"id":"5a285f2e-b2de-42de-be6a-3af871ba747c","name":"POGI Cabang Papua Barat Daya","count":1},{"id":"d8f76cf9-bd48-4d81-a041-de252a3effc3","name":"POGI Cabang Papua Pegunungan","count":6},{"id":"b00242f8-a3f6-4552-80ea-369b6169a66d","name":"POGI Cabang Papua Selatan","count":1},{"id":"f61bf33e-6f17-4172-809f-79004ba78272","name":"POGI Cabang Papua Tengah","count":1},{"id":"212c5b1a-d35d-4d54-9b74-7dfbb82baf25","name":"POGI Cabang Riau","count":6},{"id":"39cfa147-1cf9-4df7-8cd5-ee06920bddff","name":"POGI Cabang Sulawesi Barat","count":2},{"id":"e2c84d25-a770-4009-b80f-009617a598df","name":"POGI Cabang Sulawesi Selatan","count":12},{"id":"92eabfd9-5a76-4921-9b39-6a8b32f12d37","name":"POGI Cabang Sulawesi Tengah","count":3},{"id":"c1104227-0956-4785-b3b2-f0ec6a1d7b73","name":"POGI Cabang Sulawesi Tenggara","count":3},{"id":"1286c853-da80-453d-9b9d-aeb17e27c515","name":"POGI Cabang Sulawesi Utara","count":3},{"id":"4a8db153-6dc2-4478-aad0-351b31d226e4","name":"POGI Cabang Sumatera Barat","count":4},{"id":"d880e6c1-0966-453c-8f66-a5524ac97a53","name":"POGI Cabang Sumatera Selatan","count":6},{"id":"5bf244e7-6ba9-476c-832e-cb58a5f66e71","name":"POGI Cabang Sumatera Utara","count":10}],"recentActivities":[{"actor":"dr. Yohana Suryani, Sp.OG(K)","action":"Pengajuan Berkas SKP","details":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf (3.50 SKP PELAYANAN) - dr. Yohana Suryani, Sp.OG(K)","timestamp":"9 menit yang lalu","category":"Submission"},{"actor":"Dian","action":"Verifikasi Kredit SKP","details":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf (3.50 SKP PELAYANAN) - dr. Yohana Suryani, Sp.OG(K)","timestamp":"11 menit yang lalu","category":"Verification"},{"actor":"Dian","action":"Verifikasi Kredit SKP","details":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf (3.50 SKP PELAYANAN) - dr. Yohana Suryani, Sp.OG(K)","timestamp":"28 menit yang lalu","category":"Verification"},{"actor":"Dian","action":"Verifikasi Kredit SKP","details":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf (3.50 SKP PELAYANAN) - dr. Yohana Suryani, Sp.OG(K)","timestamp":"52 menit yang lalu","category":"Verification"},{"actor":"Dian","action":"Verifikasi Kredit SKP","details":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf (3.50 SKP PELAYANAN) - dr. Yohana Suryani, Sp.OG(K)","timestamp":"8 jam yang lalu","category":"Verification"}],"activeScope":"all","activeScopeLabel":"Semua Wilayah Nasional (38 Provinsi)","isFromLiveDatabase":true,"targetPelayanan":56,"targetPengabdian":8,"targetPembelajaran":72,"targetTotal":160};
+    let leafletMap = null;
+    let geoJsonLayer = null;
+    const provinceLayerMap = {};
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initRecentActivities();
+      initTopProvincesList();
+      initInteractiveIndonesiaMap();
+
+      const currentUser = (typeof PogiStore !== 'undefined') ? PogiStore.getCurrentUser() : null;
+      if (currentUser && currentUser.role === 'ADMIN_CABANG' && currentUser.branch && currentUser.branch !== 'Nasional') {
+        const bLow = currentUser.branch.toLowerCase();
+        let sKey = 'jabar';
+        if (bLow.includes('dki') || bLow.includes('jakarta')) sKey = 'dki';
+        else if (bLow.includes('timur')) sKey = 'jatim';
+        const orgBtn = document.getElementById('headerOrgScopeBtn');
+        if (orgBtn) orgBtn.setAttribute('disabled', 'true');
+      }
+    });
+
+    function initRecentActivities() {
+      const container = document.getElementById('recentActivityList');
+      if (!container || container.children.length > 0) return; // Already rendered server-side
+
+      const acts = (POGI_SERVER_DATA && POGI_SERVER_DATA.recentActivities && POGI_SERVER_DATA.recentActivities.length)
+        ? POGI_SERVER_DATA.recentActivities.slice(0, 3)
+        : [];
+      if (acts.length > 0) {
+        container.innerHTML = acts.map(a => `
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-8 h-8 rounded-lg bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-base">task_alt</span>
+              </div>
+              <div class="min-w-0">
+                <div class="font-bold text-slate-900">${a.action} &bull; <span class="text-slate-500 font-normal">${a.actor}</span></div>
+                <div class="text-[11px] text-slate-600 truncate mt-0.5">${a.details}</div>
+              </div>
+            </div>
+            <div class="text-[10px] text-slate-400 font-medium shrink-0">${a.timestamp}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function initTopProvincesList() {
+      const container = document.getElementById('topProvincesList');
+      if (!container || container.children.length > 0) return; // Already rendered server-side
+
+      const topList = (POGI_SERVER_DATA && POGI_SERVER_DATA.topProvinces && POGI_SERVER_DATA.topProvinces.length)
+        ? POGI_SERVER_DATA.topProvinces
+        : [];
+
+      container.innerHTML = topList.map(item => {
+        const rate = item.completionRate || 0;
+        let dotColor = 'bg-[#dc2626]';
+        let badgeColor = 'bg-red-50 text-red-700 border-red-200';
+
+        if (rate >= 85) {
+          dotColor = 'bg-[#eab308]';
+          badgeColor = 'bg-amber-50 text-amber-800 border-amber-200';
+        } else if (rate >= 50) {
+          dotColor = 'bg-[#16a34a]';
+          badgeColor = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+        }
+
+        return `
+          <div class="flex items-center justify-between py-1.5 px-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-200"
+               onmouseenter="highlightMapProvince('${item.name}')"
+               onmouseleave="resetMapProvince('${item.name}')"
+               onclick="window.location.href='/doctors?province=${encodeURIComponent(item.name)}'">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="w-2.5 h-2.5 rounded-full ${dotColor} shrink-0 shadow-2xs"></span>
+              <span class="font-bold text-slate-800 truncate text-xs">${item.name}</span>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="text-[10px] text-slate-400 font-semibold">${item.doctors} Dokter</span>
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold border ${badgeColor}">
+                ${rate.toFixed(0)}%
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function initInteractiveIndonesiaMap() {
+      const mapContainer = document.getElementById('interactiveIndonesiaMap');
+      if (!mapContainer || typeof L === 'undefined' || typeof INDONESIA_38_GEOJSON === 'undefined') return;
+
+      leafletMap = L.map('interactiveIndonesiaMap', {
+        center: [-2.5, 118.0],
+        zoom: 4.8,
+        minZoom: 4,
+        maxZoom: 7,
+        zoomControl: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        dragging: true,
+        attributionControl: false
+      });
+
+      const pogiProvinces = (POGI_SERVER_DATA && POGI_SERVER_DATA.provincesData && POGI_SERVER_DATA.provincesData.length)
+        ? POGI_SERVER_DATA.provincesData
+        : [];
+
+      function getProvinceStats(featureProps) {
+        if (!featureProps) return null;
+        const pId = String(featureProps.id || featureProps.KODE_PROV || '');
+        const provName = featureProps.PROVINSI || featureProps.name || '';
+        const norm = provName.toLowerCase().replace(/^(provinsi|daerah khusus ibukota|daerah istimewa)\s+/i, '').trim();
+        return pogiProvinces.find(p => {
+          if (pId && String(p.id) === pId) return true;
+          const pNorm = (p.name || '').toLowerCase().replace(/^(provinsi|daerah khusus ibukota|daerah istimewa)\s+/i, '').trim();
+          return pNorm === norm || (p.name && p.name.toLowerCase().includes(norm)) || (norm && norm.includes((p.name || '').toLowerCase()));
+        });
+      }
+
+      function getProvinceColor(stat) {
+        if (!stat || stat.doctors === 0) return '#94a3b8'; // Abu-abu: Tidak ada dokter
+        const rate = stat.completionRate;
+        if (rate >= 85) return '#eab308'; // Kuning (Terpenuhi: >= 85%) - Bab 4 RULES.md
+        if (rate >= 50) return '#16a34a'; // Hijau (Hampir Memenuhi: 50% - 84%) - Bab 4 RULES.md
+        return '#dc2626';                 // Merah (Sangat Kurang: < 50%) - Bab 4 RULES.md
+      }
+
+      geoJsonLayer = L.geoJSON(INDONESIA_38_GEOJSON, {
+        style: function(feature) {
+          const stat = getProvinceStats(feature.properties);
+          const fillColor = getProvinceColor(stat);
+          return {
+            fillColor: fillColor,
+            weight: 1,
+            opacity: 1,
+            color: '#ffffff',
+            fillOpacity: 0.95
+          };
+        },
+        onEachFeature: function(feature, layer) {
+          const provName = feature.properties.PROVINSI || feature.properties.name || '';
+          const stat = getProvinceStats(feature.properties);
+          provinceLayerMap[provName.toLowerCase()] = layer;
+
+          const docText = stat ? `${stat.doctors} Dokter Obgyn` : '0 Dokter Terdata';
+          const completeText = stat ? `${stat.complete} / ${stat.doctors} Selesai (${stat.completionRate.toFixed(0)}%)` : '0%';
+          const incompleteCount = stat ? stat.incomplete : 0;
+
+          let statusBadge = '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-red-900/90 text-red-200 border border-red-500/50">● Sangat Kurang</span>';
+          if (!stat || stat.doctors === 0) {
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-800 text-slate-300 border border-slate-600">0 Dokter</span>';
+          } else if (stat.completionRate >= 85) {
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-900/90 text-amber-200 border border-amber-500/50">● Terpenuhi</span>';
+          } else if (stat.completionRate >= 50) {
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-900/90 text-emerald-200 border border-emerald-500/50">● Hampir Memenuhi</span>';
+          }
+
+          layer.bindTooltip(`
+            <div class="text-left font-sans p-1">
+              <div class="flex items-center justify-between gap-3 mb-1">
+                <div class="font-black text-white text-xs">${provName}</div>
+                ${statusBadge}
+              </div>
+              <div class="text-[11px] text-slate-200 font-bold">${docText}</div>
+              <div class="text-[10px] text-slate-300 mt-0.5">Target SKP Terpenuhi: <strong class="text-white">${completeText}</strong></div>
+              <div class="text-[10px] text-rose-300 font-semibold mt-0.5">Belum Melengkapi SKP: ${incompleteCount} Dokter</div>
+            </div>
+          `, { sticky: true });
+
+          layer.on({
+            mouseover: function(e) {
+              const l = e.target;
+              l.setStyle({ weight: 2.5, color: '#16b3ac', fillOpacity: 1 });
+              l.bringToFront();
+            },
+            mouseout: function(e) {
+              geoJsonLayer.resetStyle(e.target);
+            },
+            click: function() {
+              window.location.href = '/provinces';
+            }
+          });
+        }
+      }).addTo(leafletMap);
+
+      // Fit map bounds neatly to Indonesia bounds
+      leafletMap.fitBounds(geoJsonLayer.getBounds(), { padding: [10, 10] });
+    }
+
+    function highlightMapProvince(name) {
+      if (!provinceLayerMap) return;
+      const key = name.toLowerCase();
+      for (const k in provinceLayerMap) {
+        if (k.includes(key) || key.includes(k)) {
+          const layer = provinceLayerMap[k];
+          layer.setStyle({ weight: 3, color: '#16b3ac', fillOpacity: 1 });
+          layer.bringToFront();
+        }
+      }
+    }
+
+    function resetMapProvince(name) {
+      if (!geoJsonLayer || !provinceLayerMap) return;
+      const key = name.toLowerCase();
+      for (const k in provinceLayerMap) {
+        if (k.includes(key) || key.includes(k)) {
+          geoJsonLayer.resetStyle(provinceLayerMap[k]);
+        }
+      }
+    }
+
+    function openFollowUpModal(mode) {
+      const m = document.getElementById('fuModal');
+      if (m) {
+        m.classList.remove('hidden');
+        if (mode === 'lowest') {
+          const t = document.getElementById('fuTarget');
+          if (t) t.value = 'lowest_5';
+        }
+      }
+    }
+
+    function closeFollowUpModal() {
+      const m = document.getElementById('fuModal');
+      if (m) m.classList.add('hidden');
+    }
+
+    async function sendFollowUpAction() {
+      const targetSelect = document.getElementById('fuTarget');
+      const target = targetSelect.value;
+      const targetLabel = targetSelect.selectedOptions[0] ? targetSelect.selectedOptions[0].text : target;
+      const message = document.getElementById('fuMessage').value;
+      const waChecked = document.getElementById('fuChannelWa').checked;
+      const emailChecked = document.getElementById('fuChannelEmail').checked;
+
+      const channels = [];
+      if (waChecked) channels.push('whatsapp');
+      if (emailChecked) channels.push('email');
+
+      if (channels.length === 0) {
+        showToast('Pilih minimal satu kanal pengiriman (WhatsApp atau Email).', 'warning');
+        return;
+      }
+
+      const btn = document.getElementById('btnSendFuSubmit');
+      const originalText = btn.innerHTML;
+      btn.setAttribute('disabled', 'true');
+      btn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">refresh</span><span>Menyimpan ke Antrean Database...</span>';
+
+      try {
+        const res = await fetch('/dashboard/send-follow-up', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': 'KWbmxxB1IJb3niJnoK2cGqPLpjrRWE78u8eeXcq4',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ target, channels, message })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          closeFollowUpModal();
+          showToast(`Sukses: ${data.recipients_count} notifikasi berhasil dijadwalkan di antrean database (${data.target_label})!`, 'success');
+        } else {
+          showToast(data.message || 'Gagal mengirimkan notifikasi follow-up.', 'error');
+        }
+      } catch (err) {
+        showToast('Terjadi kesalahan jaringan saat menyimpan ke antrean.', 'error');
+      } finally {
+        btn.removeAttribute('disabled');
+        btn.innerHTML = originalText;
+      }
+    }
+
+    function launchKemenkesPortal(doctorId, doctorName) {
+      showToast('Membuka Portal Kemenkes & mencatat riwayat kerja...', 'info');
+
+      fetch('/kemenkes/track-access', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': 'KWbmxxB1IJb3niJnoK2cGqPLpjrRWE78u8eeXcq4'
+        },
+        body: JSON.stringify({
+          doctor_id: doctorId || null,
+          doctor_name: doctorName || null,
+          source: 'dashboard_hero_cta'
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showToast('Sesi Kemenkes tercatat otomatis ke log kinerja admin!', 'success');
+          window.open(data.portal_url || 'https://satusehat.kemkes.go.id/sdmk/login', '_blank');
+        } else {
+          window.open('https://satusehat.kemkes.go.id/sdmk/login', '_blank');
+        }
+      })
+      .catch(() => {
+        window.open('https://satusehat.kemkes.go.id/sdmk/login', '_blank');
+      });
+    }
+
+    function selectOrgScope(scope, labelText) {
+      if (scope === 'all') {
+        window.location.href = '/dashboard';
+      } else {
+        window.location.href = '/dashboard?scope=' + encodeURIComponent(scope);
+      }
+    }
+
+    function setCompletionMetric(mode) {
+      const btnPct = document.getElementById('toggleMetricPct');
+      const btnNum = document.getElementById('toggleMetricNum');
+      if (!btnPct || !btnNum) return;
+
+      if (mode === 'percentage') {
+        btnPct.className = 'px-3.5 py-1.5 rounded-lg bg-white text-slate-900 font-extrabold shadow-2xs transition';
+        btnNum.className = 'px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-900 font-bold transition';
+        document.querySelectorAll('.stat-pct').forEach(el => el.classList.remove('hidden'));
+        document.querySelectorAll('.stat-count').forEach(el => {
+          el.classList.remove('font-extrabold', 'text-slate-900');
+          el.classList.add('font-medium', 'text-slate-400');
+        });
+      } else {
+        btnNum.className = 'px-3.5 py-1.5 rounded-lg bg-white text-slate-900 font-extrabold shadow-2xs transition';
+        btnPct.className = 'px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-900 font-bold transition';
+        document.querySelectorAll('.stat-pct').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.stat-count').forEach(el => {
+          el.classList.remove('font-medium', 'text-slate-400');
+          el.classList.add('font-extrabold', 'text-slate-900');
+        });
+      }
+    }
+  </script>
+</body>
+</html>

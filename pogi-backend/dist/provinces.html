@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-[#f4f7f6]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="KWbmxxB1IJb3niJnoK2cGqPLpjrRWE78u8eeXcq4">
+  <title>POGI SKP Tracker - Monitoring Kepatuhan 38 Provinsi</title>
+  
+  <!-- Tailwind CSS & CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Leaflet.js CDN for Interactive Vector Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    #interactiveIndonesiaMap {
+      background-color: transparent !important;
+    }
+    .leaflet-container {
+      background: transparent !important;
+      font-family: inherit;
+    }
+    .leaflet-tooltip {
+      background: #0f172a !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255,255,255,0.2) !important;
+      border-radius: 10px !important;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3) !important;
+      padding: 6px 12px !important;
+      font-size: 11px !important;
+    }
+    .leaflet-tooltip-top:before {
+      border-top-color: #0f172a !important;
+    }
+
+    /* Modal Sticky Header & Footer, Scrollable Body */
+    .modal-dialog-scrollable {
+      max-height: 90vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    .modal-header-sticky {
+      flex-shrink: 0 !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 20 !important;
+    }
+    .modal-body-scrollable {
+      flex: 1 1 auto !important;
+      overflow-y: auto !important;
+      min-height: 0 !important;
+    }
+    .modal-footer-sticky {
+      flex-shrink: 0 !important;
+      position: sticky !important;
+      bottom: 0 !important;
+      z-index: 20 !important;
+    }
+  </style>
+  </head>
+<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
+  <!-- Mobile Backdrop Overlay -->
+  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
+
+  <div class="flex h-screen overflow-hidden">
+    <!-- APP SIDEBAR -->
+    <aside id="appSidebar" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] lg:w-64 bg-white border-r border-slate-200/90 flex flex-col shrink-0 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static lg:inset-auto shadow-2xl lg:shadow-none">
+  <!-- Top Brand Header -->
+  <div class="px-4 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
+    <a href="/dashboard" class="flex items-center gap-2.5 min-w-0">
+      <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs shrink-0">
+        <img src="/logo.png" alt="Logo POGI" class="w-full h-full object-contain">
+      </div>
+      <div class="min-w-0">
+        <div class="font-black text-sm tracking-tight text-[#16b3ac] leading-none">POGI SKP TRACKER</div>
+        <div class="text-[9px] text-slate-500 font-bold leading-tight mt-1 truncate">PP POGI &bull; Standar 160 SKP</div>
+      </div>
+    </a>
+    <button type="button" onclick="toggleMobileSidebar(false)" class="lg:hidden p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition" aria-label="Tutup Menu">
+      <span class="material-symbols-outlined text-xl">close</span>
+    </button>
+  </div>
+
+  <!-- Navigation Menu -->
+  <div class="px-3 py-4 flex-1 overflow-y-auto space-y-6">
+    
+    <div>
+      <div class="px-3 mb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+        MONITORING NASIONAL
+      </div>
+      <nav class="space-y-1">
+                <a href="/dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition bg-[#16b3ac] text-white shadow-xs">
+          <span class="material-symbols-outlined text-[19px]">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+                                <a href="/doctors" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[19px]">stethoscope</span>
+          <span>Doctors</span>
+        </a>
+                        <a href="/provinces" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[19px]">map</span>
+          <span>Provinces</span>
+        </a>
+        <a href="/events" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[19px]">event</span>
+          <span>Events</span>
+        </a>
+                                
+      </nav>
+    </div>
+
+      </div>
+
+  
+  <!-- Bottom Profile Card -->
+  <div class="p-3 border-t border-slate-100 bg-slate-50/70">
+    <div id="sidebarUserProfileCard" class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div id="sidebarUserAvatar" class="w-9 h-9 rounded-full bg-[#16b3ac] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
+          A
+        </div>
+        <div class="min-w-0" id="sidebarUserInfo">
+          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Anna</div>
+          <div class="text-[10px] text-slate-400 font-mono truncate" id="sidebarUserEmail">sekretariat.pusat@pogi.or.id</div>
+        </div>
+      </div>
+      <button type="button" onclick="performLogout()" title="Keluar" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition shrink-0">
+        <span class="material-symbols-outlined text-lg">unfold_more</span>
+      </button>
+    </div>
+  </div>
+</aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <!-- Top Sticky Header -->
+      <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200/90 shrink-0 w-full print:hidden">
+  <div class="h-14 sm:h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
+    <!-- Left: Mobile menu button -->
+    <div class="flex items-center gap-2 sm:gap-3 min-w-0 shrink-0">
+      <button type="button" onclick="toggleMobileSidebar(true)" class="lg:hidden p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition shrink-0 cursor-pointer" aria-label="Buka Menu">
+        <span class="material-symbols-outlined text-2xl">menu</span>
+      </button>
+    </div>
+
+    <!-- Center: Global Search Input -->
+    <div class="relative flex-1 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-2 sm:mx-4">
+      <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3 text-slate-400 text-lg pointer-events-none">search</span>
+        <input type="text" id="topGlobalSearchInput" oninput="handleGlobalTopSearch(this.value)" onkeydown="handleGlobalSearchKeydown(event)" placeholder="Cari dokter, nomor STR, SIP, atau ..." class="w-full pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-[#16b3ac] rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none transition shadow-2xs">
+        <button type="button" id="clearTopSearchBtn" onclick="clearGlobalTopSearch()" class="hidden absolute right-2.5 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+      <!-- Dropdown Live Search Results -->
+      <div id="topSearchResultsDropdown" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-2 z-50 max-h-96 overflow-y-auto">
+      </div>
+    </div>
+
+    <!-- Right: Notifikasi & Profil User -->
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+      <!-- Akses Kemenkes SatuSehat Action Button -->
+      <a href="/kemenkes/launch" target="_blank"
+        onclick="if(typeof showToast === 'function') showToast('Membuka Portal Kemenkes SDMK & mencatat sesi kerja...', 'info');"
+        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200/80 font-bold text-xs transition shadow-2xs"
+        title="Buka SatuSehat SDMK Kemenkes (Tercatat otomatis ke riwayat kerja & log kinerja admin)">
+        <span class="material-symbols-outlined text-base text-emerald-700">health_and_safety</span>
+        <span class="hidden md:inline">Portal Kemenkes</span>
+      </a>
+
+      <!-- Notification Bell with Red Dot Indicator -->
+      <div class="relative">
+        <button type="button" id="topNotifBtn" onclick="toggleTopNotifDropdown()" class="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer" aria-label="Notifikasi">
+          <span class="material-symbols-outlined text-xl">notifications</span>
+          <span id="notifBadgeDot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white animate-pulse"></span>
+        </button>
+        <!-- Notification Dropdown Menu -->
+        <div id="topNotifDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
+          <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
+            <div class="font-bold text-slate-900 flex items-center gap-1.5">
+              <span>Pemberitahuan Sistem</span>
+              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">157 Perlu FU</span>
+            </div>
+            <button type="button" onclick="markAllNotificationsAsRead()" class="text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer">
+              Tandai Dibaca
+            </button>
+          </div>
+          <div id="notifListContainer" class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+            <div class="p-3.5 hover:bg-slate-50 transition flex items-start gap-3 cursor-pointer" onclick="window.location.href='/doctors?filter=pending'">
+              <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+                <span class="material-symbols-outlined text-base">pending_actions</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">157 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">17 menit yang lalu</div>
+              </div>
+            </div>
+          </div>
+                  </div>
+      </div>
+
+      <!-- User Avatar Profile Circle -->
+      <div class="relative">
+        <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#16b3ac] hover:bg-[#129993] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna">
+          <span id="headerUserInitials">A</span>
+        </button>
+        <!-- User Profile Dropdown Menu -->
+        <div id="topUserDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
+          <div class="px-4 py-2 border-b border-slate-100 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#16b3ac] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs" id="headerDropdownAvatar">
+              A
+            </div>
+            <div class="min-w-0">
+              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Anna</div>
+              <div class="text-[10px] text-slate-500 truncate" id="headerDropdownRole">Admin POGI (Data Entry &amp; Kemenkes)</div>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#16b3ac] border border-emerald-200 text-[9px] font-bold mt-1">
+                <span class="w-1 h-1 rounded-full bg-emerald-600"></span> Online
+              </span>
+            </div>
+          </div>
+          <div class="py-1">
+                                              </div>
+          <div class="pt-1 border-t border-slate-100 px-2">
+            <button type="button" onclick="performLogout()" class="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 rounded-xl font-bold flex items-center gap-2 transition cursor-pointer">
+              <span class="material-symbols-outlined text-base">logout</span>
+              <span>Keluar Sistem (Logout)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <!-- Main Body Scrollable View -->
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in">
+        
+    <!-- MedCred Standard Heading Banner -->
+    <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="space-y-1.5">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
+          <span>MONITORING 38 WILAYAH PROVINSI</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <span>Distribusi &amp; Kepatuhan Cabang POGI</span>
+          <span class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(38 Wilayah)</span>
+        </h1>
+        <p class="text-xs text-slate-500 max-w-2xl leading-relaxed">
+          Pemetaan persebaran dokter spesialis obstetri &amp; ginekologi dan tingkat kepatuhan pemenuhan standar 160 SKP di 38 cabang POGI seluruh Indonesia.
+        </p>
+      </div>
+      <div class="flex items-center gap-2.5 shrink-0">
+        <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer bg-slate-50 hover:bg-slate-100 px-3 py-2 rounded-xl border border-slate-200 transition">
+          <input id="hideZeroDoctors" type="checkbox" onchange="toggleZeroDoctors()" class="rounded text-[#16b3ac] focus:ring-[#16b3ac]" />
+          <span class="text-[11px]">Sembunyikan 0 Dokter</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center gap-3">
+      <span class="material-symbols-outlined text-slate-400 text-lg ml-1">search</span>
+      <input id="searchProvinceInput" onkeyup="filterProvinces()" type="text" placeholder="Cari nama provinsi atau cabang POGI daerah..." class="w-full text-xs text-slate-800 placeholder:text-slate-400 bg-transparent focus:outline-none" />
+    </div>
+
+    <!-- Tabel 38 Provinsi -->
+    <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
+      <div class="hidden md:block overflow-x-auto">
+        <table class="w-full text-left text-xs whitespace-nowrap">
+          <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+            <tr>
+              <th class="py-3 px-4 w-12 text-center">#</th>
+              <th class="py-3 px-4">Nama Provinsi / Cabang POGI</th>
+              <th class="py-3 px-4 text-center">Jumlah Dokter</th>
+              <th class="py-3 px-4 text-center">Complete</th>
+              <th class="py-3 px-4 text-center">Incomplete</th>
+              <th class="py-3 px-4 w-48">Progress Kepatuhan</th>
+              <th class="py-3 px-4 text-center">Status</th>
+              <th class="py-3 px-4 text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="provincesTableBody" class="divide-y divide-slate-100 font-medium">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Touch Cards (< md) -->
+      <div id="provincesMobileCards" class="md:hidden divide-y divide-slate-100 p-2 sm:p-3 space-y-3">
+        <!-- Rendered dynamically for mobile -->
+      </div>
+
+      <!-- Interactive MedCred Pagination Footer -->
+      <div id="provincesTablePagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
+    </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Global Application Modals (Outside Main Stacking Context for Full Viewport Overlay) -->
+  
+  <script>
+    window.AUTH_USER = {"id":"03bbce59-7dc4-4dc2-bce7-11e893ef4068","name":"Anna","email":"sekretariat.pusat@pogi.or.id","role":"ADMIN_POGI","branch":"Pusat"};
+  </script>
+  <!-- Core Scripts -->
+  <script src="/js/navigation.js"></script>
+    <script src="/js/pdf_exporter.js"></script>
+  <script>
+    
+    // MedCred Standard Pagination Component
+    function renderMedCredPaginationControls({ containerId, currentPage, totalPages, totalItems, startIdx, endIdx, itemLabel, onPageChangeFn, onLimitChangeFn, currentLimit, limits = [10, 25, 50] }) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+
+      if (totalItems === 0) {
+        el.innerHTML = '<div class="text-slate-400 text-xs py-1">Tidak ada data untuk ditampilkan</div>';
+        return;
+      }
+
+      let btnsHtml = '';
+
+      // Prev Button
+      const isFirst = currentPage <= 1;
+      btnsHtml += `
+        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
+          <span class="material-symbols-outlined text-sm">chevron_left</span>
+          <span>Sebelumnya</span>
+        </button>
+      `;
+
+      // Page numbers with smart window
+      const maxButtons = 5;
+      let startP = Math.max(1, currentPage - 2);
+      let endP = Math.min(totalPages, startP + maxButtons - 1);
+      if (endP - startP < maxButtons - 1) {
+        startP = Math.max(1, endP - maxButtons + 1);
+      }
+
+      if (startP > 1) {
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">1</button>`;
+        if (startP > 2) {
+          btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
+        }
+      }
+
+      for (let p = startP; p <= endP; p++) {
+        const isActive = (p === currentPage);
+        btnsHtml += `
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+            ${p}
+          </button>
+        `;
+      }
+
+      if (endP < totalPages) {
+        if (endP < totalPages - 1) {
+          btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
+        }
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">${totalPages}</button>`;
+      }
+
+      // Next Button
+      const isLast = currentPage >= totalPages;
+      btnsHtml += `
+        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
+          <span>Selanjutnya</span>
+          <span class="material-symbols-outlined text-sm">chevron_right</span>
+        </button>
+      `;
+
+      let limitSelectorHtml = '';
+      if (onLimitChangeFn && limits && limits.length > 0) {
+        limitSelectorHtml = `
+          <div class="flex items-center gap-1.5 ml-0 sm:ml-2">
+            <span class="text-slate-400 text-[11px]">Tampilkan:</span>
+            <select onchange="${onLimitChangeFn}(this.value)" class="py-1 px-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs font-bold focus:outline-none">
+              ${limits.map(l => `<option value="${l}" ${l === currentLimit ? 'selected' : ''}>${l}</option>`).join('')}
+            </select>
+          </div>
+        `;
+      }
+
+      el.innerHTML = `
+        <div class="flex flex-wrap items-center gap-2 text-slate-500 font-medium text-xs">
+          <div>
+            Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> ${itemLabel}
+          </div>
+          ${limitSelectorHtml}
+        </div>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          ${btnsHtml}
+        </div>
+      `;
+    }
+
+
+    const LIVE_SERVER_PROVINCES = [{"id":"11","name":"Aceh","region":"Sumatera","doctors":3,"complete":0,"incomplete":3,"pending":0,"completionRate":0},{"id":"51","name":"Bali","region":"Bali \u0026 Nusa Tenggara","doctors":10,"complete":1,"incomplete":9,"pending":0,"completionRate":10},{"id":"36","name":"Banten","region":"Jawa","doctors":8,"complete":1,"incomplete":7,"pending":0,"completionRate":12.5},{"id":"17","name":"Bengkulu","region":"Sumatera","doctors":3,"complete":0,"incomplete":3,"pending":0,"completionRate":0},{"id":"34","name":"DI Yogyakarta","region":"Jawa","doctors":7,"complete":2,"incomplete":5,"pending":0,"completionRate":28.6},{"id":"31","name":"DKI Jakarta","region":"Jawa","doctors":22,"complete":7,"incomplete":15,"pending":0,"completionRate":31.8},{"id":"75","name":"Gorontalo","region":"Sulawesi","doctors":2,"complete":0,"incomplete":2,"pending":0,"completionRate":0},{"id":"15","name":"Jambi","region":"Sumatera","doctors":7,"complete":3,"incomplete":4,"pending":0,"completionRate":42.9},{"id":"32","name":"Jawa Barat","region":"Jawa","doctors":8,"complete":0,"incomplete":8,"pending":0,"completionRate":0},{"id":"33","name":"Jawa Tengah","region":"Jawa","doctors":11,"complete":5,"incomplete":6,"pending":0,"completionRate":45.5},{"id":"35","name":"Jawa Timur","region":"Jawa","doctors":8,"complete":2,"incomplete":6,"pending":0,"completionRate":25},{"id":"61","name":"Kalimantan Barat","region":"Kalimantan","doctors":5,"complete":1,"incomplete":4,"pending":0,"completionRate":20},{"id":"63","name":"Kalimantan Selatan","region":"Kalimantan","doctors":4,"complete":1,"incomplete":3,"pending":0,"completionRate":25},{"id":"62","name":"Kalimantan Tengah","region":"Kalimantan","doctors":3,"complete":0,"incomplete":3,"pending":0,"completionRate":0},{"id":"64","name":"Kalimantan Timur","region":"Kalimantan","doctors":6,"complete":1,"incomplete":5,"pending":0,"completionRate":16.7},{"id":"65","name":"Kalimantan Utara","region":"Kalimantan","doctors":3,"complete":2,"incomplete":1,"pending":0,"completionRate":66.7},{"id":"19","name":"Kepulauan Bangka Belitung","region":"Sumatera","doctors":3,"complete":0,"incomplete":3,"pending":0,"completionRate":0},{"id":"21","name":"Kepulauan Riau","region":"Sumatera","doctors":3,"complete":1,"incomplete":2,"pending":0,"completionRate":33.3},{"id":"18","name":"Lampung","region":"Sumatera","doctors":5,"complete":1,"incomplete":4,"pending":0,"completionRate":20},{"id":"81","name":"Maluku","region":"Maluku \u0026 Papua","doctors":2,"complete":0,"incomplete":2,"pending":0,"completionRate":0},{"id":"82","name":"Maluku Utara","region":"Maluku \u0026 Papua","doctors":2,"complete":0,"incomplete":2,"pending":0,"completionRate":0},{"id":"52","name":"Nusa Tenggara Barat","region":"Bali \u0026 Nusa Tenggara","doctors":4,"complete":1,"incomplete":3,"pending":0,"completionRate":25},{"id":"53","name":"Nusa Tenggara Timur","region":"Bali \u0026 Nusa Tenggara","doctors":7,"complete":0,"incomplete":7,"pending":0,"completionRate":0},{"id":"92","name":"Papua","region":"Maluku \u0026 Papua","doctors":4,"complete":0,"incomplete":4,"pending":0,"completionRate":0},{"id":"91","name":"Papua Barat","region":"Maluku \u0026 Papua","doctors":2,"complete":0,"incomplete":2,"pending":0,"completionRate":0},{"id":"96","name":"Papua Barat Daya","region":"Maluku \u0026 Papua","doctors":1,"complete":0,"incomplete":1,"pending":0,"completionRate":0},{"id":"95","name":"Papua Pegunungan","region":"Maluku \u0026 Papua","doctors":6,"complete":1,"incomplete":5,"pending":0,"completionRate":16.7},{"id":"93","name":"Papua Selatan","region":"Maluku \u0026 Papua","doctors":1,"complete":0,"incomplete":1,"pending":0,"completionRate":0},{"id":"94","name":"Papua Tengah","region":"Maluku \u0026 Papua","doctors":1,"complete":0,"incomplete":1,"pending":0,"completionRate":0},{"id":"14","name":"Riau","region":"Sumatera","doctors":6,"complete":1,"incomplete":5,"pending":0,"completionRate":16.7},{"id":"76","name":"Sulawesi Barat","region":"Sulawesi","doctors":2,"complete":0,"incomplete":2,"pending":0,"completionRate":0},{"id":"73","name":"Sulawesi Selatan","region":"Sulawesi","doctors":12,"complete":4,"incomplete":8,"pending":0,"completionRate":33.3},{"id":"72","name":"Sulawesi Tengah","region":"Sulawesi","doctors":3,"complete":0,"incomplete":3,"pending":0,"completionRate":0},{"id":"74","name":"Sulawesi Tenggara","region":"Sulawesi","doctors":3,"complete":0,"incomplete":3,"pending":0,"completionRate":0},{"id":"71","name":"Sulawesi Utara","region":"Sulawesi","doctors":3,"complete":2,"incomplete":1,"pending":0,"completionRate":66.7},{"id":"13","name":"Sumatera Barat","region":"Sumatera","doctors":4,"complete":2,"incomplete":2,"pending":0,"completionRate":50},{"id":"16","name":"Sumatera Selatan","region":"Sumatera","doctors":6,"complete":1,"incomplete":5,"pending":0,"completionRate":16.7},{"id":"12","name":"Sumatera Utara","region":"Sumatera","doctors":10,"complete":3,"incomplete":7,"pending":0,"completionRate":30}];
+    let provincePagination = { page: 1, limit: 10, total: LIVE_SERVER_PROVINCES.length || 0 };
+    let currentFilteredProvinces = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProvincesTable();
+    });
+
+    function changeProvincePage(p) {
+      const list = currentFilteredProvinces || (LIVE_SERVER_PROVINCES.length > 0 ? LIVE_SERVER_PROVINCES : []);
+      const totalPages = Math.max(1, Math.ceil(list.length / provincePagination.limit));
+      if (p < 1) p = 1;
+      if (p > totalPages) p = totalPages;
+      provincePagination.page = p;
+      const q = (document.getElementById('searchProvinceInput')?.value || '');
+      const hideZero = document.getElementById('hideZeroDoctors')?.checked || false;
+      renderProvincesTable(q, hideZero, false);
+    }
+
+    function setProvincePageLimit(limit) {
+      provincePagination.limit = parseInt(limit, 10) || 10;
+      provincePagination.page = 1;
+      const q = (document.getElementById('searchProvinceInput')?.value || '');
+      const hideZero = document.getElementById('hideZeroDoctors')?.checked || false;
+      renderProvincesTable(q, hideZero, false);
+    }
+
+    function renderProvincesTable(filterText = '', hideZero = false, resetPage = true) {
+      if (resetPage) provincePagination.page = 1;
+      const provinces = (LIVE_SERVER_PROVINCES && LIVE_SERVER_PROVINCES.length > 0)
+        ? LIVE_SERVER_PROVINCES
+        : [];
+      const tbody = document.getElementById('provincesTableBody');
+      if (!tbody) return;
+
+      const filtered = provinces.filter(p => {
+        const matchText = p.name.toLowerCase().includes(filterText.toLowerCase());
+        const matchZero = hideZero ? p.doctors > 0 : true;
+        return matchText && matchZero;
+      });
+
+      currentFilteredProvinces = filtered;
+      provincePagination.total = filtered.length;
+
+      const totalPages = Math.max(1, Math.ceil(provincePagination.total / provincePagination.limit));
+      if (provincePagination.page > totalPages) provincePagination.page = totalPages;
+      if (provincePagination.page < 1) provincePagination.page = 1;
+
+      const start = (provincePagination.page - 1) * provincePagination.limit;
+      const end = Math.min(start + provincePagination.limit, provincePagination.total);
+      const pageProvinces = filtered.slice(start, end);
+
+      if (pageProvinces.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="py-12 text-center text-slate-400 font-medium">Tidak ada provinsi yang sesuai dengan filter pencarian.</td></tr>';
+      } else {
+        tbody.innerHTML = pageProvinces.map((p, idx) => {
+          let statusBadge = '';
+          let barColor = 'bg-[#16b3ac]';
+
+          if (p.completionRate >= 85) {
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">Terpenuhi (Aman)</span>';
+            barColor = 'bg-[#eab308]';
+          } else if (p.completionRate >= 50) {
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-[#16b3ac] border border-emerald-200">Hampir Memenuhi</span>';
+            barColor = 'bg-[#16a34a]';
+          } else {
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 border border-red-200">Sangat Kurang (&lt;50%)</span>';
+            barColor = 'bg-[#dc2626]';
+          }
+
+          return `
+            <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+              <td class="py-3 px-4 text-center text-slate-400 font-mono text-[11px]">${start + idx + 1}</td>
+              <td class="py-3 px-4">
+                <div class="font-extrabold text-slate-900">${p.name}</div>
+                <div class="text-[10px] text-slate-400">Pengurus Cabang POGI Daerah</div>
+              </td>
+              <td class="py-3 px-4 text-center font-bold text-slate-800">${p.doctors}</td>
+              <td class="py-3 px-4 text-center font-black text-emerald-700">${p.complete}</td>
+              <td class="py-3 px-4 text-center font-black ${p.incomplete > 0 ? 'text-amber-600' : 'text-slate-400'}">${p.incomplete}</td>
+              <td class="py-3 px-4">
+                <div class="flex items-center justify-between text-[11px] font-bold mb-1">
+                  <span class="text-slate-700">${p.completionRate.toFixed(1)}%</span>
+                  <span class="text-slate-400 font-normal">${p.complete}/${p.doctors} Dr</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                  <div class="${barColor} h-2 rounded-full" style="width: ${p.completionRate}%"></div>
+                </div>
+              </td>
+              <td class="py-3 px-4 text-center">${statusBadge}</td>
+              <td class="py-3 px-4 text-center">
+                <a href="/doctors?search=${encodeURIComponent(p.name)}" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition inline-flex items-center gap-1">
+                  <span class="material-symbols-outlined text-xs">group</span>
+                  <span>Lihat Dokter (${p.doctors})</span>
+                </a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      renderMedCredPaginationControls({
+        containerId: 'provincesTablePagination',
+        currentPage: provincePagination.page,
+        totalPages,
+        totalItems: provincePagination.total,
+        startIdx: provincePagination.total === 0 ? 0 : start + 1,
+        endIdx: end,
+        itemLabel: 'cabang POGI daerah di seluruh Indonesia',
+        onPageChangeFn: 'changeProvincePage',
+        onLimitChangeFn: 'setProvincePageLimit',
+        currentLimit: provincePagination.limit,
+        limits: [10, 20, 38]
+      });
+    }
+
+    function filterProvinces() {
+      const q = document.getElementById('searchProvinceInput').value;
+      const hideZero = document.getElementById('hideZeroDoctors').checked;
+      renderProvincesTable(q, hideZero, true);
+    }
+
+    function toggleZeroDoctors() {
+      filterProvinces();
+    }
+  
+    function exportProvincesPdf() {
+      if (typeof window.PogiPdfExporter !== 'undefined') {
+        window.exportProvincesPdf();
+      }
+    }
+    const exportProvincesCSV = exportProvincesPdf;
+</script>
+</body>
+</html>
