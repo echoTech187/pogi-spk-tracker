@@ -113,4 +113,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/manage/store', [ManageController::class, 'store'])
         ->name('manage.store')
         ->middleware('role:SUPER_ADMIN');
+    Route::post('/manage/users/{id}/status', [ManageController::class, 'updateUserStatus'])
+        ->name('manage.users.status')
+        ->middleware('role:SUPER_ADMIN');
 });

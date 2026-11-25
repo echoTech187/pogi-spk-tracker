@@ -52,6 +52,7 @@ class ManageController extends Controller
                 'users.role',
                 'users.phone_number',
                 'users.is_active',
+                'users.account_status',
                 'users.email_verified_at',
                 'users.last_login_at',
                 'users.created_at',
@@ -64,6 +65,7 @@ class ManageController extends Controller
                 $u->display_role = $roleMap[$u->role] ?? $u->role;
                 $u->role = $roleMap[$u->role] ?? $u->role;
                 $u->is_active = (bool) ($u->is_active ?? true);
+                $u->account_status = strtoupper((string) ($u->account_status ?: ($u->is_active ? 'ACTIVE' : 'INACTIVE')));
                 $u->email_verified = !empty($u->email_verified_at);
                 $u->last_login = $u->last_login_at ? Carbon::parse($u->last_login_at)->format('d M Y, H.i') . ' WIB' : 'Belum tercatat';
                 $u->created = $u->created_at ? Carbon::parse($u->created_at)->format('d M Y') : '-';
@@ -401,6 +403,7 @@ class ManageController extends Controller
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'email', 'max:255', 'unique:users,email'],
                 'role' => ['required', 'string', 'max:50'],
+                'account_status' => ['nullable', 'in:ACTIVE,INACTIVE,BLOCK'],
             ]);
             $roleEnumMap = [
                 'Super Admin' => 'SUPER_ADMIN',
@@ -410,20 +413,27 @@ class ManageController extends Controller
                 'User/Dokter' => 'DOKTER',
             ];
             $dbRole = $roleEnumMap[$v['role']] ?? strtoupper(str_replace(' ', '_', $v['role']));
+            $accStatus = strtoupper((string) ($v['account_status'] ?? 'ACTIVE'));
             $userId = (string) Str::uuid();
-            User::create([
+            DB::table('users')->insert([
                 'id' => $userId,
                 'full_name' => $v['name'],
                 'email' => strtolower(trim($v['email'])),
                 'role' => $dbRole,
-                'password' => Hash::make('password123'),
-                'is_active' => true,
+                'password_hash' => Hash::make('password123'),
+                'is_active' => $accStatus === 'ACTIVE',
+                'account_status' => $accStatus,
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
             $item = [
                 'id' => $userId,
                 'name' => $v['name'],
                 'email' => strtolower(trim($v['email'])),
                 'role' => $v['role'],
+                'raw_role' => $dbRole,
+                'is_active' => $accStatus === 'ACTIVE',
+                'account_status' => $accStatus,
                 'created' => $now->format('d M Y'),
             ];
         } else {
@@ -441,5 +451,56 @@ class ManageController extends Controller
         ]);
 
         return response()->json(['success' => true, 'item' => $item]);
+    }
+
+    /**
+     * Perbarui data & status akun user (ACTIVE / INACTIVE / BLOCK).
+     */
+    public function updateUserStatus(Request $request, string $id): JsonResponse
+    {
+        $v = $request->validate([
+            'name' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'role' => ['nullable', 'string', 'max:50'],
+            'account_status' => ['required', 'in:ACTIVE,INACTIVE,BLOCK'],
+        ]);
+
+        $target = DB::table('users')->where('id', $id)->first();
+        if (!$target) {
+            return response()->json(['success' => false, 'message' => 'Pengguna tidak ditemukan.'], 404);
+        }
+
+        $roleEnumMap = [
+            'Super Admin' => 'SUPER_ADMIN',
+            'Admin Pusat' => 'ADMIN_PUSAT',
+            'Admin POGI' => 'ADMIN_POGI',
+            'Admin Cabang' => 'ADMIN_CABANG',
+            'User/Dokter' => 'DOKTER',
+        ];
+        $accStatus = strtoupper($v['account_status']);
+        $updateData = [
+            'account_status' => $accStatus,
+            'is_active' => $accStatus === 'ACTIVE',
+            'updated_at' => Carbon::now(),
+        ];
+        if (!empty($v['name'])) $updateData['full_name'] = $v['name'];
+        if (!empty($v['email'])) $updateData['email'] = strtolower(trim($v['email']));
+        if (!empty($v['role'])) {
+            $updateData['role'] = $roleEnumMap[$v['role']] ?? strtoupper(str_replace(' ', '_', $v['role']));
+        }
+
+        DB::table('users')->where('id', $id)->update($updateData);
+
+        DB::table('audit_logs')->insert([
+            'id' => (string) Str::uuid(),
+            'user_id' => Auth::id(),
+            'action' => 'UPDATE_USER_STATUS',
+            'entity_name' => 'users',
+            'entity_id' => $id,
+            'new_values' => json_encode(['message' => "Status akun {$target->full_name} diubah ke {$accStatus}"]),
+            'created_at' => Carbon::now(),
+        ]);
+
+        return response()->json(['success' => true, 'account_status' => $accStatus]);
     }
 }

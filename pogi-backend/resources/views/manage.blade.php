@@ -466,8 +466,11 @@
 
           <div>
             <label class="block font-bold text-slate-700 mb-1 text-xs">Status Akun</label>
-            <select class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-              <option>Aktif Terverifikasi</option>
+            <select id="manageUserStatusFilter" onchange="filterManageUserTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+              <option value="ALL">Semua Status</option>
+              <option value="ACTIVE">ACTIVE</option>
+              <option value="INACTIVE">INACTIVE</option>
+              <option value="BLOCK">BLOCK</option>
             </select>
           </div>
         </div>
@@ -1446,7 +1449,12 @@
               </td>
               <td class="py-3 px-4 text-[11px] text-slate-500">${usr.created || '-'}</td>
               <td class="py-3 px-4 text-center">
-                <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold">Aktif</span>
+                ${(() => {
+                  const st = (usr.account_status || (usr.is_active === false ? 'INACTIVE' : 'ACTIVE')).toUpperCase();
+                  if (st === 'BLOCK') return '<span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200 text-[10px] font-bold">BLOCK</span>';
+                  if (st === 'INACTIVE') return '<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 text-[10px] font-bold">INACTIVE</span>';
+                  return '<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold">ACTIVE</span>';
+                })()}
               </td>
               <td class="py-3 px-4 text-center">
                 <div class="flex items-center justify-center gap-1.5">
@@ -1504,11 +1512,14 @@
     function filterManageUserTable() {
       const q = (document.getElementById('searchManageUserInput')?.value || '').toLowerCase();
       const role = document.getElementById('manageUserRoleFilter')?.value || 'ALL';
+      const status = document.getElementById('manageUserStatusFilter')?.value || 'ALL';
       const all = getDefaultListForTab('user');
       const filtered = all.filter(u => {
         const matchQ = (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q);
         const matchRole = role === 'ALL' || u.role === role;
-        return matchQ && matchRole;
+        const uStatus = (u.account_status || (u.is_active === false ? 'INACTIVE' : 'ACTIVE')).toUpperCase();
+        const matchStatus = status === 'ALL' || uStatus === status;
+        return matchQ && matchRole && matchStatus;
       });
       renderManageUserTable(filtered, true);
     }
@@ -1516,6 +1527,8 @@
     function resetManageUserFilters() {
       document.getElementById('searchManageUserInput').value = '';
       document.getElementById('manageUserRoleFilter').value = 'ALL';
+      const stEl = document.getElementById('manageUserStatusFilter');
+      if (stEl) stEl.value = 'ALL';
       renderManageUserTable(null, true);
     }
 
@@ -1703,7 +1716,10 @@
         title.innerText = 'Rincian User: ' + item.name;
         const initials = (item.name || 'US').split(' ').slice(0, 2).map(w => w.charAt(0).toUpperCase()).join('');
         const rawRole = item.raw_role || 'USER';
-        const isActive = item.is_active !== false;
+        const accStatus = (item.account_status || (item.is_active === false ? 'INACTIVE' : 'ACTIVE')).toUpperCase();
+        const badgeCls = accStatus === 'BLOCK'
+          ? 'bg-rose-100 text-rose-700 border border-rose-200'
+          : (accStatus === 'INACTIVE' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200');
         const permsByRole = {
           SUPER_ADMIN: ['Full Access Master Data', 'Alih PIC & Workload Rebalancer', 'Verifikasi SKP & Dokumen', 'WA Blast Massal', 'Audit Trail & Laporan PDF'],
           ADMIN_PUSAT: ['Read-Only 38 Provinsi', 'Monitoring SLA Admin', 'Audit Trail Nasional', 'Unduh Laporan Bulanan PDF'],
@@ -1721,8 +1737,8 @@
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2 flex-wrap">
                   <span class="font-black text-slate-900 text-sm">${item.name}</span>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isActive ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-rose-100 text-rose-700 border border-rose-200'}">
-                    ${isActive ? 'Aktif' : 'Non-Aktif'}
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${badgeCls}">
+                    ${accStatus}
                   </span>
                   ${item.email_verified ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200">Email Terverifikasi</span>' : ''}
                 </div>
@@ -1867,6 +1883,14 @@
               <option value="User/Dokter" ${item.role === 'User/Dokter' || item.role === 'Dokter' ? 'selected' : ''}>User/Dokter</option>
             </select>
           </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Status Akun</label>
+            <select id="editUsrStatus" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="ACTIVE" ${(item.account_status || 'ACTIVE') === 'ACTIVE' ? 'selected' : ''}>ACTIVE</option>
+              <option value="INACTIVE" ${item.account_status === 'INACTIVE' ? 'selected' : ''}>INACTIVE</option>
+              <option value="BLOCK" ${item.account_status === 'BLOCK' ? 'selected' : ''}>BLOCK</option>
+            </select>
+          </div>
         `;
       }
 
@@ -1934,14 +1958,43 @@
         }
       } else if (type === 'user') {
         const list = getDefaultListForTab('user');
-        const usr = list.find(u => u.id === id);
+        const usr = list.find(u => String(u.id) === String(id));
         if (usr) {
-          usr.name = document.getElementById('editUsrName').value;
-          usr.email = document.getElementById('editUsrEmail').value;
-          usr.role = document.getElementById('editUsrRole').value;
-          
-          renderManageUserTable(null, false);
-          showToast('Data User berhasil diperbarui!', 'success');
+          const newName = document.getElementById('editUsrName').value;
+          const newEmail = document.getElementById('editUsrEmail').value;
+          const newRole = document.getElementById('editUsrRole').value;
+          const newStatus = document.getElementById('editUsrStatus')?.value || 'ACTIVE';
+          const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+          fetch('/manage/users/' + encodeURIComponent(id) + '/status', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': csrf
+            },
+            body: JSON.stringify({
+              name: newName,
+              email: newEmail,
+              role: newRole,
+              account_status: newStatus
+            })
+          })
+          .then(r => r.json())
+          .then(data => {
+            if (data.success) {
+              usr.name = newName;
+              usr.email = newEmail;
+              usr.role = newRole;
+              usr.account_status = newStatus;
+              usr.is_active = (newStatus === 'ACTIVE');
+              renderManageUserTable(null, false);
+              showToast('Data & status akun user berhasil diperbarui ke basis data!', 'success');
+            } else {
+              showToast(data.message || 'Gagal memperbarui status akun user.', 'error');
+            }
+          })
+          .catch(() => showToast('Gagal terhubung ke server.', 'error'));
         }
       }
 
@@ -2060,6 +2113,7 @@
           <div><label class="font-bold text-slate-700 block mb-1">Nama Lengkap</label><input required type="text" id="addUsrName" placeholder="Nama..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl" /></div>
           <div><label class="font-bold text-slate-700 block mb-1">Email</label><input required type="email" id="addUsrEmail" placeholder="user@pogi.or.id" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl" /></div>
           <div><label class="font-bold text-slate-700 block mb-1">Role</label><select id="addUsrRole" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl"><option value="Super Admin">Super Admin</option><option value="Admin Pusat">Admin Pusat</option><option value="Admin POGI">Admin POGI</option><option value="Admin Cabang">Admin Cabang</option><option value="User/Dokter">User/Dokter</option></select></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Status Akun</label><select id="addUsrStatus" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl"><option value="ACTIVE">ACTIVE</option><option value="INACTIVE">INACTIVE</option><option value="BLOCK">BLOCK</option></select></div>
         `;
       }
 
@@ -2098,6 +2152,7 @@
         payload.name = document.getElementById('addUsrName').value;
         payload.email = document.getElementById('addUsrEmail').value;
         payload.role = document.getElementById('addUsrRole').value;
+        payload.account_status = document.getElementById('addUsrStatus')?.value || 'ACTIVE';
       }
 
       try {

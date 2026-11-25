@@ -64,10 +64,16 @@ class AuthController extends Controller
             ])->withInput($request->only('email'));
         }
 
-        // 2. Verifikasi status keaktifan akun
-        if (!$user->is_active) {
+        // 2. Verifikasi status keaktifan akun (ACTIVE / INACTIVE / BLOCK)
+        $accStatus = strtoupper((string) ($user->account_status ?? ($user->is_active ? 'ACTIVE' : 'INACTIVE')));
+        if ($accStatus === 'BLOCK') {
             return back()->withErrors([
-                'email' => 'Akun pengurus ini berstatus non-aktif. Silakan hubungi Sekretariat PP POGI.',
+                'email' => 'Akun pengurus ini telah diblokir (BLOCK). Silakan hubungi Super Admin PP POGI.',
+            ])->withInput($request->only('email'));
+        }
+        if ($accStatus !== 'ACTIVE' || !$user->is_active) {
+            return back()->withErrors([
+                'email' => 'Akun pengurus ini berstatus non-aktif (INACTIVE). Silakan hubungi Sekretariat PP POGI.',
             ])->withInput($request->only('email'));
         }
 

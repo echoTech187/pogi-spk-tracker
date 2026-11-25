@@ -15,12 +15,17 @@ class ActiveUserOnly
     {
         $user = $request->user();
 
-        if ($user && !$user->is_active) {
+        $accStatus = strtoupper((string) ($user->account_status ?? ($user->is_active ? 'ACTIVE' : 'INACTIVE')));
+        if ($user && ($accStatus !== 'ACTIVE' || !$user->is_active)) {
             auth()->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('login')->with('error', 'Akun pengurus Anda telah dinonaktifkan oleh administrator.');
+            $msg = $accStatus === 'BLOCK'
+                ? 'Akun Anda telah diblokir (BLOCK) oleh Super Admin. Silakan hubungi Sekretariat PP POGI.'
+                : 'Akun pengurus Anda berstatus non-aktif (INACTIVE). Silakan hubungi administrator.';
+
+            return redirect()->route('login')->with('error', $msg);
         }
 
         return $next($request);
