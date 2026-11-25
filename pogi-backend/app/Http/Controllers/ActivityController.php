@@ -109,7 +109,7 @@ class ActivityController extends Controller
                 'users.role as user_role'
             )
             ->orderBy('audit_logs.created_at', 'desc')
-            ->limit(250)
+            ->limit(500)
             ->get();
 
         $logs = $rawLogs->map(function ($l) {

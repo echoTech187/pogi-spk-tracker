@@ -18,7 +18,11 @@
       </div>
       @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
       <div class="flex items-center gap-2 shrink-0 flex-wrap">
-        <button type="button" onclick="openAddDoctorModal()" id="btnAddDoctor" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational">
+        <button type="button" onclick="openWaBlastModal()" id="btnWaBlastMassal" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational cursor-pointer">
+          <span class="material-symbols-outlined text-base">campaign</span>
+          <span>Kirim WA Blast Massal</span>
+        </button>
+        <button type="button" onclick="openAddDoctorModal()" id="btnAddDoctor" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational cursor-pointer">
           <span class="material-symbols-outlined text-base">person_add</span>
           <span>Daftarkan Dokter Baru</span>
         </button>
@@ -404,11 +408,70 @@
       </form>
     </div>
   </div>
-            <span class="material-symbols-outlined text-base">person_add</span>
-            <span>Add doctor</span>
-          </button>
+
+  <!-- Modal WA Blast Massal (Terhubung langsung ke wa_blast_campaigns & wa_message_queue) -->
+  <div id="waBlastModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#16b3ac] flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-2xl">campaign</span>
+          </div>
+          <div>
+            <h3 class="font-black text-slate-900 text-sm">Pengiriman Notifikasi WhatsApp Blast Massal</h3>
+            <p class="text-[11px] text-slate-500">Otomasi pengingat pemenuhan 160 SKP &amp; antrean anti-ban jitter (RULES.md Bab 4)</p>
+          </div>
         </div>
-      </form>
+        <button type="button" onclick="closeWaBlastModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 py-4 flex-1 overflow-y-auto space-y-4 text-xs">
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <label class="font-extrabold text-slate-800">1. Sasaran Penerima Blast</label>
+            <span id="waBlastRecipientBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] font-black text-[11px]">
+              {{ $metrics['incomplete'] ?? 0 }} Dokter Incomplete
+            </span>
+          </div>
+          <select id="waBlastTargetSelect" onchange="updateWaBlastRecipientCount()" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
+            <option value="all_incomplete" selected>Semua Dokter Status Incomplete (Nasional)</option>
+            <option value="lowest_5">5 Cabang POGI dengan Kepatuhan Terendah</option>
+          </select>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-2">
+          <label class="font-extrabold text-slate-800 block">2. Saluran Pengiriman</label>
+          <div class="flex flex-wrap gap-3">
+            <label class="inline-flex items-center gap-2 font-semibold text-slate-700 cursor-pointer">
+              <input type="checkbox" id="waBlastChWhatsapp" checked class="w-4 h-4 rounded text-[#16b3ac] border-slate-300" />
+              <span>WhatsApp Gateway (Anti-Ban Jitter 1.5–3s)</span>
+            </label>
+            <label class="inline-flex items-center gap-2 font-semibold text-slate-700 cursor-pointer">
+              <input type="checkbox" id="waBlastChEmail" class="w-4 h-4 rounded text-[#16b3ac] border-slate-300" />
+              <span>Email Resmi POGI</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="font-extrabold text-slate-800 block">3. Template Pesan Pengingat</label>
+          <textarea id="waBlastMessageInput" rows="4" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">Yth. [Nama Dokter] (Cabang [Cabang] - [Provinsi]), kami mengingatkan agar segera melengkapi bukti berkas SKP (tautan Google Drive) pada portal POGI SKP Tracker sebelum jadwal cutoff bulanan.</textarea>
+          <div class="text-[11px] text-slate-400">Variabel didukung: <code>[Nama Dokter]</code>, <code>[Provinsi]</code>, <code>[Cabang]</code></div>
+        </div>
+      </div>
+
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeWaBlastModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition cursor-pointer">Batal</button>
+        <button type="button" id="btnSubmitWaBlast" onclick="submitWaBlast()" class="px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+          <span class="material-symbols-outlined text-base">send</span>
+          <span>Kirim ke Antrean WA Blast</span>
+        </button>
+      </div>
     </div>
   </div>
 @endsection
@@ -1155,6 +1218,83 @@
     }
 
     // -------------------------------------------------------------
-    
+    // WA BLAST MASSAL (Terhubung ke /dashboard/send-follow-up)
+    // -------------------------------------------------------------
+    function openWaBlastModal() {
+      const sel = document.getElementById('waBlastTargetSelect');
+      if (sel && sel.options.length <= 2 && typeof LIVE_SERVER_PROVINCES !== 'undefined') {
+        LIVE_SERVER_PROVINCES.forEach(p => {
+          const pName = p.name || p;
+          const opt = document.createElement('option');
+          opt.value = pName;
+          opt.textContent = 'Dokter Incomplete - ' + pName;
+          sel.appendChild(opt);
+        });
+      }
+      updateWaBlastRecipientCount();
+      const modal = document.getElementById('waBlastModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeWaBlastModal() {
+      const modal = document.getElementById('waBlastModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function updateWaBlastRecipientCount() {
+      const sel = document.getElementById('waBlastTargetSelect');
+      const badge = document.getElementById('waBlastRecipientBadge');
+      if (!sel || !badge) return;
+      const val = sel.value;
+      const allDocs = Array.isArray(LIVE_DATABASE_DOCTORS) ? LIVE_DATABASE_DOCTORS : [];
+      const incompleteDocs = allDocs.filter(d => (d.status || '').toUpperCase() !== 'COMPLETE');
+      if (val === 'all_incomplete') {
+        badge.innerText = incompleteDocs.length + ' Dokter Incomplete';
+      } else if (val === 'lowest_5') {
+        badge.innerText = '5 Cabang Terendah';
+      } else {
+        const count = incompleteDocs.filter(d => (d.province || '').toLowerCase().includes(val.toLowerCase())).length;
+        badge.innerText = count + ' Dokter Incomplete';
+      }
+    }
+
+    async function submitWaBlast() {
+      const target = document.getElementById('waBlastTargetSelect')?.value || 'all_incomplete';
+      const message = document.getElementById('waBlastMessageInput')?.value?.trim() || '';
+      if (!message) {
+        showToast('Template pesan tidak boleh kosong.', 'warning');
+        return;
+      }
+      const channels = [];
+      if (document.getElementById('waBlastChWhatsapp')?.checked) channels.push('whatsapp');
+      if (document.getElementById('waBlastChEmail')?.checked) channels.push('email');
+      if (channels.length === 0) channels.push('whatsapp');
+
+      const btn = document.getElementById('btnSubmitWaBlast');
+      if (btn) { btn.disabled = true; btn.classList.add('opacity-60'); }
+
+      try {
+        const res = await fetch('/dashboard/send-follow-up', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          },
+          body: JSON.stringify({ target, channels, message })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          closeWaBlastModal();
+          showToast(data.message || 'Kampanye WA Blast berhasil dimasukkan ke antrean!', 'success');
+        } else {
+          showToast(data.message || 'Gagal mengirim kampanye WA Blast.', 'error');
+        }
+      } catch (err) {
+        showToast('Gagal terhubung ke server untuk mengirim WA Blast.', 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.classList.remove('opacity-60'); }
+      }
+    }
   </script>
 @endsection
