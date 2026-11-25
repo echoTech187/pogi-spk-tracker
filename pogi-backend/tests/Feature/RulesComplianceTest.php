@@ -65,6 +65,12 @@ class RulesComplianceTest extends TestCase
         $doctorsPage->assertStatus(200);
         $this->assertCount($expectedCount, $doctorsPage->viewData('doctors'));
 
+        $provincesPage = $this->actingAs($anna)->get('/provinces');
+        $provincesPage->assertStatus(200);
+        foreach ($provincesPage->viewData('provinces') as $prov) {
+            $this->assertGreaterThan(0, $prov['doctors']);
+        }
+
         $otherDoctor = DB::table('doctors')
             ->whereNull('deleted_at')
             ->where('assigned_pic_id', '!=', $anna->id)

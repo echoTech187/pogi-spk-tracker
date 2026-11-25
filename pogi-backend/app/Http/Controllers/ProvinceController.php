@@ -19,7 +19,7 @@ class ProvinceController extends Controller
         $picUserId = $roleStr === 'ADMIN_POGI' ? $user->id : null;
         $branchId = $roleStr === 'ADMIN_CABANG' ? $user->branch_id : null;
 
-        $provinceRows = DB::table('provinces')
+        $query = DB::table('provinces')
             ->leftJoin('doctors', function ($join) use ($picUserId, $branchId) {
                 $join->on('provinces.id', '=', 'doctors.province_id')
                      ->whereNull('doctors.deleted_at');
@@ -35,7 +35,13 @@ class ProvinceController extends Controller
             ->selectRaw("SUM(CASE WHEN doctors.status = 'COMPLETE' THEN 1 ELSE 0 END) as complete_count")
             ->selectRaw("SUM(CASE WHEN doctors.status = 'INCOMPLETE' THEN 1 ELSE 0 END) as incomplete_count")
             ->selectRaw("SUM(CASE WHEN doctors.status = 'PENDING_REVIEW' THEN 1 ELSE 0 END) as pending_count")
-            ->groupBy('provinces.id', 'provinces.name', 'provinces.region_island')
+            ->groupBy('provinces.id', 'provinces.name', 'provinces.region_island');
+
+        if ($picUserId || $branchId) {
+            $query->havingRaw('COUNT(doctors.id) > 0');
+        }
+
+        $provinceRows = $query
             ->orderBy('provinces.name')
             ->get();
 
