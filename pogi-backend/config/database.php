@@ -63,6 +63,7 @@ return [
                 (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA') ?: (
                     str_contains((string) env('DB_HOST', ''), 'tidbcloud.com') || str_contains((string) env('DB_URL', ''), 'tidbcloud.com')
                         ? collect([
+                            __DIR__ . '/cacert.pem',
                             '/etc/ssl/certs/ca-certificates.crt',
                             '/etc/pki/tls/certs/ca-bundle.crt',
                             '/etc/ssl/cert.pem',
@@ -93,6 +94,7 @@ return [
                 (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA') ?: (
                     str_contains((string) env('DB_HOST', ''), 'tidbcloud.com') || str_contains((string) env('DB_URL', ''), 'tidbcloud.com')
                         ? collect([
+                            __DIR__ . '/cacert.pem',
                             '/etc/ssl/certs/ca-certificates.crt',
                             '/etc/pki/tls/certs/ca-bundle.crt',
                             '/etc/ssl/cert.pem',
