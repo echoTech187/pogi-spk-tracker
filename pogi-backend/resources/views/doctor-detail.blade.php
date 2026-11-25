@@ -1,578 +1,448 @@
-<!DOCTYPE html>
-<html lang="id" class="h-full bg-[#f4f7f6]">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POGI SKP Tracker - Detail Dokter & Status Kredensial</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Core Fonts & Styles -->
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
-    rel="stylesheet">
-  <!-- Material Symbols Outlined -->
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-  <!-- Print Stylesheet: Cetak Hanya Dokumen Saja (Modal & Elemen Web Tersembunyi) -->
-  <style>
-    @media print {
+@section('title', 'POGI SKP Tracker - Dashboard Pemantauan SKP Nasional')
 
-      html,
-      body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #ffffff !important;
-        width: 100% !important;
-        height: auto !important;
-        overflow: visible !important;
-      }
+@section('content')
 
-      /* Sembunyikan seluruh elemen halaman utama & backdrop */
-      body>*:not(#doctorDocPreviewModal) {
-        display: none !important;
-      }
+  <!-- MAIN SCROLLABLE CONTENT -->
+  <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in">
 
-      /* Reset container modal pratinjau saat dicetak */
-      #doctorDocPreviewModal {
-        position: static !important;
-        display: block !important;
-        width: 100% !important;
-        height: auto !important;
-        background: transparent !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        overflow: visible !important;
-        z-index: 9999 !important;
-      }
-
-      /* Sembunyikan toolbar atas modal dan tombol kontrol */
-      #doctorDocPreviewModalHeader,
-      .no-print {
-        display: none !important;
-      }
-
-      #docViewerScrollContainer {
-        padding: 0 !important;
-        margin: 0 !important;
-        background: transparent !important;
-        overflow: visible !important;
-        display: block !important;
-        width: 100% !important;
-        height: auto !important;
-      }
-
-      /* Format lembar A4 murni tanpa zoom / bayangan */
-      #pdfDocumentSheet {
-        position: static !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        min-height: auto !important;
-        box-shadow: none !important;
-        border: none !important;
-        border-radius: 0 !important;
-        margin: 0 !important;
-        padding: 6mm 10mm !important;
-        transform: none !important;
-        page-break-inside: avoid;
-        background: #ffffff !important;
-        color: #000000 !important;
-      }
-
-      * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      @page {
-        size: A4 portrait;
-        margin: 8mm;
-      }
-    }
-
-    @keyframes verifyGlow {
-      0% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-      }
-
-      50% {
-        transform: scale(1.02);
-        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0.25);
-        border-color: #059669;
-      }
-
-      100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-      }
-    }
-
-    .pulse-emerald {
-      animation: verifyGlow 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-  </style>
-</head>
-
-<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
-  <!-- MOBILE BACKDROP OVERLAY -->
-  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)"
-    class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden">
-  </div>
-
-  <div class="flex h-screen overflow-hidden">
-    <!-- APP SIDEBAR (STANDAR POGI) -->
-    @include('layouts.sidebar')
-
-    <!-- MAIN CONSOLE WRAPPER -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-      <!-- TOP STICKY HEADER (STANDAR POGI) -->
-      @include('layouts.header')
-
-      <!-- MAIN SCROLLABLE CONTENT -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in">
-
-        <!-- Navigation Breadcrumb & Back Button -->
-        <div class="flex items-center justify-between gap-3">
-          <a href="/doctors"
-            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs">
-            <span class="material-symbols-outlined text-sm text-[#16b3ac]">arrow_back</span>
-            <span>Kembali </span>
-          </a>
-          <div class="text-[11px] text-slate-500 font-medium">
-            Monitoring SKP Dokter Obgyn &bull; <strong id="breadcrumbDoctorName">{{ $doctor->full_name ?? 'Detail Dokter' }}</strong>
-          </div>
-        </div>
-
-        @php
-          $cleanName = preg_replace('/dr\.\s*|drg\.\s*|Prof\.|Sp\.OG|\,/i', '', $doctor->full_name ?? '');
-          $parts = array_values(array_filter(explode(' ', trim($cleanName))));
-          $initials = 'DR';
-          if (count($parts) >= 2) {
-            $initials = strtoupper(substr($parts[0], 0, 1) . substr($parts[1], 0, 1));
-          } elseif (count($parts) === 1) {
-            $initials = strtoupper(substr($parts[0], 0, 2));
-          }
-          $isComplete = in_array(strtoupper($doctor->status ?? ''), ['COMPLETE']);
-          $pel = (float) ($period->achieved_pelayanan_credits ?? 0);
-          $peng = (float) ($period->achieved_pengabdian_credits ?? 0);
-          $pemb = (float) ($period->achieved_pembelajaran_credits ?? 0);
-          $totalAchieved = (float) ($period->achieved_total_credits ?? ($pel + $peng + $pemb));
-          $targetPel = 56;
-          $targetPeng = 8;
-          $targetPemb = 72;
-          $targetFleks = 24;
-          $excessPel = max(0, $pel - $targetPel);
-          $excessPeng = max(0, $peng - $targetPeng);
-          $excessPemb = max(0, $pemb - $targetPemb);
-          $achievedFleks = min($targetFleks, round($excessPel + $excessPeng + $excessPemb, 1));
-          $pctPel = min(100, round(($pel / $targetPel) * 100));
-          $pctPeng = min(100, round(($peng / $targetPeng) * 100));
-          $pctPemb = min(100, round(($pemb / $targetPemb) * 100));
-          $pctFleks = min(100, round(($achievedFleks / $targetFleks) * 100));
-          $nikFormatted = $doctor->nik_hash ? '32' . substr($doctor->nik_hash, 0, 14) : ($doctor->str_number ?? '-');
-        @endphp
-
-        <!-- DOCTOR PROFILE HERO CARD -->
-        <div class="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-2xs space-y-6">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-slate-100 pb-5">
-            <div class="flex items-center gap-4 min-w-0">
-              <div id="doctorAvatar"
-                class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#16b3ac] text-white font-black text-2xl flex items-center justify-center shrink-0 shadow-xs ring-4 ring-emerald-50">
-                {{ $initials }}
-              </div>
-              <div class="min-w-0">
-                <div class="flex items-center gap-2 flex-wrap mb-1">
-                  <span id="doctorPogiId"
-                    class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-[#16b3ac] border border-emerald-200 font-mono text-xs font-black">#{{ $doctor->npa_pogi ?? ('POGI-' . substr($doctor->id ?? 'DOC', 0, 8)) }}</span>
-                  <span id="doctorStatusBadge"
-                    class="px-2.5 py-0.5 rounded-full text-xs font-extrabold {{ $isComplete ? 'bg-emerald-50 text-[#16b3ac] border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200' }} flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full {{ $isComplete ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
-                    <span>{{ $isComplete ? 'Complete' : 'Incomplete' }}</span>
-                  </span>
-                  <!-- PIC Admin Binaan Badge -->
-                  <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-sky-50 border border-sky-200 text-sky-900 text-xs font-semibold">
-                    <span class="material-symbols-outlined text-[15px] text-sky-600">assignment_ind</span>
-                    <span>PIC:</span>
-                    <span id="doctorAssignedTo" class="font-bold text-sky-950">{{ $doctor->assigned_pic_name ?? 'Belum Ditentukan' }}</span>
-                    @if(Auth::user()?->role === 'SUPER_ADMIN')
-                    <button type="button" onclick="openChangePicModal()" class="ml-1 text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5" title="Ubah PIC Admin Pendamping">
-                      <span class="material-symbols-outlined text-[12px]">swap_horiz</span> Ganti PIC
-                    </button>
-                    @endif
-                  </div>
-                </div>
-                <h1 id="doctorName" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">{{ $doctor->full_name ?? 'Detail Dokter' }}</h1>
-                <p id="doctorSpecialty" class="text-xs text-slate-500 font-semibold mt-0.5">{{ $doctor->specialization_title ?? 'Dokter Spesialis Obstetri dan Ginekologi' }}</p>
-              </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div id="doctorActionButtonsContainer" class="flex items-center gap-2.5 flex-wrap shrink-0">
-              <button type="button" onclick="approveDoctorCredits()"
-                class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
-                <span class="material-symbols-outlined text-base">verified</span>
-                <span>Verifikasi Kredit (+4.5 SKP)</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Doctor Metadata Grid -->
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
-            <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
-              <div class="text-[10px] text-slate-400 font-bold uppercase">Nomor STR (Kemenkes)</div>
-              <div id="doctorStr" class="font-extrabold text-slate-900 mt-1 font-mono">{{ $doctor->str_number ?? '-' }}</div>
-              <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">&bull; Habis: {{ $doctor->sip_expiry_date ? \Carbon\Carbon::parse($doctor->sip_expiry_date)->format('d M Y') : '11 Nov 2029' }}</div>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
-              <div class="text-[10px] text-slate-400 font-bold uppercase">NIK / Kependudukan</div>
-              <div id="doctorNik" class="font-extrabold text-slate-900 mt-1 font-mono">{{ $nikFormatted }}</div>
-              <div class="text-[10px] text-slate-500 font-semibold mt-0.5">Dukcapil Valid</div>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
-              <div class="text-[10px] text-slate-400 font-bold uppercase">Cabang POGI</div>
-              <div id="doctorProvince" class="font-extrabold text-slate-900 mt-1">{{ $doctor->province_name ?? 'Nasional' }}</div>
-              <div class="text-[10px] text-slate-500 font-semibold mt-0.5">Cabang Terdaftar</div>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
-              <div class="text-[10px] text-slate-400 font-bold uppercase">RS Jejaring Praktik</div>
-              <div id="doctorHospital" class="font-extrabold text-slate-900 mt-1 truncate">{{ $doctor->institution_name ?? 'RS Jejaring POGI' }}</div>
-              <div class="text-[10px] text-[#16b3ac] font-semibold mt-0.5">SIP Terbit Aktif</div>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100 flex flex-col justify-between col-span-2 sm:col-span-1">
-              <div>
-                <div class="text-[10px] text-slate-400 font-bold uppercase">PIC Admin Binaan</div>
-                <div id="doctorPicCardName" class="font-extrabold text-slate-900 mt-1 truncate">{{ $doctor->assigned_pic_name ?? 'Belum Ditentukan' }}</div>
-                <div class="text-[10px] text-sky-700 font-semibold mt-0.5 flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>Admin POGI
-                </div>
-              </div>
-              @if(Auth::user()?->role === 'SUPER_ADMIN')
-              <button type="button" onclick="openChangePicModal()" class="mt-2 text-left text-[11px] text-[#16b3ac] font-bold hover:underline inline-flex items-center gap-1">
-                <span class="material-symbols-outlined text-[13px]">swap_horiz</span> Alihkan PIC
-              </button>
-              @endif
-            </div>
-          </div>
-
-          <!-- Dual-Timestamp Tracking & Sync Protocol Banner (RULES.md Bab 1.2 & 5.2) -->
-          <div
-            class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-lg">cloud_sync</span>
-              </div>
-              <div>
-                <div class="font-extrabold text-slate-900 text-xs flex items-center gap-2 flex-wrap">
-                  <span>Protokol Sinkronisasi: Non-API / Manual-Assisted Sync</span>
-                </div>
-                <div class="text-[11px] text-slate-500 mt-0.5">
-                  Folder Cloud Anggota: <code id="metaVaultPath"
-                    class="font-mono text-[#16b3ac] font-bold">cloud-storage://pogi-skp-vault/{{ $doctor->id ?? '' }}/</code>
-                </div>
-              </div>
-            </div>
-            <div
-              class="flex items-center gap-4 text-[11px] border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-4 shrink-0">
-              <div>
-                <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Internal Updated
-                  (Energi Cipta)</span>
-                <span id="tsInternal" class="font-mono font-bold text-slate-800">{{ $doctor->dashboard_updated_at ? \Carbon\Carbon::parse($doctor->dashboard_updated_at)->format('d M Y, H.i') . ' WIB' : 'Baru saja' }}</span>
-              </div>
-              <div>
-                <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Kemenkes Synced (Portal
-                  Plataran)</span>
-                <span id="tsKemenkes" class="font-mono font-bold text-emerald-700">{{ $doctor->kemenkes_updated_at ? \Carbon\Carbon::parse($doctor->kemenkes_updated_at)->format('d M Y, H.i') . ' WIB' : 'Menunggu Sinkronisasi' }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3 SUBBIDANG SKP MANDATORI & FLEKSIBILITAS (KMK 1561/2024 & KMK 1111/2026) -->
-        <div>
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
-            <div>
-              <div class="flex items-center gap-2 flex-wrap">
-                <h2 class="text-base font-black text-slate-900">Pemenuhan Subbidang SKP Mandatori (160 SKP / 5 Tahun)
-                </h2>
-                <span
-                  class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#16b3ac] border border-emerald-200">KMK
-                  1561/2024 &amp; 1111/2026</span>
-              </div>
-              <p class="text-xs text-slate-500">Standar resmi Kemenkes: Pelayanan 35% (56 SKP), Pengabdian 5% (8 SKP),
-                Pembelajaran 45% (72 SKP), &amp; Fleksibilitas 15% (24 SKP)</p>
-            </div>
-            <div class="text-left sm:text-right shrink-0">
-              <span class="text-xs font-bold text-slate-400">Target Kuartal (Q4):</span>
-              <strong id="doctorQ4TargetText" class="text-xs font-black text-[#16b3ac] ml-1">8.0 SKP / Dokter <span class="text-slate-400 font-normal">| Realisasi:</span> <span class="{{ $isComplete ? 'text-emerald-700' : 'text-rose-600' }} font-black">{{ $totalAchieved }} SKP</span></strong>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-            <!-- 1. Pelayanan (35% = 56 SKP) -->
-            <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center font-bold">
-                    <span class="material-symbols-outlined text-base">medical_services</span>
-                  </div>
-                  <div>
-                    <h3 class="font-black text-xs text-slate-900">1. Pelayanan</h3>
-                    <div class="text-[10px] text-slate-400">Min. 35% (56 SKP)</div>
-                  </div>
-                </div>
-                <span id="badgePelayanan"
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-sky-50 text-sky-700 border border-sky-200">{{ $pctPel }}%</span>
-              </div>
-              <div class="flex items-baseline justify-between text-xs">
-                <span class="text-slate-500 text-[11px]">Realisasi:</span>
-                <span class="text-base font-black text-sky-950"><span id="valPelayanan">{{ $pel }}</span> <span
-                    class="text-xs font-normal text-slate-400">/ 56 SKP</span></span>
-              </div>
-              <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div id="barPelayanan" class="bg-sky-500 h-2 rounded-full transition-all duration-500"
-                  style="width: {{ $pctPel }}%"></div>
-              </div>
-              <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
-                IGD PONEK, Bedah SC, Rawat Jalan Poli.
-              </div>
-            </div>
-
-            <!-- 2. Pengabdian (5% = 8 SKP) -->
-            <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div
-                    class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
-                    <span class="material-symbols-outlined text-base">volunteer_activism</span>
-                  </div>
-                  <div>
-                    <h3 class="font-black text-xs text-slate-900">2. Pengabdian</h3>
-                    <div class="text-[10px] text-slate-400">Min. 5% (8 SKP)</div>
-                  </div>
-                </div>
-                <span id="badgePengabdian"
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200">{{ $pctPeng }}%</span>
-              </div>
-              <div class="flex items-baseline justify-between text-xs">
-                <span class="text-slate-500 text-[11px]">Realisasi:</span>
-                <span class="text-base font-black text-amber-950"><span id="valPengabdian">{{ $peng }}</span> <span
-                    class="text-xs font-normal text-slate-400">/ 8 SKP</span></span>
-              </div>
-              <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div id="barPengabdian" class="bg-amber-500 h-2 rounded-full transition-all duration-500"
-                  style="width: {{ $pctPeng }}%"></div>
-              </div>
-              <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
-                Baksos Kanker Serviks, KIA, Edukasi KB.
-              </div>
-            </div>
-
-            <!-- 3. Pembelajaran (45% = 72 SKP) -->
-            <div id="cardSubbidangPembelajaran"
-              class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5 transition-all duration-500">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div
-                    class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
-                    <span class="material-symbols-outlined text-base">school</span>
-                  </div>
-                  <div>
-                    <h3 class="font-black text-xs text-slate-900">3. Pembelajaran</h3>
-                    <div class="text-[10px] text-slate-400">Min. 45% (72 SKP)</div>
-                  </div>
-                </div>
-                <span id="badgePembelajaran"
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">{{ $pctPemb }}%</span>
-              </div>
-              <div class="flex items-baseline justify-between text-xs">
-                <span class="text-slate-500 text-[11px]">Realisasi:</span>
-                <span class="text-base font-black text-emerald-950"><span id="valPembelajaran">{{ $pemb }}</span> <span
-                    class="text-xs font-normal text-slate-400">/ 72 SKP</span></span>
-              </div>
-              <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div id="barPembelajaran" class="bg-emerald-500 h-2 rounded-full transition-all duration-500"
-                  style="width: {{ $pctPemb }}%"></div>
-              </div>
-              <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
-                Simposium PIT POGI, Workshop USG.
-              </div>
-            </div>
-
-            <!-- 4. Fleksibilitas (15% = 24 SKP) -->
-            <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div
-                    class="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center font-bold">
-                    <span class="material-symbols-outlined text-base">auto_awesome</span>
-                  </div>
-                  <div>
-                    <h3 class="font-black text-xs text-slate-900">4. Fleksibilitas</h3>
-                    <div class="text-[10px] text-slate-400">15% (24 SKP Bebas)</div>
-                  </div>
-                </div>
-                <span id="badgeFleksibilitas"
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">{{ $pctFleks }}%</span>
-              </div>
-              <div class="flex items-baseline justify-between text-xs">
-                <span class="text-slate-500 text-[11px]">Realisasi:</span>
-                <span class="text-base font-black text-purple-950"><span id="valFleksibilitas">{{ $achievedFleks }}</span> <span
-                    class="text-xs font-normal text-slate-400">/ 24 SKP</span></span>
-              </div>
-              <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div id="barFleksibilitas" class="bg-purple-500 h-2 rounded-full transition-all duration-500"
-                  style="width: {{ $pctFleks }}%"></div>
-              </div>
-              <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
-                Kombinasi bebas 3 ranah pelengkap 160 SKP.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- LOGBOOK AKTIVITAS DETAIL & DOKUMEN REPOSITORI TABS -->
-        <div class="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
-          <!-- Segmented Tab Header (Sesuai Aturan Bisnis RULES.md Bab 1.2 & 2.3) -->
-          <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl text-xs font-bold text-slate-600">
-              <button type="button" onclick="switchDetailTab('logbook')" id="tab-btn-logbook"
-                class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-sm">history_edu</span>
-                <span>1. Logbook Kegiatan SKP</span>
-              </button>
-              <button type="button" onclick="switchDetailTab('repository')" id="tab-btn-repository"
-                class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-sm">cloud_done</span>
-                <span>2. Repositori Cloud (Object Storage)</span>
-                <span id="tabBadgeDocCount"
-                  class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-[#16b3ac] font-black">5</span>
-              </button>
-              <button type="button" onclick="switchDetailTab('detector')" id="tab-btn-detector"
-                class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-sm">rule_folder</span>
-                <span>3. Missing Document Detector</span>
-                <span id="tabBadgeMissingCount"
-                  class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-800 font-black">0</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- PANE 1: LOGBOOK KEGIATAN SKP -->
-          <div id="pane-logbook" class="space-y-3">
-            <div class="flex items-center justify-between text-xs text-slate-500">
-              <span>Riwayat pengajuan kredit SKP yang tervalidasi buku log Kemenkes / Plataran Sehat.</span>
-              <span class="text-[11px] text-slate-400" id="totalActivitiesCount">Total: 4 Entri Kegiatan</span>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
-                  <tr>
-                    <th class="py-2.5 px-3">Tanggal</th>
-                    <th class="py-2.5 px-3">Nama Kegiatan / Pelayanan</th>
-                    <th class="py-2.5 px-3">Subbidang</th>
-                    <th class="py-2.5 px-3 text-center">Nilai SKP</th>
-                    <th class="py-2.5 px-3">Institusi / Faskes Penyelenggara</th>
-                    <th class="py-2.5 px-3 text-center">Status Verifikasi</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100" id="doctorActivitiesTable">
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- PANE 2: REPOSITORI BERKAS CLOUD (OBJECT STORAGE PER ANGGOTA) -->
-          <div id="pane-repository" class="space-y-4 hidden">
-            <!-- Object Storage Header Info & Actions -->
-            <div
-              class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
-              <div class="space-y-1">
-                <div class="flex items-center gap-2">
-                  <span class="font-extrabold text-slate-900">Folder Object Storage Cloud Anggota:</span>
-                  <span
-                    class="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-100 text-[#16b3ac] font-bold border border-emerald-200"
-                    id="repoVaultBadge">pogi-skp-vault/{{ $doctor->id ?? 'vault' }}/</span>
-                </div>
-                <p class="text-[11px] text-slate-500">
-                  Seluruh berkas bukti fisik SKP tersimpan dan terenkripsi di cloud internal sebelum
-                  disinkronkan manual ke portal Kemenkes.
-                </p>
-              </div>
-              @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
-              <div class="flex items-center gap-2 shrink-0">
-                <button type="button" onclick="openUploadDoctorDocModal()"
-                  class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write">
-                  <span class="material-symbols-outlined text-base">upload_file</span>
-                  <span>Unggah Berkas Baru</span>
-                </button>
-              </div>
-              @endif
-            </div>
-
-            <!-- Tabel Dokumen Object Storage -->
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
-                  <tr>
-                    <th class="py-2.5 px-3">Nama Berkas Bukti (PDF)</th>
-                    <th class="py-2.5 px-3">Ranah / Kategori</th>
-                    <th class="py-2.5 px-3 text-center">Nilai SKP</th>
-                    <th class="py-2.5 px-3">Tautan Google Drive</th>
-                    <th class="py-2.5 px-3">Ukuran &amp; Keamanan</th>
-                    <th class="py-2.5 px-3">Diunggah ke Cloud (Internal)</th>
-                    <th class="py-2.5 px-3 text-center">Status Siklus Kemenkes</th>
-                    <th class="py-2.5 px-3">Disinkronkan ke Kemenkes</th>
-                    <th class="py-2.5 px-3 text-center">Aksi Berkas</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 font-medium" id="doctorDocumentsTableBody">
-                  <!-- Rendered dynamically by JS -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- PANE 3: MISSING DOCUMENT DETECTOR (PELACAK KEKURANGAN DOKUMEN) -->
-          <div id="pane-detector" class="space-y-4 hidden">
-            <!-- Detector Status Banner -->
-            <div id="missingDetectorAlertBox" class="p-4 rounded-2xl border text-xs space-y-2">
-              <!-- Rendered dynamically by JS -->
-            </div>
-
-            <!-- Missing Items Table -->
-            <div class="space-y-2">
-              <div class="flex items-center justify-between text-xs font-bold text-slate-800">
-                <span>Daftar Kewajiban Dokumen &amp; Status Pelacakan Sistem:</span>
-                <span class="text-[11px] text-slate-400">Aturan KMK 1561/2024</span>
-              </div>
-              <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs whitespace-nowrap">
-                  <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
-                    <tr>
-                      <th class="py-2.5 px-3">Kode Dokumen</th>
-                      <th class="py-2.5 px-3">Kebutuhan Berkas</th>
-                      <th class="py-2.5 px-3">Ranah Terkait</th>
-                      <th class="py-2.5 px-3 text-center">Status Pelacakan</th>
-                      <th class="py-2.5 px-3">Keterangan / Kendala</th>
-                      <th class="py-2.5 px-3 text-center">Tindak Lanjut</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-100" id="missingDocumentsTableBody">
-                    <!-- Rendered dynamically by JS -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </main>
+    <!-- Navigation Breadcrumb & Back Button -->
+    <div class="flex items-center justify-between gap-3">
+      <a href="/doctors"
+        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs">
+        <span class="material-symbols-outlined text-sm text-[#16b3ac]">arrow_back</span>
+        <span>Kembali </span>
+      </a>
+      <div class="text-[11px] text-slate-500 font-medium">
+        Monitoring SKP Dokter Obgyn &bull; <strong id="breadcrumbDoctorName">{{ $doctor->full_name ?? 'Detail Dokter' }}</strong>
+      </div>
     </div>
-  </div>
+
+    @php
+      $cleanName = preg_replace('/dr\.\s*|drg\.\s*|Prof\.|Sp\.OG|\,/i', '', $doctor->full_name ?? '');
+      $parts = array_values(array_filter(explode(' ', trim($cleanName))));
+      $initials = 'DR';
+      if (count($parts) >= 2) {
+        $initials = strtoupper(substr($parts[0], 0, 1) . substr($parts[1], 0, 1));
+      } elseif (count($parts) === 1) {
+        $initials = strtoupper(substr($parts[0], 0, 2));
+      }
+      $isComplete = in_array(strtoupper($doctor->status ?? ''), ['COMPLETE']);
+      $pel = (float) ($period->achieved_pelayanan_credits ?? 0);
+      $peng = (float) ($period->achieved_pengabdian_credits ?? 0);
+      $pemb = (float) ($period->achieved_pembelajaran_credits ?? 0);
+      $totalAchieved = (float) ($period->achieved_total_credits ?? ($pel + $peng + $pemb));
+      $targetPel = 56;
+      $targetPeng = 8;
+      $targetPemb = 72;
+      $targetFleks = 24;
+      $excessPel = max(0, $pel - $targetPel);
+      $excessPeng = max(0, $peng - $targetPeng);
+      $excessPemb = max(0, $pemb - $targetPemb);
+      $achievedFleks = min($targetFleks, round($excessPel + $excessPeng + $excessPemb, 1));
+      $pctPel = min(100, round(($pel / $targetPel) * 100));
+      $pctPeng = min(100, round(($peng / $targetPeng) * 100));
+      $pctPemb = min(100, round(($pemb / $targetPemb) * 100));
+      $pctFleks = min(100, round(($achievedFleks / $targetFleks) * 100));
+      $nikFormatted = $doctor->nik_hash ? '32' . substr($doctor->nik_hash, 0, 14) : ($doctor->str_number ?? '-');
+    @endphp
+
+    <!-- DOCTOR PROFILE HERO CARD -->
+    <div class="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-2xs space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-slate-100 pb-5">
+        <div class="flex items-center gap-4 min-w-0">
+          <div id="doctorAvatar"
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#16b3ac] text-white font-black text-2xl flex items-center justify-center shrink-0 shadow-xs ring-4 ring-emerald-50">
+            {{ $initials }}
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap mb-1">
+              <span id="doctorPogiId"
+                class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-[#16b3ac] border border-emerald-200 font-mono text-xs font-black">#{{ $doctor->npa_pogi ?? ('POGI-' . substr($doctor->id ?? 'DOC', 0, 8)) }}</span>
+              <span id="doctorStatusBadge"
+                class="px-2.5 py-0.5 rounded-full text-xs font-extrabold {{ $isComplete ? 'bg-emerald-50 text-[#16b3ac] border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200' }} flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full {{ $isComplete ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
+                <span>{{ $isComplete ? 'Complete' : 'Incomplete' }}</span>
+              </span>
+              <!-- PIC Admin Binaan Badge -->
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-sky-50 border border-sky-200 text-sky-900 text-xs font-semibold">
+                <span class="material-symbols-outlined text-[15px] text-sky-600">assignment_ind</span>
+                <span>PIC:</span>
+                <span id="doctorAssignedTo" class="font-bold text-sky-950">{{ $doctor->assigned_pic_name ?? 'Belum Ditentukan' }}</span>
+                @if(Auth::user()?->role === 'SUPER_ADMIN')
+                <button type="button" onclick="openChangePicModal()" class="ml-1 text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5" title="Ubah PIC Admin Pendamping">
+                  <span class="material-symbols-outlined text-[12px]">swap_horiz</span> Ganti PIC
+                </button>
+                @endif
+              </div>
+            </div>
+            <h1 id="doctorName" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">{{ $doctor->full_name ?? 'Detail Dokter' }}</h1>
+            <p id="doctorSpecialty" class="text-xs text-slate-500 font-semibold mt-0.5">{{ $doctor->specialization_title ?? 'Dokter Spesialis Obstetri dan Ginekologi' }}</p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div id="doctorActionButtonsContainer" class="flex items-center gap-2.5 flex-wrap shrink-0">
+          <button type="button" onclick="approveDoctorCredits()"
+            class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+            <span class="material-symbols-outlined text-base">verified</span>
+            <span>Verifikasi Kredit (+4.5 SKP)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Doctor Metadata Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
+        <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">Nomor STR (Kemenkes)</div>
+          <div id="doctorStr" class="font-extrabold text-slate-900 mt-1 font-mono">{{ $doctor->str_number ?? '-' }}</div>
+          <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">&bull; Habis: {{ $doctor->sip_expiry_date ? \Carbon\Carbon::parse($doctor->sip_expiry_date)->format('d M Y') : '11 Nov 2029' }}</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">NIK / Kependudukan</div>
+          <div id="doctorNik" class="font-extrabold text-slate-900 mt-1 font-mono">{{ $nikFormatted }}</div>
+          <div class="text-[10px] text-slate-500 font-semibold mt-0.5">Dukcapil Valid</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">Cabang POGI</div>
+          <div id="doctorProvince" class="font-extrabold text-slate-900 mt-1">{{ $doctor->province_name ?? 'Nasional' }}</div>
+          <div class="text-[10px] text-slate-500 font-semibold mt-0.5">Cabang Terdaftar</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">RS Jejaring Praktik</div>
+          <div id="doctorHospital" class="font-extrabold text-slate-900 mt-1 truncate">{{ $doctor->institution_name ?? 'RS Jejaring POGI' }}</div>
+          <div class="text-[10px] text-[#16b3ac] font-semibold mt-0.5">SIP Terbit Aktif</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100 flex flex-col justify-between col-span-2 sm:col-span-1">
+          <div>
+            <div class="text-[10px] text-slate-400 font-bold uppercase">PIC Admin Binaan</div>
+            <div id="doctorPicCardName" class="font-extrabold text-slate-900 mt-1 truncate">{{ $doctor->assigned_pic_name ?? 'Belum Ditentukan' }}</div>
+            <div class="text-[10px] text-sky-700 font-semibold mt-0.5 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>Admin POGI
+            </div>
+          </div>
+          @if(Auth::user()?->role === 'SUPER_ADMIN')
+          <button type="button" onclick="openChangePicModal()" class="mt-2 text-left text-[11px] text-[#16b3ac] font-bold hover:underline inline-flex items-center gap-1">
+            <span class="material-symbols-outlined text-[13px]">swap_horiz</span> Alihkan PIC
+          </button>
+          @endif
+        </div>
+      </div>
+
+      <!-- Dual-Timestamp Tracking & Sync Protocol Banner (RULES.md Bab 1.2 & 5.2) -->
+      <div
+        class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-lg">cloud_sync</span>
+          </div>
+          <div>
+            <div class="font-extrabold text-slate-900 text-xs flex items-center gap-2 flex-wrap">
+              <span>Protokol Sinkronisasi: Non-API / Manual-Assisted Sync</span>
+            </div>
+            <div class="text-[11px] text-slate-500 mt-0.5">
+              Folder Cloud Anggota: <code id="metaVaultPath"
+                class="font-mono text-[#16b3ac] font-bold">cloud-storage://pogi-skp-vault/{{ $doctor->id ?? '' }}/</code>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex items-center gap-4 text-[11px] border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-4 shrink-0">
+          <div>
+            <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Internal Updated
+              (Energi Cipta)</span>
+            <span id="tsInternal" class="font-mono font-bold text-slate-800">{{ $doctor->dashboard_updated_at ? \Carbon\Carbon::parse($doctor->dashboard_updated_at)->format('d M Y, H.i') . ' WIB' : 'Baru saja' }}</span>
+          </div>
+          <div>
+            <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Kemenkes Synced (Portal
+              Plataran)</span>
+            <span id="tsKemenkes" class="font-mono font-bold text-emerald-700">{{ $doctor->kemenkes_updated_at ? \Carbon\Carbon::parse($doctor->kemenkes_updated_at)->format('d M Y, H.i') . ' WIB' : 'Menunggu Sinkronisasi' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 SUBBIDANG SKP MANDATORI & FLEKSIBILITAS (KMK 1561/2024 & KMK 1111/2026) -->
+    <div>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 class="text-base font-black text-slate-900">Pemenuhan Subbidang SKP Mandatori (160 SKP / 5 Tahun)
+            </h2>
+            <span
+              class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#16b3ac] border border-emerald-200">KMK
+              1561/2024 &amp; 1111/2026</span>
+          </div>
+          <p class="text-xs text-slate-500">Standar resmi Kemenkes: Pelayanan 35% (56 SKP), Pengabdian 5% (8 SKP),
+            Pembelajaran 45% (72 SKP), &amp; Fleksibilitas 15% (24 SKP)</p>
+        </div>
+        <div class="text-left sm:text-right shrink-0">
+          <span class="text-xs font-bold text-slate-400">Target Kuartal (Q4):</span>
+          <strong id="doctorQ4TargetText" class="text-xs font-black text-[#16b3ac] ml-1">8.0 SKP / Dokter <span class="text-slate-400 font-normal">| Realisasi:</span> <span class="{{ $isComplete ? 'text-emerald-700' : 'text-rose-600' }} font-black">{{ $totalAchieved }} SKP</span></strong>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <!-- 1. Pelayanan (35% = 56 SKP) -->
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center font-bold">
+                <span class="material-symbols-outlined text-base">medical_services</span>
+              </div>
+              <div>
+                <h3 class="font-black text-xs text-slate-900">1. Pelayanan</h3>
+                <div class="text-[10px] text-slate-400">Min. 35% (56 SKP)</div>
+              </div>
+            </div>
+            <span id="badgePelayanan"
+              class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-sky-50 text-sky-700 border border-sky-200">{{ $pctPel }}%</span>
+          </div>
+          <div class="flex items-baseline justify-between text-xs">
+            <span class="text-slate-500 text-[11px]">Realisasi:</span>
+            <span class="text-base font-black text-sky-950"><span id="valPelayanan">{{ $pel }}</span> <span
+                class="text-xs font-normal text-slate-400">/ 56 SKP</span></span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div id="barPelayanan" class="bg-sky-500 h-2 rounded-full transition-all duration-500"
+              style="width: {{ $pctPel }}%"></div>
+          </div>
+          <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
+            IGD PONEK, Bedah SC, Rawat Jalan Poli.
+          </div>
+        </div>
+
+        <!-- 2. Pengabdian (5% = 8 SKP) -->
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+                <span class="material-symbols-outlined text-base">volunteer_activism</span>
+              </div>
+              <div>
+                <h3 class="font-black text-xs text-slate-900">2. Pengabdian</h3>
+                <div class="text-[10px] text-slate-400">Min. 5% (8 SKP)</div>
+              </div>
+            </div>
+            <span id="badgePengabdian"
+              class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200">{{ $pctPeng }}%</span>
+          </div>
+          <div class="flex items-baseline justify-between text-xs">
+            <span class="text-slate-500 text-[11px]">Realisasi:</span>
+            <span class="text-base font-black text-amber-950"><span id="valPengabdian">{{ $peng }}</span> <span
+                class="text-xs font-normal text-slate-400">/ 8 SKP</span></span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div id="barPengabdian" class="bg-amber-500 h-2 rounded-full transition-all duration-500"
+              style="width: {{ $pctPeng }}%"></div>
+          </div>
+          <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
+            Baksos Kanker Serviks, KIA, Edukasi KB.
+          </div>
+        </div>
+
+        <!-- 3. Pembelajaran (45% = 72 SKP) -->
+        <div id="cardSubbidangPembelajaran"
+          class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5 transition-all duration-500">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+                <span class="material-symbols-outlined text-base">school</span>
+              </div>
+              <div>
+                <h3 class="font-black text-xs text-slate-900">3. Pembelajaran</h3>
+                <div class="text-[10px] text-slate-400">Min. 45% (72 SKP)</div>
+              </div>
+            </div>
+            <span id="badgePembelajaran"
+              class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">{{ $pctPemb }}%</span>
+          </div>
+          <div class="flex items-baseline justify-between text-xs">
+            <span class="text-slate-500 text-[11px]">Realisasi:</span>
+            <span class="text-base font-black text-emerald-950"><span id="valPembelajaran">{{ $pemb }}</span> <span
+                class="text-xs font-normal text-slate-400">/ 72 SKP</span></span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div id="barPembelajaran" class="bg-emerald-500 h-2 rounded-full transition-all duration-500"
+              style="width: {{ $pctPemb }}%"></div>
+          </div>
+          <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
+            Simposium PIT POGI, Workshop USG.
+          </div>
+        </div>
+
+        <!-- 4. Fleksibilitas (15% = 24 SKP) -->
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center font-bold">
+                <span class="material-symbols-outlined text-base">auto_awesome</span>
+              </div>
+              <div>
+                <h3 class="font-black text-xs text-slate-900">4. Fleksibilitas</h3>
+                <div class="text-[10px] text-slate-400">15% (24 SKP Bebas)</div>
+              </div>
+            </div>
+            <span id="badgeFleksibilitas"
+              class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">{{ $pctFleks }}%</span>
+          </div>
+          <div class="flex items-baseline justify-between text-xs">
+            <span class="text-slate-500 text-[11px]">Realisasi:</span>
+            <span class="text-base font-black text-purple-950"><span id="valFleksibilitas">{{ $achievedFleks }}</span> <span
+                class="text-xs font-normal text-slate-400">/ 24 SKP</span></span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div id="barFleksibilitas" class="bg-purple-500 h-2 rounded-full transition-all duration-500"
+              style="width: {{ $pctFleks }}%"></div>
+          </div>
+          <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
+            Kombinasi bebas 3 ranah pelengkap 160 SKP.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGBOOK AKTIVITAS DETAIL & DOKUMEN REPOSITORI TABS -->
+    <div class="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+      <!-- Segmented Tab Header (Sesuai Aturan Bisnis RULES.md Bab 1.2 & 2.3) -->
+      <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl text-xs font-bold text-slate-600">
+          <button type="button" onclick="switchDetailTab('logbook')" id="tab-btn-logbook"
+            class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">history_edu</span>
+            <span>1. Logbook Kegiatan SKP</span>
+          </button>
+          <button type="button" onclick="switchDetailTab('repository')" id="tab-btn-repository"
+            class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">cloud_done</span>
+            <span>2. Repositori Cloud (Object Storage)</span>
+            <span id="tabBadgeDocCount"
+              class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-[#16b3ac] font-black">5</span>
+          </button>
+          <button type="button" onclick="switchDetailTab('detector')" id="tab-btn-detector"
+            class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">rule_folder</span>
+            <span>3. Missing Document Detector</span>
+            <span id="tabBadgeMissingCount"
+              class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-800 font-black">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PANE 1: LOGBOOK KEGIATAN SKP -->
+      <div id="pane-logbook" class="space-y-3">
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <span>Riwayat pengajuan kredit SKP yang tervalidasi buku log Kemenkes / Plataran Sehat.</span>
+          <span class="text-[11px] text-slate-400" id="totalActivitiesCount">Total: 4 Entri Kegiatan</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
+              <tr>
+                <th class="py-2.5 px-3">Tanggal</th>
+                <th class="py-2.5 px-3">Nama Kegiatan / Pelayanan</th>
+                <th class="py-2.5 px-3">Subbidang</th>
+                <th class="py-2.5 px-3 text-center">Nilai SKP</th>
+                <th class="py-2.5 px-3">Institusi / Faskes Penyelenggara</th>
+                <th class="py-2.5 px-3 text-center">Status Verifikasi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100" id="doctorActivitiesTable">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PANE 2: REPOSITORI BERKAS CLOUD (OBJECT STORAGE PER ANGGOTA) -->
+      <div id="pane-repository" class="space-y-4 hidden">
+        <!-- Object Storage Header Info & Actions -->
+        <div
+          class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-slate-900">Folder Object Storage Cloud Anggota:</span>
+              <span
+                class="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-100 text-[#16b3ac] font-bold border border-emerald-200"
+                id="repoVaultBadge">pogi-skp-vault/{{ $doctor->id ?? 'vault' }}/</span>
+            </div>
+            <p class="text-[11px] text-slate-500">
+              Seluruh berkas bukti fisik SKP tersimpan dan terenkripsi di cloud internal sebelum
+              disinkronkan manual ke portal Kemenkes.
+            </p>
+          </div>
+          @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
+          <div class="flex items-center gap-2 shrink-0">
+            <button type="button" onclick="openUploadDoctorDocModal()"
+              class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write">
+              <span class="material-symbols-outlined text-base">upload_file</span>
+              <span>Unggah Berkas Baru</span>
+            </button>
+          </div>
+          @endif
+        </div>
+
+        <!-- Tabel Dokumen Object Storage -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
+              <tr>
+                <th class="py-2.5 px-3">Nama Berkas Bukti (PDF)</th>
+                <th class="py-2.5 px-3">Ranah / Kategori</th>
+                <th class="py-2.5 px-3 text-center">Nilai SKP</th>
+                <th class="py-2.5 px-3">Tautan Google Drive</th>
+                <th class="py-2.5 px-3">Ukuran &amp; Keamanan</th>
+                <th class="py-2.5 px-3">Diunggah ke Cloud (Internal)</th>
+                <th class="py-2.5 px-3 text-center">Status Siklus Kemenkes</th>
+                <th class="py-2.5 px-3">Disinkronkan ke Kemenkes</th>
+                <th class="py-2.5 px-3 text-center">Aksi Berkas</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-medium" id="doctorDocumentsTableBody">
+              <!-- Rendered dynamically by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PANE 3: MISSING DOCUMENT DETECTOR (PELACAK KEKURANGAN DOKUMEN) -->
+      <div id="pane-detector" class="space-y-4 hidden">
+        <!-- Detector Status Banner -->
+        <div id="missingDetectorAlertBox" class="p-4 rounded-2xl border text-xs space-y-2">
+          <!-- Rendered dynamically by JS -->
+        </div>
+
+        <!-- Missing Items Table -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-800">
+            <span>Daftar Kewajiban Dokumen &amp; Status Pelacakan Sistem:</span>
+            <span class="text-[11px] text-slate-400">Aturan KMK 1561/2024</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs whitespace-nowrap">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
+                <tr>
+                  <th class="py-2.5 px-3">Kode Dokumen</th>
+                  <th class="py-2.5 px-3">Kebutuhan Berkas</th>
+                  <th class="py-2.5 px-3">Ranah Terkait</th>
+                  <th class="py-2.5 px-3 text-center">Status Pelacakan</th>
+                  <th class="py-2.5 px-3">Keterangan / Kendala</th>
+                  <th class="py-2.5 px-3 text-center">Tindak Lanjut</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100" id="missingDocumentsTableBody">
+                <!-- Rendered dynamically by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
 
   <!-- Modal Unggah Berkas Baru ke Cloud Internal (RULES.md Bab 1.2) -->
   <div id="uploadDoctorDocModal"
@@ -2760,6 +2630,4 @@
       if (modal) modal.classList.add('hidden');
     }
   </script>
-</body>
-
-</html>
+@endsection
