@@ -522,6 +522,15 @@
     }
   </script>
 
+  <script>
+    window.AUTH_USER = {!! json_encode([
+      'id'     => Auth::id() ?? 'auth-user',
+      'name'   => Auth::user()?->full_name ?? Auth::user()?->name ?? 'Pengurus POGI',
+      'email'  => Auth::user()?->email ?? '',
+      'role'   => Auth::user()?->role ?? 'ADMIN_PUSAT',
+      'branch' => Auth::user()?->branch ?? 'Pusat'
+    ]) !!};
+  </script>
   <script src="/js/navigation.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
