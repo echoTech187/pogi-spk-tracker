@@ -10,9 +10,9 @@ if (typeof window !== 'undefined') {
   if (typeof window.PogiStore === 'undefined') {
     window.PogiStore = {};
   }
-  
+
   window.PogiStore._currentUser = null;
-  window.PogiStore.getCurrentUser = function() {
+  window.PogiStore.getCurrentUser = function () {
     if (this._currentUser) return this._currentUser;
     if (typeof window !== 'undefined') {
       if (window.AUTH_USER) return (this._currentUser = window.AUTH_USER);
@@ -26,7 +26,7 @@ if (typeof window !== 'undefined') {
       branch: 'Pusat'
     };
   };
-  window.PogiStore.getAllRoles = function() {
+  window.PogiStore.getAllRoles = function () {
     return [
       { role: 'SUPER_ADMIN', roleLabel: 'Super Admin', branch: 'Pusat' },
       { role: 'ADMIN_PUSAT', roleLabel: 'Admin Pusat', branch: 'Pusat' },
@@ -35,49 +35,49 @@ if (typeof window !== 'undefined') {
       { role: 'DOKTER', roleLabel: 'User/Dokter', branch: 'DKI Jakarta' }
     ];
   };
-  window.PogiStore.setCurrentUser = function(u) {
+  window.PogiStore.setCurrentUser = function (u) {
     this._currentUser = typeof u === 'string' ? { id: 'user-' + u.toLowerCase(), name: u, role: u, branch: 'Pusat' } : u;
     if (typeof window !== 'undefined') window.AUTH_USER = this._currentUser;
   };
-  window.PogiStore.formatCurrentDate = function() {
+  window.PogiStore.formatCurrentDate = function () {
     const d = new Date();
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
     return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
   };
-  window.PogiStore.getDoctors = function() {
+  window.PogiStore.getDoctors = function () {
     return (window.LIVE_SERVER_DOCTORS || window.LIVE_DATABASE_DOCTORS || window.LIVE_MANAGE_DOCTORS || []);
   };
-  window.PogiStore.getProvinces = function() {
+  window.PogiStore.getProvinces = function () {
     const provs = window.LIVE_SERVER_PROVINCES || window.LIVE_MANAGE_BRANCHES || [];
     return provs.map(p => typeof p === 'string' ? { name: p } : p);
   };
-  window.PogiStore.getInstitutions = function() {
+  window.PogiStore.getInstitutions = function () {
     return window.LIVE_MANAGE_INSTITUTIONS || window.LIVE_SERVER_INSTITUTIONS || [];
   };
-  window.PogiStore.getEvents = function() {
+  window.PogiStore.getEvents = function () {
     return window.LIVE_MANAGE_EVENTS || window.LIVE_SERVER_EVENTS || [];
   };
-  window.PogiStore.getCategories = function() {
+  window.PogiStore.getCategories = function () {
     return window.LIVE_MANAGE_CATEGORIES || [];
   };
-  window.PogiStore.getUsers = function() {
+  window.PogiStore.getUsers = function () {
     return window.LIVE_MANAGE_USERS || [];
   };
-  window.PogiStore.getActivities = function() {
+  window.PogiStore.getActivities = function () {
     return window.LIVE_SERVER_ACTIVITIES || window.LIVE_SERVER_LOGS || [];
   };
-  window.PogiStore.generateUUIDv7 = function() {
+  window.PogiStore.generateUUIDv7 = function () {
     return 'id-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
   };
-  window.PogiStore.addActivity = window.PogiStore.addActivity || function() {};
-  window.PogiStore.saveDoctors = window.PogiStore.saveDoctors || function() {};
-  window.PogiStore.saveInstitutions = window.PogiStore.saveInstitutions || function() {};
-  window.PogiStore.saveEvents = window.PogiStore.saveEvents || function() {};
-  window.PogiStore.saveCategories = window.PogiStore.saveCategories || function() {};
-  window.PogiStore.saveUsers = window.PogiStore.saveUsers || function() {};
-  window.PogiStore.reassignDoctor = window.PogiStore.reassignDoctor || function() {};
-  window.PogiStore.addDoctorDocument = window.PogiStore.addDoctorDocument || function() {};
-  window.PogiStore.updateDoctorDocumentStatus = window.PogiStore.updateDoctorDocumentStatus || function() {};
+  window.PogiStore.addActivity = window.PogiStore.addActivity || function () { };
+  window.PogiStore.saveDoctors = window.PogiStore.saveDoctors || function () { };
+  window.PogiStore.saveInstitutions = window.PogiStore.saveInstitutions || function () { };
+  window.PogiStore.saveEvents = window.PogiStore.saveEvents || function () { };
+  window.PogiStore.saveCategories = window.PogiStore.saveCategories || function () { };
+  window.PogiStore.saveUsers = window.PogiStore.saveUsers || function () { };
+  window.PogiStore.reassignDoctor = window.PogiStore.reassignDoctor || function () { };
+  window.PogiStore.addDoctorDocument = window.PogiStore.addDoctorDocument || function () { };
+  window.PogiStore.updateDoctorDocumentStatus = window.PogiStore.updateDoctorDocumentStatus || function () { };
 }
 
 // Mobile Sidebar Toggle
@@ -210,11 +210,11 @@ function handleGlobalTopSearch(query) {
   const doctors = PogiStore.getDoctors();
   const matches = doctors.filter(d => {
     return (d.name && d.name.toLowerCase().includes(q)) ||
-           (d.pogiId && d.pogiId.toLowerCase().includes(q)) ||
-           (d.nik && d.nik.includes(q)) ||
-           (d.hospital && d.hospital.toLowerCase().includes(q)) ||
-           (d.province && d.province.toLowerCase().includes(q)) ||
-           (d.strNumber && d.strNumber.includes(q));
+      (d.pogiId && d.pogiId.toLowerCase().includes(q)) ||
+      (d.nik && d.nik.includes(q)) ||
+      (d.hospital && d.hospital.toLowerCase().includes(q)) ||
+      (d.province && d.province.toLowerCase().includes(q)) ||
+      (d.strNumber && d.strNumber.includes(q));
   }).slice(0, 6);
 
   if (matches.length === 0) {
@@ -453,7 +453,7 @@ function performLogout() {
     try {
       localStorage.removeItem('pogi_current_user');
       sessionStorage.clear();
-    } catch (e) {}
+    } catch (e) { }
 
     const isLaravel = document.querySelector('meta[name="csrf-token"]') !== null;
     if (isLaravel) {
@@ -534,56 +534,9 @@ document.addEventListener('DOMContentLoaded', () => {
         openDoctorDetailModal(openDocId);
       }, 300);
     }
-  } catch (err) {}
+  } catch (err) { }
 });
 
-// -------------------------------------------------------------
-// -------------------------------------------------------------
-// BAB 6.1 & 6.2 — RBAC ENFORCEMENT & ROLE SIMULATION (5 ROLE RESMI)
-// 1. Super Admin (Full-access)
-// 2. Admin Pusat (Memantau setiap aktifitas dan performance dari Admin POGI)
-// 3. Admin POGI (Melakukan kesesuaian dokumen-dokumen, SKP, validasi & monitoring data dokter PJ)
-// 4. Admin Cabang (Tugas verifikator untuk dokter wilayah cabang sendiri)
-// 5. User/Dokter (Melihat progress SKP mereka sendiri)
-// -------------------------------------------------------------
-function switchUserRole(roleKey) {
-  const roles = (typeof PogiStore !== 'undefined' && typeof PogiStore.getAllRoles === 'function')
-    ? PogiStore.getAllRoles()
-    : [
-        { role: 'SUPER_ADMIN', roleLabel: 'Super Admin', branch: 'Pusat' },
-        { role: 'ADMIN_PUSAT', roleLabel: 'Admin Pusat', branch: 'Pusat' },
-        { role: 'ADMIN_POGI', roleLabel: 'Admin POGI', branch: 'Pusat' },
-        { role: 'ADMIN_CABANG', roleLabel: 'Admin Cabang', branch: 'DKI Jakarta' },
-        { role: 'DOKTER', roleLabel: 'User/Dokter', branch: 'DKI Jakarta' }
-      ];
-  const target = roles.find(r => r.role === roleKey) || roles[0];
-  if (typeof PogiStore !== 'undefined' && typeof PogiStore.setCurrentUser === 'function') {
-    PogiStore.setCurrentUser(target);
-  } else if (typeof window !== 'undefined') {
-    window.AUTH_USER = target;
-  }
-  showToast('Peran beralih ke: ' + target.roleLabel, 'info');
-
-  const currentPath = window.location.pathname.toLowerCase();
-  
-  // Guard per role saat berpindah role
-  if (target.role === 'DOKTER') {
-    if (currentPath.includes('admin-performance') || currentPath.includes('manage') || currentPath.includes('provinces.html')) {
-      window.location.href = '/doctor-detail';
-      return;
-    }
-  } else if (target.role === 'ADMIN_POGI' || target.role === 'VERIFIKATOR' || target.role === 'ADMIN_CABANG') {
-    if (currentPath.includes('admin-performance')) {
-      window.location.href = '/dashboard';
-      return;
-    }
-  }
-
-  // Reload halaman seketika agar seluruh state tabel, tombol, dan guard langsung ter-render sesuai peran baru
-  setTimeout(() => {
-    window.location.reload();
-  }, 100);
-}
 
 function applyRbacEnforcement() {
   let user = null;
@@ -609,6 +562,32 @@ function applyRbacEnforcement() {
   }
 
   // 1. Sync dropdowns / switchers
+  // Helper to extract clean initials from full name
+  function extractUserInitials(name, roleKey, defaultAvatar) {
+    if (defaultAvatar && defaultAvatar !== 'AP' && defaultAvatar.trim() !== '') return defaultAvatar.trim();
+    if (name && typeof name === 'string' && name.trim()) {
+      const clean = name.replace(/^(dr\.|dr\s+|drg\.|prof\.|prof\s+)/i, '')
+                        .replace(/,\s*(Sp\.OG|S\.Farm|M\.Kes|MARS|PhD|M\.Ked|S\.Ked|M\.Biomed|Subsp\.[a-zA-Z]+).*$/i, '')
+                        .trim();
+      const parts = clean.split(/\s+/).filter(Boolean);
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      } else if (parts.length === 1 && parts[0].length >= 1) {
+        return parts[0][0].toUpperCase();
+      }
+    }
+    if (defaultAvatar && defaultAvatar.trim() !== '') return defaultAvatar.trim();
+    if (roleKey === 'SUPER_ADMIN') return 'SA';
+    if (roleKey === 'ADMIN_PUSAT') return 'BP';
+    if (roleKey === 'ADMIN_CABANG') return 'DF';
+    if (roleKey === 'DOKTER') return 'CS';
+    return 'SR'; // Default Admin POGI: Siti Rahma (SR)
+  }
+
+  const userInitials = extractUserInitials(user.name || user.displayName, roleKey, user.avatar);
+  const userBgClass = user.avatarBg || (roleKey === 'SUPER_ADMIN' ? 'bg-purple-700 text-white' : (roleKey === 'ADMIN_PUSAT' ? 'bg-indigo-700 text-white' : (roleKey === 'ADMIN_CABANG' ? 'bg-sky-700 text-white' : (roleKey === 'DOKTER' ? 'bg-teal-700 text-white' : 'bg-[#16b3ac] text-white'))));
+
+  // 1. Sync dropdowns / switchers
   const topSelect = document.getElementById('topHeaderRoleSelect');
   if (topSelect) topSelect.value = roleKey;
   const switcherSelect = document.getElementById('headerRoleSwitcher');
@@ -618,22 +597,38 @@ function applyRbacEnforcement() {
   const aside = document.querySelector('aside');
   if (aside) {
     const logoutBtn = aside.querySelector('button[onclick*="performLogout"]') ||
-                     aside.querySelector('button[title*="Keluar"]') ||
-                     aside.querySelector('button[title*="Sesi"]') ||
-                     aside.querySelector('button .material-symbols-outlined');
-    const profileCard = logoutBtn ? logoutBtn.closest('.rounded-xl') : null;
+      aside.querySelector('button[title*="Keluar"]') ||
+      aside.querySelector('button[title*="Sesi"]') ||
+      aside.querySelector('button .material-symbols-outlined');
+    const profileCard = document.getElementById('sidebarUserProfileCard') ||
+      (logoutBtn ? logoutBtn.closest('.rounded-xl') : null);
     if (profileCard) {
-      const avatarEl = profileCard.querySelector('.rounded-full') || profileCard.querySelector('div');
+      const avatarEl = document.getElementById('sidebarUserAvatar') ||
+        profileCard.querySelector('#sidebarUserAvatar') ||
+        profileCard.querySelector('.rounded-full') ||
+        profileCard.querySelector('.w-9.h-9') ||
+        profileCard.querySelector('.w-8.h-8');
       if (avatarEl) {
-        avatarEl.innerText = user.avatar || (user.name ? user.name.replace(/dr\.\s*|Sp\.OG.*|Prof\.|Dr\./gi, '').trim().split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() : (roleKey === 'SUPER_ADMIN' ? 'SA' : (roleKey === 'ADMIN_PUSAT' ? 'PP' : (roleKey === 'ADMIN_CABANG' ? 'AC' : (roleKey === 'DOKTER' ? 'DR' : 'AP')))));
-        avatarEl.className = 'w-9 h-9 rounded-full ' + (user.avatarBg || (roleKey === 'SUPER_ADMIN' ? 'bg-purple-700 text-white' : (roleKey === 'ADMIN_PUSAT' ? 'bg-indigo-700 text-white' : (roleKey === 'ADMIN_CABANG' ? 'bg-sky-700 text-white' : (roleKey === 'DOKTER' ? 'bg-teal-700 text-white' : 'bg-[#16b3ac] text-white'))))) + ' font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs';
+        avatarEl.innerText = userInitials;
+        avatarEl.className = 'w-9 h-9 rounded-full ' + userBgClass + ' font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs';
       }
-      const textContainer = profileCard.querySelector('.min-w-0');
-      if (textContainer && textContainer.children.length >= 2) {
-        textContainer.children[0].innerText = user.name || user.displayName || 'Pengguna';
-        textContainer.children[1].innerText = user.shortRole || user.roleLabel || roleKey;
+      const nameEl = document.getElementById('sidebarUserName') ||
+        profileCard.querySelector('#sidebarUserName') ||
+        profileCard.querySelector('.text-slate-900') ||
+        profileCard.querySelector('.text-slate-800');
+      if (nameEl) {
+        nameEl.innerText = user.name || user.displayName || 'Pengguna';
+      }
+      const roleEl = document.getElementById('sidebarUserRole') ||
+        document.getElementById('sidebarUserEmail') ||
+        profileCard.querySelector('#sidebarUserRole') ||
+        profileCard.querySelector('#sidebarUserEmail') ||
+        profileCard.querySelector('.uppercase') ||
+        profileCard.querySelector('.font-mono');
+      if (roleEl) {
+        roleEl.innerText = user.shortRole || user.roleLabel || user.email || roleKey;
         const roleColorClass = roleKey === 'SUPER_ADMIN' ? 'text-purple-700' : (roleKey === 'ADMIN_PUSAT' ? 'text-indigo-700' : (roleKey === 'ADMIN_CABANG' ? 'text-sky-700' : (roleKey === 'DOKTER' ? 'text-teal-700' : 'text-[#16b3ac]')));
-        textContainer.children[1].className = 'text-[9px] font-bold ' + roleColorClass + ' uppercase tracking-wider truncate';
+        roleEl.className = 'text-[9px] font-bold ' + roleColorClass + ' uppercase tracking-wider truncate';
       }
     }
 
@@ -662,24 +657,46 @@ function applyRbacEnforcement() {
     });
   }
 
-  // 3. Update Top Header User Avatar button
+  // 3. Update Top Header User Avatar button & profile dropdown
   const topUserBtn = document.getElementById('topUserBtn');
   if (topUserBtn) {
-    const topAv = topUserBtn.querySelector('div');
-    if (topAv) {
-      topAv.innerText = user.avatar || (user.name ? user.name.replace(/dr\.\s*|Sp\.OG.*|Prof\.|Dr\./gi, '').trim().split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() : (roleKey === 'SUPER_ADMIN' ? 'SA' : (roleKey === 'ADMIN_PUSAT' ? 'PP' : (roleKey === 'ADMIN_CABANG' ? 'AC' : (roleKey === 'DOKTER' ? 'DR' : 'AP')))));
-      topAv.className = 'w-7 h-7 rounded-lg ' + (user.avatarBg || (roleKey === 'SUPER_ADMIN' ? 'bg-purple-700 text-white' : (roleKey === 'ADMIN_PUSAT' ? 'bg-indigo-700 text-white' : (roleKey === 'ADMIN_CABANG' ? 'bg-sky-700 text-white' : (roleKey === 'DOKTER' ? 'bg-teal-700 text-white' : 'bg-[#16b3ac] text-white'))))) + ' font-extrabold text-[11px] flex items-center justify-center shadow-2xs';
+    const initialsSpan = topUserBtn.querySelector('#headerUserInitials') ||
+                         topUserBtn.querySelector('span') ||
+                         topUserBtn.querySelector('div');
+    if (initialsSpan) {
+      initialsSpan.innerText = userInitials;
+    } else {
+      topUserBtn.innerText = userInitials;
     }
+    topUserBtn.className = 'w-9 h-9 rounded-full ' + userBgClass + ' font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20';
+    topUserBtn.title = 'Profil Pengguna: ' + (user.name || 'Pengguna');
+  }
+
+  const ddAvatar = document.getElementById('headerDropdownAvatar') ||
+                   document.querySelector('#topUserDropdown .rounded-full');
+  if (ddAvatar) {
+    ddAvatar.innerText = userInitials;
+    ddAvatar.className = 'w-10 h-10 rounded-full ' + userBgClass + ' font-black text-sm flex items-center justify-center shrink-0 shadow-2xs';
+  }
+  const ddName = document.getElementById('headerDropdownName') ||
+                 document.querySelector('#topUserDropdown .text-slate-900');
+  if (ddName) {
+    ddName.innerText = user.name || user.displayName || 'Pengguna';
+  }
+  const ddRole = document.getElementById('headerDropdownRole') ||
+                 document.querySelector('#topUserDropdown .text-slate-500');
+  if (ddRole) {
+    ddRole.innerText = user.roleLabel || user.shortRole || roleKey;
   }
 
   // 4. Update Header Scope button label
   const orgBtn = document.getElementById('headerOrgScopeBtn') ||
-                 document.getElementById('orgScopeBtn') ||
-                 document.querySelector('header button[onclick*="OrgScope"]');
+    document.getElementById('orgScopeBtn') ||
+    document.querySelector('header button[onclick*="OrgScope"]');
   if (orgBtn) {
     const orgSpan = orgBtn.querySelector('span.truncate') ||
-                    document.getElementById('selectedOrgScopeLabel') ||
-                    orgBtn.querySelector('span:not(.material-symbols-outlined)');
+      document.getElementById('selectedOrgScopeLabel') ||
+      orgBtn.querySelector('span:not(.material-symbols-outlined)');
     if (orgSpan) {
       if (roleKey === 'ADMIN_CABANG' && user.branch && user.branch !== 'Nasional') {
         orgSpan.innerText = 'Wilayah Cabang: ' + user.branch;
