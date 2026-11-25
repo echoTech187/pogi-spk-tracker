@@ -207,8 +207,9 @@
 @section('modals')
   <!-- MODAL 1: Detail Kinerja & Log Aktivitas Admin (Drill-Down Modal) -->
   <div id="adminDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3 shrink-0">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-3">
           <div id="modalAdminAvatar" class="w-10 h-10 rounded-2xl bg-[#16b3ac] text-white flex items-center justify-center font-black text-sm">
             SR
@@ -218,12 +219,13 @@
             <p id="modalAdminRole" class="text-[11px] text-slate-500">Lead Admin POGI Tim Data Pusat</p>
           </div>
         </div>
-        <button type="button" onclick="closeAdminDetailModal()" class="text-slate-400 hover:text-slate-600 p-1">
+        <button type="button" onclick="closeAdminDetailModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
           <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
 
-      <div class="flex-1 overflow-y-auto space-y-4 pr-1 text-xs">
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 py-4 flex-1 overflow-y-auto space-y-4 text-xs">
         <!-- 3 Highlights Cards in Modal -->
         <div class="grid grid-cols-3 gap-2.5">
           <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 text-center">
@@ -262,26 +264,29 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 shrink-0">
-        <button type="button" onclick="closeAdminDetailModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Tutup</button>
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex items-center justify-end border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeAdminDetailModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">Tutup</button>
       </div>
     </div>
   </div>
 
   <!-- MODAL 2: Redistribusi Beban Dokter (Workload Rebalancer) -->
   <div id="workloadRebalanceModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-[#16b3ac] text-xl">balance</span>
           <h3 class="font-black text-slate-900 text-sm">Redistribusi Beban Kerja Dokter Binaan</h3>
         </div>
-        <button type="button" onclick="closeWorkloadRebalanceModal()" class="text-slate-400 hover:text-slate-600 p-1">
+        <button type="button" onclick="closeWorkloadRebalanceModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
           <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
 
-      <div class="space-y-3.5 text-xs">
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 py-4 flex-1 overflow-y-auto space-y-3.5 text-xs">
         <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-relaxed">
           <strong>Manajemen Kapasitas:</strong> Pindahkan penugasan dokter dari admin yang memiliki beban tinggi ke admin yang berkapasitas longgar agar SLA &lt; 24 jam tetap terjaga.
         </div>
@@ -301,9 +306,10 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-        <button type="button" onclick="closeWorkloadRebalanceModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Batal</button>
-        <button type="button" onclick="submitRebalance()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs">
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeWorkloadRebalanceModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">Batal</button>
+        <button type="button" onclick="submitRebalance()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs transition cursor-pointer">
           <span class="material-symbols-outlined text-sm">check</span>
           <span>Simpan &amp; Alihkan Dokter</span>
         </button>

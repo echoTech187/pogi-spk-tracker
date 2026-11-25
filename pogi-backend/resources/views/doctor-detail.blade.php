@@ -577,18 +577,20 @@
   <!-- Modal Unggah Berkas Baru ke Cloud Internal (RULES.md Bab 1.2) -->
   <div id="uploadDoctorDocModal"
     class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-[#16b3ac] text-xl">cloud_upload</span>
           <h3 class="font-black text-slate-900 text-sm">Unggah Berkas ke Object Storage Cloud Internal</h3>
         </div>
-        <button type="button" onclick="closeUploadDoctorDocModal()" class="text-slate-400 hover:text-slate-600 p-1">
+        <button type="button" onclick="closeUploadDoctorDocModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
           <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
 
-      <div class="space-y-3.5 text-xs">
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 py-4 flex-1 overflow-y-auto space-y-3.5 text-xs">
         <div>
           <label class="block font-bold text-slate-700 mb-1">Nama Berkas Bukti (File PDF)</label>
           <input type="text" id="newDocFilename" placeholder="contoh: Sertifikat_Webinar_USG_2026.pdf"
@@ -658,11 +660,12 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
         <button type="button" onclick="closeUploadDoctorDocModal()"
-          class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Batal</button>
+          class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer">Batal</button>
         <button type="button" onclick="submitNewDoctorDocument()"
-          class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs">
+          class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs cursor-pointer">
           <span class="material-symbols-outlined text-sm">cloud_done</span>
           <span>Simpan ke Cloud Internal</span>
         </button>
@@ -749,8 +752,9 @@
 
   <!-- Modal Ganti PIC Dokter Binaan -->
   <div id="changeDoctorPicModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200/90 space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div class="bg-white rounded-3xl max-w-md w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200/90 overflow-hidden relative z-10">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center">
             <span class="material-symbols-outlined text-lg">assignment_ind</span>
@@ -760,38 +764,42 @@
             <p class="text-[11px] text-slate-500">Tentukan PIC Admin POGI untuk dokter ini</p>
           </div>
         </div>
-        <button type="button" onclick="closeChangePicModal()" class="text-slate-400 hover:text-slate-600 p-1">
+        <button type="button" onclick="closeChangePicModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
           <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
 
-      <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5 text-xs">
-        <div class="flex justify-between">
-          <span class="text-slate-500">Nama Dokter:</span>
-          <span id="modalChangePicDocName" class="font-bold text-slate-900">-</span>
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 py-4 flex-1 overflow-y-auto space-y-4 text-xs">
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5 text-xs">
+          <div class="flex justify-between">
+            <span class="text-slate-500">Nama Dokter:</span>
+            <span id="modalChangePicDocName" class="font-bold text-slate-900">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">PIC Saat Ini:</span>
+            <span id="modalChangePicCurrentPic" class="font-bold text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">-</span>
+          </div>
         </div>
-        <div class="flex justify-between">
-          <span class="text-slate-500">PIC Saat Ini:</span>
-          <span id="modalChangePicCurrentPic" class="font-bold text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">-</span>
+
+        <div class="space-y-1.5 text-xs">
+          <label class="block font-bold text-slate-700">Pilih PIC Admin Baru</label>
+          <select id="modalChangePicSelect" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
+            @php
+              $adminPogiList = \Illuminate\Support\Facades\DB::table('users')->where('role', 'ADMIN_POGI')->orderBy('full_name')->get();
+            @endphp
+            @foreach($adminPogiList as $adm)
+              <option value="{{ $adm->id }}">{{ $adm->full_name }} (Admin POGI)</option>
+            @endforeach
+          </select>
+          <p class="text-[11px] text-slate-400">Pengalihan akan dicatat secara otomatis dalam log audit sistem.</p>
         </div>
       </div>
 
-      <div class="space-y-1.5 text-xs">
-        <label class="block font-bold text-slate-700">Pilih PIC Admin Baru</label>
-        <select id="modalChangePicSelect" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
-          @php
-            $adminPogiList = \Illuminate\Support\Facades\DB::table('users')->where('role', 'ADMIN_POGI')->orderBy('full_name')->get();
-          @endphp
-          @foreach($adminPogiList as $adm)
-            <option value="{{ $adm->id }}">{{ $adm->full_name }} (Admin POGI)</option>
-          @endforeach
-        </select>
-        <p class="text-[11px] text-slate-400">Pengalihan akan dicatat secara otomatis dalam log audit sistem.</p>
-      </div>
-
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button type="button" onclick="closeChangePicModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition">Batal</button>
-        <button type="button" onclick="submitChangePic()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5">
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeChangePicModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">Batal</button>
+        <button type="button" onclick="submitChangePic()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer">
           <span class="material-symbols-outlined text-sm">check</span>
           <span>Simpan &amp; Alihkan</span>
         </button>
@@ -803,8 +811,9 @@
   <div id="doctorVerificationSuccessModal"
     class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div
-      class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-emerald-100 space-y-4 animate-in fade-in zoom-in-95 duration-200">
-      <div class="flex items-center gap-3">
+      class="bg-white rounded-3xl max-w-md w-full max-h-[90vh] flex flex-col shadow-2xl border border-emerald-100 overflow-hidden relative z-10 animate-in fade-in zoom-in-95 duration-200">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center gap-3 border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div
           class="w-12 h-12 rounded-2xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-xs">
           <span class="material-symbols-outlined text-2xl">verified</span>
@@ -815,47 +824,51 @@
         </div>
       </div>
 
-      <div class="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100/80 space-y-2.5 text-xs">
-        <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
-          <span class="text-slate-600">Dokter Sasaran:</span>
-          <span id="modalVerifDocName" class="font-black text-slate-900">{{ $doctor->full_name ?? 'Dokter' }}</span>
-        </div>
-        <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
-          <span class="text-slate-600">Kredit Disetujui:</span>
-          <span id="modalVerifAddedCredit"
-            class="font-black text-[#16b3ac] bg-white px-2 py-0.5 rounded-lg border border-emerald-200">+4.5 SKP
-            (Pembelajaran)</span>
-        </div>
-        <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
-          <span class="text-slate-600">Status Kepatuhan:</span>
-          <div id="modalVerifStatusContainer" class="flex items-center gap-1.5 font-bold">
-            <span
-              class="text-rose-700 bg-rose-100/70 px-1.5 py-0.5 rounded text-[11px] line-through">Incomplete</span>
-            <span class="text-slate-400">&rarr;</span>
-            <span
-              class="text-emerald-800 bg-emerald-200/80 px-2 py-0.5 rounded-full text-[11px] flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Complete
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 py-4 flex-1 overflow-y-auto space-y-4 text-xs">
+        <div class="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100/80 space-y-2.5 text-xs">
+          <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
+            <span class="text-slate-600">Dokter Sasaran:</span>
+            <span id="modalVerifDocName" class="font-black text-slate-900">{{ $doctor->full_name ?? 'Dokter' }}</span>
+          </div>
+          <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
+            <span class="text-slate-600">Kredit Disetujui:</span>
+            <span id="modalVerifAddedCredit"
+              class="font-black text-[#16b3ac] bg-white px-2 py-0.5 rounded-lg border border-emerald-200">+4.5 SKP
+              (Pembelajaran)</span>
+          </div>
+          <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
+            <span class="text-slate-600">Status Kepatuhan:</span>
+            <div id="modalVerifStatusContainer" class="flex items-center gap-1.5 font-bold">
+              <span
+                class="text-rose-700 bg-rose-100/70 px-1.5 py-0.5 rounded text-[11px] line-through">Incomplete</span>
+              <span class="text-slate-400">&rarr;</span>
+              <span
+                class="text-emerald-800 bg-emerald-200/80 px-2 py-0.5 rounded-full text-[11px] flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Complete
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
+            <span class="text-slate-600">Realisasi Pembelajaran:</span>
+            <span id="modalVerifPembProg" class="font-bold text-slate-800">28.0 &rarr; 32.5 SKP / 72 SKP</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-slate-600">Sinkronisasi Cloud &amp; Audit:</span>
+            <span class="font-bold text-[#16b3ac] flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm">cloud_done</span> Tersinkron (DONE)
             </span>
           </div>
         </div>
-        <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
-          <span class="text-slate-600">Realisasi Pembelajaran:</span>
-          <span id="modalVerifPembProg" class="font-bold text-slate-800">28.0 &rarr; 32.5 SKP / 72 SKP</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-slate-600">Sinkronisasi Cloud &amp; Audit:</span>
-          <span class="font-bold text-[#16b3ac] flex items-center gap-1">
-            <span class="material-symbols-outlined text-sm">cloud_done</span> Tersinkron (DONE)
-          </span>
+
+        <div class="text-[11px] text-slate-500 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
+          💡 <strong>Catatan Sistem:</strong> Seluruh tabel <em>Logbook Kegiatan</em> dan berkas bukti di <em>Repositori
+            Cloud</em> telah diperbarui ke status <strong>Terverifikasi Kemenkes (DONE)</strong>.
         </div>
       </div>
 
-      <div class="text-[11px] text-slate-500 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
-        💡 <strong>Catatan Sistem:</strong> Seluruh tabel <em>Logbook Kegiatan</em> dan berkas bukti di <em>Repositori
-          Cloud</em> telah diperbarui ke status <strong>Terverifikasi Kemenkes (DONE)</strong>.
-      </div>
-
-      <div class="flex items-center justify-end gap-2 pt-2">
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex items-center justify-end border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
         <button type="button" onclick="closeDoctorVerificationModal()"
           class="w-full py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-black transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
           <span class="material-symbols-outlined text-base">check</span>

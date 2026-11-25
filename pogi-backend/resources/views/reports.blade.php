@@ -265,8 +265,8 @@
   <div id="monthPickerModal"
     class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
     <div
-      class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden animate-scale-in">
-      <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+      class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden animate-scale-in">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70 shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-[#16b3ac] text-xl">calendar_month</span>
           <h3 class="font-black text-sm text-slate-900">Pilih Bulan Laporan (Flashback)</h3>
@@ -277,7 +277,7 @@
         </button>
       </div>
 
-      <div class="p-6 space-y-4">
+      <div class="p-6 space-y-4 flex-1 overflow-y-auto">
         <div class="flex items-center justify-between px-1">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tahun Laporan</span>
           <span class="text-xs font-black text-slate-900 bg-slate-100 px-3 py-1 rounded-xl">Tahun 2026</span>
@@ -317,7 +317,7 @@
         </div>
       </div>
 
-      <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end">
+      <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end shrink-0 sticky bottom-0 z-20">
         <button type="button" onclick="toggleMonthPickerModal(false)"
           class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition cursor-pointer">
           Tutup
@@ -332,8 +332,8 @@
   <div id="archiveModal"
     class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
     <div
-      class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-5xl overflow-hidden animate-scale-in">
-      <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+      class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-in">
+      <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shadow-2xs">
             <span class="material-symbols-outlined text-xl">folder_zip</span>
@@ -350,7 +350,7 @@
         </button>
       </div>
 
-      <div class="p-5 sm:p-6 max-h-[65vh] overflow-y-auto">
+      <div class="p-5 sm:p-6 flex-1 overflow-y-auto">
         <div class="overflow-x-auto rounded-2xl border border-slate-200">
           <table class="w-full text-left text-xs whitespace-nowrap">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
@@ -498,7 +498,7 @@
       </div>
 
       <div
-        class="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        class="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 shrink-0 sticky bottom-0 z-20">
         <div class="flex items-center gap-1.5">
           <span class="material-symbols-outlined text-sm text-[#16b3ac]">verified</span>
           <span>Sistem Penyimpanan Terpadu Impruve.Id &bull; Cutoff tgl 1</span>

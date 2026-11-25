@@ -153,8 +153,9 @@
 @section('modals')
   <!-- Modal Detail & Verifikasi Dokter -->
   <div id="doctorDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-5 responsive-modal-body overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-3">
           <div id="modalAvatar" class="w-12 h-12 rounded-2xl bg-[#16b3ac] text-white font-extrabold text-base flex items-center justify-center shrink-0">
             DR
@@ -164,108 +165,119 @@
             <p id="modalDoctorMeta" class="text-xs text-slate-500">-</p>
           </div>
         </div>
-        <button onclick="closeDoctorModal()" class="text-slate-400 hover:text-slate-600 p-1">
+        <button onclick="closeDoctorModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
           <span class="material-symbols-outlined text-xl">close</span>
         </button>
       </div>
 
-      <!-- 3 Subbidang Progress Cards in Modal (KMK 1561/2024 & KMK 1111/2026) -->
-      <div class="grid grid-cols-3 gap-2.5 text-xs">
-        <div class="p-3 rounded-xl bg-sky-50 border border-sky-200">
-          <div class="text-[10px] text-sky-800 font-bold uppercase">1. Pelayanan (35%)</div>
-          <div id="modalPelayananScore" class="text-base font-black text-sky-900 mt-0.5">0 / 56 SKP</div>
-          <div class="text-[10px] text-sky-700 mt-1">Standar Min. 56 SKP</div>
-        </div>
-        <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
-          <div class="text-[10px] text-amber-800 font-bold uppercase">2. Pengabdian (5%)</div>
-          <div id="modalPengabdianScore" class="text-base font-black text-amber-900 mt-0.5">0 / 8 SKP</div>
-          <div class="text-[10px] text-amber-700 mt-1">Standar Min. 8 SKP</div>
-        </div>
-        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-          <div class="text-[10px] text-emerald-800 font-bold uppercase">3. Pembelajaran (45%)</div>
-          <div id="modalPembelajaranScore" class="text-base font-black text-emerald-900 mt-0.5">0 / 72 SKP</div>
-          <div class="text-[10px] text-emerald-700 mt-1">Standar Min. 72 SKP</div>
-        </div>
-      </div>
-
-      <!-- Logbook Entri Menunggu Persetujuan -->
-      <div class="space-y-2">
-        <div class="flex items-center justify-between">
-          <h4 class="font-bold text-xs text-slate-800 uppercase tracking-wider">Logbook Pengajuan Kredit Terbaru</h4>
-          <span class="text-[11px] text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Menunggu Verifikasi</span>
-        </div>
-        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1.5">
-          <div class="flex items-center justify-between font-bold text-slate-900">
-            <span>Sertifikat Workshop Hands-on USG Fetomaternal (POGI Jaya)</span>
-            <span class="text-[#16b3ac] font-black">+4.5 SKP (Pembelajaran)</span>
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 py-4 flex-1 overflow-y-auto space-y-5 text-xs">
+        <!-- 3 Subbidang Progress Cards in Modal (KMK 1561/2024 & KMK 1111/2026) -->
+        <div class="grid grid-cols-3 gap-2.5 text-xs">
+          <div class="p-3 rounded-xl bg-sky-50 border border-sky-200">
+            <div class="text-[10px] text-sky-800 font-bold uppercase">1. Pelayanan (35%)</div>
+            <div id="modalPelayananScore" class="text-base font-black text-sky-900 mt-0.5">0 / 56 SKP</div>
+            <div class="text-[10px] text-sky-700 mt-1">Standar Min. 56 SKP</div>
           </div>
-          <div class="text-[11px] text-slate-500">Nomor Registrasi: CERT-POGI-2026-9921 &bull; Tanggal: 14 Nov 2026</div>
-          <div class="flex items-center gap-2 pt-1">
-            <button type="button" onclick="openCertificatePreviewModal()" class="text-[11px] text-[#16b3ac] font-bold hover:underline flex items-center gap-1">
-              <span class="material-symbols-outlined text-xs">visibility</span> Lihat Berkas PDF
-            </button>
-            <span class="text-slate-300">&bull;</span>
-            <button type="button" onclick="approvePendingCredits()" class="text-[11px] text-emerald-700 font-bold hover:underline flex items-center gap-1 rbac-operational">
-              <span class="material-symbols-outlined text-xs">check_circle</span> Setujui &amp; Tambahkan ke Akumulasi
-            </button>
+          <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
+            <div class="text-[10px] text-amber-800 font-bold uppercase">2. Pengabdian (5%)</div>
+            <div id="modalPengabdianScore" class="text-base font-black text-amber-900 mt-0.5">0 / 8 SKP</div>
+            <div class="text-[10px] text-amber-700 mt-1">Standar Min. 8 SKP</div>
+          </div>
+          <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+            <div class="text-[10px] text-emerald-800 font-bold uppercase">3. Pembelajaran (45%)</div>
+            <div id="modalPembelajaranScore" class="text-base font-black text-emerald-900 mt-0.5">0 / 72 SKP</div>
+            <div class="text-[10px] text-emerald-700 mt-1">Standar Min. 72 SKP</div>
           </div>
         </div>
-      </div>
 
-      <!-- Tindak Lanjut Follow-Up -->
-      <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 text-xs space-y-2">
-        <div class="font-bold text-[#16b3ac]">Kirim Pengingat Langsung ke Dokter / RS:</div>
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="sendDoctorReminder('wa')" class="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] transition flex items-center gap-1">
-            <span class="material-symbols-outlined text-xs">chat</span> Hubungi via WhatsApp
-          </button>
-          <button type="button" onclick="sendDoctorReminder('email')" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold text-[11px] hover:bg-slate-50 transition flex items-center gap-1">
-            <span class="material-symbols-outlined text-xs">mail</span> Kirim Email Resmi POGI
-          </button>
+        <!-- Logbook Entri Menunggu Persetujuan -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs text-slate-800 uppercase tracking-wider">Logbook Pengajuan Kredit Terbaru</h4>
+            <span class="text-[11px] text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Menunggu Verifikasi</span>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1.5">
+            <div class="flex items-center justify-between font-bold text-slate-900">
+              <span>Sertifikat Workshop Hands-on USG Fetomaternal (POGI Jaya)</span>
+              <span class="text-[#16b3ac] font-black">+4.5 SKP (Pembelajaran)</span>
+            </div>
+            <div class="text-[11px] text-slate-500">Nomor Registrasi: CERT-POGI-2026-9921 &bull; Tanggal: 14 Nov 2026</div>
+            <div class="flex items-center gap-2 pt-1">
+              <button type="button" onclick="openCertificatePreviewModal()" class="text-[11px] text-[#16b3ac] font-bold hover:underline flex items-center gap-1 cursor-pointer">
+                <span class="material-symbols-outlined text-xs">visibility</span> Lihat Berkas PDF
+              </button>
+              <span class="text-slate-300">&bull;</span>
+              <button type="button" onclick="approvePendingCredits()" class="text-[11px] text-emerald-700 font-bold hover:underline flex items-center gap-1 rbac-operational cursor-pointer">
+                <span class="material-symbols-outlined text-xs">check_circle</span> Setujui &amp; Tambahkan ke Akumulasi
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tindak Lanjut Follow-Up -->
+        <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 text-xs space-y-2">
+          <div class="font-bold text-[#16b3ac]">Kirim Pengingat Langsung ke Dokter / RS:</div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="sendDoctorReminder('wa')" class="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] transition flex items-center gap-1 cursor-pointer">
+              <span class="material-symbols-outlined text-xs">chat</span> Hubungi via WhatsApp
+            </button>
+            <button type="button" onclick="sendDoctorReminder('email')" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold text-[11px] hover:bg-slate-50 transition flex items-center gap-1 cursor-pointer">
+              <span class="material-symbols-outlined text-xs">mail</span> Kirim Email Resmi POGI
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
-        <button type="button" onclick="openDoctorRepositoryPage()" class="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] text-xs font-bold transition flex items-center gap-1.5 border border-emerald-200">
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex items-center justify-between gap-2 border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="openDoctorRepositoryPage()" class="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] text-xs font-bold transition flex items-center gap-1.5 border border-emerald-200 cursor-pointer">
           <span class="material-symbols-outlined text-sm">cloud_done</span>
           <span>Buka Repositori Dokumen (Object Storage)</span>
         </button>
-        <button type="button" onclick="closeDoctorModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Tutup</button>
+        <button type="button" onclick="closeDoctorModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">Tutup</button>
       </div>
     </div>
   </div>
 
   <!-- Modal Pratinjau Sertifikat PDF -->
   <div id="certificateModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-red-600 text-xl">picture_as_pdf</span>
           <h3 class="font-black text-slate-900 text-sm">Pratinjau Sertifikat Resmi Terakreditasi</h3>
         </div>
-        <button type="button" onclick="closeCertificatePreviewModal()" class="text-slate-400 hover:text-slate-600 p-1">
+        <button type="button" onclick="closeCertificatePreviewModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
           <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
-      <div class="p-5 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 space-y-3 text-center">
-        <div class="w-12 h-12 mx-auto rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs">
-          <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
-        </div>
-        <div>
-          <div class="text-[10px] uppercase font-black tracking-widest text-[#16b3ac]">PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA</div>
-          <h4 class="font-black text-sm text-slate-900 mt-1">SERTIFIKAT AKREDITASI ILMIAH</h4>
-          <p class="text-xs text-slate-600 mt-0.5">Diberikan atas partisipasi aktif dalam: <strong>Workshop Hands-on USG Fetomaternal</strong></p>
-        </div>
-        <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-bold inline-block">
-          Nilai Kredit: +4.5 SKP Subbidang Pembelajaran &bull; Terverifikasi Plataran Sehat
-        </div>
-        <div class="text-[10px] text-slate-400 font-mono">
-          Nomor Registrasi: CERT-POGI-2026-9921 &bull; Terbit: 14 Nov 2026
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 py-4 flex-1 overflow-y-auto space-y-4 text-center">
+        <div class="p-5 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 space-y-3">
+          <div class="w-12 h-12 mx-auto rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs">
+            <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <div class="text-[10px] uppercase font-black tracking-widest text-[#16b3ac]">PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA</div>
+            <h4 class="font-black text-sm text-slate-900 mt-1">SERTIFIKAT AKREDITASI ILMIAH</h4>
+            <p class="text-xs text-slate-600 mt-0.5">Diberikan atas partisipasi aktif dalam: <strong>Workshop Hands-on USG Fetomaternal</strong></p>
+          </div>
+          <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-bold inline-block">
+            Nilai Kredit: +4.5 SKP Subbidang Pembelajaran &bull; Terverifikasi Plataran Sehat
+          </div>
+          <div class="text-[10px] text-slate-400 font-mono">
+            Nomor Registrasi: CERT-POGI-2026-9921 &bull; Terbit: 14 Nov 2026
+          </div>
         </div>
       </div>
-      <div class="flex items-center justify-end gap-2 pt-2">
-        <button type="button" onclick="closeCertificatePreviewModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Tutup</button>
-        <button type="button" onclick="showToast('Mengunduh salinan resmi berkas PDF...', 'success'); closeCertificatePreviewModal();" class="px-4 py-2 rounded-xl bg-[#16b3ac] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs">
+
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeCertificatePreviewModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer">Tutup</button>
+        <button type="button" onclick="showToast('Mengunduh salinan resmi berkas PDF...', 'success'); closeCertificatePreviewModal();" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs cursor-pointer">
           <span class="material-symbols-outlined text-sm">download</span>
           <span>Unduh Berkas PDF</span>
         </button>
@@ -275,112 +287,123 @@
 
   <!-- Modal Tambah Dokter Baru -->
   <div id="addDoctorModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-[#16b3ac] text-xl">person_add</span>
           <h3 class="font-black text-slate-900 text-sm">Add Doctor</h3>
         </div>
-        <button type="button" onclick="closeAddDoctorModal()" class="text-slate-400 hover:text-slate-600 p-1">
+        <button type="button" onclick="closeAddDoctorModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
           <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
 
-      <form onsubmit="event.preventDefault(); submitNewDoctorForm();" class="space-y-4 text-xs">
-        <!-- 1. Doctor Info Section -->
-        <div class="space-y-3">
-          <div class="text-[11px] font-black uppercase tracking-wider text-slate-400">Doctor info</div>
+      <form id="addDoctorForm" onsubmit="event.preventDefault(); submitNewDoctorForm();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
+        <!-- Modal Body (Scrollable) -->
+        <div class="p-6 py-4 flex-1 overflow-y-auto space-y-4 text-xs">
+          <!-- 1. Doctor Info Section -->
+          <div class="space-y-3">
+            <div class="text-[11px] font-black uppercase tracking-wider text-slate-400">Doctor info</div>
 
-          <!-- Name -->
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Name</label>
-            <input id="newDocName" type="text" required placeholder="dr. Budi Santoso, Sp.PD" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
-          </div>
-
-          <!-- STR -->
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">STR</label>
-            <input id="newDocStr" type="text" required placeholder="32.73.100.2.21.0883" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
-          </div>
-
-          <!-- Phone -->
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Phone</label>
-            <input id="newDocPhone" type="text" required placeholder="08123456789" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
-            <p class="text-[11px] text-slate-400 mt-1">Numbers starting with 0 are saved as +62.</p>
-          </div>
-
-          <!-- Province -->
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Province</label>
-            <select id="newDocProv" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
-              <option value="">Select province</option>
-            </select>
-          </div>
-
-          <!-- Institution -->
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Institution</label>
-            <select id="newDocInst" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
-              <option value="">Select institution</option>
-            </select>
-          </div>
-
-          <!-- Assigned PIC Admin -->
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">PIC Admin / Dokter Binaan</label>
-            <select id="newDocAssignedTo" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
-              <option value="Anna">Anna (Admin POGI)</option><option value="Vivi">Vivi (Admin POGI)</option><option value="Lily">Lily (Admin POGI)</option>
-              <option value="Dewi Lestari">Dewi Lestari (Admin POGI DKI &amp; Banten)</option>
-              <option value="Wahyu Setiawan">Wahyu Setiawan (Admin POGI Jawa Barat)</option>
-              <option value="Melati Sihombing">Melati Sihombing (Admin POGI Jawa Tengah &amp; DIY)</option>
-              <option value="Rina Kartika">Rina Kartika (Admin POGI Jawa Timur &amp; Bali)</option>
-              <option value="Dimas Saputra">Dimas Saputra (Admin POGI Luar Jawa / Sumatera &amp; Kalimantan)</option>
-              <option value="Fikri Ramadhan">Fikri Ramadhan (Admin POGI Indonesia Timur)</option>
-            </select>
-          </div>
-
-          <!-- Period start & Period end -->
-          <div class="grid grid-cols-2 gap-3">
+            <!-- Name -->
             <div>
-              <label class="block font-bold text-slate-700 mb-1">Period start</label>
-              <div class="relative">
-                <input id="newDocPeriodStart" type="text" required value="1 Jan 2026" placeholder="1 Jan 2026" class="w-full pl-8 pr-2.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
-                <span class="material-symbols-outlined text-slate-400 text-base absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
+              <label class="block font-bold text-slate-700 mb-1">Name</label>
+              <input id="newDocName" type="text" required placeholder="dr. Budi Santoso, Sp.PD" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
+            </div>
+
+            <!-- STR -->
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">STR</label>
+              <input id="newDocStr" type="text" required placeholder="32.73.100.2.21.0883" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
+            </div>
+
+            <!-- Phone -->
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Phone</label>
+              <input id="newDocPhone" type="text" required placeholder="08123456789" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
+              <p class="text-[11px] text-slate-400 mt-1">Numbers starting with 0 are saved as +62.</p>
+            </div>
+
+            <!-- Province -->
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Province</label>
+              <select id="newDocProv" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
+                <option value="">Select province</option>
+              </select>
+            </div>
+
+            <!-- Institution -->
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Institution</label>
+              <select id="newDocInst" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
+                <option value="">Select institution</option>
+              </select>
+            </div>
+
+            <!-- Assigned PIC Admin -->
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">PIC Admin / Dokter Binaan</label>
+              <select id="newDocAssignedTo" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
+                <option value="Anna">Anna (Admin POGI)</option><option value="Vivi">Vivi (Admin POGI)</option><option value="Lily">Lily (Admin POGI)</option>
+                <option value="Dewi Lestari">Dewi Lestari (Admin POGI DKI &amp; Banten)</option>
+                <option value="Wahyu Setiawan">Wahyu Setiawan (Admin POGI Jawa Barat)</option>
+                <option value="Melati Sihombing">Melati Sihombing (Admin POGI Jawa Tengah &amp; DIY)</option>
+                <option value="Rina Kartika">Rina Kartika (Admin POGI Jawa Timur &amp; Bali)</option>
+                <option value="Dimas Saputra">Dimas Saputra (Admin POGI Luar Jawa / Sumatera &amp; Kalimantan)</option>
+                <option value="Fikri Ramadhan">Fikri Ramadhan (Admin POGI Indonesia Timur)</option>
+              </select>
+            </div>
+
+            <!-- Period start & Period end -->
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Period start</label>
+                <div class="relative">
+                  <input id="newDocPeriodStart" type="text" required value="1 Jan 2026" placeholder="1 Jan 2026" class="w-full pl-8 pr-2.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
+                  <span class="material-symbols-outlined text-slate-400 text-base absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
+                </div>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Period end</label>
+                <div class="relative">
+                  <input id="newDocPeriodEnd" type="text" required value="31 Des 2030" placeholder="31 Des 2030" class="w-full pl-8 pr-2.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
+                  <span class="material-symbols-outlined text-slate-400 text-base absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
+                </div>
               </div>
             </div>
+          </div>
+
+          <!-- 2. Credentials Section (LMS Plataran Account) -->
+          <div class="pt-3 border-t border-slate-100 space-y-3">
             <div>
-              <label class="block font-bold text-slate-700 mb-1">Period end</label>
-              <div class="relative">
-                <input id="newDocPeriodEnd" type="text" required value="31 Des 2030" placeholder="31 Des 2030" class="w-full pl-8 pr-2.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
-                <span class="material-symbols-outlined text-slate-400 text-base absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
-              </div>
+              <div class="text-[11px] font-black uppercase tracking-wider text-slate-700">Credentials</div>
+              <div class="text-[11px] text-slate-400 font-medium">LMS Plataran Account</div>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Username</label>
+              <input id="newDocLmsUsername" type="text" placeholder="super@example.com" class="w-full p-2.5 bg-sky-50/70 border border-sky-100 rounded-xl text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Password</label>
+              <input id="newDocLmsPassword" type="password" placeholder="••••••••" class="w-full p-2.5 bg-sky-50/70 border border-sky-100 rounded-xl text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
             </div>
           </div>
         </div>
 
-        <!-- 2. Credentials Section (LMS Plataran Account) -->
-        <div class="pt-3 border-t border-slate-100 space-y-3">
-          <div>
-            <div class="text-[11px] font-black uppercase tracking-wider text-slate-700">Credentials</div>
-            <div class="text-[11px] text-slate-400 font-medium">LMS Plataran Account</div>
-          </div>
-
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Username</label>
-            <input id="newDocLmsUsername" type="text" placeholder="super@example.com" class="w-full p-2.5 bg-sky-50/70 border border-sky-100 rounded-xl text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
-          </div>
-
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Password</label>
-            <input id="newDocLmsPassword" type="password" placeholder="••••••••" class="w-full p-2.5 bg-sky-50/70 border border-sky-100 rounded-xl text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]" />
-          </div>
-        </div>
-
-        <!-- Modal Footer Actions -->
-        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-          <button type="button" onclick="closeAddDoctorModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition">Batal</button>
+        <!-- Modal Footer Actions (Sticky) -->
+        <div class="p-4 px-6 flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+          <button type="button" onclick="closeAddDoctorModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition cursor-pointer">Batal</button>
           <button type="submit" class="px-5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-base">person_add</span>
+            <span>Add doctor</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
             <span class="material-symbols-outlined text-base">person_add</span>
             <span>Add doctor</span>
           </button>

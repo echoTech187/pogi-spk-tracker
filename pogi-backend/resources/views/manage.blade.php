@@ -533,20 +533,21 @@
 @section('modals')
   <!-- Modal Add Generic Master Item -->
   <div id="manageAddModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <h3 id="manageAddModalTitle" class="font-black text-slate-900 text-base">Add Item</h3>
-        <button onclick="closeManageAddModal()" class="text-slate-400 hover:text-slate-600 p-1">
+        <button onclick="closeManageAddModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
           <span class="material-symbols-outlined text-xl">close</span>
         </button>
       </div>
-      <form id="manageAddForm" onsubmit="event.preventDefault(); submitManageAdd();" class="space-y-3 text-xs">
-        <div id="manageAddFormFields" class="space-y-3">
+      <form id="manageAddForm" onsubmit="event.preventDefault(); submitManageAdd();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div id="manageAddFormFields" class="p-6 py-4 space-y-3 text-xs flex-1 overflow-y-auto">
           <!-- Populated dynamically based on active tab -->
         </div>
-        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-          <button type="button" onclick="closeManageAddModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold">Batal</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] text-white font-extrabold shadow-sm">Simpan</button>
+        <div class="p-4 px-6 flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+          <button type="button" onclick="closeManageAddModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition cursor-pointer">Batal</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold shadow-sm transition cursor-pointer">Simpan</button>
         </div>
       </form>
     </div>
@@ -554,38 +555,42 @@
 
   <!-- Modal View Details -->
   <div id="manageDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3 shrink-0">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <h3 id="manageDetailModalTitle" class="font-black text-slate-900 text-base">Rincian Data Master</h3>
-        <button type="button" onclick="closeManageDetailModal()" class="text-slate-400 hover:text-slate-600 p-1">
+        <button type="button" onclick="closeManageDetailModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
           <span class="material-symbols-outlined text-xl">close</span>
         </button>
       </div>
-      <div id="manageDetailContent" class="space-y-2.5 text-xs flex-1 overflow-y-auto">
+      <!-- Modal Body (Scrollable) -->
+      <div id="manageDetailContent" class="p-6 py-4 space-y-2.5 text-xs flex-1 overflow-y-auto">
         <!-- Key value pairs -->
       </div>
-      <div class="flex justify-end pt-3 border-t border-slate-100 shrink-0">
-        <button type="button" onclick="closeManageDetailModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold">Tutup</button>
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex justify-end border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeManageDetailModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition cursor-pointer">Tutup</button>
       </div>
     </div>
   </div>
 
   <!-- Modal Edit Item -->
   <div id="manageEditModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <h3 id="manageEditModalTitle" class="font-black text-slate-900 text-base">Edit Data Master</h3>
-        <button type="button" onclick="closeManageEditModal()" class="text-slate-400 hover:text-slate-600 p-1">
+        <button type="button" onclick="closeManageEditModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
           <span class="material-symbols-outlined text-xl">close</span>
         </button>
       </div>
-      <form id="manageEditForm" onsubmit="event.preventDefault(); submitManageEdit();" class="space-y-3 text-xs">
-        <div id="manageEditFormFields" class="space-y-3">
+      <form id="manageEditForm" onsubmit="event.preventDefault(); submitManageEdit();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div id="manageEditFormFields" class="p-6 py-4 space-y-3 text-xs flex-1 overflow-y-auto">
           <!-- Populated dynamically -->
         </div>
-        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-          <button type="button" onclick="closeManageEditModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold">Batal</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] text-white font-extrabold shadow-sm">Simpan Perubahan</button>
+        <div class="p-4 px-6 flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+          <button type="button" onclick="closeManageEditModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition cursor-pointer">Batal</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold shadow-sm transition cursor-pointer">Simpan Perubahan</button>
         </div>
       </form>
     </div>

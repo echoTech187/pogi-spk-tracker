@@ -361,8 +361,9 @@
 @section('modals')
   <!-- Modal Follow-Up Massal (Terhubung ke MySQL Live - Full Viewport Overlay z-[9999]) -->
   <div id="fuModal" onclick="if(event.target.id === 'fuModal') closeFollowUpModal()" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 relative z-10 animate-in fade-in zoom-in duration-150">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-in fade-in zoom-in duration-150">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-xl bg-teal-50 text-[#16b3ac] flex items-center justify-center">
             <span class="material-symbols-outlined text-2xl">forward_to_inbox</span>
@@ -377,7 +378,8 @@
         </button>
       </div>
 
-      <div class="space-y-3 text-xs">
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 py-4 flex-1 overflow-y-auto space-y-3 text-xs">
         <div>
           <label class="font-bold text-slate-700 block mb-1">Target Penerima Follow-Up:</label>
           <select id="fuTarget" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
@@ -411,7 +413,8 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
         <button type="button" onclick="closeFollowUpModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">Batal</button>
         <button type="button" id="btnSendFuSubmit" onclick="sendFollowUpAction()" class="px-4 py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-sm transition flex items-center gap-1.5 rbac-operational cursor-pointer">
           <span class="material-symbols-outlined text-sm">send</span>
