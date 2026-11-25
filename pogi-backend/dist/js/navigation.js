@@ -455,11 +455,10 @@ function performLogout() {
       sessionStorage.clear();
     } catch (e) { }
 
-    const isLaravel = document.querySelector('meta[name="csrf-token"]') !== null;
-    if (isLaravel) {
-      window.location.href = '/logout';
-    } else {
+    if (window.location.hostname.includes('vercel.app')) {
       window.location.href = '/login';
+    } else {
+      window.location.href = '/logout';
     }
   }
 }

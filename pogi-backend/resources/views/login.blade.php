@@ -189,7 +189,6 @@
     </div>
   </div>
 
-  <script src="/js/pogi_state.js"></script>
   <script src="/js/navigation.js"></script>
   <script>
     function togglePassVisibility() {
@@ -198,6 +197,22 @@
         p.type = p.type === 'password' ? 'text' : 'password';
       }
     }
+
+    // Static fallback login handler (for static hosting like Vercel)
+    document.getElementById('pogiLoginForm')?.addEventListener('submit', function (e) {
+      if (window.location.hostname.includes('vercel.app') || window.location.protocol === 'file:') {
+        e.preventDefault();
+        const email = document.getElementById('inputEmail')?.value || 'super@example.com';
+        localStorage.setItem('pogi_current_user', JSON.stringify({
+          id: 'auth-user',
+          name: email.split('@')[0],
+          email: email,
+          role: 'SUPER_ADMIN',
+          branch: 'Pusat'
+        }));
+        window.location.href = '/dashboard';
+      }
+    });
   </script>
 </body>
 </html>

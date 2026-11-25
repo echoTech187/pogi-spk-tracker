@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="KWbmxxB1IJb3niJnoK2cGqPLpjrRWE78u8eeXcq4">
+  <meta name="csrf-token" content="H5Nci8Z0pM0AIOkdJDX0EkW9dUujzmh12vF9Q345">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -97,7 +97,11 @@
           <span class="material-symbols-outlined text-[19px]">dashboard</span>
           <span>Dashboard</span>
         </a>
-                                <a href="/doctors" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        <a href="/admin-performance" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[19px]">speed</span>
+          <span>Admin Performance</span>
+        </a>
+                        <a href="/doctors" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
           <span class="material-symbols-outlined text-[19px]">stethoscope</span>
           <span>Doctors</span>
         </a>
@@ -109,10 +113,45 @@
           <span class="material-symbols-outlined text-[19px]">event</span>
           <span>Events</span>
         </a>
-                                
+                        <a href="/activity" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[19px]">history</span>
+          <span>Activity Log</span>
+        </a>
+                        <a href="/reports" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[19px]">bar_chart</span>
+          <span>Report</span>
+        </a>
+                
       </nav>
     </div>
 
+        <div>
+      <div class="px-3 mb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+        PENGATURAN DATA (MANAGE)
+      </div>
+      <nav class="space-y-1">
+        <a href="/manage?tab=doctor" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[18px]">person</span>
+          <span>Doctor</span>
+        </a>
+        <a href="/manage?tab=institution" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[18px]">domain</span>
+          <span>Institution (RS)</span>
+        </a>
+        <a href="/manage?tab=event" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+          <span>SKP Event</span>
+        </a>
+        <a href="/manage?tab=category" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[18px]">category</span>
+          <span>Event Category</span>
+        </a>
+                <a href="/manage?tab=user" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[18px]">manage_accounts</span>
+          <span>User &amp; Hak Akses</span>
+        </a>
+              </nav>
+    </div>
       </div>
 
   
@@ -121,11 +160,11 @@
     <div id="sidebarUserProfileCard" class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
       <div class="flex items-center gap-2.5 min-w-0">
         <div id="sidebarUserAvatar" class="w-9 h-9 rounded-full bg-[#16b3ac] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
-          A
+          SA
         </div>
         <div class="min-w-0" id="sidebarUserInfo">
-          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Anna</div>
-          <div class="text-[10px] text-slate-400 font-mono truncate" id="sidebarUserEmail">sekretariat.pusat@pogi.or.id</div>
+          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Super Admin</div>
+          <div class="text-[10px] text-slate-400 font-mono truncate" id="sidebarUserEmail">super@example.com</div>
         </div>
       </div>
       <button type="button" onclick="performLogout()" title="Keluar" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition shrink-0">
@@ -197,9 +236,15 @@
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
                 <div class="text-[11px] text-slate-500 mt-0.5">157 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">17 menit yang lalu</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">23 menit yang lalu</div>
               </div>
             </div>
+          </div>
+                    <div class="px-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+            <a href="/activity" class="text-slate-600 hover:text-[#16b3ac] font-bold flex items-center gap-1 transition">
+              <span>Buka Log Aktivitas Lengkap</span>
+              <span class="material-symbols-outlined text-xs">arrow_forward</span>
+            </a>
           </div>
                   </div>
       </div>
@@ -207,24 +252,36 @@
       <!-- User Avatar Profile Circle -->
       <div class="relative">
         <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#16b3ac] hover:bg-[#129993] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna">
-          <span id="headerUserInitials">A</span>
+          <span id="headerUserInitials">SA</span>
         </button>
         <!-- User Profile Dropdown Menu -->
         <div id="topUserDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
           <div class="px-4 py-2 border-b border-slate-100 flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-[#16b3ac] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs" id="headerDropdownAvatar">
-              A
+              SA
             </div>
             <div class="min-w-0">
-              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Anna</div>
-              <div class="text-[10px] text-slate-500 truncate" id="headerDropdownRole">Admin POGI (Data Entry &amp; Kemenkes)</div>
+              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Super Admin</div>
+              <div class="text-[10px] text-slate-500 truncate" id="headerDropdownRole">Super Admin Sistem</div>
               <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#16b3ac] border border-emerald-200 text-[9px] font-bold mt-1">
                 <span class="w-1 h-1 rounded-full bg-emerald-600"></span> Online
               </span>
             </div>
           </div>
           <div class="py-1">
-                                              </div>
+                        <a href="/manage" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
+              <span class="material-symbols-outlined text-base text-slate-400">admin_panel_settings</span>
+              <span>Pengelolaan Master Data</span>
+            </a>
+                                    <a href="/activity" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
+              <span class="material-symbols-outlined text-base text-slate-400">history</span>
+              <span>Jejak Audit &amp; Log Aktivitas</span>
+            </a>
+                                    <a href="/reports" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-slate-700 flex items-center gap-2.5 font-semibold transition">
+              <span class="material-symbols-outlined text-base text-slate-400">description</span>
+              <span>Laporan Bulanan SKP</span>
+            </a>
+                      </div>
           <div class="pt-1 border-t border-slate-100 px-2">
             <button type="button" onclick="performLogout()" class="w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 rounded-xl font-bold flex items-center gap-2 transition cursor-pointer">
               <span class="material-symbols-outlined text-base">logout</span>
@@ -256,12 +313,6 @@
             <p class="text-xs text-slate-500 max-w-2xl leading-relaxed">
               Daftar kegiatan ilmiah, simposium, workshop, dan pelayanan klinis ber-SKP yang telah terverifikasi Kemenkes Plataran Sehat terintegrasi PP POGI.
             </p>
-          </div>
-                    <div class="flex items-center gap-2.5 shrink-0">
-            <button type="button" onclick="openAddEventModal()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-write">
-              <span class="material-symbols-outlined text-base">add_circle</span>
-              <span>Tambah Event SKP</span>
-            </button>
           </div>
                   </div>
 
@@ -377,7 +428,7 @@
   </div>
 
   <script>
-    window.AUTH_USER = {"id":"03bbce59-7dc4-4dc2-bce7-11e893ef4068","name":"Anna","email":"sekretariat.pusat@pogi.or.id","role":"ADMIN_POGI","branch":"Pusat"};
+    window.AUTH_USER = {"id":"auth-user","name":"Pengguna","email":"","role":"SUPER_ADMIN","branch":"Pusat"};
   </script>
   <!-- Core Scripts -->
   <script src="/js/navigation.js"></script>

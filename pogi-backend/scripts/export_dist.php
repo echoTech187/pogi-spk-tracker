@@ -66,6 +66,17 @@ $pages = [
     'manage' => [App\Http\Controllers\ManageController::class, 'index'],
 ];
 
+// 4. Render Login view specifically
+try {
+    Auth::logout();
+    $loginHtml = view('login', ['errors' => new Illuminate\Support\ViewErrorBag()])->render();
+    $loginHtml = preg_replace('#https?://(?:localhost|127\.0\.0\.1)(?::\d+)?/#', '/', $loginHtml);
+    file_put_contents("$distDir/login.html", $loginHtml);
+    echo "  [OK] login.html (" . strlen($loginHtml) . " bytes)\n";
+} catch (Throwable $e) {
+    echo "  [FAIL] login: " . $e->getMessage() . "\n";
+}
+
 $req = Illuminate\Http\Request::create('/', 'GET');
 
 foreach ($pages as $slug => [$ctrlClass, $method]) {

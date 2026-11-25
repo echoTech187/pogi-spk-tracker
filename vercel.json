@@ -4,8 +4,8 @@
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/", "destination": "/" },
-    { "source": "/login", "destination": "/" },
-    { "source": "/logout", "destination": "/" },
+    { "source": "/login", "destination": "/login" },
+    { "source": "/logout", "destination": "/login" },
     { "source": "/dashboard", "destination": "/dashboard" },
     { "source": "/doctors", "destination": "/doctors" },
     { "source": "/events", "destination": "/events" },
