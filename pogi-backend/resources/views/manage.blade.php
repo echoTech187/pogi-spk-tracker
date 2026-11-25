@@ -1439,7 +1439,6 @@
                   </div>
                   <div>
                     <div class="font-bold text-slate-900 text-xs">${usr.name}</div>
-                    <div class="text-[10px] text-slate-400 font-mono">${usr.id}</div>
                   </div>
                 </div>
               </td>
@@ -1715,19 +1714,10 @@
         if (!item) return;
         title.innerText = 'Rincian User: ' + item.name;
         const initials = (item.name || 'US').split(' ').slice(0, 2).map(w => w.charAt(0).toUpperCase()).join('');
-        const rawRole = item.raw_role || 'USER';
         const accStatus = (item.account_status || (item.is_active === false ? 'INACTIVE' : 'ACTIVE')).toUpperCase();
         const badgeCls = accStatus === 'BLOCK'
           ? 'bg-rose-100 text-rose-700 border border-rose-200'
           : (accStatus === 'INACTIVE' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200');
-        const permsByRole = {
-          SUPER_ADMIN: ['Full Access Master Data', 'Alih PIC & Workload Rebalancer', 'Verifikasi SKP & Dokumen', 'WA Blast Massal', 'Audit Trail & Laporan PDF'],
-          ADMIN_PUSAT: ['Read-Only 38 Provinsi', 'Monitoring SLA Admin', 'Audit Trail Nasional', 'Unduh Laporan Bulanan PDF'],
-          ADMIN_POGI: ['Kelola & Verifikasi Dokter Binaan PIC', 'Input Kredit SKP', 'Akses Portal Kemenkes (Auto-Log)', 'WA Blast Dokter Binaan'],
-          ADMIN_CABANG: ['Read-Only Monitoring Cabang Sendiri', 'Cek Kepatuhan Anggota Cabang'],
-          DOKTER: ['Portal Mandiri Portofolio 160 SKP', 'Unggah Tautan Google Drive Bukti SKP']
-        };
-        const perms = permsByRole[rawRole] || ['Akses Standar Sistem'];
         html = `
           <div class="space-y-4">
             <div class="flex items-center gap-3 p-3.5 bg-slate-50 border border-slate-200 rounded-2xl">
@@ -1743,7 +1733,6 @@
                   ${item.email_verified ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200">Email Terverifikasi</span>' : ''}
                 </div>
                 <div class="text-xs text-slate-600 font-mono mt-0.5 truncate">${item.email}</div>
-                <div class="text-[10px] text-slate-400 font-mono mt-0.5 truncate">UUID: ${item.id}</div>
               </div>
             </div>
 
@@ -1751,7 +1740,6 @@
               <div class="p-3 bg-white border border-slate-200 rounded-xl">
                 <div class="text-[10px] text-slate-400 font-bold uppercase">Role Akses</div>
                 <div class="font-extrabold text-slate-800 mt-0.5">${item.role}</div>
-                <div class="text-[10px] text-slate-400 font-mono">${rawRole}</div>
               </div>
               <div class="p-3 bg-white border border-slate-200 rounded-xl">
                 <div class="text-[10px] text-slate-400 font-bold uppercase">Wilayah / Cabang POGI</div>
@@ -1772,13 +1760,6 @@
               <div class="p-3 bg-white border border-slate-200 rounded-xl">
                 <div class="text-[10px] text-slate-400 font-bold uppercase">Binaan &amp; Audit Aktivitas</div>
                 <div class="font-bold text-slate-800 mt-0.5">${item.assigned_doctors_count ?? 0} Dokter PIC &bull; ${item.audit_actions_count ?? 0} Log</div>
-              </div>
-            </div>
-
-            <div class="p-3.5 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-2">
-              <div class="text-[10px] text-[#16b3ac] font-black uppercase tracking-wider">Hak Akses &amp; Wewenang RBAC</div>
-              <div class="flex flex-wrap gap-1.5">
-                ${perms.map(p => `<span class="px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-slate-700 text-[11px] font-semibold">${p}</span>`).join('')}
               </div>
             </div>
           </div>
