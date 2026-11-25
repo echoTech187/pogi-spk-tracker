@@ -929,8 +929,8 @@
       }
 
       // Dual-Timestamp Tracking & Vault (Live Database Synchronized)
-      const tsInternal = doc.dashboardUpdatedAt || ((typeof PogiStore !== 'undefined' && PogiStore.getDoctorTimestamps) ? PogiStore.getDoctorTimestamps(doc.id).dashboard_updated_at : 'Baru saja');
-      const tsKemenkes = doc.kemenkesUpdatedAt || ((typeof PogiStore !== 'undefined' && PogiStore.getDoctorTimestamps) ? PogiStore.getDoctorTimestamps(doc.id).kemenkes_updated_at : 'Menunggu Sinkronisasi');
+      const tsInternal = doc.dashboardUpdatedAt || '-';
+      const tsKemenkes = doc.kemenkesUpdatedAt || 'Menunggu Sinkronisasi';
       const vaultPath = `cloud-storage://pogi-skp-vault/${doc.id}/`;
       if (document.getElementById('tsInternal')) document.getElementById('tsInternal').innerText = tsInternal;
       if (document.getElementById('tsKemenkes')) document.getElementById('tsKemenkes').innerText = tsKemenkes;
@@ -1506,18 +1506,7 @@
         }
       })
       .catch(err => {
-        if (typeof PogiStore !== 'undefined') {
-          PogiStore.addDoctorDocument(activeDoctor.id, {
-            filename: filename,
-            category: category,
-            skpValue: skpValue,
-            driveUrl: driveUrl,
-            size: sizeStr
-          });
-        }
-        closeUploadDoctorDocModal();
-        renderDoctorRepositoryAndDetector(activeDoctor.id);
-        showToast(`Berkas "${filename}" berhasil disimpan ke Object Storage Cloud!`, 'success');
+        showToast('Gagal menyimpan berkas ke server. Silakan coba kembali.', 'error');
       });
     }
 
@@ -1606,9 +1595,6 @@
           if (newStatus === 'DONE') {
             docInList.uploadedKemenkes = 'Baru saja';
           }
-        }
-        if (typeof PogiStore !== 'undefined') {
-          PogiStore.updateDoctorDocumentStatus(activeDoctor.id, fileId, newStatus);
         }
         renderDoctorRepositoryAndDetector(activeDoctor.id);
         if (document.getElementById('tsKemenkes')) {
