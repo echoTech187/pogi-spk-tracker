@@ -259,27 +259,27 @@ erDiagram
 
 ### 3.1 DFD Level 0 (Context Diagram)
 
-Menampilkan batasan sistem dan entitas eksternal yang berinteraksi langsung:
+Menampilkan batasan sistem dan entitas eksternal yang berinteraksi langsung sesuai aturan RBAC dan alur kerja sistem saat ini:
 
 ```mermaid
 flowchart TD
     DOKTER["Dokter Spesialis Obgyn (User/Dokter)"]
-    CABANG["Admin Cabang POGI (Daerah)"]
-    VERIF["Admin POGI (Verifikator Nasional)"]
-    PUSAT["Admin Pusat & Pengurus PP POGI"]
+    CABANG["Admin Cabang POGI (Read-Only Cabang)"]
+    VERIF["Admin POGI (Verifikator Binaan PIC)"]
+    PUSAT["POGI Pusat / Admin Pusat (Read-Only Nasional)"]
     SUPER["Super Admin (PT Energi Cipta)"]
     WAGW["WhatsApp Business Gateway API"]
-    KEMENKES["Portal Plataran Sehat Kemenkes (Manual Sync)"]
+    KEMENKES["Portal SatuSehat SDMK Kemenkes (Manual-Assisted Sync)"]
 
-    SYS(("SISTEM MONITORING & MANAJEMEN SKP NASIONAL POGI (MedCred)"))
+    SYS(("SISTEM MONITORING & MANAJEMEN SKP NASIONAL POGI (Laravel 12 + TiDB Cloud)"))
 
-    DOKTER <-->|Login Mandiri, Input Tautan GDrive & Bukti, Cek Portofolio| SYS
-    CABANG <-->|Verifikasi Berkas Cabangnya, Monitoring Wilayah| SYS
-    VERIF <-->|Validasi Dokumen Binaan, Rekalkulasi Ranah, Alasan Tolak| SYS
-    PUSAT <-->|Pantau Peta 38 Prov, Monitor SLA Verifikator, Unduh Invoice PDF| SYS
-    SUPER <-->|Konfigurasi Master Data, User & Hak Akses, Audit Trail| SYS
-    SYS -->|Pesan Pengingat H-7 & H-2 dengan Anti-Ban Jitter| WAGW
-    SYS <-->|Sinkronisasi Status & Last Update Kemenkes| KEMENKES
+    DOKTER <-->|Login Mandiri, Input URL GDrive Wajib, Cek Portofolio 160 SKP| SYS
+    CABANG <-->|Monitoring Read-Only Dokter & Kepatuhan Cabangnya| SYS
+    VERIF <-->|Kelola & Verifikasi Dokter Binaan PIC Sendiri, WA Blast Binaan| SYS
+    PUSAT <-->|Monitoring Read-Only 38 Provinsi, SLA Admin, Unduh Laporan PDF| SYS
+    SUPER <-->|Master Data /manage, Alih PIC & Rebalancer, Cron, Audit Trail| SYS
+    SYS -->|Antrean WA Blast & Pengingat H-7 / H-2 dengan Jitter 1.5-3s| WAGW
+    SYS <-->|Launch Portal & Auto-Log Sesi Verifikator| KEMENKES
 ```
 
 ---
@@ -288,49 +288,53 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    subgraph P1["1.0 Manajemen Identitas & Hak Akses (RBAC)"]
-        D1[("Users & Roles")]
+    subgraph P1["1.0 Autentikasi, RBAC 5 Peran & Isolasi Scope (Cabang / PIC)"]
+        D1[("users & pogi_branches")]
+        S1["Cookie Session, Middleware RBAC & NikCipher (AES-256-GCM)"]
     end
 
-    subgraph P2["2.0 Repositori Dokumen & Verifikasi SKP"]
-        D2[("Doctor Documents Vault (Google Drive URLs)")]
-        D3[("SKP Entries Logbook")]
-        D4[("Doctor SKP Periods")]
+    subgraph P2["2.0 Master Data, Katalog Event & Portofolio 160 SKP"]
+        D2[("doctors & doctor_skp_periods")]
+        D3[("skp_events, event_categories & institutions")]
+        D4[("skp_entries & doctor_documents (GDrive URL Mandatori)")]
     end
 
-    subgraph P3["3.0 Pemantauan Wilayah & Kinerja SLA"]
-        D5[("Provinces & Branches")]
-        D6[("Verifier SLA Logs")]
-        D7[("Materialized View Peta")]
+    subgraph P3["3.0 Monitoring 38 Provinsi, Dashboard & SLA Admin POGI"]
+        D5[("provinces (Agregasi Live 38 Provinsi)")]
+        D6[("verifier_performance_logs")]
     end
 
-    subgraph P4["4.0 Otomasi Cutoff Bulanan & Arsip PDF"]
-        D8[("Monthly Cutoff Snapshots")]
-        D9[("S3 PDF Storage")]
+    subgraph P4["4.0 Monthly Cutoff Snapshot & Ekspor PDF Live DB"]
+        D7[("monthly_cutoff_snapshots & monthly_doctor_cutoff_details")]
+        D8["Client PDF Engine (jsPDF + LIVE_REPORT_PDF_CONTEXT)"]
     end
 
-    subgraph P5["5.0 Pengiriman Notifikasi & WA Blast"]
-        D10[("WA Message Queue")]
+    subgraph P5["5.0 WA Blast Manual & Otomasi Scheduler H-7 / H-2"]
+        D9[("wa_blast_campaigns & wa_message_queue")]
     end
 
-    subgraph P6["6.0 Audit Trail Kepatuhan UU PDP"]
-        D11[("Audit Logs")]
+    subgraph P6["6.0 Jejak Audit Permanen (UU PDP No. 27/2022)"]
+        D10[("audit_logs")]
     end
 
     P1 --> D1
+    P1 --> S1
     P2 --> D2
     P2 --> D3
     P2 --> D4
     P2 --> P3
     P3 --> D5
     P3 --> D6
-    P3 --> D7
+    P2 --> P4
+    P4 --> D7
     P4 --> D8
-    P4 --> D9
-    P5 --> D10
-    P2 --> P6
+    P2 --> P5
+    P5 --> D9
     P1 --> P6
-    P6 --> D11
+    P2 --> P6
+    P4 --> P6
+    P5 --> P6
+    P6 --> D10
 ```
 
 ---
