@@ -7,6 +7,7 @@ use App\Infrastructure\Security\NikCipher;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -214,7 +215,7 @@ class DoctorController extends Controller
     /**
      * Tampilkan detail portofolio dokter secara live dari basis data MySQL.
      */
-    public function show(Request $request): View
+    public function show(Request $request): View|RedirectResponse
     {
         $user = $request->user();
         $doctorId = $request->query('id');
@@ -282,6 +283,11 @@ class DoctorController extends Controller
             }
 
             $doctorRow = $fallbackQuery->first();
+        }
+
+        if (!$doctorRow) {
+            return redirect()->route('doctors.index')
+                ->with('info', 'Data dokter belum tersedia atau tidak ditemukan.');
         }
 
         // Isolasi multi-tenant ketat untuk ADMIN_CABANG & PIC binaan untuk ADMIN_POGI
