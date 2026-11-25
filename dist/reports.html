@@ -113,10 +113,10 @@
     <div id="sidebarUserProfileCard" class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
       <div class="flex items-center gap-2.5 min-w-0">
         <div id="sidebarUserAvatar" class="w-9 h-9 rounded-full bg-[#16b3ac] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
-          D
+          DI
         </div>
         <div class="min-w-0" id="sidebarUserInfo">
-          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Dian</div>
+          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Dian Imas</div>
           <div class="text-[10px] text-slate-400 font-mono truncate" id="sidebarUserEmail">super@example.com</div>
         </div>
       </div>
@@ -175,7 +175,7 @@
           <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
             <div class="font-bold text-slate-900 flex items-center gap-1.5">
               <span>Pemberitahuan Sistem</span>
-              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">157 Perlu FU</span>
+              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">1 Perlu FU</span>
             </div>
             <button type="button" onclick="markAllNotificationsAsRead()" class="text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer">
               Tandai Dibaca
@@ -188,8 +188,8 @@
               </div>
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
-                <div class="text-[11px] text-slate-500 mt-0.5">157 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">36 menit yang lalu</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">14 menit yang lalu</div>
               </div>
             </div>
           </div>
@@ -205,16 +205,16 @@
       <!-- User Avatar Profile Circle -->
       <div class="relative">
         <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#16b3ac] hover:bg-[#129993] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna">
-          <span id="headerUserInitials">D</span>
+          <span id="headerUserInitials">DI</span>
         </button>
         <!-- User Profile Dropdown Menu -->
         <div id="topUserDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
           <div class="px-4 py-2 border-b border-slate-100 flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-[#16b3ac] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs" id="headerDropdownAvatar">
-              D
+              DI
             </div>
             <div class="min-w-0">
-              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Dian</div>
+              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Dian Imas</div>
               <div class="text-[10px] text-slate-500 truncate" id="headerDropdownRole">Super Admin Sistem</div>
               <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#16b3ac] border border-emerald-200 text-[9px] font-bold mt-1">
                 <span class="w-1 h-1 rounded-full bg-emerald-600"></span> Online
@@ -582,63 +582,26 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-                                                <tr class="bg-emerald-50/50">
-                    <td class="py-3.5 px-4 font-bold text-slate-900 flex items-center gap-2">
-                      <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>                      Bulan 11/2026 (Aktif)
-                    </td>
-                    <td class="py-3.5 px-4 text-slate-600 font-medium">1 11 2026</td>
-                    <td class="py-3.5 px-4 text-slate-600 font-mono">01 Nov 2026, 00:00 WIB</td>
-                    <td class="py-3.5 px-4 text-center">
-                      <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-[#16b3ac]">
-                        Tersedia (Resmi)
-                      </span>
-                    </td>
-                    <td class="py-3.5 px-4 text-right">
-                      <div class="inline-flex items-center gap-2">
-                        <button type="button" onclick="printOnePogiMonthlyReportPdf('11/2026')"
-                          title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
-                          class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
-                          <span>Lap. Bulanan</span>
-                        </button>
-                        <button type="button" onclick="printOfficialSkpReportPdf('11/2026')"
-                          title="Unduh PDF Resmi SKP Report (1 Halaman)"
-                          class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
-                          <span>Report SKP</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                                  <tr class="">
-                    <td class="py-3.5 px-4 font-bold text-slate-900 flex items-center gap-2">
-                                            Bulan 10/2026 
-                    </td>
-                    <td class="py-3.5 px-4 text-slate-600 font-medium">1 10 2026</td>
-                    <td class="py-3.5 px-4 text-slate-600 font-mono">01 Oct 2026, 00:00 WIB</td>
-                    <td class="py-3.5 px-4 text-center">
-                      <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-[#16b3ac]">
-                        Tersedia (Resmi)
-                      </span>
-                    </td>
-                    <td class="py-3.5 px-4 text-right">
-                      <div class="inline-flex items-center gap-2">
-                        <button type="button" onclick="printOnePogiMonthlyReportPdf('10/2026')"
-                          title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
-                          class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
-                          <span>Lap. Bulanan</span>
-                        </button>
-                        <button type="button" onclick="printOfficialSkpReportPdf('10/2026')"
-                          title="Unduh PDF Resmi SKP Report (1 Halaman)"
-                          class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
-                          <span>Report SKP</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                                          </tbody>
+                              <tr class="bg-emerald-50/50">
+                  <td class="py-3.5 px-4 font-bold text-slate-900 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> November 2026 (Aktif)
+                  </td>
+                  <td class="py-3.5 px-4 text-slate-600 font-medium">1 November 2026</td>
+                  <td class="py-3.5 px-4 text-slate-600 font-mono">20 Nov 2026, 09:14 WIB</td>
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-[#16b3ac]">Tersedia (Resmi)</span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="inline-flex items-center gap-2">
+                      <button type="button" onclick="printOnePogiMonthlyReportPdf('November 2026')"
+                        class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                        <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
+                        <span>Lap. Bulanan</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                          </tbody>
               <tr>
                 <td class="py-3.5 px-4 font-bold text-slate-800">Agustus 2026</td>
                 <td class="py-3.5 px-4 text-slate-600">1 Agustus 2026</td>
@@ -744,9 +707,10 @@
     }
   </script>
 
-  <script src="/js/pogi_state.js"></script>
+  <script>
+    window.AUTH_USER = {"id":"14eac2f0-bb8c-4771-8c8d-8de6355003af","name":"Dian Imas","email":"super@example.com","role":"SUPER_ADMIN","branch":"Pusat"};
+  </script>
   <script src="/js/navigation.js"></script>
-  <script src="/js/pogi_template_data.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
     let chartMonthInstance = null;
@@ -754,22 +718,11 @@
     let chartDonutInstance = null;
     let chartStatusInstance = null;
 
-    const LIVE_MONTHLY_DATA = [{"name":"Januari 2026","short":"Jan","target":534,"real":1004.9,"complete":3,"pending":12,"pel":562.2,"peng":211.6,"pemb":342.8,"update":"30 Jan 2026, 17:00 WIB"},{"name":"Februari 2026","short":"Feb","target":534,"real":2009.9,"complete":6,"pending":12,"pel":1124.4,"peng":423.2,"pemb":685.6,"update":"30 Feb 2026, 17:00 WIB"},{"name":"Maret 2026","short":"Mar","target":534,"real":3014.8,"complete":10,"pending":12,"pel":1686.6,"peng":634.8,"pemb":1028.4,"update":"30 Mar 2026, 17:00 WIB"},{"name":"April 2026","short":"Apr","target":534,"real":4019.7,"complete":13,"pending":12,"pel":2248.8,"peng":846.3,"pemb":1371.2,"update":"30 Apr 2026, 17:00 WIB"},{"name":"Mei 2026","short":"Mei","target":534,"real":5024.6,"complete":16,"pending":12,"pel":2811,"peng":1057.9,"pemb":1714,"update":"30 Mei 2026, 17:00 WIB"},{"name":"Juni 2026","short":"Jun","target":534,"real":6029.6,"complete":19,"pending":12,"pel":3373.3,"peng":1269.5,"pemb":2056.8,"update":"30 Jun 2026, 17:00 WIB"},{"name":"Juli 2026","short":"Jul","target":534,"real":7034.5,"complete":23,"pending":12,"pel":3935.5,"peng":1481.1,"pemb":2399.5,"update":"30 Jul 2026, 17:00 WIB"},{"name":"Agustus 2026","short":"Agu","target":534,"real":8039.4,"complete":26,"pending":12,"pel":4497.7,"peng":1692.7,"pemb":2742.3,"update":"30 Agu 2026, 17:00 WIB"},{"name":"September 2026","short":"Sep","target":534,"real":9044.3,"complete":29,"pending":12,"pel":5059.9,"peng":1904.3,"pemb":3085.1,"update":"30 Sep 2026, 17:00 WIB"},{"name":"Oktober 2026","short":"Okt","target":534,"real":10049.3,"complete":32,"pending":12,"pel":5622.1,"peng":2115.8,"pemb":3427.9,"update":"30 Okt 2026, 17:00 WIB"},{"name":"November 2026","short":"Nov","target":534,"real":13399,"complete":43,"pending":0,"pel":6746.5,"peng":2539,"pemb":4113.5,"update":"25 Nov 2026, 10:43 WIB"},{"name":"Desember 2026","short":"Des","target":534,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"Belum Cutoff (1 Des 2026)"}];
-    const fallbackMonthlyData = [
-      { name: 'Januari 2026', short: 'Jan', target: 509.33, real: 126.0, complete: 38, pending: 24, pel: 110, peng: 6, pemb: 10, update: '31 Jan 2026, 17:00 WIB' },
-      { name: 'Februari 2026', short: 'Feb', target: 496.00, real: 229.0, complete: 68, pending: 20, pel: 200, peng: 12, pemb: 17, update: '28 Feb 2026, 17:00 WIB' },
-      { name: 'Maret 2026', short: 'Mar', target: 485.33, real: 1039.5, complete: 154, pending: 7, pel: 920, peng: 54, pemb: 65.5, update: '31 Mar 2026, 17:00 WIB' },
-      { name: 'April 2026', short: 'Apr', target: 482.67, real: 283.5, complete: 88, pending: 18, pel: 250, peng: 15, pemb: 18.5, update: '30 Apr 2026, 17:00 WIB' },
-      { name: 'Mei 2026', short: 'Mei', target: 477.33, real: 285.0, complete: 92, pending: 16, pel: 255, peng: 14, pemb: 16, update: '31 Mei 2026, 17:00 WIB' },
-      { name: 'Juni 2026', short: 'Jun', target: 469.33, real: 821.5, complete: 148, pending: 12, pel: 740, peng: 42, pemb: 39.5, update: '30 Jun 2026, 17:00 WIB' },
-      { name: 'Juli 2026', short: 'Jul', target: 469.33, real: 214.5, complete: 64, pending: 22, pel: 190, peng: 11, pemb: 13.5, update: '31 Jul 2026, 17:00 WIB' },
-      { name: 'Agustus 2026', short: 'Agu', target: 461.33, real: 257.0, complete: 80, pending: 20, pel: 230, peng: 13, pemb: 14, update: '31 Agu 2026, 17:00 WIB' },
-      { name: 'September 2026', short: 'Sep', target: 448.00, real: 923.5, complete: 152, pending: 9, pel: 830, peng: 48, pemb: 45.5, update: '30 Sep 2026, 17:00 WIB' },
-      { name: 'Oktober 2026', short: 'Okt', target: 442.67, real: 493.5, complete: 138, pending: 14, pel: 440, peng: 26, pemb: 27.5, update: '31 Okt 2026, 17:00 WIB' },
-      { name: 'November 2026', short: 'Nov', target: 429.33, real: 464.5, complete: 142, pending: 19, pel: 416, peng: 27, pemb: 21.5, update: '20 Nov 2026, 09:14 WIB' },
-      { name: 'Desember 2026', short: 'Des', target: 420.00, real: 0, complete: 0, pending: 0, pel: 0, peng: 0, pemb: 0, update: 'Belum Cutoff (1 Des 2026)' }
-    ];
-    const monthlyData = (Array.isArray(LIVE_MONTHLY_DATA) && LIVE_MONTHLY_DATA.length > 0) ? LIVE_MONTHLY_DATA : fallbackMonthlyData;
+    const LIVE_MONTHLY_DATA = [{"name":"Januari 2026","short":"Jan","target":2.67,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"Belum Ada Snapshot"},{"name":"Februari 2026","short":"Feb","target":2.67,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"Belum Ada Snapshot"},{"name":"Maret 2026","short":"Mar","target":2.67,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"Belum Ada Snapshot"},{"name":"April 2026","short":"Apr","target":2.67,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"Belum Ada Snapshot"},{"name":"Mei 2026","short":"Mei","target":2.67,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"Belum Ada Snapshot"},{"name":"Juni 2026","short":"Jun","target":2.67,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"Belum Ada Snapshot"},{"name":"Juli 2026","short":"Jul","target":2.67,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"Belum Ada Snapshot"},{"name":"Agustus 2026","short":"Agu","target":2.67,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"Belum Ada Snapshot"},{"name":"September 2026","short":"Sep","target":2.67,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"Belum Ada Snapshot"},{"name":"Oktober 2026","short":"Okt","target":2.67,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"Belum Ada Snapshot"},{"name":"November 2026","short":"Nov","target":2.67,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"25 Nov 2026, 17:47 WIB"},{"name":"Desember 2026","short":"Des","target":2.67,"real":0,"complete":0,"pending":0,"pel":0,"peng":0,"pemb":0,"update":"Belum Cutoff (1 Des 2026)"}];
+    const LIVE_REPORT_PDF_CONTEXT = {"metrics":{"total_reports":0,"total_verified_skp":0,"total_doctors":1,"complete_doctors":0,"incomplete_doctors":1,"pending_doctors":0,"compliance_rate":0},"totalRecords":0,"domainBreakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"topDoctors":[{"name":"dr. Budi Santoso, Sp.PD","province":"DKI Jakarta","status":"INCOMPLETE","total_skp":"0.00","pemb_skp":"0.00","pel_skp":"0.00","peng_skp":"0.00"}],"topEvents":[{"title":"Simposium Akhir Tahun Kardiologi Klinis \u0026 Maternal","event_date":"2026-11-25","credit_value":"2.00","domain":"PEMBELAJARAN","participants":0}],"topProvinces":[{"name":"DKI Jakarta","doctors_count":1,"complete_count":"0"}]};
+    window.LIVE_MONTHLY_DATA = LIVE_MONTHLY_DATA;
+    window.LIVE_REPORT_PDF_CONTEXT = LIVE_REPORT_PDF_CONTEXT;
+    const monthlyData = Array.isArray(LIVE_MONTHLY_DATA) ? LIVE_MONTHLY_DATA : [];
 
     let currentSelectedMonthIndex = 10; // November
 

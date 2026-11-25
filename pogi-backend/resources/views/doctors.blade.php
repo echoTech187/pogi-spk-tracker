@@ -418,7 +418,7 @@
           </div>
           <div>
             <h3 class="font-black text-slate-900 text-sm">Pengiriman Notifikasi WhatsApp Blast Massal</h3>
-            <p class="text-[11px] text-slate-500">Otomasi pengingat pemenuhan 160 SKP &amp; antrean anti-ban jitter (RULES.md Bab 4)</p>
+            <p class="text-[11px] text-slate-500">Otomasi pengingat pemenuhan 160 SKP</p>
           </div>
         </div>
         <button type="button" onclick="closeWaBlastModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
@@ -446,11 +446,11 @@
           <div class="flex flex-wrap gap-3">
             <label class="inline-flex items-center gap-2 font-semibold text-slate-700 cursor-pointer">
               <input type="checkbox" id="waBlastChWhatsapp" checked class="w-4 h-4 rounded text-[#16b3ac] border-slate-300" />
-              <span>WhatsApp Gateway (Anti-Ban Jitter 1.5–3s)</span>
+              <span>WhatsApp</span>
             </label>
             <label class="inline-flex items-center gap-2 font-semibold text-slate-700 cursor-pointer">
               <input type="checkbox" id="waBlastChEmail" class="w-4 h-4 rounded text-[#16b3ac] border-slate-300" />
-              <span>Email Resmi POGI</span>
+              <span>Email</span>
             </label>
           </div>
         </div>
@@ -458,7 +458,6 @@
         <div class="space-y-1.5">
           <label class="font-extrabold text-slate-800 block">3. Template Pesan Pengingat</label>
           <textarea id="waBlastMessageInput" rows="4" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">Yth. [Nama Dokter] (Cabang [Cabang] - [Provinsi]), kami mengingatkan agar segera melengkapi bukti berkas SKP (tautan Google Drive) pada portal POGI SKP Tracker sebelum jadwal cutoff bulanan.</textarea>
-          <div class="text-[11px] text-slate-400">Variabel didukung: <code>[Nama Dokter]</code>, <code>[Provinsi]</code>, <code>[Cabang]</code></div>
         </div>
       </div>
 
@@ -1152,7 +1151,9 @@
         institution: inst,
         assigned_to: assignedTo,
         period_start: periodStart,
-        period_end: periodEnd
+        period_end: periodEnd,
+        plataran_sehat_username: lmsUser,
+        plataran_sehat_password: lmsPass
       };
 
       fetch('/doctors', {

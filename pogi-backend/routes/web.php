@@ -116,4 +116,10 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/manage/users/{id}/status', [ManageController::class, 'updateUserStatus'])
         ->name('manage.users.status')
         ->middleware('role:SUPER_ADMIN');
+    Route::post('/manage/{type}/{id}/update', [ManageController::class, 'update'])
+        ->name('manage.update')
+        ->middleware('role:SUPER_ADMIN');
+    Route::delete('/manage/{type}/{id}', [ManageController::class, 'destroy'])
+        ->name('manage.destroy')
+        ->middleware('role:SUPER_ADMIN');
 });

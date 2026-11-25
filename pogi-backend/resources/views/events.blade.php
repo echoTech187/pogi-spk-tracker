@@ -330,10 +330,10 @@
               <tr class="hover:bg-slate-50/80 transition">
                 <td class="py-3.5 px-4">
                   <div class="font-bold text-slate-900 text-xs leading-snug">${eventTitle}</div>
-                  <div class="text-[10px] text-slate-400 font-mono mt-0.5 flex items-center gap-1.5 flex-wrap">
+                  <div class="text-[10px] text-slate-500 font-medium mt-0.5 flex items-center gap-1.5 flex-wrap">
                     <span class="inline-flex items-center gap-0.5"><span class="material-symbols-outlined text-[11px] text-slate-400">calendar_month</span>${e.date || 'Periode Q4 2026'}</span>
                     <span>&bull;</span>
-                    <span class="bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded font-mono text-[9px] font-bold">${e.id}</span>
+                    <span>${eventVenue}</span>
                   </div>
                 </td>
                 <td class="py-3.5 px-4">

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="jLNHYKQnTjIbHCjWnZgMZ4Wl3P1wSsj8wd0EeQq3">
+  <meta name="csrf-token" content="QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu">
   <title>POGI SKP Tracker - Monitoring Kepatuhan 38 Provinsi</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -12,10 +12,112 @@
   <!-- Leaflet.js CDN for Interactive Vector Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- jQuery & Select2 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   
   <!-- Core Styles -->
   <link rel="stylesheet" href="/css/style.css">
   <style>
+    /* =========================================================
+       Select2 Custom Tailwind Theme (Matching POGI SKP Tracker)
+       ========================================================= */
+    .select2-container {
+      width: 100% !important;
+      display: block !important;
+    }
+    .select2-container .select2-selection--single {
+      height: 38px !important;
+      background-color: #f8fafc !important; /* bg-slate-50 */
+      border: 1px solid #e2e8f0 !important; /* border-slate-200 */
+      border-radius: 0.75rem !important; /* rounded-xl (12px) */
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 4px !important;
+      outline: none !important;
+      transition: all 0.15s ease-in-out !important;
+      box-sizing: border-box !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      color: #1e293b !important; /* text-slate-800 */
+      font-size: 0.75rem !important; /* text-xs (12px) */
+      font-weight: 600 !important; /* font-semibold */
+      line-height: 36px !important;
+      padding-left: 8px !important;
+      padding-right: 28px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__placeholder {
+      color: #94a3b8 !important; /* text-slate-400 */
+      font-weight: 500 !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 100% !important;
+      right: 8px !important;
+      top: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow b {
+      border-color: #64748b transparent transparent transparent !important;
+      border-width: 5px 4px 0 4px !important;
+    }
+    .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+      border-color: transparent transparent #64748b transparent !important;
+      border-width: 0 4px 5px 4px !important;
+    }
+    .select2-container--default.select2-container--focus .select2-selection--single,
+    .select2-container--default.select2-container--open .select2-selection--single {
+      background-color: #ffffff !important;
+      border-color: #16b3ac !important;
+      box-shadow: 0 0 0 3px rgba(22, 179, 172, 0.15) !important;
+    }
+    .select2-dropdown {
+      background-color: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 0.75rem !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+      overflow: hidden !important;
+      z-index: 9999999 !important;
+      font-family: inherit !important;
+      padding-top: 4px !important;
+      padding-bottom: 4px !important;
+    }
+    .select2-container--default .select2-search--dropdown {
+      padding: 6px 8px !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 0.5rem !important;
+      padding: 6px 10px !important;
+      font-size: 0.75rem !important;
+      outline: none !important;
+      color: #1e293b !important;
+      box-sizing: border-box !important;
+      width: 100% !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+      border-color: #16b3ac !important;
+      box-shadow: 0 0 0 2px rgba(22, 179, 172, 0.15) !important;
+    }
+    .select2-results__option {
+      padding: 7px 12px !important;
+      font-size: 0.75rem !important;
+      font-weight: 500 !important;
+      color: #334155 !important;
+      cursor: pointer !important;
+    }
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+      background-color: #16b3ac !important;
+      color: #ffffff !important;
+    }
+    .select2-container--default .select2-results__option[aria-selected="true"] {
+      background-color: #f0fdf4 !important;
+      color: #0d9488 !important;
+      font-weight: 700 !important;
+    }
     #interactiveIndonesiaMap {
       background-color: transparent !important;
     }
@@ -160,10 +262,10 @@
     <div id="sidebarUserProfileCard" class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
       <div class="flex items-center gap-2.5 min-w-0">
         <div id="sidebarUserAvatar" class="w-9 h-9 rounded-full bg-[#16b3ac] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
-          D
+          DI
         </div>
         <div class="min-w-0" id="sidebarUserInfo">
-          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Dian</div>
+          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Dian Imas</div>
           <div class="text-[10px] text-slate-400 font-mono truncate" id="sidebarUserEmail">super@example.com</div>
         </div>
       </div>
@@ -222,7 +324,7 @@
           <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
             <div class="font-bold text-slate-900 flex items-center gap-1.5">
               <span>Pemberitahuan Sistem</span>
-              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">157 Perlu FU</span>
+              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">1 Perlu FU</span>
             </div>
             <button type="button" onclick="markAllNotificationsAsRead()" class="text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer">
               Tandai Dibaca
@@ -235,8 +337,8 @@
               </div>
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
-                <div class="text-[11px] text-slate-500 mt-0.5">157 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">36 menit yang lalu</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">14 menit yang lalu</div>
               </div>
             </div>
           </div>
@@ -252,16 +354,16 @@
       <!-- User Avatar Profile Circle -->
       <div class="relative">
         <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#16b3ac] hover:bg-[#129993] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna">
-          <span id="headerUserInitials">D</span>
+          <span id="headerUserInitials">DI</span>
         </button>
         <!-- User Profile Dropdown Menu -->
         <div id="topUserDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
           <div class="px-4 py-2 border-b border-slate-100 flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-[#16b3ac] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs" id="headerDropdownAvatar">
-              D
+              DI
             </div>
             <div class="min-w-0">
-              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Dian</div>
+              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Dian Imas</div>
               <div class="text-[10px] text-slate-500 truncate" id="headerDropdownRole">Super Admin Sistem</div>
               <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#16b3ac] border border-emerald-200 text-[9px] font-bold mt-1">
                 <span class="w-1 h-1 rounded-full bg-emerald-600"></span> Online
@@ -362,7 +464,7 @@
   <!-- Global Application Modals (Outside Main Stacking Context for Full Viewport Overlay) -->
   
   <script>
-    window.AUTH_USER = {"id":"14eac2f0-bb8c-4771-8c8d-8de6355003af","name":"Dian","email":"super@example.com","role":"SUPER_ADMIN","branch":"Pusat"};
+    window.AUTH_USER = {"id":"14eac2f0-bb8c-4771-8c8d-8de6355003af","name":"Dian Imas","email":"super@example.com","role":"SUPER_ADMIN","branch":"Pusat"};
   </script>
   <!-- Core Scripts -->
   <script src="/js/navigation.js"></script>
@@ -456,7 +558,7 @@
     }
 
 
-    const LIVE_SERVER_PROVINCES = [{"id":"11","name":"Aceh","region":"Sumatera","doctors":3,"complete":0,"incomplete":3,"pending":0,"completionRate":0},{"id":"51","name":"Bali","region":"Bali \u0026 Nusa Tenggara","doctors":10,"complete":1,"incomplete":9,"pending":0,"completionRate":10},{"id":"36","name":"Banten","region":"Jawa","doctors":8,"complete":1,"incomplete":7,"pending":0,"completionRate":12.5},{"id":"17","name":"Bengkulu","region":"Sumatera","doctors":3,"complete":0,"incomplete":3,"pending":0,"completionRate":0},{"id":"34","name":"DI Yogyakarta","region":"Jawa","doctors":7,"complete":2,"incomplete":5,"pending":0,"completionRate":28.6},{"id":"31","name":"DKI Jakarta","region":"Jawa","doctors":22,"complete":7,"incomplete":15,"pending":0,"completionRate":31.8},{"id":"75","name":"Gorontalo","region":"Sulawesi","doctors":2,"complete":0,"incomplete":2,"pending":0,"completionRate":0},{"id":"15","name":"Jambi","region":"Sumatera","doctors":7,"complete":3,"incomplete":4,"pending":0,"completionRate":42.9},{"id":"32","name":"Jawa Barat","region":"Jawa","doctors":8,"complete":0,"incomplete":8,"pending":0,"completionRate":0},{"id":"33","name":"Jawa Tengah","region":"Jawa","doctors":11,"complete":5,"incomplete":6,"pending":0,"completionRate":45.5},{"id":"35","name":"Jawa Timur","region":"Jawa","doctors":8,"complete":2,"incomplete":6,"pending":0,"completionRate":25},{"id":"61","name":"Kalimantan Barat","region":"Kalimantan","doctors":5,"complete":1,"incomplete":4,"pending":0,"completionRate":20},{"id":"63","name":"Kalimantan Selatan","region":"Kalimantan","doctors":4,"complete":1,"incomplete":3,"pending":0,"completionRate":25},{"id":"62","name":"Kalimantan Tengah","region":"Kalimantan","doctors":3,"complete":0,"incomplete":3,"pending":0,"completionRate":0},{"id":"64","name":"Kalimantan Timur","region":"Kalimantan","doctors":6,"complete":1,"incomplete":5,"pending":0,"completionRate":16.7},{"id":"65","name":"Kalimantan Utara","region":"Kalimantan","doctors":3,"complete":2,"incomplete":1,"pending":0,"completionRate":66.7},{"id":"19","name":"Kepulauan Bangka Belitung","region":"Sumatera","doctors":3,"complete":0,"incomplete":3,"pending":0,"completionRate":0},{"id":"21","name":"Kepulauan Riau","region":"Sumatera","doctors":3,"complete":1,"incomplete":2,"pending":0,"completionRate":33.3},{"id":"18","name":"Lampung","region":"Sumatera","doctors":5,"complete":1,"incomplete":4,"pending":0,"completionRate":20},{"id":"81","name":"Maluku","region":"Maluku \u0026 Papua","doctors":2,"complete":0,"incomplete":2,"pending":0,"completionRate":0},{"id":"82","name":"Maluku Utara","region":"Maluku \u0026 Papua","doctors":2,"complete":0,"incomplete":2,"pending":0,"completionRate":0},{"id":"52","name":"Nusa Tenggara Barat","region":"Bali \u0026 Nusa Tenggara","doctors":4,"complete":1,"incomplete":3,"pending":0,"completionRate":25},{"id":"53","name":"Nusa Tenggara Timur","region":"Bali \u0026 Nusa Tenggara","doctors":7,"complete":0,"incomplete":7,"pending":0,"completionRate":0},{"id":"92","name":"Papua","region":"Maluku \u0026 Papua","doctors":4,"complete":0,"incomplete":4,"pending":0,"completionRate":0},{"id":"91","name":"Papua Barat","region":"Maluku \u0026 Papua","doctors":2,"complete":0,"incomplete":2,"pending":0,"completionRate":0},{"id":"96","name":"Papua Barat Daya","region":"Maluku \u0026 Papua","doctors":1,"complete":0,"incomplete":1,"pending":0,"completionRate":0},{"id":"95","name":"Papua Pegunungan","region":"Maluku \u0026 Papua","doctors":6,"complete":1,"incomplete":5,"pending":0,"completionRate":16.7},{"id":"93","name":"Papua Selatan","region":"Maluku \u0026 Papua","doctors":1,"complete":0,"incomplete":1,"pending":0,"completionRate":0},{"id":"94","name":"Papua Tengah","region":"Maluku \u0026 Papua","doctors":1,"complete":0,"incomplete":1,"pending":0,"completionRate":0},{"id":"14","name":"Riau","region":"Sumatera","doctors":6,"complete":1,"incomplete":5,"pending":0,"completionRate":16.7},{"id":"76","name":"Sulawesi Barat","region":"Sulawesi","doctors":2,"complete":0,"incomplete":2,"pending":0,"completionRate":0},{"id":"73","name":"Sulawesi Selatan","region":"Sulawesi","doctors":12,"complete":4,"incomplete":8,"pending":0,"completionRate":33.3},{"id":"72","name":"Sulawesi Tengah","region":"Sulawesi","doctors":3,"complete":0,"incomplete":3,"pending":0,"completionRate":0},{"id":"74","name":"Sulawesi Tenggara","region":"Sulawesi","doctors":3,"complete":0,"incomplete":3,"pending":0,"completionRate":0},{"id":"71","name":"Sulawesi Utara","region":"Sulawesi","doctors":3,"complete":2,"incomplete":1,"pending":0,"completionRate":66.7},{"id":"13","name":"Sumatera Barat","region":"Sumatera","doctors":4,"complete":2,"incomplete":2,"pending":0,"completionRate":50},{"id":"16","name":"Sumatera Selatan","region":"Sumatera","doctors":6,"complete":1,"incomplete":5,"pending":0,"completionRate":16.7},{"id":"12","name":"Sumatera Utara","region":"Sumatera","doctors":10,"complete":3,"incomplete":7,"pending":0,"completionRate":30}];
+    const LIVE_SERVER_PROVINCES = [{"id":"11","name":"Aceh","region":"Sumatera","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"51","name":"Bali","region":"Bali \u0026 Nusa Tenggara","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"36","name":"Banten","region":"Jawa","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"17","name":"Bengkulu","region":"Sumatera","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"34","name":"DI Yogyakarta","region":"Jawa","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"31","name":"DKI Jakarta","region":"Jawa","doctors":1,"complete":0,"incomplete":1,"pending":0,"completionRate":0},{"id":"75","name":"Gorontalo","region":"Sulawesi","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"15","name":"Jambi","region":"Sumatera","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"32","name":"Jawa Barat","region":"Jawa","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"33","name":"Jawa Tengah","region":"Jawa","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"35","name":"Jawa Timur","region":"Jawa","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"61","name":"Kalimantan Barat","region":"Kalimantan","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"63","name":"Kalimantan Selatan","region":"Kalimantan","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"62","name":"Kalimantan Tengah","region":"Kalimantan","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"64","name":"Kalimantan Timur","region":"Kalimantan","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"65","name":"Kalimantan Utara","region":"Kalimantan","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"19","name":"Kepulauan Bangka Belitung","region":"Sumatera","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"21","name":"Kepulauan Riau","region":"Sumatera","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"18","name":"Lampung","region":"Sumatera","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"81","name":"Maluku","region":"Maluku \u0026 Papua","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"82","name":"Maluku Utara","region":"Maluku \u0026 Papua","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"52","name":"Nusa Tenggara Barat","region":"Bali \u0026 Nusa Tenggara","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"53","name":"Nusa Tenggara Timur","region":"Bali \u0026 Nusa Tenggara","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"92","name":"Papua","region":"Maluku \u0026 Papua","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"91","name":"Papua Barat","region":"Maluku \u0026 Papua","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"96","name":"Papua Barat Daya","region":"Maluku \u0026 Papua","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"95","name":"Papua Pegunungan","region":"Maluku \u0026 Papua","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"93","name":"Papua Selatan","region":"Maluku \u0026 Papua","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"94","name":"Papua Tengah","region":"Maluku \u0026 Papua","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"14","name":"Riau","region":"Sumatera","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"76","name":"Sulawesi Barat","region":"Sulawesi","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"73","name":"Sulawesi Selatan","region":"Sulawesi","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"72","name":"Sulawesi Tengah","region":"Sulawesi","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"74","name":"Sulawesi Tenggara","region":"Sulawesi","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"71","name":"Sulawesi Utara","region":"Sulawesi","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"13","name":"Sumatera Barat","region":"Sumatera","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"16","name":"Sumatera Selatan","region":"Sumatera","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0},{"id":"12","name":"Sumatera Utara","region":"Sumatera","doctors":0,"complete":0,"incomplete":0,"pending":0,"completionRate":0}];
     let provincePagination = { page: 1, limit: 10, total: LIVE_SERVER_PROVINCES.length || 0 };
     let currentFilteredProvinces = null;
 

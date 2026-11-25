@@ -204,7 +204,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3.5">
         <!-- 1. Pelayanan (35% = 56 SKP) -->
         <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
           <div class="flex items-center justify-between">

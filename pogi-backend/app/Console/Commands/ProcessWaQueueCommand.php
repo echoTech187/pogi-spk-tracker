@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 
 class ProcessWaQueueCommand extends Command
 {
-    protected $signature = 'pogi:wa-process-queue {--limit=15 : Maksimal 15 pesan/menit (RULES.md Bab 4)}';
+    protected $signature = 'pogi:wa-process-queue {--limit=15 : Maksimal 15 pesan/menit }';
     protected $description = 'Proses antrean wa_message_queue dengan anti-ban jitter 1500-3000ms (maks 15 pesan/menit)';
 
     public function handle(): int

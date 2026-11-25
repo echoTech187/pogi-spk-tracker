@@ -1,130 +1,175 @@
 <!DOCTYPE html>
 <html lang="id" class="h-full bg-[#f4f7f6]">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POGI SKP Tracker - Detail Dokter & Status Kredensial</title>
-  <!-- Tailwind CSS CDN -->
+  <meta name="csrf-token" content="QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu">
+  <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
+  
+  <!-- Tailwind CSS & CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Core Fonts & Styles -->
+  
+  <!-- Leaflet.js CDN for Interactive Vector Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- jQuery & Select2 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  
+  <!-- Core Styles -->
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
-    rel="stylesheet">
-  <!-- Material Symbols Outlined -->
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-  <!-- Print Stylesheet: Cetak Hanya Dokumen Saja (Modal & Elemen Web Tersembunyi) -->
   <style>
-    @media print {
-
-      html,
-      body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #ffffff !important;
-        width: 100% !important;
-        height: auto !important;
-        overflow: visible !important;
-      }
-
-      /* Sembunyikan seluruh elemen halaman utama & backdrop */
-      body>*:not(#doctorDocPreviewModal) {
-        display: none !important;
-      }
-
-      /* Reset container modal pratinjau saat dicetak */
-      #doctorDocPreviewModal {
-        position: static !important;
-        display: block !important;
-        width: 100% !important;
-        height: auto !important;
-        background: transparent !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        overflow: visible !important;
-        z-index: 9999 !important;
-      }
-
-      /* Sembunyikan toolbar atas modal dan tombol kontrol */
-      #doctorDocPreviewModalHeader,
-      .no-print {
-        display: none !important;
-      }
-
-      #docViewerScrollContainer {
-        padding: 0 !important;
-        margin: 0 !important;
-        background: transparent !important;
-        overflow: visible !important;
-        display: block !important;
-        width: 100% !important;
-        height: auto !important;
-      }
-
-      /* Format lembar A4 murni tanpa zoom / bayangan */
-      #pdfDocumentSheet {
-        position: static !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        min-height: auto !important;
-        box-shadow: none !important;
-        border: none !important;
-        border-radius: 0 !important;
-        margin: 0 !important;
-        padding: 6mm 10mm !important;
-        transform: none !important;
-        page-break-inside: avoid;
-        background: #ffffff !important;
-        color: #000000 !important;
-      }
-
-      * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      @page {
-        size: A4 portrait;
-        margin: 8mm;
-      }
+    /* =========================================================
+       Select2 Custom Tailwind Theme (Matching POGI SKP Tracker)
+       ========================================================= */
+    .select2-container {
+      width: 100% !important;
+      display: block !important;
+    }
+    .select2-container .select2-selection--single {
+      height: 38px !important;
+      background-color: #f8fafc !important; /* bg-slate-50 */
+      border: 1px solid #e2e8f0 !important; /* border-slate-200 */
+      border-radius: 0.75rem !important; /* rounded-xl (12px) */
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 4px !important;
+      outline: none !important;
+      transition: all 0.15s ease-in-out !important;
+      box-sizing: border-box !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      color: #1e293b !important; /* text-slate-800 */
+      font-size: 0.75rem !important; /* text-xs (12px) */
+      font-weight: 600 !important; /* font-semibold */
+      line-height: 36px !important;
+      padding-left: 8px !important;
+      padding-right: 28px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__placeholder {
+      color: #94a3b8 !important; /* text-slate-400 */
+      font-weight: 500 !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 100% !important;
+      right: 8px !important;
+      top: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow b {
+      border-color: #64748b transparent transparent transparent !important;
+      border-width: 5px 4px 0 4px !important;
+    }
+    .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+      border-color: transparent transparent #64748b transparent !important;
+      border-width: 0 4px 5px 4px !important;
+    }
+    .select2-container--default.select2-container--focus .select2-selection--single,
+    .select2-container--default.select2-container--open .select2-selection--single {
+      background-color: #ffffff !important;
+      border-color: #16b3ac !important;
+      box-shadow: 0 0 0 3px rgba(22, 179, 172, 0.15) !important;
+    }
+    .select2-dropdown {
+      background-color: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 0.75rem !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+      overflow: hidden !important;
+      z-index: 9999999 !important;
+      font-family: inherit !important;
+      padding-top: 4px !important;
+      padding-bottom: 4px !important;
+    }
+    .select2-container--default .select2-search--dropdown {
+      padding: 6px 8px !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 0.5rem !important;
+      padding: 6px 10px !important;
+      font-size: 0.75rem !important;
+      outline: none !important;
+      color: #1e293b !important;
+      box-sizing: border-box !important;
+      width: 100% !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+      border-color: #16b3ac !important;
+      box-shadow: 0 0 0 2px rgba(22, 179, 172, 0.15) !important;
+    }
+    .select2-results__option {
+      padding: 7px 12px !important;
+      font-size: 0.75rem !important;
+      font-weight: 500 !important;
+      color: #334155 !important;
+      cursor: pointer !important;
+    }
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+      background-color: #16b3ac !important;
+      color: #ffffff !important;
+    }
+    .select2-container--default .select2-results__option[aria-selected="true"] {
+      background-color: #f0fdf4 !important;
+      color: #0d9488 !important;
+      font-weight: 700 !important;
+    }
+    #interactiveIndonesiaMap {
+      background-color: transparent !important;
+    }
+    .leaflet-container {
+      background: transparent !important;
+      font-family: inherit;
+    }
+    .leaflet-tooltip {
+      background: #0f172a !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255,255,255,0.2) !important;
+      border-radius: 10px !important;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3) !important;
+      padding: 6px 12px !important;
+      font-size: 11px !important;
+    }
+    .leaflet-tooltip-top:before {
+      border-top-color: #0f172a !important;
     }
 
-    @keyframes verifyGlow {
-      0% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-      }
-
-      50% {
-        transform: scale(1.02);
-        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0.25);
-        border-color: #059669;
-      }
-
-      100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-      }
+    /* Modal Sticky Header & Footer, Scrollable Body */
+    .modal-dialog-scrollable {
+      max-height: 90vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
     }
-
-    .pulse-emerald {
-      animation: verifyGlow 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    .modal-header-sticky {
+      flex-shrink: 0 !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 20 !important;
+    }
+    .modal-body-scrollable {
+      flex: 1 1 auto !important;
+      overflow-y: auto !important;
+      min-height: 0 !important;
+    }
+    .modal-footer-sticky {
+      flex-shrink: 0 !important;
+      position: sticky !important;
+      bottom: 0 !important;
+      z-index: 20 !important;
     }
   </style>
-</head>
-
+  </head>
 <body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
-  <!-- MOBILE BACKDROP OVERLAY -->
-  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)"
-    class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden">
-  </div>
+  <!-- Mobile Backdrop Overlay -->
+  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
 
   <div class="flex h-screen overflow-hidden">
-    <!-- APP SIDEBAR (STANDAR POGI) -->
+    <!-- APP SIDEBAR -->
     <aside id="appSidebar" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] lg:w-64 bg-white border-r border-slate-200/90 flex flex-col shrink-0 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static lg:inset-auto shadow-2xl lg:shadow-none">
   <!-- Top Brand Header -->
   <div class="px-4 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
@@ -217,10 +262,10 @@
     <div id="sidebarUserProfileCard" class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
       <div class="flex items-center gap-2.5 min-w-0">
         <div id="sidebarUserAvatar" class="w-9 h-9 rounded-full bg-[#16b3ac] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
-          D
+          DI
         </div>
         <div class="min-w-0" id="sidebarUserInfo">
-          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Dian</div>
+          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Dian Imas</div>
           <div class="text-[10px] text-slate-400 font-mono truncate" id="sidebarUserEmail">super@example.com</div>
         </div>
       </div>
@@ -231,9 +276,9 @@
   </div>
 </aside>
 
-    <!-- MAIN CONSOLE WRAPPER -->
+    <!-- MAIN CONTENT AREA -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-      <!-- TOP STICKY HEADER (STANDAR POGI) -->
+      <!-- Top Sticky Header -->
       <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200/90 shrink-0 w-full print:hidden">
   <div class="h-14 sm:h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
     <!-- Left: Mobile menu button -->
@@ -279,7 +324,7 @@
           <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
             <div class="font-bold text-slate-900 flex items-center gap-1.5">
               <span>Pemberitahuan Sistem</span>
-              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">157 Perlu FU</span>
+              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">1 Perlu FU</span>
             </div>
             <button type="button" onclick="markAllNotificationsAsRead()" class="text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer">
               Tandai Dibaca
@@ -292,8 +337,8 @@
               </div>
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
-                <div class="text-[11px] text-slate-500 mt-0.5">157 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">36 menit yang lalu</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">14 menit yang lalu</div>
               </div>
             </div>
           </div>
@@ -309,16 +354,16 @@
       <!-- User Avatar Profile Circle -->
       <div class="relative">
         <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#16b3ac] hover:bg-[#129993] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna">
-          <span id="headerUserInitials">D</span>
+          <span id="headerUserInitials">DI</span>
         </button>
         <!-- User Profile Dropdown Menu -->
         <div id="topUserDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
           <div class="px-4 py-2 border-b border-slate-100 flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-[#16b3ac] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs" id="headerDropdownAvatar">
-              D
+              DI
             </div>
             <div class="min-w-0">
-              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Dian</div>
+              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Dian Imas</div>
               <div class="text-[10px] text-slate-500 truncate" id="headerDropdownRole">Super Admin Sistem</div>
               <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#16b3ac] border border-emerald-200 text-[9px] font-bold mt-1">
                 <span class="w-1 h-1 rounded-full bg-emerald-600"></span> Online
@@ -351,413 +396,414 @@
   </div>
 </header>
 
-      <!-- MAIN SCROLLABLE CONTENT -->
+      <!-- Main Body Scrollable View -->
       <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in">
+        
+  <!-- MAIN SCROLLABLE CONTENT -->
+  <main class="flex-1 overflow-y-auto space-y-6 page-fade-in">
 
-        <!-- Navigation Breadcrumb & Back Button -->
-        <div class="flex items-center justify-between gap-3">
-          <a href="/doctors"
-            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs">
-            <span class="material-symbols-outlined text-sm text-[#16b3ac]">arrow_back</span>
-            <span>Kembali </span>
-          </a>
-          <div class="text-[11px] text-slate-500 font-medium">
-            Monitoring SKP Dokter Obgyn &bull; <strong id="breadcrumbDoctorName">dr. Yohana Suryani, Sp.OG(K)</strong>
-          </div>
-        </div>
+    <!-- Navigation Breadcrumb & Back Button -->
+    <div class="flex items-center justify-between gap-3">
+      <a href="/doctors"
+        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs">
+        <span class="material-symbols-outlined text-sm text-[#16b3ac]">arrow_back</span>
+        <span>Kembali </span>
+      </a>
+      <div class="text-[11px] text-slate-500 font-medium">
+        Monitoring SKP Dokter Obgyn &bull; <strong id="breadcrumbDoctorName">dr. Budi Santoso, Sp.PD</strong>
+      </div>
+    </div>
 
         
-        <!-- DOCTOR PROFILE HERO CARD -->
-        <div class="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-2xs space-y-6">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-slate-100 pb-5">
-            <div class="flex items-center gap-4 min-w-0">
-              <div id="doctorAvatar"
-                class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#16b3ac] text-white font-black text-2xl flex items-center justify-center shrink-0 shadow-xs ring-4 ring-emerald-50">
-                YS
-              </div>
-              <div class="min-w-0">
-                <div class="flex items-center gap-2 flex-wrap mb-1">
-                  <span id="doctorPogiId"
-                    class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-[#16b3ac] border border-emerald-200 font-mono text-xs font-black">##POGI-2026-1050</span>
-                  <span id="doctorStatusBadge"
-                    class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-50 text-[#16b3ac] border border-emerald-200 flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span>Complete</span>
-                  </span>
-                  <!-- PIC Admin Binaan Badge -->
-                  <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-sky-50 border border-sky-200 text-sky-900 text-xs font-semibold">
-                    <span class="material-symbols-outlined text-[15px] text-sky-600">assignment_ind</span>
-                    <span>PIC:</span>
-                    <span id="doctorAssignedTo" class="font-bold text-sky-950">Anna</span>
-                                        <button type="button" onclick="openChangePicModal()" class="ml-1 text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5" title="Ubah PIC Admin Pendamping">
-                      <span class="material-symbols-outlined text-[12px]">swap_horiz</span> Ganti PIC
-                    </button>
-                                      </div>
-                </div>
-                <h1 id="doctorName" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">dr. Yohana Suryani, Sp.OG(K)</h1>
-                <p id="doctorSpecialty" class="text-xs text-slate-500 font-semibold mt-0.5">Sp.OG</p>
-              </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div id="doctorActionButtonsContainer" class="flex items-center gap-2.5 flex-wrap shrink-0">
-              <button type="button" onclick="approveDoctorCredits()"
-                class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
-                <span class="material-symbols-outlined text-base">verified</span>
-                <span>Verifikasi Kredit (+4.5 SKP)</span>
-              </button>
-            </div>
+    <!-- DOCTOR PROFILE HERO CARD -->
+    <div class="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-2xs space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-slate-100 pb-5">
+        <div class="flex items-center gap-4 min-w-0">
+          <div id="doctorAvatar"
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#16b3ac] text-white font-black text-2xl flex items-center justify-center shrink-0 shadow-xs ring-4 ring-emerald-50">
+            BS
           </div>
-
-          <!-- Doctor Metadata Grid -->
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
-            <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
-              <div class="text-[10px] text-slate-400 font-bold uppercase">Nomor STR (Kemenkes)</div>
-              <div id="doctorStr" class="font-extrabold text-slate-900 mt-1 font-mono">32.73.100.2.21.0050</div>
-              <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">&bull; Habis: 01 Mar 2027</div>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
-              <div class="text-[10px] text-slate-400 font-bold uppercase">NIK / Kependudukan</div>
-              <div id="doctorNik" class="font-extrabold text-slate-900 mt-1 font-mono">32d5327cf335ebfe</div>
-              <div class="text-[10px] text-slate-500 font-semibold mt-0.5">Dukcapil Valid</div>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
-              <div class="text-[10px] text-slate-400 font-bold uppercase">Cabang POGI</div>
-              <div id="doctorProvince" class="font-extrabold text-slate-900 mt-1">Jawa Tengah</div>
-              <div class="text-[10px] text-slate-500 font-semibold mt-0.5">Cabang Terdaftar</div>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
-              <div class="text-[10px] text-slate-400 font-bold uppercase">RS Jejaring Praktik</div>
-              <div id="doctorHospital" class="font-extrabold text-slate-900 mt-1 truncate">RS Panti Wilasa</div>
-              <div class="text-[10px] text-[#16b3ac] font-semibold mt-0.5">SIP Terbit Aktif</div>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100 flex flex-col justify-between col-span-2 sm:col-span-1">
-              <div>
-                <div class="text-[10px] text-slate-400 font-bold uppercase">PIC Admin Binaan</div>
-                <div id="doctorPicCardName" class="font-extrabold text-slate-900 mt-1 truncate">Anna</div>
-                <div class="text-[10px] text-sky-700 font-semibold mt-0.5 flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>Admin POGI
-                </div>
-              </div>
-                            <button type="button" onclick="openChangePicModal()" class="mt-2 text-left text-[11px] text-[#16b3ac] font-bold hover:underline inline-flex items-center gap-1">
-                <span class="material-symbols-outlined text-[13px]">swap_horiz</span> Alihkan PIC
-              </button>
-                          </div>
-          </div>
-
-          <!-- Dual-Timestamp Tracking & Sync Protocol Banner (RULES.md Bab 1.2 & 5.2) -->
-          <div
-            class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-lg">cloud_sync</span>
-              </div>
-              <div>
-                <div class="font-extrabold text-slate-900 text-xs flex items-center gap-2 flex-wrap">
-                  <span>Protokol Sinkronisasi: Non-API / Manual-Assisted Sync</span>
-                </div>
-                <div class="text-[11px] text-slate-500 mt-0.5">
-                  Folder Cloud Anggota: <code id="metaVaultPath"
-                    class="font-mono text-[#16b3ac] font-bold">cloud-storage://pogi-skp-vault/012eb9b4-7667-4b47-9e9d-a48738f3385f/</code>
-                </div>
-              </div>
-            </div>
-            <div
-              class="flex items-center gap-4 text-[11px] border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-4 shrink-0">
-              <div>
-                <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Internal Updated
-                  (Energi Cipta)</span>
-                <span id="tsInternal" class="font-mono font-bold text-slate-800">25 Nov 2026, 10.42 WIB</span>
-              </div>
-              <div>
-                <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Kemenkes Synced (Portal
-                  Plataran)</span>
-                <span id="tsKemenkes" class="font-mono font-bold text-emerald-700">25 Nov 2026, 10.42 WIB</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3 SUBBIDANG SKP MANDATORI & FLEKSIBILITAS (KMK 1561/2024 & KMK 1111/2026) -->
-        <div>
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
-            <div>
-              <div class="flex items-center gap-2 flex-wrap">
-                <h2 class="text-base font-black text-slate-900">Pemenuhan Subbidang SKP Mandatori (160 SKP / 5 Tahun)
-                </h2>
-                <span
-                  class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#16b3ac] border border-emerald-200">KMK
-                  1561/2024 &amp; 1111/2026</span>
-              </div>
-              <p class="text-xs text-slate-500">Standar resmi Kemenkes: Pelayanan 35% (56 SKP), Pengabdian 5% (8 SKP),
-                Pembelajaran 45% (72 SKP), &amp; Fleksibilitas 15% (24 SKP)</p>
-            </div>
-            <div class="text-left sm:text-right shrink-0">
-              <span class="text-xs font-bold text-slate-400">Target Kuartal (Q4):</span>
-              <strong id="doctorQ4TargetText" class="text-xs font-black text-[#16b3ac] ml-1">8.0 SKP / Dokter <span class="text-slate-400 font-normal">| Realisasi:</span> <span class="text-emerald-700 font-black">164 SKP</span></strong>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-            <!-- 1. Pelayanan (35% = 56 SKP) -->
-            <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center font-bold">
-                    <span class="material-symbols-outlined text-base">medical_services</span>
-                  </div>
-                  <div>
-                    <h3 class="font-black text-xs text-slate-900">1. Pelayanan</h3>
-                    <div class="text-[10px] text-slate-400">Min. 35% (56 SKP)</div>
-                  </div>
-                </div>
-                <span id="badgePelayanan"
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-sky-50 text-sky-700 border border-sky-200">100%</span>
-              </div>
-              <div class="flex items-baseline justify-between text-xs">
-                <span class="text-slate-500 text-[11px]">Realisasi:</span>
-                <span class="text-base font-black text-sky-950"><span id="valPelayanan">140.5</span> <span
-                    class="text-xs font-normal text-slate-400">/ 56 SKP</span></span>
-              </div>
-              <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div id="barPelayanan" class="bg-sky-500 h-2 rounded-full transition-all duration-500"
-                  style="width: 100%"></div>
-              </div>
-              <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
-                IGD PONEK, Bedah SC, Rawat Jalan Poli.
-              </div>
-            </div>
-
-            <!-- 2. Pengabdian (5% = 8 SKP) -->
-            <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div
-                    class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
-                    <span class="material-symbols-outlined text-base">volunteer_activism</span>
-                  </div>
-                  <div>
-                    <h3 class="font-black text-xs text-slate-900">2. Pengabdian</h3>
-                    <div class="text-[10px] text-slate-400">Min. 5% (8 SKP)</div>
-                  </div>
-                </div>
-                <span id="badgePengabdian"
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200">100%</span>
-              </div>
-              <div class="flex items-baseline justify-between text-xs">
-                <span class="text-slate-500 text-[11px]">Realisasi:</span>
-                <span class="text-base font-black text-amber-950"><span id="valPengabdian">10</span> <span
-                    class="text-xs font-normal text-slate-400">/ 8 SKP</span></span>
-              </div>
-              <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div id="barPengabdian" class="bg-amber-500 h-2 rounded-full transition-all duration-500"
-                  style="width: 100%"></div>
-              </div>
-              <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
-                Baksos Kanker Serviks, KIA, Edukasi KB.
-              </div>
-            </div>
-
-            <!-- 3. Pembelajaran (45% = 72 SKP) -->
-            <div id="cardSubbidangPembelajaran"
-              class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5 transition-all duration-500">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div
-                    class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
-                    <span class="material-symbols-outlined text-base">school</span>
-                  </div>
-                  <div>
-                    <h3 class="font-black text-xs text-slate-900">3. Pembelajaran</h3>
-                    <div class="text-[10px] text-slate-400">Min. 45% (72 SKP)</div>
-                  </div>
-                </div>
-                <span id="badgePembelajaran"
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">19%</span>
-              </div>
-              <div class="flex items-baseline justify-between text-xs">
-                <span class="text-slate-500 text-[11px]">Realisasi:</span>
-                <span class="text-base font-black text-emerald-950"><span id="valPembelajaran">13.5</span> <span
-                    class="text-xs font-normal text-slate-400">/ 72 SKP</span></span>
-              </div>
-              <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div id="barPembelajaran" class="bg-emerald-500 h-2 rounded-full transition-all duration-500"
-                  style="width: 19%"></div>
-              </div>
-              <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
-                Simposium PIT POGI, Workshop USG.
-              </div>
-            </div>
-
-            <!-- 4. Fleksibilitas (15% = 24 SKP) -->
-            <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div
-                    class="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center font-bold">
-                    <span class="material-symbols-outlined text-base">auto_awesome</span>
-                  </div>
-                  <div>
-                    <h3 class="font-black text-xs text-slate-900">4. Fleksibilitas</h3>
-                    <div class="text-[10px] text-slate-400">15% (24 SKP Bebas)</div>
-                  </div>
-                </div>
-                <span id="badgeFleksibilitas"
-                  class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">100%</span>
-              </div>
-              <div class="flex items-baseline justify-between text-xs">
-                <span class="text-slate-500 text-[11px]">Realisasi:</span>
-                <span class="text-base font-black text-purple-950"><span id="valFleksibilitas">24</span> <span
-                    class="text-xs font-normal text-slate-400">/ 24 SKP</span></span>
-              </div>
-              <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div id="barFleksibilitas" class="bg-purple-500 h-2 rounded-full transition-all duration-500"
-                  style="width: 100%"></div>
-              </div>
-              <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
-                Kombinasi bebas 3 ranah pelengkap 160 SKP.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- LOGBOOK AKTIVITAS DETAIL & DOKUMEN REPOSITORI TABS -->
-        <div class="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
-          <!-- Segmented Tab Header (Sesuai Aturan Bisnis RULES.md Bab 1.2 & 2.3) -->
-          <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl text-xs font-bold text-slate-600">
-              <button type="button" onclick="switchDetailTab('logbook')" id="tab-btn-logbook"
-                class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-sm">history_edu</span>
-                <span>1. Logbook Kegiatan SKP</span>
-              </button>
-              <button type="button" onclick="switchDetailTab('repository')" id="tab-btn-repository"
-                class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-sm">cloud_done</span>
-                <span>2. Repositori Cloud (Object Storage)</span>
-                <span id="tabBadgeDocCount"
-                  class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-[#16b3ac] font-black">5</span>
-              </button>
-              <button type="button" onclick="switchDetailTab('detector')" id="tab-btn-detector"
-                class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-sm">rule_folder</span>
-                <span>3. Missing Document Detector</span>
-                <span id="tabBadgeMissingCount"
-                  class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-800 font-black">0</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- PANE 1: LOGBOOK KEGIATAN SKP -->
-          <div id="pane-logbook" class="space-y-3">
-            <div class="flex items-center justify-between text-xs text-slate-500">
-              <span>Riwayat pengajuan kredit SKP yang tervalidasi buku log Kemenkes / Plataran Sehat.</span>
-              <span class="text-[11px] text-slate-400" id="totalActivitiesCount">Total: 4 Entri Kegiatan</span>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
-                  <tr>
-                    <th class="py-2.5 px-3">Tanggal</th>
-                    <th class="py-2.5 px-3">Nama Kegiatan / Pelayanan</th>
-                    <th class="py-2.5 px-3">Subbidang</th>
-                    <th class="py-2.5 px-3 text-center">Nilai SKP</th>
-                    <th class="py-2.5 px-3">Institusi / Faskes Penyelenggara</th>
-                    <th class="py-2.5 px-3 text-center">Status Verifikasi</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100" id="doctorActivitiesTable">
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- PANE 2: REPOSITORI BERKAS CLOUD (OBJECT STORAGE PER ANGGOTA) -->
-          <div id="pane-repository" class="space-y-4 hidden">
-            <!-- Object Storage Header Info & Actions -->
-            <div
-              class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
-              <div class="space-y-1">
-                <div class="flex items-center gap-2">
-                  <span class="font-extrabold text-slate-900">Folder Object Storage Cloud Anggota:</span>
-                  <span
-                    class="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-100 text-[#16b3ac] font-bold border border-emerald-200"
-                    id="repoVaultBadge">pogi-skp-vault/012eb9b4-7667-4b47-9e9d-a48738f3385f/</span>
-                </div>
-                <p class="text-[11px] text-slate-500">
-                  Seluruh berkas bukti fisik SKP tersimpan dan terenkripsi di cloud internal sebelum
-                  disinkronkan manual ke portal Kemenkes.
-                </p>
-              </div>
-                            <div class="flex items-center gap-2 shrink-0">
-                <button type="button" onclick="openUploadDoctorDocModal()"
-                  class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write">
-                  <span class="material-symbols-outlined text-base">upload_file</span>
-                  <span>Unggah Berkas Baru</span>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap mb-1">
+              <span id="doctorPogiId"
+                class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-[#16b3ac] border border-emerald-200 font-mono text-xs font-black">##POGI-2026-5774</span>
+              <span id="doctorStatusBadge"
+                class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span>Incomplete</span>
+              </span>
+              <!-- PIC Admin Binaan Badge -->
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-sky-50 border border-sky-200 text-sky-900 text-xs font-semibold">
+                <span class="material-symbols-outlined text-[15px] text-sky-600">assignment_ind</span>
+                <span>PIC:</span>
+                <span id="doctorAssignedTo" class="font-bold text-sky-950">Belum Ditentukan</span>
+                                <button type="button" onclick="openChangePicModal()" class="ml-1 text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5" title="Ubah PIC Admin Pendamping">
+                  <span class="material-symbols-outlined text-[12px]">swap_horiz</span> Ganti PIC
                 </button>
-              </div>
-                          </div>
-
-            <!-- Tabel Dokumen Object Storage -->
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
-                  <tr>
-                    <th class="py-2.5 px-3">Nama Berkas Bukti (PDF)</th>
-                    <th class="py-2.5 px-3">Ranah / Kategori</th>
-                    <th class="py-2.5 px-3 text-center">Nilai SKP</th>
-                    <th class="py-2.5 px-3">Tautan Google Drive</th>
-                    <th class="py-2.5 px-3">Ukuran &amp; Keamanan</th>
-                    <th class="py-2.5 px-3">Diunggah ke Cloud (Internal)</th>
-                    <th class="py-2.5 px-3 text-center">Status Siklus Kemenkes</th>
-                    <th class="py-2.5 px-3">Disinkronkan ke Kemenkes</th>
-                    <th class="py-2.5 px-3 text-center">Aksi Berkas</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 font-medium" id="doctorDocumentsTableBody">
-                  <!-- Rendered dynamically by JS -->
-                </tbody>
-              </table>
+                              </div>
             </div>
-          </div>
-
-          <!-- PANE 3: MISSING DOCUMENT DETECTOR (PELACAK KEKURANGAN DOKUMEN) -->
-          <div id="pane-detector" class="space-y-4 hidden">
-            <!-- Detector Status Banner -->
-            <div id="missingDetectorAlertBox" class="p-4 rounded-2xl border text-xs space-y-2">
-              <!-- Rendered dynamically by JS -->
-            </div>
-
-            <!-- Missing Items Table -->
-            <div class="space-y-2">
-              <div class="flex items-center justify-between text-xs font-bold text-slate-800">
-                <span>Daftar Kewajiban Dokumen &amp; Status Pelacakan Sistem:</span>
-                <span class="text-[11px] text-slate-400">Aturan KMK 1561/2024</span>
-              </div>
-              <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs whitespace-nowrap">
-                  <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
-                    <tr>
-                      <th class="py-2.5 px-3">Kode Dokumen</th>
-                      <th class="py-2.5 px-3">Kebutuhan Berkas</th>
-                      <th class="py-2.5 px-3">Ranah Terkait</th>
-                      <th class="py-2.5 px-3 text-center">Status Pelacakan</th>
-                      <th class="py-2.5 px-3">Keterangan / Kendala</th>
-                      <th class="py-2.5 px-3 text-center">Tindak Lanjut</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-100" id="missingDocumentsTableBody">
-                    <!-- Rendered dynamically by JS -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <h1 id="doctorName" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">dr. Budi Santoso, Sp.PD</h1>
+            <p id="doctorSpecialty" class="text-xs text-slate-500 font-semibold mt-0.5">Sp.OG</p>
           </div>
         </div>
 
-      </main>
+        <!-- Action Buttons -->
+        <div id="doctorActionButtonsContainer" class="flex items-center gap-2.5 flex-wrap shrink-0">
+          <button type="button" onclick="approveDoctorCredits()"
+            class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+            <span class="material-symbols-outlined text-base">verified</span>
+            <span>Verifikasi Kredit (+4.5 SKP)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Doctor Metadata Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
+        <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">Nomor STR (Kemenkes)</div>
+          <div id="doctorStr" class="font-extrabold text-slate-900 mt-1 font-mono">32.73.100.2.21.0883</div>
+          <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">&bull; Habis: 25 Nov 2031</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">NIK / Kependudukan</div>
+          <div id="doctorNik" class="font-extrabold text-slate-900 mt-1 font-mono">3208cab81591ae73</div>
+          <div class="text-[10px] text-slate-500 font-semibold mt-0.5">Dukcapil Valid</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">Cabang POGI</div>
+          <div id="doctorProvince" class="font-extrabold text-slate-900 mt-1">DKI Jakarta</div>
+          <div class="text-[10px] text-slate-500 font-semibold mt-0.5">Cabang Terdaftar</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">RS Jejaring Praktik</div>
+          <div id="doctorHospital" class="font-extrabold text-slate-900 mt-1 truncate">Klinik Pratama Sehat Sentosa</div>
+          <div class="text-[10px] text-[#16b3ac] font-semibold mt-0.5">SIP Terbit Aktif</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100 flex flex-col justify-between col-span-2 sm:col-span-1">
+          <div>
+            <div class="text-[10px] text-slate-400 font-bold uppercase">PIC Admin Binaan</div>
+            <div id="doctorPicCardName" class="font-extrabold text-slate-900 mt-1 truncate">Belum Ditentukan</div>
+            <div class="text-[10px] text-sky-700 font-semibold mt-0.5 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>Admin POGI
+            </div>
+          </div>
+                    <button type="button" onclick="openChangePicModal()" class="mt-2 text-left text-[11px] text-[#16b3ac] font-bold hover:underline inline-flex items-center gap-1">
+            <span class="material-symbols-outlined text-[13px]">swap_horiz</span> Alihkan PIC
+          </button>
+                  </div>
+      </div>
+
+      <!-- Dual-Timestamp Tracking & Sync Protocol Banner (RULES.md Bab 1.2 & 5.2) -->
+      <div
+        class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-lg">cloud_sync</span>
+          </div>
+          <div>
+            <div class="font-extrabold text-slate-900 text-xs flex items-center gap-2 flex-wrap">
+              <span>Protokol Sinkronisasi: Non-API / Manual-Assisted Sync</span>
+            </div>
+            <div class="text-[11px] text-slate-500 mt-0.5">
+              Folder Cloud Anggota: <code id="metaVaultPath"
+                class="font-mono text-[#16b3ac] font-bold">cloud-storage://pogi-skp-vault/04680f57-b8b3-4873-898e-754974a29bb1/</code>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex items-center gap-4 text-[11px] border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-4 shrink-0">
+          <div>
+            <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Internal Updated
+              (Energi Cipta)</span>
+            <span id="tsInternal" class="font-mono font-bold text-slate-800">25 Nov 2026, 17.32 WIB</span>
+          </div>
+          <div>
+            <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Kemenkes Synced (Portal
+              Plataran)</span>
+            <span id="tsKemenkes" class="font-mono font-bold text-emerald-700">Menunggu Sinkronisasi</span>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+
+    <!-- 3 SUBBIDANG SKP MANDATORI & FLEKSIBILITAS (KMK 1561/2024 & KMK 1111/2026) -->
+    <div>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 class="text-base font-black text-slate-900">Pemenuhan Subbidang SKP Mandatori (160 SKP / 5 Tahun)
+            </h2>
+            <span
+              class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#16b3ac] border border-emerald-200">KMK
+              1561/2024 &amp; 1111/2026</span>
+          </div>
+          <p class="text-xs text-slate-500">Standar resmi Kemenkes: Pelayanan 35% (56 SKP), Pengabdian 5% (8 SKP),
+            Pembelajaran 45% (72 SKP), &amp; Fleksibilitas 15% (24 SKP)</p>
+        </div>
+        <div class="text-left sm:text-right shrink-0">
+          <span class="text-xs font-bold text-slate-400">Target Kuartal (Q4):</span>
+          <strong id="doctorQ4TargetText" class="text-xs font-black text-[#16b3ac] ml-1">8.0 SKP / Dokter <span class="text-slate-400 font-normal">| Realisasi:</span> <span class="text-rose-600 font-black">0 SKP</span></strong>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3.5">
+        <!-- 1. Pelayanan (35% = 56 SKP) -->
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center font-bold">
+                <span class="material-symbols-outlined text-base">medical_services</span>
+              </div>
+              <div>
+                <h3 class="font-black text-xs text-slate-900">1. Pelayanan</h3>
+                <div class="text-[10px] text-slate-400">Min. 35% (56 SKP)</div>
+              </div>
+            </div>
+            <span id="badgePelayanan"
+              class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-sky-50 text-sky-700 border border-sky-200">0%</span>
+          </div>
+          <div class="flex items-baseline justify-between text-xs">
+            <span class="text-slate-500 text-[11px]">Realisasi:</span>
+            <span class="text-base font-black text-sky-950"><span id="valPelayanan">0</span> <span
+                class="text-xs font-normal text-slate-400">/ 56 SKP</span></span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div id="barPelayanan" class="bg-sky-500 h-2 rounded-full transition-all duration-500"
+              style="width: 0%"></div>
+          </div>
+          <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
+            IGD PONEK, Bedah SC, Rawat Jalan Poli.
+          </div>
+        </div>
+
+        <!-- 2. Pengabdian (5% = 8 SKP) -->
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+                <span class="material-symbols-outlined text-base">volunteer_activism</span>
+              </div>
+              <div>
+                <h3 class="font-black text-xs text-slate-900">2. Pengabdian</h3>
+                <div class="text-[10px] text-slate-400">Min. 5% (8 SKP)</div>
+              </div>
+            </div>
+            <span id="badgePengabdian"
+              class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200">0%</span>
+          </div>
+          <div class="flex items-baseline justify-between text-xs">
+            <span class="text-slate-500 text-[11px]">Realisasi:</span>
+            <span class="text-base font-black text-amber-950"><span id="valPengabdian">0</span> <span
+                class="text-xs font-normal text-slate-400">/ 8 SKP</span></span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div id="barPengabdian" class="bg-amber-500 h-2 rounded-full transition-all duration-500"
+              style="width: 0%"></div>
+          </div>
+          <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
+            Baksos Kanker Serviks, KIA, Edukasi KB.
+          </div>
+        </div>
+
+        <!-- 3. Pembelajaran (45% = 72 SKP) -->
+        <div id="cardSubbidangPembelajaran"
+          class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5 transition-all duration-500">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+                <span class="material-symbols-outlined text-base">school</span>
+              </div>
+              <div>
+                <h3 class="font-black text-xs text-slate-900">3. Pembelajaran</h3>
+                <div class="text-[10px] text-slate-400">Min. 45% (72 SKP)</div>
+              </div>
+            </div>
+            <span id="badgePembelajaran"
+              class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">0%</span>
+          </div>
+          <div class="flex items-baseline justify-between text-xs">
+            <span class="text-slate-500 text-[11px]">Realisasi:</span>
+            <span class="text-base font-black text-emerald-950"><span id="valPembelajaran">0</span> <span
+                class="text-xs font-normal text-slate-400">/ 72 SKP</span></span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div id="barPembelajaran" class="bg-emerald-500 h-2 rounded-full transition-all duration-500"
+              style="width: 0%"></div>
+          </div>
+          <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
+            Simposium PIT POGI, Workshop USG.
+          </div>
+        </div>
+
+        <!-- 4. Fleksibilitas (15% = 24 SKP) -->
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center font-bold">
+                <span class="material-symbols-outlined text-base">auto_awesome</span>
+              </div>
+              <div>
+                <h3 class="font-black text-xs text-slate-900">4. Fleksibilitas</h3>
+                <div class="text-[10px] text-slate-400">15% (24 SKP Bebas)</div>
+              </div>
+            </div>
+            <span id="badgeFleksibilitas"
+              class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">0%</span>
+          </div>
+          <div class="flex items-baseline justify-between text-xs">
+            <span class="text-slate-500 text-[11px]">Realisasi:</span>
+            <span class="text-base font-black text-purple-950"><span id="valFleksibilitas">0</span> <span
+                class="text-xs font-normal text-slate-400">/ 24 SKP</span></span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div id="barFleksibilitas" class="bg-purple-500 h-2 rounded-full transition-all duration-500"
+              style="width: 0%"></div>
+          </div>
+          <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-100 truncate">
+            Kombinasi bebas 3 ranah pelengkap 160 SKP.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGBOOK AKTIVITAS DETAIL & DOKUMEN REPOSITORI TABS -->
+    <div class="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+      <!-- Segmented Tab Header (Sesuai Aturan Bisnis RULES.md Bab 1.2 & 2.3) -->
+      <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl text-xs font-bold text-slate-600">
+          <button type="button" onclick="switchDetailTab('logbook')" id="tab-btn-logbook"
+            class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">history_edu</span>
+            <span>1. Logbook Kegiatan SKP</span>
+          </button>
+          <button type="button" onclick="switchDetailTab('repository')" id="tab-btn-repository"
+            class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">cloud_done</span>
+            <span>2. Repositori Cloud (Object Storage)</span>
+            <span id="tabBadgeDocCount"
+              class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-[#16b3ac] font-black">5</span>
+          </button>
+          <button type="button" onclick="switchDetailTab('detector')" id="tab-btn-detector"
+            class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">rule_folder</span>
+            <span>3. Missing Document Detector</span>
+            <span id="tabBadgeMissingCount"
+              class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-800 font-black">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PANE 1: LOGBOOK KEGIATAN SKP -->
+      <div id="pane-logbook" class="space-y-3">
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <span>Riwayat pengajuan kredit SKP yang tervalidasi buku log Kemenkes / Plataran Sehat.</span>
+          <span class="text-[11px] text-slate-400" id="totalActivitiesCount">Total: 4 Entri Kegiatan</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
+              <tr>
+                <th class="py-2.5 px-3">Tanggal</th>
+                <th class="py-2.5 px-3">Nama Kegiatan / Pelayanan</th>
+                <th class="py-2.5 px-3">Subbidang</th>
+                <th class="py-2.5 px-3 text-center">Nilai SKP</th>
+                <th class="py-2.5 px-3">Institusi / Faskes Penyelenggara</th>
+                <th class="py-2.5 px-3 text-center">Status Verifikasi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100" id="doctorActivitiesTable">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PANE 2: REPOSITORI BERKAS CLOUD (OBJECT STORAGE PER ANGGOTA) -->
+      <div id="pane-repository" class="space-y-4 hidden">
+        <!-- Object Storage Header Info & Actions -->
+        <div
+          class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-slate-900">Folder Object Storage Cloud Anggota:</span>
+              <span
+                class="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-100 text-[#16b3ac] font-bold border border-emerald-200"
+                id="repoVaultBadge">pogi-skp-vault/04680f57-b8b3-4873-898e-754974a29bb1/</span>
+            </div>
+            <p class="text-[11px] text-slate-500">
+              Seluruh berkas bukti fisik SKP tersimpan dan terenkripsi di cloud internal sebelum
+              disinkronkan manual ke portal Kemenkes.
+            </p>
+          </div>
+                    <div class="flex items-center gap-2 shrink-0">
+            <button type="button" onclick="openUploadDoctorDocModal()"
+              class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write">
+              <span class="material-symbols-outlined text-base">upload_file</span>
+              <span>Unggah Berkas Baru</span>
+            </button>
+          </div>
+                  </div>
+
+        <!-- Tabel Dokumen Object Storage -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
+              <tr>
+                <th class="py-2.5 px-3">Nama Berkas Bukti (PDF)</th>
+                <th class="py-2.5 px-3">Ranah / Kategori</th>
+                <th class="py-2.5 px-3 text-center">Nilai SKP</th>
+                <th class="py-2.5 px-3">Tautan Google Drive</th>
+                <th class="py-2.5 px-3">Ukuran &amp; Keamanan</th>
+                <th class="py-2.5 px-3">Diunggah ke Cloud (Internal)</th>
+                <th class="py-2.5 px-3 text-center">Status Siklus Kemenkes</th>
+                <th class="py-2.5 px-3">Disinkronkan ke Kemenkes</th>
+                <th class="py-2.5 px-3 text-center">Aksi Berkas</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-medium" id="doctorDocumentsTableBody">
+              <!-- Rendered dynamically by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PANE 3: MISSING DOCUMENT DETECTOR (PELACAK KEKURANGAN DOKUMEN) -->
+      <div id="pane-detector" class="space-y-4 hidden">
+        <!-- Detector Status Banner -->
+        <div id="missingDetectorAlertBox" class="p-4 rounded-2xl border text-xs space-y-2">
+          <!-- Rendered dynamically by JS -->
+        </div>
+
+        <!-- Missing Items Table -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-800">
+            <span>Daftar Kewajiban Dokumen &amp; Status Pelacakan Sistem:</span>
+            <span class="text-[11px] text-slate-400">Aturan KMK 1561/2024</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs whitespace-nowrap">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
+                <tr>
+                  <th class="py-2.5 px-3">Kode Dokumen</th>
+                  <th class="py-2.5 px-3">Kebutuhan Berkas</th>
+                  <th class="py-2.5 px-3">Ranah Terkait</th>
+                  <th class="py-2.5 px-3 text-center">Status Pelacakan</th>
+                  <th class="py-2.5 px-3">Keterangan / Kendala</th>
+                  <th class="py-2.5 px-3 text-center">Tindak Lanjut</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100" id="missingDocumentsTableBody">
+                <!-- Rendered dynamically by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </main>
 
   <!-- Modal Unggah Berkas Baru ke Cloud Internal (RULES.md Bab 1.2) -->
   <div id="uploadDoctorDocModal"
@@ -970,12 +1016,7 @@
         <div class="space-y-1.5 text-xs">
           <label class="block font-bold text-slate-700">Pilih PIC Admin Baru</label>
           <select id="modalChangePicSelect" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
-                                      <option value="03bbce59-7dc4-4dc2-bce7-11e893ef4068">Anna (Admin POGI)</option>
-                          <option value="622b9c53-db7f-44b1-939d-2b1721bee869">Dewi Lestari (Admin POGI)</option>
-                          <option value="66340565-af3f-43d4-bdcf-79a84de7c99b">Fikri Ramadhan (Admin POGI)</option>
-                          <option value="32b2b767-5289-4957-8fb1-3647ab88d42d">Lily (Admin POGI)</option>
-                          <option value="eb0904a3-cbdb-4ba5-98dc-1d8bb5fc126f">Vivi (Admin POGI)</option>
-                      </select>
+                                  </select>
           <p class="text-[11px] text-slate-400">Pengalihan akan dicatat secara otomatis dalam log audit sistem.</p>
         </div>
       </div>
@@ -1013,7 +1054,7 @@
         <div class="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100/80 space-y-2.5 text-xs">
           <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
             <span class="text-slate-600">Dokter Sasaran:</span>
-            <span id="modalVerifDocName" class="font-black text-slate-900">dr. Yohana Suryani, Sp.OG(K)</span>
+            <span id="modalVerifDocName" class="font-black text-slate-900">dr. Budi Santoso, Sp.PD</span>
           </div>
           <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
             <span class="text-slate-600">Kredit Disetujui:</span>
@@ -1063,15 +1104,17 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/js/pogi_state.js"></script>
+  <script>
+    window.AUTH_USER = {"id":"14eac2f0-bb8c-4771-8c8d-8de6355003af","name":"Dian Imas","email":"super@example.com","role":"SUPER_ADMIN","branch":"Pusat"};
+  </script>
   <script src="/js/navigation.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
-    const LIVE_SERVER_DOCTOR = {"id":"012eb9b4-7667-4b47-9e9d-a48738f3385f","user_id":null,"npa_pogi":"#POGI-2026-1050","full_name":"dr. Yohana Suryani, Sp.OG(K)","specialization_title":"Sp.OG","nik_encrypted":"ENC_3273100000039735","nik_hash":"d5327cf335ebfec871f67b91e53c41cb4c26dc09b24809d372e8645f08b10b6e","str_number":"32.73.100.2.21.0050","sip_number":"SIP.01.2024\/0050","sip_expiry_date":"2027-03-01","email":"dr.yohana.suryani.sp.og.k.@pogi.or.id","whatsapp_number":"+62 812-2665-1855","branch_id":"dfb0b922-47e2-4356-8bba-93fbb3697bf1","province_id":"33","primary_institution_id":"b6d81434-c857-47bf-a600-35b9bc214e54","assigned_pic_id":"03bbce59-7dc4-4dc2-bce7-11e893ef4068","plataran_sehat_username":"user_50","plataran_sehat_pass_encrypted":null,"status":"COMPLETE","dashboard_updated_at":"2026-11-25 10:42:36","kemenkes_updated_at":"2026-11-25 10:42:36","created_at":"2026-11-24 20:24:44","updated_at":"2026-11-25 10:42:37","deleted_at":null,"branch_name":"POGI Cabang Jawa Tengah","branch_code":"POGI-33","province_name":"Jawa Tengah","institution_name":"RS Panti Wilasa","institution_city":"Jawa Tengah","assigned_pic_name":"Anna","assigned_pic_email":"sekretariat.pusat@pogi.or.id","assigned_pic_phone":"081200000004"};
-    const LIVE_SERVER_DOCUMENTS = [{"id":"6de31f53-db30-4e6d-8a27-5e179efd137a","filename":"Sertifikat_Workshop_Maternal.pdf","name":"Sertifikat_Workshop_Maternal.pdf","category":"Pembelajaran","domain":"Pembelajaran","skpValue":8,"status":"DONE","driveUrl":"https:\/\/drive.google.com\/file\/d\/1BZIJz9X00000050\/view?usp=sharing","size":"2.4 MB","uploadedInternal":"24 Nov 2026, 20.24 WIB","uploadedKemenkes":"24 Nov 2026, 20.24 WIB","createdAt":"24 Nov 2026"}];
-    const LIVE_SERVER_PERIOD = {"id":"72a9c068-bf25-418d-85fb-630a61008d4e","doctor_id":"012eb9b4-7667-4b47-9e9d-a48738f3385f","cycle_number":1,"start_date":"2022-03-01","end_date":"2027-03-01","target_total_credits":"160.00","target_pembelajaran_credits":"72.00","target_pelayanan_credits":"56.00","target_pengabdian_credits":"8.00","target_flexibility_credits":"24.00","achieved_pembelajaran_credits":"13.50","achieved_pelayanan_credits":"140.50","achieved_pengabdian_credits":"10.00","achieved_total_credits":"164.00","is_active":1,"is_completed":1,"created_at":"2026-11-24 20:24:44","updated_at":"2026-11-25 10:42:36"};
-    const LIVE_SERVER_ENTRIES = [{"id":"02740f86-2f21-44fd-9ee3-c45b374f60a7","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"1633329a-b0fc-4e34-89bc-a0bf63b845d4","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"b126aa52-b43a-4bad-8bb5-a2b883644308","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"NOT_SUBMITTED","statusLabel":"Menunggu Verifikasi","statusClass":"bg-amber-50 text-amber-700 border border-amber-200","eventId":null},{"id":"22b52342-b2a6-4bfd-84f7-e4ba555fbe6a","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"c847d609-d533-4ab3-b1d8-b317e0dc2d8f","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"c8e4f593-eefb-4231-bf66-4db408a35cb5","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"2d8f4dce-186a-4306-b9b8-4d1c5a352cbd","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"35f727cd-f839-4028-9d2f-0bca07aaa9f1","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"c99fa65b-9d19-42fd-9170-3bf7e76bf872","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"44c6865b-8684-4d13-9d4e-5a2f90c3cd83","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"48003319-4827-4a7c-af9e-a719ec53ce7b","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"4b2f20f7-2f6b-459b-832f-c97eebe57913","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"d618b210-60e5-458c-a251-0fe154890938","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"f0a19844-b643-4c8c-84f1-a70a8b6d8be3","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"f17fa082-788c-4d54-b11e-172e1fd012a4","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"f8db3896-3a25-4666-be83-1805ee93f1e4","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"7595dd8b-c3bd-4118-a088-5ef3f2851b78","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"7713fc75-3b9c-41ca-8558-048d69d416ad","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"7d54a804-cd46-482d-b57c-cd432907fdc8","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"7ea41fab-6a5a-43c7-ab58-2036563216a7","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"922656c4-324f-4265-8887-197ad8afe1c3","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"9ac4faa7-07e2-42d6-908b-fe8da9ade829","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"9c9f4f91-ace4-4442-94f9-a98e6b991ebc","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"a64b9df0-7f36-46e0-8e4e-bc6f2207b547","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"a87cc0c4-8a43-4358-8bda-7a866a0ed2ac","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"25 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"223b0719-a9aa-4414-8c84-eac7e5d0eb29","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"24 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"264ea0da-b865-4ac4-ac6f-af3041799e3b","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"24 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"3bb39a8f-dc58-4903-951c-4f5841195029","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"24 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"58bbdf14-1fa1-4801-9d12-bbc78af6735e","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"24 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"6affb6f6-b0f0-4a01-8b52-86d359304f78","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"24 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"6fbcb806-04ab-406b-b9ca-08f1be5e311a","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"24 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"8a323997-f841-4349-8b9e-bf1457af1e0e","title":"Pengajuan Bukti Fisik: Sertifikat_Pelayanan_Live_Test.pdf","category":"Pelayanan","domain":"Pelayanan","date":"24 Nov 2026","credit":3.5,"credits":3.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"d168fca7-3258-4160-8383-3f35953c4451","title":"Pengajuan Verifikasi Bukti Fisik Webinar Obgyn","category":"Pembelajaran","domain":"Pembelajaran","date":"18 Nov 2026","credit":0.5,"credits":0.5,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"2d62ded3-5ccd-4a83-938f-3c43a1fb83f0","title":"Bakti Sosial \u0026 Penyuluhan Deteksi Dini Kanker Serviks","category":"Pengabdian","domain":"Pengabdian","date":"10 Nov 2026","credit":10,"credits":10,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"67f75d9e-7c17-4943-8066-635ac6da7bae","title":"Logbook Tindakan \u0026 Pelayanan Klinis Pasien Obgyn","category":"Pelayanan","domain":"Pelayanan","date":"01 Nov 2026","credit":32,"credits":32,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":null},{"id":"bcf12639-a845-4c8b-927c-2aa809338629","title":"Partisipasi Simposium \u0026 Workshop Maternal","category":"Pembelajaran","domain":"Pembelajaran","date":"15 Oct 2026","credit":8,"credits":8,"organizer":"RS Panti Wilasa","status":"DONE","statusLabel":"\u2713 Terverifikasi Kemenkes","statusClass":"bg-emerald-50 text-emerald-700 border border-emerald-200","eventId":"02fe4db4"}];
-    const LIVE_SERVER_MISSING_DOCS = {"missingCount":2,"items":[{"code":"DOC-REQ-01","name":"Logbook Pelayanan Klinis \/ Bedah Maternal","domain":"Pelayanan","status":"Wajib Segera (Missing)","statusBadgeClass":"bg-rose-50 text-rose-700 border-rose-200","reason":"Belum ada berkas logbook pelayanan tindakan untuk memenuhi minimal 56 SKP (KMK 1561\/2024)"},{"code":"DOC-REQ-03","name":"Surat Tugas \/ Bukti Pengabdian Masyarakat","domain":"Pengabdian","status":"Peringatan (Warning)","statusBadgeClass":"bg-amber-50 text-amber-800 border-amber-200","reason":"Perlu bukti kegiatan bakti sosial, edukasi KB, atau penyuluhan deteksi kanker serviks (minimal 8 SKP)"}]};
+    const LIVE_SERVER_DOCTOR = {"id":"04680f57-b8b3-4873-898e-754974a29bb1","user_id":null,"npa_pogi":"#POGI-2026-5774","full_name":"dr. Budi Santoso, Sp.PD","specialization_title":"Sp.OG","nik_encrypted":"GCM1:fdjSlPScKQi2oHvA9ErMzj\/VpE54RUY5OB1ghj96MboYgP8vHK23RQ8Ygg==","nik_hash":"08cab81591ae7342b39cd73a914609da19b891483ba972c2e4df73c9b79ae45c","str_number":"32.73.100.2.21.0883","sip_number":"446\/926\/SIP\/2026","sip_expiry_date":"2031-11-25","email":"dr.budi.santoso.sp.pd@pogi-member.id","whatsapp_number":"+628123456789","branch_id":"b800841f-8173-44eb-a99e-3eea6b954ae1","province_id":"31","primary_institution_id":"59df83b0-fd7e-476c-bf44-e7cff7ce515a","assigned_pic_id":null,"plataran_sehat_username":"super@example.com","plataran_sehat_pass_encrypted":"secret123","status":"INCOMPLETE","dashboard_updated_at":"2026-11-25 17:32:35","kemenkes_updated_at":null,"created_at":"2026-11-25 17:32:35","updated_at":"2026-11-25 17:32:35","deleted_at":null,"branch_name":"POGI Cabang DKI Jakarta","branch_code":"POGI-31","province_name":"DKI Jakarta","institution_name":"Klinik Pratama Sehat Sentosa","institution_city":"Jakarta Selatan","assigned_pic_name":null,"assigned_pic_email":null,"assigned_pic_phone":null};
+    const LIVE_SERVER_DOCUMENTS = [];
+    const LIVE_SERVER_PERIOD = {"id":"950fc41e-a764-4281-8c10-8a1352c62fcd","doctor_id":"04680f57-b8b3-4873-898e-754974a29bb1","cycle_number":1,"start_date":"2026-01-01","end_date":"2030-12-31","target_total_credits":"160.00","target_pembelajaran_credits":"72.00","target_pelayanan_credits":"56.00","target_pengabdian_credits":"8.00","target_flexibility_credits":"24.00","achieved_pembelajaran_credits":"0.00","achieved_pelayanan_credits":"0.00","achieved_pengabdian_credits":"0.00","achieved_total_credits":"0.00","is_active":1,"is_completed":0,"created_at":"2026-11-25 17:32:35","updated_at":"2026-11-25 17:32:35"};
+    const LIVE_SERVER_ENTRIES = [];
+    const LIVE_SERVER_MISSING_DOCS = {"missingCount":3,"items":[{"code":"DOC-REQ-01","name":"Logbook Pelayanan Klinis \/ Bedah Maternal","domain":"Pelayanan","status":"Wajib Segera (Missing)","statusBadgeClass":"bg-rose-50 text-rose-700 border-rose-200","reason":"Belum ada berkas logbook pelayanan tindakan untuk memenuhi minimal 56 SKP (KMK 1561\/2024)"},{"code":"DOC-REQ-02","name":"Sertifikat PIT POGI \/ Simposium Terakreditasi","domain":"Pembelajaran","status":"Wajib Segera (Missing)","statusBadgeClass":"bg-rose-50 text-rose-700 border-rose-200","reason":"Belum ada bukti sertifikat simposium\/workshop terakreditasi untuk memenuhi minimal 72 SKP"},{"code":"DOC-REQ-03","name":"Surat Tugas \/ Bukti Pengabdian Masyarakat","domain":"Pengabdian","status":"Peringatan (Warning)","statusBadgeClass":"bg-amber-50 text-amber-800 border-amber-200","reason":"Perlu bukti kegiatan bakti sosial, edukasi KB, atau penyuluhan deteksi kanker serviks (minimal 8 SKP)"}]};
 
     let activeDoctor = null;
     let currentDetailTab = 'logbook';
@@ -1235,8 +1278,8 @@
       }
 
       // Dual-Timestamp Tracking & Vault (Live Database Synchronized)
-      const tsInternal = doc.dashboardUpdatedAt || ((typeof PogiStore !== 'undefined' && PogiStore.getDoctorTimestamps) ? PogiStore.getDoctorTimestamps(doc.id).dashboard_updated_at : 'Baru saja');
-      const tsKemenkes = doc.kemenkesUpdatedAt || ((typeof PogiStore !== 'undefined' && PogiStore.getDoctorTimestamps) ? PogiStore.getDoctorTimestamps(doc.id).kemenkes_updated_at : 'Menunggu Sinkronisasi');
+      const tsInternal = doc.dashboardUpdatedAt || '-';
+      const tsKemenkes = doc.kemenkesUpdatedAt || 'Menunggu Sinkronisasi';
       const vaultPath = `cloud-storage://pogi-skp-vault/${doc.id}/`;
       if (document.getElementById('tsInternal')) document.getElementById('tsInternal').innerText = tsInternal;
       if (document.getElementById('tsKemenkes')) document.getElementById('tsKemenkes').innerText = tsKemenkes;
@@ -1758,7 +1801,12 @@
       const category = catSelect ? catSelect.value : 'Pembelajaran';
       const skpValue = (skpInput && skpInput.value !== '') ? parseFloat(skpInput.value) : 0;
       const driveUrl = (driveInput && driveInput.value.trim()) ? driveInput.value.trim() : '';
-      const sizeStr = selectedUploadFile ? ((selectedUploadFile.size / (1024 * 1024)).toFixed(1) + ' MB') : (driveUrl ? 'Cloud (Drive)' : '1.8 MB');
+      if (!driveUrl) {
+        showToast('Tautan Google Drive wajib diisi sesuai kebijakan Anti-Storage Bloat!', 'warning');
+        if (driveInput) driveInput.focus();
+        return;
+      }
+      const sizeStr = selectedUploadFile ? ((selectedUploadFile.size / (1024 * 1024)).toFixed(1) + ' MB') : 'Cloud (Drive)';
 
       if (!activeDoctor) return;
 
@@ -1766,14 +1814,14 @@
         filename: filename,
         category: category,
         skp_value: skpValue,
-        google_drive_url: driveUrl || null
+        google_drive_url: driveUrl
       };
 
       fetch(`/doctors/${activeDoctor.id}/documents`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'jLNHYKQnTjIbHCjWnZgMZ4Wl3P1wSsj8wd0EeQq3',
+          'X-CSRF-TOKEN': 'QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu',
           'Accept': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -1807,18 +1855,7 @@
         }
       })
       .catch(err => {
-        if (typeof PogiStore !== 'undefined') {
-          PogiStore.addDoctorDocument(activeDoctor.id, {
-            filename: filename,
-            category: category,
-            skpValue: skpValue,
-            driveUrl: driveUrl,
-            size: sizeStr
-          });
-        }
-        closeUploadDoctorDocModal();
-        renderDoctorRepositoryAndDetector(activeDoctor.id);
-        showToast(`Berkas "${filename}" berhasil disimpan ke Object Storage Cloud!`, 'success');
+        showToast('Gagal menyimpan berkas ke server. Silakan coba kembali.', 'error');
       });
     }
 
@@ -1860,7 +1897,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'jLNHYKQnTjIbHCjWnZgMZ4Wl3P1wSsj8wd0EeQq3',
+          'X-CSRF-TOKEN': 'QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ assigned_pic_id: newAdminId })
@@ -1883,19 +1920,7 @@
         }
       })
       .catch(err => {
-        // Fallback store
-        if (typeof PogiStore !== 'undefined' && typeof PogiStore.reassignDoctor === 'function') {
-          PogiStore.reassignDoctor(activeDoctor.id, newAdminName);
-        }
-        activeDoctor.assignedTo = newAdminName;
-        if (document.getElementById('doctorAssignedTo')) {
-          document.getElementById('doctorAssignedTo').innerText = newAdminName;
-        }
-        if (document.getElementById('doctorPicCardName')) {
-          document.getElementById('doctorPicCardName').innerText = newAdminName;
-        }
-        closeChangePicModal();
-        showToast(`PIC dokter berhasil dialihkan ke ${newAdminName}!`, 'success');
+        showToast('Gagal terhubung ke server saat mengalihkan PIC dokter.', 'error');
       });
     }
 
@@ -1906,7 +1931,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'jLNHYKQnTjIbHCjWnZgMZ4Wl3P1wSsj8wd0EeQq3',
+          'X-CSRF-TOKEN': 'QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ status: newStatus })
@@ -1920,9 +1945,6 @@
             docInList.uploadedKemenkes = 'Baru saja';
           }
         }
-        if (typeof PogiStore !== 'undefined') {
-          PogiStore.updateDoctorDocumentStatus(activeDoctor.id, fileId, newStatus);
-        }
         renderDoctorRepositoryAndDetector(activeDoctor.id);
         if (document.getElementById('tsKemenkes')) {
           document.getElementById('tsKemenkes').innerText = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ', ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
@@ -1930,11 +1952,7 @@
         showToast(`Status siklus Kemenkes berkas berhasil diubah menjadi: ${newStatus}`, 'success');
       })
       .catch(err => {
-        if (typeof PogiStore !== 'undefined') {
-          PogiStore.updateDoctorDocumentStatus(activeDoctor.id, fileId, newStatus);
-        }
-        renderDoctorRepositoryAndDetector(activeDoctor.id);
-        showToast(`Status siklus Kemenkes berkas berhasil diubah menjadi: ${newStatus}`, 'success');
+        showToast('Gagal mengubah status dokumen di server. Silakan coba kembali.', 'error');
       });
     }
 
@@ -2841,7 +2859,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'jLNHYKQnTjIbHCjWnZgMZ4Wl3P1wSsj8wd0EeQq3',
+          'X-CSRF-TOKEN': 'QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu',
           'Accept': 'application/json'
         }
       })
@@ -2906,16 +2924,7 @@
         showVerificationSuccessModal(activeDoctor, addedCredit, prevPemb, newPemb, prevStatus);
       })
       .catch(err => {
-        // Fallback jika request terputus
-        const newPemb = prevPemb + addedCredit;
-        activeDoctor.pendingCredits = 0;
-        activeDoctor.pembelajaranCredits = newPemb;
-        activeDoctor.status = 'Complete';
-        activeDoctor.q4Credits = (activeDoctor.q4Credits || 0) + addedCredit;
-        renderDoctorDetails(activeDoctor);
-        renderDoctorActivities(activeDoctor.id);
-        renderDoctorRepositoryAndDetector(activeDoctor.id);
-        showVerificationSuccessModal(activeDoctor, addedCredit, prevPemb, newPemb, prevStatus);
+        showToast('Gagal menyimpan verifikasi kredit SKP ke server. Silakan coba kembali.', 'error');
       });
     }
 
@@ -2952,6 +2961,16 @@
       if (modal) modal.classList.add('hidden');
     }
   </script>
-</body>
+      </main>
+    </div>
+  </div>
 
+  <!-- Global Application Modals (Outside Main Stacking Context for Full Viewport Overlay) -->
+  
+  <script>
+    window.AUTH_USER = {"id":"14eac2f0-bb8c-4771-8c8d-8de6355003af","name":"Dian Imas","email":"super@example.com","role":"SUPER_ADMIN","branch":"Pusat"};
+  </script>
+  <!-- Core Scripts -->
+  <script src="/js/navigation.js"></script>
+  </body>
 </html>

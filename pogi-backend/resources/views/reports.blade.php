@@ -525,7 +525,7 @@
   <script>
     window.AUTH_USER = {!! json_encode([
       'id'     => Auth::id() ?? 'auth-user',
-      'name'   => Auth::user()?->full_name ?? Auth::user()?->name ?? 'Pengurus POGI',
+      'name'   => Auth::user()?->full_name ?? Auth::user()?->name,
       'email'  => Auth::user()?->email ?? '',
       'role'   => Auth::user()?->role ?? 'ADMIN_PUSAT',
       'branch' => Auth::user()?->branch ?? 'Pusat'

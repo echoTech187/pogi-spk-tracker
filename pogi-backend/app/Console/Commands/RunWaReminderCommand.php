@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class RunWaReminderCommand extends Command
 {
     protected $signature = 'pogi:wa-reminder {--trigger=H-7 : H-7 atau H-2}';
-    protected $description = 'Jadwalkan antrean WhatsApp Blast otomatis H-7 & H-2 menjelang cutoff (RULES.md Bab 4)';
+    protected $description = 'Jadwalkan antrean WhatsApp Blast otomatis H-7 & H-2 menjelang cutoff ';
 
     public function handle(): int
     {

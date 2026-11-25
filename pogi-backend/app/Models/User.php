@@ -32,6 +32,7 @@ class User extends Authenticatable
         'password',
         'branch_id',
         'is_active',
+        'account_status',
         'email_verified_at',
         'last_login_at',
     ];
@@ -74,33 +75,13 @@ class User extends Authenticatable
     }
 
     /**
-     * Perlindungan penyimpanan database jika ada kendala koneksi
-     */
-    public function save(array $options = [])
-    {
-        try {
-            return parent::save($options);
-        } catch (\Throwable $e) {
-            return false;
-        }
-    }
-
-    public function update(array $attributes = [], array $options = [])
-    {
-        try {
-            return parent::update($attributes, $options);
-        } catch (\Throwable $e) {
-            $this->fill($attributes);
-            return false;
-        }
-    }
-
-    /**
-     * Nama pengguna untuk kompatibilitas tampilan
+     * Nama pengguna untuk kompatibilitas tampilan.
+     * Menggunakan $this->attributes secara langsung untuk menghindari infinite loop
+     * dan untuk mendukung query yang meng-alias full_name AS name.
      */
     public function getNameAttribute(): string
     {
-        return $this->full_name ?? 'Pengurus POGI';
+        return (string) ($this->attributes['full_name'] ?? $this->attributes['name'] ?? '');
     }
 
     // =========================================================================

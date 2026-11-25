@@ -13,14 +13,24 @@ if (typeof window !== 'undefined') {
 
   window.PogiStore._currentUser = null;
   window.PogiStore.getCurrentUser = function () {
-    if (this._currentUser) return this._currentUser;
+    // Selalu prioritaskan window.AUTH_USER yang di-inject dari Blade (server-side)
+    // JANGAN cache fallback guest agar tidak mengotori state sesi berikutnya
     if (typeof window !== 'undefined') {
-      if (window.AUTH_USER) return (this._currentUser = window.AUTH_USER);
-      if (window.CURRENT_USER) return (this._currentUser = window.CURRENT_USER);
+      if (window.AUTH_USER) {
+        this._currentUser = window.AUTH_USER;
+        return window.AUTH_USER;
+      }
+      if (window.CURRENT_USER) {
+        this._currentUser = window.CURRENT_USER;
+        return window.CURRENT_USER;
+      }
     }
+    // Hanya gunakan cache jika sudah ter-set dari AUTH_USER/CURRENT_USER sebelumnya
+    if (this._currentUser && this._currentUser.id !== 'guest') return this._currentUser;
+    // Fallback guest — TIDAK disimpan ke cache agar tidak memblokir AUTH_USER berikutnya
     return {
       id: 'guest',
-      name: 'Pengurus POGI',
+      name: 'Super Admin',
       email: '',
       role: 'GUEST',
       branch: 'Pusat'
@@ -619,20 +629,9 @@ function hoistAllModalsToBody() {
       modal.classList.add('z-[9999]');
     }
 
-    // Tambahkan backdrop click to close jika belum ada
-    if (!modal.dataset.backdropHandled) {
-      modal.dataset.backdropHandled = 'true';
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          const closeBtn = modal.querySelector('button[onclick*="close"], button[onclick*="Modal"], button[data-dismiss]');
-          if (closeBtn) {
-            closeBtn.click();
-          } else {
-            modal.classList.add('hidden');
-          }
-        }
-      });
-    }
+    // CATATAN: Backdrop click-to-close TIDAK ditambahkan di sini.
+    // Setiap halaman mengatur sendiri perilaku dismiss modal mereka
+    // agar tidak bertentangan dengan logika form submit yang belum selesai.
   });
 }
 

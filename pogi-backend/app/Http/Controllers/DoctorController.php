@@ -491,6 +491,10 @@ class DoctorController extends Controller
             'province' => 'nullable|string|max:100',
             'institution' => 'nullable|string|max:255',
             'assigned_to' => 'nullable|string|max:100',
+            'period_start' => 'nullable|string|max:50',
+            'period_end' => 'nullable|string|max:50',
+            'plataran_sehat_username' => 'nullable|string|max:150',
+            'plataran_sehat_password' => 'nullable|string|max:255',
         ]);
 
         $now = Carbon::now();
@@ -512,6 +516,17 @@ class DoctorController extends Controller
 
         $rawNik = (string) ($request->input('nik') ?: $request->input('str'));
 
+        $phone = $request->input('phone') ?: '+6281200000000';
+        $phone = trim($phone);
+        if (str_starts_with($phone, '0')) {
+            $phone = '+62' . substr($phone, 1);
+        } elseif (!str_starts_with($phone, '+')) {
+            $phone = '+62' . $phone;
+        }
+
+        $lmsUser = $request->input('plataran_sehat_username') ?: $request->input('lms_username');
+        $lmsPass = $request->input('plataran_sehat_password') ?: $request->input('lms_password');
+
         DB::table('doctors')->insert([
             'id' => $doctorId,
             'user_id' => null,
@@ -524,11 +539,13 @@ class DoctorController extends Controller
             'sip_number' => 'SIP.01.2026/' . rand(1000, 9999),
             'sip_expiry_date' => Carbon::now()->addYears(5)->toDateString(),
             'email' => Str::slug($request->input('name')) . '@pogi.or.id',
-            'whatsapp_number' => $request->input('phone') ?: '+62 812-0000-0000',
+            'whatsapp_number' => $phone,
             'branch_id' => $branch?->id,
             'province_id' => $province?->id ?? '31',
             'primary_institution_id' => $institution?->id,
             'assigned_pic_id' => $pic?->id,
+            'plataran_sehat_username' => $lmsUser ? trim($lmsUser) : null,
+            'plataran_sehat_pass_encrypted' => $lmsPass ? trim($lmsPass) : null,
             'status' => 'INCOMPLETE',
             'dashboard_updated_at' => $now,
             'kemenkes_updated_at' => $now,
@@ -536,13 +553,27 @@ class DoctorController extends Controller
             'updated_at' => $now,
         ]);
 
+        // Parse period dates
+        $periodStartVal = $request->input('period_start');
+        $periodEndVal = $request->input('period_end');
+        try {
+            $startDate = $periodStartVal ? Carbon::parse($periodStartVal)->toDateString() : $now->copy()->startOfYear()->toDateString();
+        } catch (\Throwable $e) {
+            $startDate = $now->copy()->startOfYear()->toDateString();
+        }
+        try {
+            $endDate = $periodEndVal ? Carbon::parse($periodEndVal)->toDateString() : $now->copy()->addYears(5)->endOfYear()->toDateString();
+        } catch (\Throwable $e) {
+            $endDate = $now->copy()->addYears(5)->endOfYear()->toDateString();
+        }
+
         // Create initial SKP period
         DB::table('doctor_skp_periods')->insert([
             'id' => (string) Str::uuid(),
             'doctor_id' => $doctorId,
             'cycle_number' => 1,
-            'start_date' => $now->toDateString(),
-            'end_date' => Carbon::now()->addYears(5)->toDateString(),
+            'start_date' => $startDate,
+            'end_date' => $endDate,
             'target_total_credits' => 160.0,
             'target_pembelajaran_credits' => 72.0,
             'target_pelayanan_credits' => 56.0,

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="jLNHYKQnTjIbHCjWnZgMZ4Wl3P1wSsj8wd0EeQq3">
+  <meta name="csrf-token" content="QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -12,10 +12,112 @@
   <!-- Leaflet.js CDN for Interactive Vector Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- jQuery & Select2 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   
   <!-- Core Styles -->
   <link rel="stylesheet" href="/css/style.css">
   <style>
+    /* =========================================================
+       Select2 Custom Tailwind Theme (Matching POGI SKP Tracker)
+       ========================================================= */
+    .select2-container {
+      width: 100% !important;
+      display: block !important;
+    }
+    .select2-container .select2-selection--single {
+      height: 38px !important;
+      background-color: #f8fafc !important; /* bg-slate-50 */
+      border: 1px solid #e2e8f0 !important; /* border-slate-200 */
+      border-radius: 0.75rem !important; /* rounded-xl (12px) */
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 4px !important;
+      outline: none !important;
+      transition: all 0.15s ease-in-out !important;
+      box-sizing: border-box !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      color: #1e293b !important; /* text-slate-800 */
+      font-size: 0.75rem !important; /* text-xs (12px) */
+      font-weight: 600 !important; /* font-semibold */
+      line-height: 36px !important;
+      padding-left: 8px !important;
+      padding-right: 28px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__placeholder {
+      color: #94a3b8 !important; /* text-slate-400 */
+      font-weight: 500 !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 100% !important;
+      right: 8px !important;
+      top: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow b {
+      border-color: #64748b transparent transparent transparent !important;
+      border-width: 5px 4px 0 4px !important;
+    }
+    .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+      border-color: transparent transparent #64748b transparent !important;
+      border-width: 0 4px 5px 4px !important;
+    }
+    .select2-container--default.select2-container--focus .select2-selection--single,
+    .select2-container--default.select2-container--open .select2-selection--single {
+      background-color: #ffffff !important;
+      border-color: #16b3ac !important;
+      box-shadow: 0 0 0 3px rgba(22, 179, 172, 0.15) !important;
+    }
+    .select2-dropdown {
+      background-color: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 0.75rem !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+      overflow: hidden !important;
+      z-index: 9999999 !important;
+      font-family: inherit !important;
+      padding-top: 4px !important;
+      padding-bottom: 4px !important;
+    }
+    .select2-container--default .select2-search--dropdown {
+      padding: 6px 8px !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 0.5rem !important;
+      padding: 6px 10px !important;
+      font-size: 0.75rem !important;
+      outline: none !important;
+      color: #1e293b !important;
+      box-sizing: border-box !important;
+      width: 100% !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+      border-color: #16b3ac !important;
+      box-shadow: 0 0 0 2px rgba(22, 179, 172, 0.15) !important;
+    }
+    .select2-results__option {
+      padding: 7px 12px !important;
+      font-size: 0.75rem !important;
+      font-weight: 500 !important;
+      color: #334155 !important;
+      cursor: pointer !important;
+    }
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+      background-color: #16b3ac !important;
+      color: #ffffff !important;
+    }
+    .select2-container--default .select2-results__option[aria-selected="true"] {
+      background-color: #f0fdf4 !important;
+      color: #0d9488 !important;
+      font-weight: 700 !important;
+    }
     #interactiveIndonesiaMap {
       background-color: transparent !important;
     }
@@ -160,10 +262,10 @@
     <div id="sidebarUserProfileCard" class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
       <div class="flex items-center gap-2.5 min-w-0">
         <div id="sidebarUserAvatar" class="w-9 h-9 rounded-full bg-[#16b3ac] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
-          D
+          DI
         </div>
         <div class="min-w-0" id="sidebarUserInfo">
-          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Dian</div>
+          <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">Dian Imas</div>
           <div class="text-[10px] text-slate-400 font-mono truncate" id="sidebarUserEmail">super@example.com</div>
         </div>
       </div>
@@ -222,7 +324,7 @@
           <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
             <div class="font-bold text-slate-900 flex items-center gap-1.5">
               <span>Pemberitahuan Sistem</span>
-              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">157 Perlu FU</span>
+              <span id="notifUnreadBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">1 Perlu FU</span>
             </div>
             <button type="button" onclick="markAllNotificationsAsRead()" class="text-[11px] text-[#16b3ac] hover:underline font-bold cursor-pointer">
               Tandai Dibaca
@@ -235,8 +337,8 @@
               </div>
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
-                <div class="text-[11px] text-slate-500 mt-0.5">157 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">36 menit yang lalu</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">14 menit yang lalu</div>
               </div>
             </div>
           </div>
@@ -252,16 +354,16 @@
       <!-- User Avatar Profile Circle -->
       <div class="relative">
         <button type="button" id="topUserBtn" onclick="toggleTopUserDropdown()" class="w-9 h-9 rounded-full bg-[#16b3ac] hover:bg-[#129993] text-white font-black text-xs flex items-center justify-center shadow-xs transition cursor-pointer ring-2 ring-emerald-600/20" title="Profil Pengguna">
-          <span id="headerUserInitials">D</span>
+          <span id="headerUserInitials">DI</span>
         </button>
         <!-- User Profile Dropdown Menu -->
         <div id="topUserDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-3 z-50 text-xs">
           <div class="px-4 py-2 border-b border-slate-100 flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-[#16b3ac] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-2xs" id="headerDropdownAvatar">
-              D
+              DI
             </div>
             <div class="min-w-0">
-              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Dian</div>
+              <div class="font-bold text-slate-900 text-xs truncate" id="headerDropdownName">Dian Imas</div>
               <div class="text-[10px] text-slate-500 truncate" id="headerDropdownRole">Super Admin Sistem</div>
               <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#16b3ac] border border-emerald-200 text-[9px] font-bold mt-1">
                 <span class="w-1 h-1 rounded-full bg-emerald-600"></span> Online
@@ -434,7 +536,7 @@
   </div>
 
   <script>
-    window.AUTH_USER = {"id":"14eac2f0-bb8c-4771-8c8d-8de6355003af","name":"Dian","email":"super@example.com","role":"SUPER_ADMIN","branch":"Pusat"};
+    window.AUTH_USER = {"id":"14eac2f0-bb8c-4771-8c8d-8de6355003af","name":"Dian Imas","email":"super@example.com","role":"SUPER_ADMIN","branch":"Pusat"};
   </script>
   <!-- Core Scripts -->
   <script src="/js/navigation.js"></script>
@@ -548,8 +650,8 @@
       renderEventsGrid(true);
     }
 
-    const LIVE_SERVER_EVENTS = [{"id":"02fe4db4-bf26-479a-ba45-e2fd756e495b","title":"Simposium Akhir Tahun Kardiologi Klinis \u0026 Maternal","type":"Pembelajaran","category":"Simposium Ilmiah","credits":1.5,"creditsDisplay":"1.50","date":"19 Dec 2026","venue":"PP POGI \u0026 Kolegium Obgyn","doctors":"98 \/ 100 selesai"},{"id":"4f972b67-1f6e-4698-a1f1-9d9835de81f2","title":"Webinar Kesehatan Jiwa di Layanan Primer \u0026 Postpartum","type":"Pembelajaran","category":"Seminar \/ Webinar","credits":1,"creditsDisplay":"1.00","date":"19 Dec 2026","venue":"PP POGI \u0026 Kolegium Obgyn","doctors":"98 \/ 100 selesai"},{"id":"5dd05a54-d9a2-437f-b372-ab4d82ffd440","title":"Webinar Vaksinasi Dewasa \u0026 Imunisasi Kehamilan","type":"Pembelajaran","category":"Seminar \/ Webinar","credits":0.5,"creditsDisplay":"0.50","date":"19 Dec 2026","venue":"PP POGI \u0026 Kolegium Obgyn","doctors":"98 \/ 100 selesai"},{"id":"6d88a936-3ede-40ae-9887-f4c3ed4904c5","title":"Penyuluhan Gizi Seimbang Ibu Hamil \u0026 Cegah Stunting","type":"Pengabdian","category":"Penyuluhan Kesehatan Masyarakat","credits":0.5,"creditsDisplay":"0.50","date":"19 Dec 2026","venue":"PP POGI \u0026 Kolegium Obgyn","doctors":"98 \/ 100 selesai"},{"id":"a1259655-7a34-45b1-8984-8d3223399a84","title":"Tindakan Medis Terjadwal Triwulan IV (Sectio Caesarea)","type":"Pelayanan","category":"Tindakan Medis","credits":2,"creditsDisplay":"2.00","date":"19 Dec 2026","venue":"PP POGI \u0026 Kolegium Obgyn","doctors":"98 \/ 100 selesai"},{"id":"a6ca280c-002c-440f-be4a-ab3f8d1963fa","title":"Jaga IGD Maternal PONEK Oktober-November","type":"Pelayanan","category":"Jaga IGD \/ Piket","credits":1,"creditsDisplay":"1.00","date":"19 Dec 2026","venue":"PP POGI \u0026 Kolegium Obgyn","doctors":"98 \/ 100 selesai"},{"id":"b1e7693e-1ec0-4cbe-a4fa-1cd7b74e9e3d","title":"Bakti Sosial Pemeriksaan Lansia \u0026 Kesehatan Reproduksi","type":"Pengabdian","category":"Bakti Sosial","credits":0.5,"creditsDisplay":"0.50","date":"19 Dec 2026","venue":"PP POGI \u0026 Kolegium Obgyn","doctors":"98 \/ 100 selesai"},{"id":"baad2e46-917d-4bfe-a290-811094174844","title":"Workshop USG Point-of-Care Fetomaternal","type":"Pembelajaran","category":"Workshop \/ Pelatihan","credits":2,"creditsDisplay":"2.00","date":"19 Dec 2026","venue":"PP POGI \u0026 Kolegium Obgyn","doctors":"98 \/ 100 selesai"},{"id":"d574e9a9-31dc-4a47-bdd3-61127b21b613","title":"Bakti Sosial Khitanan Massal \u0026 Skrining Serviks","type":"Pengabdian","category":"Bakti Sosial","credits":1,"creditsDisplay":"1.00","date":"19 Dec 2026","venue":"PP POGI \u0026 Kolegium Obgyn","doctors":"98 \/ 100 selesai"},{"id":"d71b9a6d-1cf5-44ea-b94b-08b528cd7074","title":"Praktik Klinis Poliklinik Triwulan IV","type":"Pelayanan","category":"Praktik Klinis","credits":5,"creditsDisplay":"5.00","date":"19 Dec 2026","venue":"PP POGI \u0026 Kolegium Obgyn","doctors":"98 \/ 100 selesai"}];
-    const LIVE_SERVER_DOCTORS = [{"id":"012eb9b4-7667-4b47-9e9d-a48738f3385f","name":"dr. Yohana Suryani, Sp.OG(K)","pogiId":"#POGI-2026-1050","province":"Jawa Tengah","institution":"RS Panti Wilasa"},{"id":"0364888b-90f6-4ce0-bb90-60ba36785fee","name":"dr. Sri Kusuma, Sp.OG, Subsp. KFM","pogiId":"#POGI-2026-1020","province":"DKI Jakarta","institution":"RS Siloam Semanggi"},{"id":"04551c71-a0cc-4a1f-898e-13d8f6cc46af","name":"dr. Christy Fauzi, Sp.OG, Subsp. Urogin-RE","pogiId":"#POGI-2026-1082","province":"DI Yogyakarta","institution":"RSUP Dr. Sardjito Yogyakarta"},{"id":"0532c531-6432-4f8a-969b-dad19d345628","name":"Yohana Simatupang","pogiId":"#POGI-2026-1006","province":"Jawa Barat","institution":"RSUP Dr. Hasan Sadikin"},{"id":"0551e50b-0277-4089-b1a1-2bcdf0b984f1","name":"dr. Dian Wibowo, Sp.OG, Subsp. Obginsos","pogiId":"#POGI-2026-1157","province":"Sulawesi Utara","institution":"RSUP Prof. Dr. R. D. Kandou Manado"},{"id":"06c2bd75-7094-4c0b-a944-9906f4d0009f","name":"dr. Maya Utami, Sp.OG, Subsp. KFM","pogiId":"#POGI-2026-1031","province":"Sulawesi Selatan","institution":"RS Awal Bros Makassar"},{"id":"08f838a4-e274-485b-812f-e3918b0b42b4","name":"dr. Cut Kurniawan, Sp.OG, Subsp. Urogin-RE","pogiId":"#POGI-2026-1022","province":"DKI Jakarta","institution":"RS Ibu dan Anak Harapan Kita"},{"id":"0a8582fa-c36e-4154-8bf2-a60cbb8b3021","name":"dr. Arif Nasution, Sp.OG, Subsp. FER","pogiId":"#POGI-2026-1127","province":"Kalimantan Barat","institution":"RS Antonius Pontianak"},{"id":"0ad04e52-92c5-4400-81d9-85ec66139ee6","name":"dr. Andi Sumampouw, Sp.OG, Subsp. Obginsos","pogiId":"#POGI-2026-1191","province":"Papua Barat","institution":"RSUD Manokwari"},{"id":"0af4574a-1d26-43fd-aaa0-ba4415c45312","name":"Christy Sumampouw","pogiId":"#POGI-2026-1007","province":"Jawa Barat","institution":"RSUD Kota Bogor"},{"id":"0b867a59-df64-4d08-a817-7a51e0162541","name":"dr. Ahmad Santoso, Sp.OG, Subsp. FER","pogiId":"#POGI-2026-1197","province":"Papua Pegunungan","institution":"RSUD Wamena"},{"id":"0c98f61a-388e-4bc9-a563-f6a0b0ad65db","name":"dr. Bambang Anggraini, Sp.OG, Subsp. Obginsos","pogiId":"#POGI-2026-1066","province":"Sumatera Utara","institution":"RS Murni Teguh Memorial"},{"id":"0deb8d1d-ba48-46c5-93ac-780bea32fba0","name":"dr. Eko Saputra, Sp.OG","pogiId":"#POGI-2026-1083","province":"DI Yogyakarta","institution":"RS Panti Rapih"},{"id":"0e43a5d6-9762-461a-b784-7b78f0a6a2f4","name":"Cut Bakhtiar","pogiId":"#POGI-2026-1004","province":"DKI Jakarta","institution":"RS Pondok Indah"},{"id":"0e577c5a-45b3-4026-93d9-0a1606ad8f03","name":"Prof. Dr. dr. Maya Rahmawati, Sp.OG, Subsp. Onk","pogiId":"#POGI-2026-1035","province":"Sulawesi Selatan","institution":"RS Awal Bros Makassar"}];
+    const LIVE_SERVER_EVENTS = [{"id":"d4f0a6c3-d40e-4875-8114-3a938ed7b7ed","title":"Simposium Akhir Tahun Kardiologi Klinis \u0026 Maternal","type":"Pembelajaran","category":"Simposium Ilmiah","credits":2,"creditsDisplay":"2.00","date":"25 Nov 2026","venue":"PP POGI","doctors":"0 selesai"}];
+    const LIVE_SERVER_DOCTORS = [{"id":"04680f57-b8b3-4873-898e-754974a29bb1","name":"dr. Budi Santoso, Sp.PD","pogiId":"#POGI-2026-5774","province":"DKI Jakarta","institution":"Klinik Pratama Sehat Sentosa"}];
     window.LIVE_SERVER_EVENTS = LIVE_SERVER_EVENTS;
     window.LIVE_SERVER_DOCTORS = LIVE_SERVER_DOCTORS;
     let activeFilter = 'ALL';
@@ -627,10 +729,10 @@
               <tr class="hover:bg-slate-50/80 transition">
                 <td class="py-3.5 px-4">
                   <div class="font-bold text-slate-900 text-xs leading-snug">${eventTitle}</div>
-                  <div class="text-[10px] text-slate-400 font-mono mt-0.5 flex items-center gap-1.5 flex-wrap">
+                  <div class="text-[10px] text-slate-500 font-medium mt-0.5 flex items-center gap-1.5 flex-wrap">
                     <span class="inline-flex items-center gap-0.5"><span class="material-symbols-outlined text-[11px] text-slate-400">calendar_month</span>${e.date || 'Periode Q4 2026'}</span>
                     <span>&bull;</span>
-                    <span class="bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded font-mono text-[9px] font-bold">${e.id}</span>
+                    <span>${eventVenue}</span>
                   </div>
                 </td>
                 <td class="py-3.5 px-4">
