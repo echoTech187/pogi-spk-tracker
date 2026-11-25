@@ -1617,11 +1617,7 @@
         showToast(`Status siklus Kemenkes berkas berhasil diubah menjadi: ${newStatus}`, 'success');
       })
       .catch(err => {
-        if (typeof PogiStore !== 'undefined') {
-          PogiStore.updateDoctorDocumentStatus(activeDoctor.id, fileId, newStatus);
-        }
-        renderDoctorRepositoryAndDetector(activeDoctor.id);
-        showToast(`Status siklus Kemenkes berkas berhasil diubah menjadi: ${newStatus}`, 'success');
+        showToast('Gagal mengubah status dokumen di server. Silakan coba kembali.', 'error');
       });
     }
 

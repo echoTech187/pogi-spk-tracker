@@ -540,6 +540,9 @@
     let chartStatusInstance = null;
 
     const LIVE_MONTHLY_DATA = @json($monthlyData ?? []);
+    const LIVE_REPORT_PDF_CONTEXT = @json($pdfContext ?? []);
+    window.LIVE_MONTHLY_DATA = LIVE_MONTHLY_DATA;
+    window.LIVE_REPORT_PDF_CONTEXT = LIVE_REPORT_PDF_CONTEXT;
     const monthlyData = Array.isArray(LIVE_MONTHLY_DATA) ? LIVE_MONTHLY_DATA : [];
 
     let currentSelectedMonthIndex = 10; // November

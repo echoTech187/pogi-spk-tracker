@@ -19,25 +19,12 @@ if (typeof window !== 'undefined') {
       if (window.CURRENT_USER) return (this._currentUser = window.CURRENT_USER);
     }
     return {
-      id: 'auth-user',
-      name: 'Super Admin',
-      email: 'super@example.com',
-      role: 'SUPER_ADMIN',
+      id: 'guest',
+      name: 'Pengurus POGI',
+      email: '',
+      role: 'GUEST',
       branch: 'Pusat'
     };
-  };
-  window.PogiStore.getAllRoles = function () {
-    return [
-      { role: 'SUPER_ADMIN', roleLabel: 'Super Admin', branch: 'Pusat' },
-      { role: 'ADMIN_PUSAT', roleLabel: 'Admin Pusat', branch: 'Pusat' },
-      { role: 'ADMIN_POGI', roleLabel: 'Admin POGI', branch: 'Pusat' },
-      { role: 'ADMIN_CABANG', roleLabel: 'Admin Cabang', branch: 'DKI Jakarta' },
-      { role: 'DOKTER', roleLabel: 'User/Dokter', branch: 'DKI Jakarta' }
-    ];
-  };
-  window.PogiStore.setCurrentUser = function (u) {
-    this._currentUser = typeof u === 'string' ? { id: 'user-' + u.toLowerCase(), name: u, role: u, branch: 'Pusat' } : u;
-    if (typeof window !== 'undefined') window.AUTH_USER = this._currentUser;
   };
   window.PogiStore.formatCurrentDate = function () {
     const d = new Date();
@@ -66,18 +53,6 @@ if (typeof window !== 'undefined') {
   window.PogiStore.getActivities = function () {
     return window.LIVE_SERVER_ACTIVITIES || window.LIVE_SERVER_LOGS || [];
   };
-  window.PogiStore.generateUUIDv7 = function () {
-    return 'id-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
-  };
-  window.PogiStore.addActivity = window.PogiStore.addActivity || function () { };
-  window.PogiStore.saveDoctors = window.PogiStore.saveDoctors || function () { };
-  window.PogiStore.saveInstitutions = window.PogiStore.saveInstitutions || function () { };
-  window.PogiStore.saveEvents = window.PogiStore.saveEvents || function () { };
-  window.PogiStore.saveCategories = window.PogiStore.saveCategories || function () { };
-  window.PogiStore.saveUsers = window.PogiStore.saveUsers || function () { };
-  window.PogiStore.reassignDoctor = window.PogiStore.reassignDoctor || function () { };
-  window.PogiStore.addDoctorDocument = window.PogiStore.addDoctorDocument || function () { };
-  window.PogiStore.updateDoctorDocumentStatus = window.PogiStore.updateDoctorDocumentStatus || function () { };
 }
 
 // Mobile Sidebar Toggle
@@ -99,48 +74,6 @@ function toggleMobileSidebar(forceOpen) {
     overlay.classList.add('hidden', 'pointer-events-none');
     overlay.classList.remove('opacity-100');
     document.body.classList.remove('overflow-hidden');
-  }
-}
-
-// Scope Selector Dropdown
-function toggleOrgScopeDropdown() {
-  const dd = document.getElementById('orgScopeDropdown');
-  if (dd) {
-    dd.classList.toggle('hidden');
-  }
-}
-
-function selectOrgScope(scope, labelText) {
-  const label = document.getElementById('selectedOrgScopeLabel');
-  if (label) {
-    label.innerText = labelText || (scope === 'all' ? 'Semua Wilayah Nasional (38 Provinsi)' : scope);
-  }
-  const dd = document.getElementById('orgScopeDropdown');
-  if (dd) dd.classList.add('hidden');
-  showToast('Cakupan Wilayah Diperbarui: ' + (labelText || scope), 'info');
-
-  // If on doctors.html, trigger page filter
-  if (typeof applyDoctorFilters === 'function') {
-    const provSelect = document.getElementById('filterProvince') || document.getElementById('provinceFilter');
-    if (provSelect) {
-      if (scope === 'jabar') provSelect.value = 'Jawa Barat';
-      else if (scope === 'dki') provSelect.value = 'DKI Jakarta';
-      else if (scope === 'jatim') provSelect.value = 'Jawa Timur';
-      else provSelect.value = 'ALL';
-      applyDoctorFilters();
-    }
-  }
-
-  // If on provinces.html, filter search input
-  if (typeof filterProvinces === 'function') {
-    const searchInput = document.getElementById('searchProvinceInput');
-    if (searchInput) {
-      if (scope === 'jabar') searchInput.value = 'Jawa Barat';
-      else if (scope === 'dki') searchInput.value = 'DKI Jakarta';
-      else if (scope === 'jatim') searchInput.value = 'Jawa Timur';
-      else searchInput.value = '';
-      filterProvinces();
-    }
   }
 }
 
@@ -170,7 +103,7 @@ function markAllNotificationsAsRead() {
 function toggleTopUserDropdown() {
   const dd = document.getElementById('topUserDropdown');
   if (dd) {
-    initRbacRoleSwitcher();
+    applyRbacEnforcement();
     dd.classList.toggle('hidden');
     // Close notif dropdown if open
     const notifDd = document.getElementById('topNotifDropdown');
@@ -309,110 +242,6 @@ function selectGlobalSearchResult(docId) {
   }
 }
 
-// Global QR Modal Controller
-function openGlobalQrModal() {
-  let modal = document.getElementById('globalQrModal');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'globalQrModal';
-    modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity';
-    modal.innerHTML = `
-      <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-slate-100 transform transition-all scale-100">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-          <div class="flex items-center gap-2 text-left">
-            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#16b3ac] flex items-center justify-center">
-              <span class="material-symbols-outlined text-lg">qr_code_2</span>
-            </div>
-            <div>
-              <div class="font-black text-xs text-slate-900 leading-tight">Link QR Dokter</div>
-              <div class="text-[10px] text-slate-400">Portal Kredensial Mandiri</div>
-            </div>
-          </div>
-          <button type="button" onclick="closeGlobalQrModal()" class="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer">
-            <span class="material-symbols-outlined text-lg">close</span>
-          </button>
-        </div>
-
-        <div class="p-4 bg-slate-50 border border-slate-200/80 rounded-2xl flex flex-col items-center justify-center space-y-2">
-          <!-- Visual SVG QR Code -->
-          <div class="w-44 h-44 bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-center relative">
-            <svg class="w-full h-full text-slate-900" viewBox="0 0 100 100" fill="currentColor">
-              <rect x="0" y="0" width="30" height="30" rx="3" fill="#16b3ac" />
-              <rect x="5" y="5" width="20" height="20" rx="2" fill="#fff" />
-              <rect x="10" y="10" width="10" height="10" rx="1" fill="#16b3ac" />
-              <rect x="70" y="0" width="30" height="30" rx="3" fill="#16b3ac" />
-              <rect x="75" y="5" width="20" height="20" rx="2" fill="#fff" />
-              <rect x="80" y="10" width="10" height="10" rx="1" fill="#16b3ac" />
-              <rect x="0" y="70" width="30" height="30" rx="3" fill="#16b3ac" />
-              <rect x="5" y="75" width="20" height="20" rx="2" fill="#fff" />
-              <rect x="10" y="80" width="10" height="10" rx="1" fill="#16b3ac" />
-              <rect x="36" y="8" width="6" height="6" rx="1" fill="#16b3ac" />
-              <rect x="48" y="8" width="6" height="6" rx="1" fill="#16b3ac" />
-              <rect x="40" y="20" width="8" height="8" rx="1" fill="#16b3ac" />
-              <rect x="55" y="20" width="6" height="6" rx="1" fill="#16b3ac" />
-              <rect x="8" y="40" width="8" height="8" rx="1" fill="#16b3ac" />
-              <rect x="22" y="42" width="6" height="6" rx="1" fill="#16b3ac" />
-              <rect x="36" y="38" width="10" height="10" rx="2" fill="#16b3ac" />
-              <rect x="52" y="36" width="8" height="8" rx="1" fill="#16b3ac" />
-              <rect x="68" y="42" width="6" height="6" rx="1" fill="#16b3ac" />
-              <rect x="82" y="38" width="8" height="8" rx="1" fill="#16b3ac" />
-              <rect x="38" y="56" width="6" height="6" rx="1" fill="#16b3ac" />
-              <rect x="50" y="54" width="8" height="8" rx="1" fill="#16b3ac" />
-              <rect x="64" y="58" width="6" height="6" rx="1" fill="#16b3ac" />
-              <rect x="80" y="56" width="8" height="8" rx="1" fill="#16b3ac" />
-              <rect x="38" y="72" width="10" height="10" rx="2" fill="#16b3ac" />
-              <rect x="54" y="74" width="6" height="6" rx="1" fill="#16b3ac" />
-              <rect x="68" y="70" width="8" height="8" rx="1" fill="#16b3ac" />
-              <rect x="84" y="76" width="6" height="6" rx="1" fill="#16b3ac" />
-              <rect x="42" y="88" width="8" height="8" rx="1" fill="#16b3ac" />
-              <rect x="58" y="86" width="6" height="6" rx="1" fill="#16b3ac" />
-              <rect x="74" y="88" width="8" height="8" rx="1" fill="#16b3ac" />
-            </svg>
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div class="w-8 h-8 rounded-lg bg-white p-0.5 shadow-md flex items-center justify-center">
-                <img src="assets/img/pogi_logo.jpg" alt="POGI" class="w-full h-full object-contain">
-              </div>
-            </div>
-          </div>
-          <div class="text-[10px] text-slate-500 font-mono select-all">
-            pogi.medcred.id/portal-dokter
-          </div>
-        </div>
-
-        <div class="space-y-2 text-xs">
-          <button type="button" onclick="copyDoctorQrLink()" class="w-full py-2.5 px-4 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
-            <span class="material-symbols-outlined text-base">content_copy</span>
-            <span>Salin Tautan Akses Dokter</span>
-          </button>
-          <button type="button" onclick="closeGlobalQrModal()" class="w-full py-2 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition cursor-pointer">
-            Tutup
-          </button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-  }
-  modal.classList.remove('hidden');
-}
-
-function closeGlobalQrModal() {
-  const modal = document.getElementById('globalQrModal');
-  if (modal) modal.classList.add('hidden');
-}
-
-function copyDoctorQrLink() {
-  const url = 'https://pogi.medcred.id/portal-dokter/verifikasi-mandiri';
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(() => {
-      showToast('Tautan QR Portal Dokter berhasil disalin ke clipboard!', 'success');
-    }).catch(() => {
-      showToast('Tautan: ' + url, 'info');
-    });
-  } else {
-    showToast('Tautan: ' + url, 'info');
-  }
-}
-
 // Toast Notifications
 function showToast(message, type = 'success') {
   let container = document.getElementById('toastContainer');
@@ -457,18 +286,6 @@ function performLogout() {
 
     window.location.href = '/logout';
   }
-}
-
-// Universal Header Actions
-function syncSatuSehat() {
-  showToast('Menghubungkan ke API SATUSEHAT Kemenkes RI...', 'info');
-  setTimeout(() => {
-    showToast('Sinkronisasi SATUSEHAT Berhasil: 200 Dokter Terverifikasi', 'success');
-  }, 1200);
-}
-
-function openFollowUpModal() {
-  showToast('Fitur Follow-up: Mengirimkan rekapitulasi data kepatuhan ke Sekretariat Cabang...', 'info');
 }
 
 // Global Click-Outside Listener to Close Dropdowns
@@ -772,13 +589,9 @@ function applyRbacEnforcement() {
   }
 }
 
-function initRbacRoleSwitcher() {
-  applyRbacEnforcement();
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
-    initRbacRoleSwitcher();
+    applyRbacEnforcement();
   }, 30);
 });
 

@@ -125,13 +125,97 @@ class ReportController extends Controller
             'total_verified_skp' => $totalSkp,
             'total_doctors' => $totalDoctors,
             'complete_doctors' => $completeDoctors,
+            'incomplete_doctors' => $incompleteDoctors,
+            'pending_doctors' => $pendingDoctors,
             'compliance_rate' => $avgCompliance,
+        ];
+
+        // Konteks Data Riil Database untuk Ekspor PDF Resmi (Bebas Hardcode)
+        $entryStats = DB::table('skp_entries')
+            ->select('domain', 'status', DB::raw('COUNT(*) as entry_count'), DB::raw('COALESCE(SUM(credit_amount), 0) as total_credits'))
+            ->groupBy('domain', 'status')
+            ->get();
+
+        $domainBreakdown = [
+            'PEMBELAJARAN' => ['DONE' => 0, 'SUBMITTED' => 0, 'REJECTED' => 0, 'NOT_SUBMITTED' => 0],
+            'PELAYANAN' => ['DONE' => 0, 'SUBMITTED' => 0, 'REJECTED' => 0, 'NOT_SUBMITTED' => 0],
+            'PENGABDIAN' => ['DONE' => 0, 'SUBMITTED' => 0, 'REJECTED' => 0, 'NOT_SUBMITTED' => 0],
+        ];
+        $totalRecords = 0;
+        foreach ($entryStats as $row) {
+            $dom = strtoupper((string) $row->domain);
+            $st = strtoupper((string) $row->status);
+            if ($st === 'PENDING') $st = 'NOT_SUBMITTED';
+            if ($st === 'VERIFIED') $st = 'DONE';
+            if (isset($domainBreakdown[$dom][$st])) {
+                $domainBreakdown[$dom][$st] += round((float) $row->total_credits, 1);
+            }
+            $totalRecords += (int) $row->entry_count;
+        }
+
+        $topDoctors = DB::table('doctors')
+            ->leftJoin('provinces', 'doctors.province_id', '=', 'provinces.id')
+            ->leftJoin('doctor_skp_periods as p', function ($j) {
+                $j->on('doctors.id', '=', 'p.doctor_id')->where('p.is_active', true);
+            })
+            ->whereNull('doctors.deleted_at')
+            ->orderByDesc('p.achieved_total_credits')
+            ->limit(10)
+            ->select(
+                'doctors.full_name as name',
+                'provinces.name as province',
+                'doctors.status',
+                DB::raw('COALESCE(p.achieved_total_credits, 0) as total_skp'),
+                DB::raw('COALESCE(p.achieved_pembelajaran_credits, 0) as pemb_skp'),
+                DB::raw('COALESCE(p.achieved_pelayanan_credits, 0) as pel_skp'),
+                DB::raw('COALESCE(p.achieved_pengabdian_credits, 0) as peng_skp')
+            )
+            ->get();
+
+        $topEvents = DB::table('skp_events')
+            ->leftJoin('event_categories', 'skp_events.category_id', '=', 'event_categories.id')
+            ->leftJoin('skp_entries', 'skp_events.id', '=', 'skp_entries.event_id')
+            ->groupBy('skp_events.id', 'skp_events.title', 'skp_events.event_date', 'skp_events.credit_value', 'event_categories.domain')
+            ->orderByDesc(DB::raw('COUNT(DISTINCT skp_entries.doctor_id)'))
+            ->limit(8)
+            ->select(
+                'skp_events.title',
+                'skp_events.event_date',
+                'skp_events.credit_value',
+                'event_categories.domain',
+                DB::raw('COUNT(DISTINCT skp_entries.doctor_id) as participants')
+            )
+            ->get();
+
+        $topProvinces = DB::table('provinces')
+            ->leftJoin('doctors', function ($j) {
+                $j->on('provinces.id', '=', 'doctors.province_id')->whereNull('doctors.deleted_at');
+            })
+            ->groupBy('provinces.id', 'provinces.name')
+            ->havingRaw('COUNT(doctors.id) > 0')
+            ->orderByDesc(DB::raw('COUNT(doctors.id)'))
+            ->limit(10)
+            ->select(
+                'provinces.name',
+                DB::raw('COUNT(doctors.id) as doctors_count'),
+                DB::raw("SUM(CASE WHEN doctors.status = 'COMPLETE' THEN 1 ELSE 0 END) as complete_count")
+            )
+            ->get();
+
+        $pdfContext = [
+            'metrics' => $metrics,
+            'totalRecords' => $totalRecords,
+            'domainBreakdown' => $domainBreakdown,
+            'topDoctors' => $topDoctors,
+            'topEvents' => $topEvents,
+            'topProvinces' => $topProvinces,
         ];
 
         return view('reports', [
             'snapshots' => $snapshots,
             'monthlyData' => $monthlyData,
             'metrics' => $metrics,
+            'pdfContext' => $pdfContext,
         ]);
     }
 }
