@@ -1,6 +1,6 @@
 @php
   $headerUser = Auth::user() ?? ($user ?? null);
-  $headerName = $headerUser?->full_name ?? 'Super Admin';
+  $headerName = $headerUser?->full_name ?? ($headerUser?->name ?? 'Super Admin');
   $headerEmail = $headerUser?->email ?? 'super@example.com';
   $headerRole = $headerUser?->role ?? 'SUPER_ADMIN';
   $headerRoleLabel = match($headerRole) {
@@ -11,7 +11,7 @@
       'DOKTER' => 'Dokter Spesialis Obgyn',
       default => 'Pengurus'
   };
-  $headerInitials = collect(explode(' ', $headerName))->filter()->map(fn($part) => strtoupper(substr($part, 0, 1)))->take(2)->implode('') ?: 'SA';
+  $headerInitials = collect(explode(' ', preg_replace('/^(dr\.|dr\s+|drg\.|prof\.|prof\s+)/i', '', $headerName)))->filter()->map(fn($part) => strtoupper(substr($part, 0, 1)))->take(2)->implode('') ?: 'SA';
 
   $notifPendingCount = \Illuminate\Support\Facades\DB::table('doctors')->where('status', 'INCOMPLETE')->count();
   $latestIncomplete = \Illuminate\Support\Facades\DB::table('doctors')->where('status', 'INCOMPLETE')->latest('updated_at')->first();

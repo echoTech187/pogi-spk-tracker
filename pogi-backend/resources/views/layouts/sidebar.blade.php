@@ -105,19 +105,20 @@
 
   @php
     $sidebarUser = Auth::user() ?? ($user ?? null);
-    $sidebarName = $sidebarUser?->full_name ?? 'Super Admin';
+    $sidebarName = $sidebarUser?->full_name ?? ($sidebarUser?->name ?? 'Super Admin');
     $sidebarEmail = $sidebarUser?->email ?? 'super@example.com';
     $sidebarRole = $sidebarUser?->role ?? 'SUPER_ADMIN';
+    $sidebarInitials = collect(explode(' ', preg_replace('/^(dr\.|dr\s+|drg\.|prof\.|prof\s+)/i', '', $sidebarName)))->filter()->map(fn($part) => strtoupper(substr($part, 0, 1)))->take(2)->implode('') ?: 'SA';
   @endphp
 
   <!-- Bottom Profile Card -->
   <div class="p-3 border-t border-slate-100 bg-slate-50/70">
-    <div class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
+    <div id="sidebarUserProfileCard" class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
       <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-800 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-xs">
-          <span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+        <div id="sidebarUserAvatar" class="w-9 h-9 rounded-full bg-[#16b3ac] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
+          {{ $sidebarInitials }}
         </div>
-        <div class="min-w-0">
+        <div class="min-w-0" id="sidebarUserInfo">
           <div class="text-xs font-bold text-slate-900 truncate" id="sidebarUserName">{{ $sidebarName }}</div>
           <div class="text-[10px] text-slate-400 font-mono truncate" id="sidebarUserEmail">{{ $sidebarEmail }}</div>
         </div>
