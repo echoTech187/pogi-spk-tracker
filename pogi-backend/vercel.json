@@ -1,19 +1,36 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "cleanUrls": true,
-  "outputDirectory": "dist",
-  "rewrites": [
-    { "source": "/", "destination": "/" },
-    { "source": "/login", "destination": "/login" },
-    { "source": "/logout", "destination": "/login" },
-    { "source": "/dashboard", "destination": "/dashboard" },
-    { "source": "/doctors", "destination": "/doctors" },
-    { "source": "/events", "destination": "/events" },
-    { "source": "/activity", "destination": "/activity" },
-    { "source": "/provinces", "destination": "/provinces" },
-    { "source": "/reports", "destination": "/reports" },
-    { "source": "/admin-performance", "destination": "/admin-performance" },
-    { "source": "/manage", "destination": "/manage" },
-    { "source": "/doctor-detail", "destination": "/doctor-detail" }
-  ]
+  "framework": null,
+  "functions": {
+    "api/index.php": {
+      "runtime": "vercel-php@0.7.4"
+    }
+  },
+  "routes": [
+    {
+      "src": "/(css|js|assets)/(.*)",
+      "dest": "/public/$1/$2"
+    },
+    {
+      "src": "/(favicon\\.ico|logo\\.png|robots\\.txt)",
+      "dest": "/public/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.php"
+    }
+  ],
+  "env": {
+    "APP_NAME": "POGI SKP Tracker",
+    "APP_ENV": "production",
+    "APP_DEBUG": "false",
+    "APP_TIMEZONE": "Asia/Jakarta",
+    "APP_LOCALE": "id",
+    "APP_FALLBACK_LOCALE": "en",
+    "APP_URL": "https://console-pogi.vercel.app",
+    "LOG_CHANNEL": "stderr",
+    "SESSION_DRIVER": "cookie",
+    "CACHE_STORE": "array"
+  }
 }
