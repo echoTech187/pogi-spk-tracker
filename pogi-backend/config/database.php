@@ -60,7 +60,17 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA') ?: (
+                    str_contains((string) env('DB_HOST', ''), 'tidbcloud.com') || str_contains((string) env('DB_URL', ''), 'tidbcloud.com')
+                        ? collect([
+                            '/etc/ssl/certs/ca-certificates.crt',
+                            '/etc/pki/tls/certs/ca-bundle.crt',
+                            '/etc/ssl/cert.pem',
+                            'C:/Program Files/Git/mingw64/etc/ssl/certs/ca-bundle.crt',
+                            'C:/xampp/apache/bin/curl-ca-bundle.crt',
+                        ])->first(fn ($path) => file_exists($path))
+                        : null
+                ),
             ]) : [],
         ],
 
@@ -80,7 +90,17 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA') ?: (
+                    str_contains((string) env('DB_HOST', ''), 'tidbcloud.com') || str_contains((string) env('DB_URL', ''), 'tidbcloud.com')
+                        ? collect([
+                            '/etc/ssl/certs/ca-certificates.crt',
+                            '/etc/pki/tls/certs/ca-bundle.crt',
+                            '/etc/ssl/cert.pem',
+                            'C:/Program Files/Git/mingw64/etc/ssl/certs/ca-bundle.crt',
+                            'C:/xampp/apache/bin/curl-ca-bundle.crt',
+                        ])->first(fn ($path) => file_exists($path))
+                        : null
+                ),
             ]) : [],
         ],
 
