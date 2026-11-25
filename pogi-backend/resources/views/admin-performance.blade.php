@@ -77,7 +77,7 @@
           <span class="material-symbols-outlined text-indigo-600 text-xl">task_alt</span>
         </div>
         <div class="flex items-baseline gap-2">
-          <span id="kpiTeamProcessed" class="text-3xl font-black text-slate-900 font-mono">1,628</span>
+          <span id="kpiTeamProcessed" class="text-3xl font-black text-slate-900 font-mono">{{ number_format($summary['totalProcessedDocs'] ?? 0, 0, ',', '.') }}</span>
           <span class="text-xs text-slate-400 font-medium">Dokumen</span>
         </div>
         <div class="mt-2 flex items-center gap-1.5">
@@ -95,8 +95,8 @@
           <span class="material-symbols-outlined text-amber-600 text-xl">medical_services</span>
         </div>
         <div class="flex items-baseline gap-2">
-          <span id="kpiTeamComplete" class="text-3xl font-black text-slate-900 font-mono">42 / 200</span>
-          <span id="kpiTeamRate" class="text-xs text-slate-500 font-bold font-mono">(21%)</span>
+          <span id="kpiTeamComplete" class="text-3xl font-black text-slate-900 font-mono">{{ $summary['totalCompleteDocs'] ?? 0 }} / {{ $summary['totalAssignedDocs'] ?? 200 }}</span>
+          <span id="kpiTeamRate" class="text-xs text-slate-500 font-bold font-mono">({{ $summary['teamComplianceRate'] ?? 0 }}%)</span>
         </div>
         <div class="mt-2 flex items-center gap-1.5">
           <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200">
@@ -571,11 +571,11 @@
         <option value="${d.id}">${d.name} (Saat ini dipegang: ${d.assignedTo || 'Unassigned'})</option>
       `).join('');
 
-      const adminNames = (LIVE_SERVER_ADMINS && LIVE_SERVER_ADMINS.length > 0)
-        ? LIVE_SERVER_ADMINS.map(a => a.name)
-        : ['Anna', 'Vivi', 'Lily'];
-      adminSelect.innerHTML = adminNames.map(name => `
-        <option value="${name}">${name} (Admin POGI)</option>
+      const admins = (LIVE_SERVER_ADMINS && LIVE_SERVER_ADMINS.length > 0)
+        ? LIVE_SERVER_ADMINS
+        : [];
+      adminSelect.innerHTML = admins.map(a => `
+        <option value="${a.id}">${a.name} (${a.doctorCount || 0} Dokter)</option>
       `).join('');
     }
 
@@ -595,18 +595,34 @@
       document.getElementById('workloadRebalanceModal').classList.add('hidden');
     }
 
-    function submitRebalance() {
+    async function submitRebalance() {
       const docId = document.getElementById('rebalanceDoctorSelect').value;
-      const targetAdmin = document.getElementById('rebalanceTargetAdminSelect').value;
+      const targetAdminId = document.getElementById('rebalanceTargetAdminSelect').value;
 
-      if (!docId || !targetAdmin) return;
-      const doc = (LIVE_SERVER_DOCTORS || []).find(d => String(d.id) === String(docId));
-      if (doc) {
-        doc.assignedTo = targetAdmin;
+      if (!docId || !targetAdminId) return;
+
+      try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+        const res = await fetch(`/doctors/${docId}/assign-pic`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+          },
+          body: JSON.stringify({ assigned_pic_id: targetAdminId })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(data.message || 'Dokter berhasil dialihkan!', 'success');
+          closeWorkloadRebalanceModal();
+          setTimeout(() => window.location.reload(), 600);
+        } else {
+          showToast(data.message || 'Gagal mengalihkan dokter', 'error');
+        }
+      } catch (err) {
+        showToast('Terjadi kesalahan koneksi server', 'error');
       }
-      closeWorkloadRebalanceModal();
-      loadPerformanceData();
-      showToast(`Dokter berhasil dialihkan ke admin ${targetAdmin}!`, 'success');
     }
 
     function exportKpiReport() {
