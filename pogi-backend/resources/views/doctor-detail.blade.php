@@ -1698,19 +1698,7 @@
         }
       })
       .catch(err => {
-        // Fallback store
-        if (typeof PogiStore !== 'undefined' && typeof PogiStore.reassignDoctor === 'function') {
-          PogiStore.reassignDoctor(activeDoctor.id, newAdminName);
-        }
-        activeDoctor.assignedTo = newAdminName;
-        if (document.getElementById('doctorAssignedTo')) {
-          document.getElementById('doctorAssignedTo').innerText = newAdminName;
-        }
-        if (document.getElementById('doctorPicCardName')) {
-          document.getElementById('doctorPicCardName').innerText = newAdminName;
-        }
-        closeChangePicModal();
-        showToast(`PIC dokter berhasil dialihkan ke ${newAdminName}!`, 'success');
+        showToast('Gagal terhubung ke server saat mengalihkan PIC dokter.', 'error');
       });
     }
 
