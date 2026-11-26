@@ -6,8 +6,12 @@
   <main class="flex-1 overflow-y-auto space-y-6 page-fade-in pb-8">
 
     <!-- Modern Heading Banner -->
-    <div class="p-6 sm:p-7 rounded-3xl border border-slate-200/80 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden">
+    <div class="p-6 sm:p-7 rounded-3xl bg-white flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden">
       <div class="space-y-2 relative z-10 min-w-0">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>LOG OPERASIONAL &amp; AUDIT TRAIL</span>
+        </div>
         <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
           <span>Log Aktivitas &amp; Jejak Audit Operasional</span>
           <span class="text-xs font-bold text-slate-500 bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 rounded-full">Real-Time Sync</span>
