@@ -20,16 +20,16 @@
       </p>
     </div>
 
-    <!-- Search & Filter Bar -->
-    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-      <div class="flex-1 p-2.5 sm:p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center gap-2.5 transition hover:border-slate-300 focus-within:border-[#16b3ac] focus-within:ring-2 focus-within:ring-[#16b3ac]/15">
-        <span class="material-symbols-outlined text-slate-400 text-lg ml-1">search</span>
+    <!-- Search & Filter Bar (Unified in Single Card) -->
+    <div class="p-2 sm:p-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition hover:border-slate-300 focus-within:border-[#16b3ac] focus-within:ring-2 focus-within:ring-[#16b3ac]/15">
+      <div class="flex-1 flex items-center gap-2.5 px-2">
+        <span class="material-symbols-outlined text-slate-400 text-lg">search</span>
         <input id="searchProvinceInput" onkeyup="filterProvinces()" type="text" placeholder="Cari nama provinsi atau cabang POGI daerah..." class="w-full text-xs font-medium text-slate-800 placeholder:text-slate-400 bg-transparent focus:outline-none" />
       </div>
-      <div class="flex items-center gap-2.5 shrink-0">
-        <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer bg-white hover:bg-slate-50 px-3.5 py-2.5 sm:py-3 rounded-2xl border border-slate-200/90 shadow-2xs transition select-none">
+      <div class="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 sm:py-1 border-t sm:border-t-0 sm:border-l border-slate-100 shrink-0">
+        <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
           <input id="hideZeroDoctors" type="checkbox" onchange="toggleZeroDoctors()" class="w-4 h-4 rounded text-[#16b3ac] focus:ring-[#16b3ac] border-slate-300 cursor-pointer" />
-          <span class="text-xs font-semibold text-slate-700">Sembunyikan 0 Dokter</span>
+          <span class="text-xs font-semibold text-slate-600 hover:text-slate-900 transition">Sembunyikan 0 Dokter</span>
         </label>
       </div>
     </div>
