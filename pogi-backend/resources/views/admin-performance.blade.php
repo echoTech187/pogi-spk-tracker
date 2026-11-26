@@ -24,7 +24,7 @@
         @if(Auth::user()?->role === 'SUPER_ADMIN')
         <button type="button" onclick="openWorkloadRebalanceModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-operational cursor-pointer active:scale-95">
           <span class="material-symbols-outlined text-sm text-emerald-400">balance</span>
-          <span>Redistribusi Beban Dokter</span>
+          <span>Redistribusi Beban Kerja</span>
         </button>
         @endif
         <button type="button" onclick="exportKpiReport()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95">
@@ -151,13 +151,6 @@
             <!-- Rendered via JS -->
           </div>
         </div>
-
-        @if(Auth::user()?->role === 'SUPER_ADMIN')
-        <button type="button" onclick="openWorkloadRebalanceModal()" class="w-full mt-4 py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-200 rbac-operational">
-          <span class="material-symbols-outlined text-sm">tune</span>
-          <span>Buka Tool Seimbangkan Beban (Rebalancer)</span>
-        </button>
-        @endif
       </div>
     </div>
 
@@ -539,18 +532,10 @@
               </div>
             </td>
             <td class="py-3 px-3 text-center">
-              <div class="inline-flex items-center gap-1.5">
-                <button type="button" onclick="showAdminDetailModal('${a.id}')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition flex items-center gap-1">
-                  <span class="material-symbols-outlined text-xs">visibility</span>
-                  <span>Rincian</span>
-                </button>
-                ${IS_SUPER_ADMIN ? `
-                <button type="button" onclick="openWorkloadRebalanceModal('${a.name}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-[11px] transition flex items-center gap-1 border border-emerald-200 rbac-operational">
-                  <span class="material-symbols-outlined text-xs">tune</span>
-                  <span>Alihkan</span>
-                </button>
-                ` : ''}
-              </div>
+              <button type="button" onclick="showAdminDetailModal('${a.id}')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition inline-flex items-center gap-1 cursor-pointer">
+                <span class="material-symbols-outlined text-xs">visibility</span>
+                <span>Rincian</span>
+              </button>
             </td>
           </tr>
         `;
