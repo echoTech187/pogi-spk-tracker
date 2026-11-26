@@ -338,39 +338,41 @@
     </div>
 
     <!-- LOGBOOK AKTIVITAS DETAIL & DOKUMEN REPOSITORI TABS -->
-    <div class="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
-      <!-- Segmented Tab Header (Sesuai Aturan Bisnis RULES.md Bab 1.2 & 2.3) -->
-      <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl text-xs font-bold text-slate-600">
-          <button type="button" onclick="switchDetailTab('logbook')" id="tab-btn-logbook"
-            class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-sm">history_edu</span>
-            <span>1. Logbook Kegiatan SKP</span>
-          </button>
-          <button type="button" onclick="switchDetailTab('repository')" id="tab-btn-repository"
-            class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-sm">cloud_done</span>
-            <span>2. Repositori Cloud (Object Storage)</span>
-            <span id="tabBadgeDocCount"
-              class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-[#16b3ac] font-black">5</span>
-          </button>
-          <button type="button" onclick="switchDetailTab('detector')" id="tab-btn-detector"
-            class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-sm">rule_folder</span>
-            <span>3. Missing Document Detector</span>
-            <span id="tabBadgeMissingCount"
-              class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-800 font-black">0</span>
-          </button>
+    <div class="p-4 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+      <!-- Segmented Tab Header (Responsive horizontal scroll with smooth pill tabs) -->
+      <div class="border-b border-slate-100 pb-3 -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div class="overflow-x-auto no-scrollbar scroll-smooth py-0.5">
+          <div class="inline-flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl text-xs font-bold text-slate-600 min-w-max">
+            <button type="button" onclick="switchDetailTab('logbook')" id="tab-btn-logbook"
+              class="px-3.5 py-2 rounded-xl bg-white text-slate-900 shadow-2xs transition inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer font-bold">
+              <span class="material-symbols-outlined text-sm">history_edu</span>
+              <span>1. Logbook Kegiatan SKP</span>
+            </button>
+            <button type="button" onclick="switchDetailTab('repository')" id="tab-btn-repository"
+              class="px-3.5 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer font-medium">
+              <span class="material-symbols-outlined text-sm">cloud_done</span>
+              <span>2. Repositori Cloud (Object Storage)</span>
+              <span id="tabBadgeDocCount"
+                class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-[#16b3ac] font-black">5</span>
+            </button>
+            <button type="button" onclick="switchDetailTab('detector')" id="tab-btn-detector"
+              class="px-3.5 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer font-medium">
+              <span class="material-symbols-outlined text-sm">rule_folder</span>
+              <span>3. Missing Document Detector</span>
+              <span id="tabBadgeMissingCount"
+                class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-800 font-black">0</span>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- PANE 1: LOGBOOK KEGIATAN SKP -->
       <div id="pane-logbook" class="space-y-3">
-        <div class="flex items-center justify-between text-xs text-slate-500">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-500">
           <span>Riwayat pengajuan kredit SKP yang tervalidasi buku log Kemenkes / Plataran Sehat.</span>
-          <span class="text-[11px] text-slate-400" id="totalActivitiesCount">Total: 4 Entri Kegiatan</span>
+          <span class="text-[11px] text-slate-400 shrink-0" id="totalActivitiesCount">Total: 4 Entri Kegiatan</span>
         </div>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
           <table class="w-full text-left text-xs whitespace-nowrap">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
               <tr>
@@ -391,9 +393,9 @@
       <!-- PANE 2: REPOSITORI BERKAS CLOUD (OBJECT STORAGE PER ANGGOTA) -->
       <div id="pane-repository" class="space-y-4 hidden">
         @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
-        <div class="flex items-center justify-end pb-1">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 pb-1">
           <button type="button" onclick="openUploadDoctorDocModal()"
-            class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write cursor-pointer active:scale-95">
+            class="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs rbac-write cursor-pointer active:scale-95">
             <span class="material-symbols-outlined text-base">upload_file</span>
             <span>Unggah Berkas Baru</span>
           </button>
@@ -401,7 +403,7 @@
         @endif
 
         <!-- Tabel Dokumen Object Storage -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
           <table class="w-full text-left text-xs whitespace-nowrap">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
               <tr>
@@ -432,14 +434,14 @@
 
         <!-- Missing Items Table -->
         <div class="space-y-2">
-          <div class="flex items-center justify-between text-xs font-bold text-slate-800">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-bold text-slate-800">
             <span>Daftar Kewajiban Dokumen &amp; Status Pelacakan Sistem:</span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-black" title="Berdasarkan Keputusan Menteri Kesehatan RI terbaru">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-black shrink-0" title="Berdasarkan Keputusan Menteri Kesehatan RI terbaru">
               <span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span>
               Standar Regulasi Baru: KMK 1561/2024 &amp; KMK 1111/2026
             </span>
           </div>
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
             <table class="w-full text-left text-xs whitespace-nowrap">
               <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
                 <tr>
@@ -902,9 +904,9 @@
         const pane = document.getElementById('pane-' + t);
         if (btn) {
           if (t === tab) {
-            btn.className = 'px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5 font-bold';
+            btn.className = 'px-3.5 py-2 rounded-xl bg-white text-slate-900 shadow-2xs transition inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer font-bold';
           } else {
-            btn.className = 'px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5';
+            btn.className = 'px-3.5 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer font-medium';
           }
         }
         if (pane) {
