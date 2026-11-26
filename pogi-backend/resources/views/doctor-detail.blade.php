@@ -153,31 +153,29 @@
 
       <!-- Dual-Timestamp Tracking & Sync Protocol Banner (RULES.md Bab 1.2 & 5.2) -->
       <div
-        class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-lg">cloud_sync</span>
+        class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs text-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100/80 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs">
+            <span class="material-symbols-outlined text-[20px]">cloud_sync</span>
           </div>
           <div>
-            <div class="font-extrabold text-slate-900 text-xs flex items-center gap-2 flex-wrap">
-              <span>Protokol Sinkronisasi: Non-API / Manual-Assisted Sync</span>
+            <div class="font-black text-slate-900 text-xs sm:text-sm flex items-center gap-2 flex-wrap">
+              <span>Status Sinkronisasi Portofolio SKP</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#16b3ac] border border-emerald-200/80 shadow-2xs">Plataran Sehat Terhubung</span>
             </div>
-            <div class="text-[11px] text-slate-500 mt-0.5">
-              Folder Cloud Anggota: <code id="metaVaultPath"
-                class="font-mono text-[#16b3ac] font-bold">cloud-storage://pogi-skp-vault/{{ $doctor->id ?? '' }}/</code>
+            <div class="text-[11px] text-slate-500 mt-0.5 font-medium">
+              Verifikasi berkas fisik dan audit berkala tersinkronisasi dengan standar resmi Kemenkes RI
             </div>
           </div>
         </div>
         <div
-          class="flex items-center gap-4 text-[11px] border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-4 shrink-0">
+          class="flex items-center gap-4 text-[11px] border-t md:border-t-0 md:border-l border-slate-100 pt-3 md:pt-0 md:pl-5 shrink-0">
           <div>
-            <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Internal Updated
-              (Energi Cipta)</span>
+            <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Internal Updated (Energi Cipta)</span>
             <span id="tsInternal" class="font-mono font-bold text-slate-800">{{ $doctor?->dashboard_updated_at ? \Carbon\Carbon::parse($doctor->dashboard_updated_at)->format('d M Y, H.i') . ' WIB' : '-' }}</span>
           </div>
           <div>
-            <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Kemenkes Synced (Portal
-              Plataran)</span>
+            <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Kemenkes Synced (Portal Plataran)</span>
             <span id="tsKemenkes" class="font-mono font-bold text-emerald-700">{{ $doctor?->kemenkes_updated_at ? \Carbon\Carbon::parse($doctor->kemenkes_updated_at)->format('d M Y, H.i') . ' WIB' : 'Menunggu Sinkronisasi' }}</span>
           </div>
         </div>
