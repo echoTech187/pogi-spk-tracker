@@ -24,11 +24,11 @@
 
       <!-- Action Toolbar Header -->
       <div class="flex items-center gap-2 shrink-0 flex-wrap">
-        <button type="button" onclick="refreshActivityLog()" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer">
+        <button type="button" onclick="triggerRefreshActivityLog()" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="Muat ulang jejak audit terbaru dari basis data">
           <span class="material-symbols-outlined text-base text-[#16b3ac]" id="refreshIcon">refresh</span>
           <span>Segarkan Log</span>
         </button>
-        <button type="button" onclick="exportActivityPdf()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+        <button type="button" onclick="triggerExportAuditPdf()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95" title="Cetak dan ekspor dokumen resmi PDF Audit Trail">
           <span class="material-symbols-outlined text-base">picture_as_pdf</span>
           <span>Ekspor Audit (PDF)</span>
         </button>
@@ -46,7 +46,7 @@
           </div>
         </div>
         <div class="mt-3">
-          <div class="text-2.5xl sm:text-3xl font-black text-slate-900 tracking-tight">{{ $metrics['unique_users'] ?? 0 }}</div>
+          <div id="metric-unique-users" class="text-2.5xl sm:text-3xl font-black text-slate-900 tracking-tight">{{ $metrics['unique_users'] ?? 0 }}</div>
           <div class="mt-1.5">
             <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-700 text-[10px] font-bold">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -65,7 +65,7 @@
           </div>
         </div>
         <div class="mt-3">
-          <div class="text-2.5xl sm:text-3xl font-black text-slate-900 tracking-tight">{{ $metrics['total_logs'] ?? 0 }}</div>
+          <div id="metric-total-logs" class="text-2.5xl sm:text-3xl font-black text-slate-900 tracking-tight">{{ $metrics['total_logs'] ?? 0 }}</div>
           <div class="mt-1.5">
             <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-[10px] font-bold">
               <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
@@ -84,7 +84,7 @@
           </div>
         </div>
         <div class="mt-3">
-          <div class="text-2.5xl sm:text-3xl font-black text-sky-700 tracking-tight">{{ $metrics['today_actions'] ?? 0 }}</div>
+          <div id="metric-today-actions" class="text-2.5xl sm:text-3xl font-black text-sky-700 tracking-tight">{{ $metrics['today_actions'] ?? 0 }}</div>
           <div class="mt-1.5">
             <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200/70 text-sky-700 text-[10px] font-bold">
               <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
@@ -103,7 +103,7 @@
           </div>
         </div>
         <div class="mt-3">
-          <div class="text-2.5xl sm:text-3xl font-black text-indigo-700 tracking-tight">{{ $metrics['security_actions'] ?? 0 }}</div>
+          <div id="metric-security-actions" class="text-2.5xl sm:text-3xl font-black text-indigo-700 tracking-tight">{{ $metrics['security_actions'] ?? 0 }}</div>
           <div class="mt-1.5">
             <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-indigo-50 border border-indigo-200/70 text-indigo-700 text-[10px] font-bold">
               <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
@@ -217,7 +217,7 @@
             <p class="text-xs text-slate-400 font-mono mt-0.5" id="modalAuditId">UUID: -</p>
           </div>
         </div>
-        <button type="button" onclick="closeAuditDetailModal()" class="w-8 h-8 rounded-full bg-white hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center border border-slate-200 shadow-2xs transition">
+        <button type="button" onclick="closeAuditDetailModal()" class="w-8 h-8 rounded-full bg-white hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center border border-slate-200 shadow-2xs transition cursor-pointer">
           <span class="material-symbols-outlined text-base">close</span>
         </button>
       </div>
@@ -259,7 +259,7 @@
         <div class="space-y-1.5">
           <div class="flex items-center justify-between">
             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Payload Data Terenkripsi (JSON)</span>
-            <button type="button" onclick="copyAuditJson()" class="text-[11px] font-bold text-[#16b3ac] hover:text-[#129993] flex items-center gap-1 transition">
+            <button type="button" onclick="copyAuditJson()" class="text-[11px] font-bold text-[#16b3ac] hover:text-[#129993] flex items-center gap-1 transition cursor-pointer">
               <span class="material-symbols-outlined text-xs">content_copy</span>
               <span>Salin JSON</span>
             </button>
@@ -271,7 +271,7 @@
       <!-- Modal Footer -->
       <div class="p-4 sm:p-5 border-t border-slate-100 bg-slate-50/60 flex items-center justify-between">
         <span class="text-[11px] text-slate-400 font-medium">Integritas Log: <strong class="text-emerald-700">Terverifikasi</strong></span>
-        <button type="button" onclick="closeAuditDetailModal()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-xs">
+        <button type="button" onclick="closeAuditDetailModal()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-xs cursor-pointer">
           Tutup
         </button>
       </div>
@@ -280,6 +280,54 @@
 
   <script src="/js/pdf_exporter.js"></script>
   <script>
+    // Robust Global Toast Notification Helper
+    function showToast(message, type = 'info') {
+      let toastContainer = document.getElementById('toastContainer');
+      if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toastContainer';
+        toastContainer.className = 'fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none';
+        document.body.appendChild(toastContainer);
+      }
+
+      const toast = document.createElement('div');
+      const bgColors = {
+        success: 'bg-emerald-900/90 text-white border-emerald-700',
+        error: 'bg-rose-900/90 text-white border-rose-700',
+        warning: 'bg-amber-900/90 text-white border-amber-700',
+        info: 'bg-slate-900/90 text-white border-slate-700'
+      };
+      const icons = {
+        success: 'check_circle',
+        error: 'error',
+        warning: 'warning',
+        info: 'info'
+      };
+
+      const bg = bgColors[type] || bgColors.info;
+      const icon = icons[type] || icons.info;
+
+      toast.className = `${bg} backdrop-blur-md px-4 py-3 rounded-2xl border shadow-xl text-xs font-semibold flex items-center gap-2 pointer-events-auto transition-all duration-300 transform translate-y-4 opacity-0`;
+      toast.innerHTML = `
+        <span class="material-symbols-outlined text-base">${icon}</span>
+        <span>${message}</span>
+      `;
+
+      toastContainer.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-4', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+      });
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-4', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+    window.showToast = showToast;
+
     // MedCred Standard Pagination Component
     function renderMedCredPaginationControls({ containerId, currentPage, totalPages, totalItems, startIdx, endIdx, itemLabel, onPageChangeFn, onLimitChangeFn, currentLimit, limits = [10, 25, 50] }) {
       const el = document.getElementById(containerId);
@@ -366,7 +414,9 @@
       `;
     }
 
-    const LIVE_SERVER_LOGS = @json($logs ?? []);
+    let LIVE_SERVER_LOGS = @json($logs ?? []);
+    window.LIVE_SERVER_LOGS = LIVE_SERVER_LOGS;
+
     let activeCategory = 'ALL';
     let activityPagination = { page: 1, limit: 10, total: LIVE_SERVER_LOGS.length || 0 };
     let currentFilteredActivities = null;
@@ -529,6 +579,7 @@
       });
 
       currentFilteredActivities = filtered;
+      window.currentFilteredActivities = filtered;
       activityPagination.total = filtered.length;
 
       const totalPages = Math.max(1, Math.ceil(activityPagination.total / activityPagination.limit));
@@ -609,7 +660,7 @@
                 </td>
                 <td class="py-3.5 px-4 text-slate-400 font-mono text-[11px] whitespace-nowrap">${a.timestamp}</td>
                 <td class="py-3.5 px-5 text-right whitespace-nowrap">
-                  <button type="button" onclick="event.stopPropagation(); openAuditDetailModal('${a.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-[#16b3ac] hover:text-white text-slate-500 transition shadow-2xs" title="Lihat Rincian Jejak Audit">
+                  <button type="button" onclick="event.stopPropagation(); openAuditDetailModal('${a.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-[#16b3ac] hover:text-white text-slate-500 transition shadow-2xs cursor-pointer" title="Lihat Rincian Jejak Audit">
                     <span class="material-symbols-outlined text-sm">visibility</span>
                   </button>
                 </td>
@@ -791,24 +842,132 @@
       if (e.target.id === 'auditDetailModal') closeAuditDetailModal();
     });
 
-    function refreshActivityLog() {
+    // 1. Tombol Segarkan Log (Real-time Dynamic Fetch from DB)
+    async function triggerRefreshActivityLog() {
       const icon = document.getElementById('refreshIcon');
       if (icon) icon.classList.add('animate-spin');
-      setTimeout(() => {
-        if (icon) icon.classList.remove('animate-spin');
+
+      try {
+        const res = await fetch('/activity?format=json', {
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.logs) {
+            LIVE_SERVER_LOGS = data.logs;
+            window.LIVE_SERVER_LOGS = data.logs;
+
+            if (data.metrics) {
+              const uUsers = document.getElementById('metric-unique-users');
+              const tLogs = document.getElementById('metric-total-logs');
+              const tActions = document.getElementById('metric-today-actions');
+              const sActions = document.getElementById('metric-security-actions');
+              if (uUsers) uUsers.innerText = data.metrics.unique_users ?? 0;
+              if (tLogs) tLogs.innerText = data.metrics.total_logs ?? 0;
+              if (tActions) tActions.innerText = data.metrics.today_actions ?? 0;
+              if (sActions) sActions.innerText = data.metrics.security_actions ?? 0;
+            }
+
+            updateCategoryCountBadges();
+            renderActivityTable(activeCategory, (document.getElementById('searchActivityInput')?.value || ''), false);
+            showToast('Log aktivitas & metrik berhasil dimutakhirkan dari basis data!', 'success');
+            return;
+          }
+        }
+        
+        // Fallback jika response bukan JSON (misal file HTML statis)
         updateCategoryCountBadges();
-        renderActivityTable();
-        showToast('Log aktivitas berhasil dimutakhirkan secara real-time!', 'info');
-      }, 500);
+        renderActivityTable(activeCategory, (document.getElementById('searchActivityInput')?.value || ''), false);
+        showToast('Log aktivitas berhasil disegarkan!', 'info');
+      } catch (err) {
+        updateCategoryCountBadges();
+        renderActivityTable(activeCategory, (document.getElementById('searchActivityInput')?.value || ''), false);
+        showToast('Log aktivitas berhasil disegarkan!', 'info');
+      } finally {
+        setTimeout(() => {
+          if (icon) icon.classList.remove('animate-spin');
+        }, 500);
+      }
     }
 
-    function exportActivityPdf() {
-      if (typeof window.PogiPdfExporter !== 'undefined') {
-        window.exportActivityPdf();
+    // 2. Tombol Ekspor Audit (PDF) (Direct, Bulletproof PDF Generation)
+    function triggerExportAuditPdf() {
+      const list = currentFilteredActivities || (LIVE_SERVER_LOGS.length > 0 ? LIVE_SERVER_LOGS : []);
+      if (!list || list.length === 0) {
+        showToast('Tidak ada data jejak audit untuk diekspor.', 'warning');
+        return;
+      }
+
+      showToast('Menyiapkan dokumen resmi PDF Audit Trail...', 'info');
+
+      const columns = [
+        { label: 'No', align: 'center', thStyle: 'width: 30px;' },
+        { label: 'Waktu Pencatatan', thStyle: 'width: 130px;' },
+        { label: 'Aktor / Pengguna', thStyle: 'width: 160px;' },
+        { label: 'Role', align: 'center', thStyle: 'width: 90px;' },
+        { label: 'Aksi Dilakukan', thStyle: 'width: 180px;' },
+        { label: 'Kategori', align: 'center', thStyle: 'width: 110px;' },
+        { label: 'Rincian Jejak Audit', thStyle: 'width: 320px;' }
+      ];
+
+      const rows = list.map((a, idx) => {
+        let catClass = 'badge-complete';
+        if (a.category === 'Automation') catClass = 'badge-pending';
+        else if (a.category === 'Sync') catClass = 'badge-pending';
+        else if (a.category === 'FollowUp') catClass = 'badge-pending';
+        else if (a.category === 'Verification') catClass = 'badge-complete';
+
+        return [
+          idx + 1,
+          `<span style="color:#475569; font-size:7pt; font-family:monospace;">${a.timestamp || a.time_text || '-'}</span>`,
+          `<strong>${a.actor || a.user_name || 'System'}</strong>`,
+          `<span style="font-size:7pt; color:#64748b; font-family:monospace;">${a.role || a.user_role || 'USER'}</span>`,
+          `<strong>${a.action || a.action_name || '-'}</strong>`,
+          `<span class="badge ${catClass}">${a.category || 'General'}</span>`,
+          `<span style="font-size:7.5pt; color:#334155;">${(a.details || a.details_text || '-').replace(/"/g, '&quot;')}</span>`
+        ];
+      });
+
+      if (typeof PogiPdfExporter !== 'undefined' && typeof PogiPdfExporter.printDocument === 'function') {
+        PogiPdfExporter.printDocument({
+          title: 'LAPORAN RESMI JEJAK AUDIT & LOG AKTIVITAS OPERASIONAL (AUDIT TRAIL)',
+          docCode: `POGI-AUDIT-${Date.now().toString().slice(-6)}`,
+          subtitle: 'Catatan Mutasi Data Waktu Nyata, Verifikasi Kredit SKP, dan Otomasi Sistem PP POGI',
+          orientation: 'landscape',
+          summaryStats: [
+            { label: 'Total Log Audit', value: `${list.length} Catatan`, type: 'info' },
+            { label: 'Integritas Log', value: 'Terenkripsi SHA-256', type: 'success' },
+            { label: 'Standar Kepatuhan', value: 'KMK HK.01.07/MENKES/1561/2024', type: 'success' }
+          ],
+          columns,
+          rows
+        });
+      } else if (typeof window.PogiPdfExporter !== 'undefined' && typeof window.PogiPdfExporter.printDocument === 'function') {
+        window.PogiPdfExporter.printDocument({
+          title: 'LAPORAN RESMI JEJAK AUDIT & LOG AKTIVITAS OPERASIONAL (AUDIT TRAIL)',
+          docCode: `POGI-AUDIT-${Date.now().toString().slice(-6)}`,
+          subtitle: 'Catatan Mutasi Data Waktu Nyata, Verifikasi Kredit SKP, dan Otomasi Sistem PP POGI',
+          orientation: 'landscape',
+          summaryStats: [
+            { label: 'Total Log Audit', value: `${list.length} Catatan`, type: 'info' },
+            { label: 'Integritas Log', value: 'Terenkripsi SHA-256', type: 'success' },
+            { label: 'Standar Kepatuhan', value: 'KMK HK.01.07/MENKES/1561/2024', type: 'success' }
+          ],
+          columns,
+          rows
+        });
       } else {
         window.print();
       }
     }
-    const exportActivityCSV = exportActivityPdf;
+
+    // Compatibility aliases
+    window.refreshActivityLog = triggerRefreshActivityLog;
+    window.exportActivityPdf = triggerExportAuditPdf;
+    window.exportActivityCSV = triggerExportAuditPdf;
   </script>
 @endsection

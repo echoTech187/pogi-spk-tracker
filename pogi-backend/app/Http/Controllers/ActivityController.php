@@ -211,6 +211,14 @@ class ActivityController extends Controller
             'incomplete_doctors' => $incompleteDoctors,
         ];
 
+        if ($request->wantsJson() || $request->query('format') === 'json' || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'logs' => $logs,
+                'metrics' => $metrics,
+            ]);
+        }
+
         return view('activity', [
             'logs' => $logs,
             'metrics' => $metrics,
