@@ -1,23 +1,180 @@
 <!DOCTYPE html>
 <html lang="id" class="h-full bg-[#f4f7f6]">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="EzG0V4ROnRbxLRbW5pcBxyFPOluhqBirWyPzYVgr">
   <title>POGI SKP Tracker - Laporan &amp; Analisis Realisasi SKP</title>
-  <!-- Tailwind CSS CDN -->
+  
+  <!-- Tailwind CSS & CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Leaflet.js CDN for Interactive Vector Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- jQuery & Select2 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+  <!-- SheetJS (Excel XLSX Import & Export) -->
+  <script src="/js/vendor/xlsx.full.min.js"></script>
+  <script>
+    if (typeof XLSX === 'undefined') {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"><\/script>');
+    }
+  </script>
+  
   <!-- Core Styles -->
   <link rel="stylesheet" href="/css/style.css">
-</head>
+  <style>
+    /* =========================================================
+       Select2 Custom Tailwind Theme (Matching POGI SKP Tracker)
+       ========================================================= */
+    .select2-container {
+      width: 100% !important;
+      display: block !important;
+    }
+    .select2-container .select2-selection--single {
+      height: 38px !important;
+      background-color: #f8fafc !important; /* bg-slate-50 */
+      border: 1px solid #e2e8f0 !important; /* border-slate-200 */
+      border-radius: 0.75rem !important; /* rounded-xl (12px) */
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 4px !important;
+      outline: none !important;
+      transition: all 0.15s ease-in-out !important;
+      box-sizing: border-box !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      color: #1e293b !important; /* text-slate-800 */
+      font-size: 0.75rem !important; /* text-xs (12px) */
+      font-weight: 600 !important; /* font-semibold */
+      line-height: 36px !important;
+      padding-left: 8px !important;
+      padding-right: 28px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__placeholder {
+      color: #94a3b8 !important; /* text-slate-400 */
+      font-weight: 500 !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 100% !important;
+      right: 8px !important;
+      top: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow b {
+      border-color: #64748b transparent transparent transparent !important;
+      border-width: 5px 4px 0 4px !important;
+    }
+    .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+      border-color: transparent transparent #64748b transparent !important;
+      border-width: 0 4px 5px 4px !important;
+    }
+    .select2-container--default.select2-container--focus .select2-selection--single,
+    .select2-container--default.select2-container--open .select2-selection--single {
+      background-color: #ffffff !important;
+      border-color: #16b3ac !important;
+      box-shadow: 0 0 0 3px rgba(22, 179, 172, 0.15) !important;
+    }
+    .select2-dropdown {
+      background-color: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 0.75rem !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+      overflow: hidden !important;
+      z-index: 9999999 !important;
+      font-family: inherit !important;
+      padding-top: 4px !important;
+      padding-bottom: 4px !important;
+    }
+    .select2-container--default .select2-search--dropdown {
+      padding: 6px 8px !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 0.5rem !important;
+      padding: 6px 10px !important;
+      font-size: 0.75rem !important;
+      outline: none !important;
+      color: #1e293b !important;
+      box-sizing: border-box !important;
+      width: 100% !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+      border-color: #16b3ac !important;
+      box-shadow: 0 0 0 2px rgba(22, 179, 172, 0.15) !important;
+    }
+    .select2-results__option {
+      padding: 7px 12px !important;
+      font-size: 0.75rem !important;
+      font-weight: 500 !important;
+      color: #334155 !important;
+      cursor: pointer !important;
+    }
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+      background-color: #16b3ac !important;
+      color: #ffffff !important;
+    }
+    .select2-container--default .select2-results__option[aria-selected="true"] {
+      background-color: #f0fdf4 !important;
+      color: #0d9488 !important;
+      font-weight: 700 !important;
+    }
+    #interactiveIndonesiaMap {
+      background-color: transparent !important;
+    }
+    .leaflet-container {
+      background: transparent !important;
+      font-family: inherit;
+    }
+    .leaflet-tooltip {
+      background: #0f172a !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255,255,255,0.2) !important;
+      border-radius: 10px !important;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3) !important;
+      padding: 6px 12px !important;
+      font-size: 11px !important;
+    }
+    .leaflet-tooltip-top:before {
+      border-top-color: #0f172a !important;
+    }
 
+    /* Modal Sticky Header & Footer, Scrollable Body */
+    .modal-dialog-scrollable {
+      max-height: 90vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    .modal-header-sticky {
+      flex-shrink: 0 !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 20 !important;
+    }
+    .modal-body-scrollable {
+      flex: 1 1 auto !important;
+      overflow-y: auto !important;
+      min-height: 0 !important;
+    }
+    .modal-footer-sticky {
+      flex-shrink: 0 !important;
+      position: sticky !important;
+      bottom: 0 !important;
+      z-index: 20 !important;
+    }
+  </style>
+  </head>
 <body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
   <!-- Mobile Backdrop Overlay -->
-  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)"
-    class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden">
-  </div>
+  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden"></div>
 
   <div class="flex h-screen overflow-hidden">
     <!-- APP SIDEBAR -->
@@ -127,7 +284,7 @@
   </div>
 </aside>
 
-    <!-- MAIN CONSOLE WRAPPER -->
+    <!-- MAIN CONTENT AREA -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
       <!-- Top Sticky Header -->
       <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200/90 shrink-0 w-full print:hidden">
@@ -247,124 +404,142 @@
   </div>
 </header>
 
-      <!-- Main Body -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in print:p-0">
+      <!-- Main Body Scrollable View -->
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in">
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        <!-- HEADER LAPORAN BULANAN RESMI (ONE POGI) -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-1">
-          <div class="space-y-1">
-            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              <span>LAPORAN BULANAN</span>
-            </h1>
-            <p class="text-xs text-slate-500 leading-relaxed max-w-7xl">
-              Pengelolaan dan Penginputan Data Satuan Kredit Profesi (SKP) Dokter Spesialis Obstetri &amp; Ginekologi mengacu pada KMK HK.01.07/MENKES/1561/2024 &amp; KMK HK.01.07/MENKES/1111/2026. Laporan resmi berkas &amp; lampiran penagihan invoice.
-            </p>
-          </div>
+  <!-- Main Content Wrapper -->
+  <div class="space-y-6">
 
+    <!-- Clean Executive Page Header (Modern Enterprise Standard matching Activity Log) -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+      <div class="space-y-1.5 min-w-0">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Laporan Eksekutif &amp; Analisis SKP</span>
+          <span class="text-slate-300">•</span>
+          <span class="text-slate-500 font-semibold normal-case">Standar Kemenkes</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
+          <span>Laporan Bulanan &amp; Kepatuhan SKP</span>
+        </h1>
+        <p class="text-xs text-slate-500 max-w-3xl leading-relaxed">
+          Pengelolaan dan Penginputan Data Satuan Kredit Profesi (SKP) Dokter Spesialis Obstetri &amp; Ginekologi mengacu pada KMK HK.01.07/MENKES/1561/2024 &amp; KMK HK.01.07/MENKES/1111/2026. Laporan resmi berkas &amp; lampiran penagihan invoice.
+        </p>
+      </div>
 
+      <!-- Action Toolbar Header -->
+      <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+        <!-- Month Navigator (< November 2026 >) -->
+        <div class="flex items-center bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden text-xs">
+          <button type="button" onclick="changeMonthStep(-1)" title="Bulan Sebelumnya" class="p-2 hover:bg-slate-50 text-slate-600 border-r border-slate-100 transition flex items-center justify-center cursor-pointer">
+            <span class="material-symbols-outlined text-base">chevron_left</span>
+          </button>
+          <button type="button" onclick="toggleMonthPickerModal(true)" class="px-3.5 py-2 font-bold text-slate-800 hover:text-[#16b3ac] hover:bg-emerald-50/50 transition flex items-center gap-1.5 select-none whitespace-nowrap cursor-pointer">
+            <span class="material-symbols-outlined text-sm text-[#16b3ac]">calendar_month</span>
+            <span id="currentMonthLabel">November 2026</span>
+            <span class="material-symbols-outlined text-xs text-slate-400">expand_more</span>
+          </button>
+          <button type="button" onclick="changeMonthStep(1)" title="Bulan Berikutnya" class="p-2 hover:bg-slate-50 text-slate-600 border-l border-slate-100 transition flex items-center justify-center cursor-pointer">
+            <span class="material-symbols-outlined text-base">chevron_right</span>
+          </button>
         </div>
 
-        <!-- Status Bar Update Admin -->
-        <div
-          class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/80 pb-3 text-xs text-slate-500">
-          <div class="flex items-center gap-2">
-            <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
-              <!-- Month Navigator (< November 2026 >) -->
-              <div
-                class="flex items-center bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden text-xs">
-                <button type="button" onclick="changeMonthStep(-1)" title="Bulan Sebelumnya"
-                  class="p-2 hover:bg-slate-50 text-slate-600 border-r border-slate-100 transition flex items-center justify-center cursor-pointer">
-                  <span class="material-symbols-outlined text-base">chevron_left</span>
-                </button>
-                <button type="button" onclick="toggleMonthPickerModal(true)"
-                  class="px-3.5 py-2 font-bold text-slate-800 hover:text-[#16b3ac] hover:bg-emerald-50/50 transition flex items-center gap-1.5 select-none whitespace-nowrap cursor-pointer">
-                  <span class="material-symbols-outlined text-sm text-[#16b3ac]">calendar_month</span>
-                  <span id="currentMonthLabel">November 2026</span>
-                  <span class="material-symbols-outlined text-xs text-slate-400">expand_more</span>
-                </button>
-                <button type="button" onclick="changeMonthStep(1)" title="Bulan Berikutnya"
-                  class="p-2 hover:bg-slate-50 text-slate-600 border-l border-slate-100 transition flex items-center justify-center cursor-pointer">
-                  <span class="material-symbols-outlined text-base">chevron_right</span>
-                </button>
-              </div>
+        <!-- Tombol Arsip Laporan Bulanan -->
+        <button type="button" onclick="openArchiveModal(true)" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95">
+          <span class="material-symbols-outlined text-base text-amber-600">folder_zip</span>
+          <span>Arsip Laporan</span>
+        </button>
+
+        <!-- Tombol Report SKP -->
+        <button type="button" onclick="downloadCurrentMonthSkpReport()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95" title="Unduh PDF Resmi SKP Report (1 Halaman)">
+          <span class="material-symbols-outlined text-base">assessment</span>
+          <span>Report SKP</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="pane-dashboard" class="space-y-6">
+
+      <!-- 4 Summary KPI Cards (Modern Enterprise Style matching Activity Log) -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+
+        <!-- Card 1: Target -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Target Bulan Ini</span>
+            <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[18px]">flag</span>
             </div>
           </div>
-          <div class="text-xs text-slate-400 font-medium flex items-center justify-end gap-1.5">
-            <!-- Tombol Arsip Laporan Bulanan (Flashback) -->
-            <button type="button" onclick="openArchiveModal(true)"
-              class="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer">
-              <span class="material-symbols-outlined text-base text-amber-600">folder_zip</span>
-              <span>Arsip Laporan</span>
-            </button>
-
-            <!-- Tombol Report SKP (Dipindahkan ke sebelah Arsip Laporan) -->
-            <button type="button" onclick="downloadCurrentMonthSkpReport()"
-              class="px-3.5 py-2 rounded-xl bg-sky-700 hover:bg-sky-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
-              title="Unduh PDF Resmi SKP Report (1 Halaman)">
-              <span class="material-symbols-outlined text-base">assessment</span>
-              <span>Report SKP</span>
-            </button>
+          <div>
+            <div id="cardTargetValue" class="text-2xl sm:text-3xl font-black text-slate-900 font-mono tracking-tight">0,00</div>
+            <div class="mt-2">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold">
+                <span id="cardTargetSubtitle">0 dokter &times; 2,67 credits</span>
+              </span>
+            </div>
           </div>
         </div>
 
-        <div id="pane-dashboard" class="space-y-6">
-
-          <!-- 4 Summary KPI Cards (Murni Bulanan) -->
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-
-            <!-- Card 1: Target -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-              <div class="flex items-center justify-between text-slate-500 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider">Target Bulan Ini</span>
-                <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700">
-                  <span class="material-symbols-outlined text-lg">flag</span>
-                </div>
-              </div>
-              <div id="cardTargetValue" class="text-2xl sm:text-3xl font-black text-slate-900 font-mono tracking-tight">
-                0,00</div>
-              <div id="cardTargetSubtitle" class="text-[11px] text-slate-500 mt-1">0 dokter &times; 2,67 credits</div>
+        <!-- Card 2: Realization -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Realization</span>
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-[#16b3ac] border border-emerald-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[18px]">trending_up</span>
             </div>
-
-            <!-- Card 2: Realization -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-              <div class="flex items-center justify-between text-slate-500 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider">Realization</span>
-                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#16b3ac] flex items-center justify-center">
-                  <span class="material-symbols-outlined text-lg">trending_up</span>
-                </div>
-              </div>
-              <div id="cardRealValue" class="text-2xl sm:text-3xl font-black text-emerald-800 font-mono tracking-tight">
-                0,00</div>
-              <div id="cardRealSubtitle" class="text-[11px] text-slate-500 mt-1"><span class="text-emerald-700 font-bold">0%</span> of target</div>
-            </div>
-
-            <!-- Card 3: Dokter Capai Target -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-              <div class="flex items-center justify-between text-slate-500 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider">Dokter Capai Target</span>
-                <div class="w-8 h-8 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-lg">task_alt</span>
-                </div>
-              </div>
-              <div id="cardCompleteValue" class="text-2xl sm:text-3xl font-black text-sky-900 font-mono tracking-tight">
-                0 Dokter</div>
-              <div id="cardCompleteSubtitle" class="text-[11px] text-slate-500 mt-1"><span class="text-sky-800 font-bold">0%</span> dari 0 dokter aktif</div>
-            </div>
-
-            <!-- Card 4: Waiting for validation -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-              <div class="flex items-center justify-between text-slate-500 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider">Waiting for validation</span>
-                <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-lg">hourglass_top</span>
-                </div>
-              </div>
-              <div id="cardPendingValue"
-                class="text-2xl sm:text-3xl font-black text-amber-600 font-mono tracking-tight">0 SKP</div>
-              <div id="cardPendingSubtitle" class="text-[11px] text-slate-500 mt-1">0 dokter pending kurasi Kemenkes</div>
-            </div>
-
           </div>
+          <div>
+            <div id="cardRealValue" class="text-2xl sm:text-3xl font-black text-emerald-800 font-mono tracking-tight">0,00</div>
+            <div class="mt-2">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-[11px] font-bold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span id="cardRealSubtitle">0% of target</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Dokter Capai Target -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Dokter Capai Target</span>
+            <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-700 border border-sky-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[18px]">task_alt</span>
+            </div>
+          </div>
+          <div>
+            <div id="cardCompleteValue" class="text-2xl sm:text-3xl font-black text-sky-900 font-mono tracking-tight">0 Dokter</div>
+            <div class="mt-2">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-50 border border-sky-200/80 text-sky-700 text-[11px] font-bold">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                <span id="cardCompleteSubtitle">0% dari 0 dokter aktif</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Waiting for validation -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Waiting for Validation</span>
+            <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 border border-amber-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[18px]">hourglass_top</span>
+            </div>
+          </div>
+          <div>
+            <div id="cardPendingValue" class="text-2xl sm:text-3xl font-black text-amber-600 font-mono tracking-tight">0 SKP</div>
+            <div class="mt-2">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200/80 text-amber-700 text-[11px] font-bold">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span id="cardPendingSubtitle">0 dokter pending kurasi Kemenkes</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
 
           <!-- 4 CHARTS GRID (2x2) - Persis Gambar 2 dengan Layout Lega & Rapih -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
@@ -459,10 +634,7 @@
 
         </div>
 
-
-      </main>
-    </div>
-  </div>
+      </div>
 
   <!-- ========================================================================= -->
   <!-- MODAL POPUP 1: PILIHAN BULAN (PERSIS BPJS DI CHAT WHATSAPP)               -->
@@ -618,7 +790,7 @@
     let chartDonutInstance = null;
     let chartStatusInstance = null;
 
-    const LIVE_MONTHLY_DATA = [{"name":"Januari 2026","short":"Jan","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Februari 2026","short":"Feb","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Maret 2026","short":"Mar","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"April 2026","short":"Apr","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Mei 2026","short":"Mei","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Juni 2026","short":"Jun","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Juli 2026","short":"Jul","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Agustus 2026","short":"Agu","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"September 2026","short":"Sep","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Oktober 2026","short":"Okt","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"November 2026","short":"Nov","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":1,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"26 Nov 2026, 13:11 WIB"},{"name":"Desember 2026","short":"Des","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Cutoff (1 Des 2026)"}];
+    const LIVE_MONTHLY_DATA = [{"name":"Januari 2026","short":"Jan","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Februari 2026","short":"Feb","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Maret 2026","short":"Mar","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"April 2026","short":"Apr","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Mei 2026","short":"Mei","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Juni 2026","short":"Jun","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Juli 2026","short":"Jul","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Agustus 2026","short":"Agu","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"September 2026","short":"Sep","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Oktober 2026","short":"Okt","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"November 2026","short":"Nov","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":1,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"26 Nov 2026, 13:19 WIB"},{"name":"Desember 2026","short":"Des","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Cutoff (1 Des 2026)"}];
     const LIVE_REPORT_PDF_CONTEXT = {"metrics":{"total_reports":0,"total_verified_skp":0,"total_doctors":1,"complete_doctors":0,"incomplete_doctors":1,"pending_doctors":0,"compliance_rate":0},"totalRecords":0,"domainBreakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"topDoctors":[{"name":"dr. Budi Santoso, Sp.PD","province":"DKI Jakarta","status":"INCOMPLETE","total_skp":"0.00","pemb_skp":"0.00","pel_skp":"0.00","peng_skp":"0.00"}],"topEvents":[{"title":"Simposium Akhir Tahun Kardiologi Klinis \u0026 Maternal","event_date":"2026-11-25","credit_value":"2.00","domain":"PEMBELAJARAN","participants":0}],"topProvinces":[{"name":"DKI Jakarta","doctors_count":1,"complete_count":"0"}]};
     window.LIVE_MONTHLY_DATA = LIVE_MONTHLY_DATA;
     window.LIVE_REPORT_PDF_CONTEXT = LIVE_REPORT_PDF_CONTEXT;
@@ -915,6 +1087,16 @@
       }
     }
   </script>
-</body>
+      </main>
+    </div>
+  </div>
 
+  <!-- Global Application Modals (Outside Main Stacking Context for Full Viewport Overlay) -->
+  
+  <script>
+    window.AUTH_USER = {"id":"14eac2f0-bb8c-4771-8c8d-8de6355003af","name":"Dian Imas","email":"super@example.com","role":"SUPER_ADMIN","branch":"Pusat"};
+  </script>
+  <!-- Core Scripts -->
+  <script src="/js/navigation.js"></script>
+  </body>
 </html>

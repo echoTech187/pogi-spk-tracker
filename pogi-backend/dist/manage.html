@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="zWm7IlShuYotKrb0GeGLfsp6AAGPGkYCnHKPKxfN">
+  <meta name="csrf-token" content="EzG0V4ROnRbxLRbW5pcBxyFPOluhqBirWyPzYVgr">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -410,42 +410,50 @@
   <!-- Main Body -->
   <div class="space-y-5">
 
-    <!-- MedCred Standard Heading Banner -->
-    <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div class="space-y-1.5">
-        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
-          <span>PUSAT PENGELOLAAN MASTER DATA</span>
+    <!-- Clean Page Header (Modern Enterprise Standard matching Activity Log) -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+      <div class="space-y-1.5 min-w-0">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Pusat Pengelolaan Master Data</span>
+          <span class="text-slate-300">•</span>
+          <span class="text-slate-500 font-semibold normal-case">5 Entitas Terpadu</span>
         </div>
-        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
           <span>Master Data Pangkalan POGI SKP</span>
-          <span id="manageHeadingBadge" class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(5 Entitas Terpadu)</span>
         </h1>
-        <p class="text-xs text-slate-500 max-w-2xl leading-relaxed">
+        <p class="text-xs text-slate-500 max-w-3xl leading-relaxed">
           Manajemen terpadu database dokter spesialis, rumah sakit &amp; jejaring faskes, katalog kegiatan SKP, kategori kegiatan, serta hak akses pengguna sistem.
         </p>
       </div>
-      
+
+      <div class="flex items-center gap-2 shrink-0">
+        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200/90 text-slate-600 font-bold text-xs shadow-2xs">
+          <span class="w-2 h-2 rounded-full bg-[#16b3ac]"></span>
+          <span>Database Aktif &bull; Master Sync</span>
+        </span>
+      </div>
     </div>
 
     <!-- Top Segmented Tabs (Doctor, Institution, SKP Event, Event Category, User) -->
-    <div class="p-1.5 bg-slate-200/70 rounded-2xl flex flex-wrap gap-1 text-xs font-bold text-slate-600">
-      <button type="button" onclick="switchManageTab('doctor')" id="tab-btn-doctor" class="py-2 px-3.5 rounded-xl bg-white text-slate-900 shadow-xs transition flex items-center gap-1.5 font-bold">
-        <span class="material-symbols-outlined text-sm">person</span>
+    <div class="p-1 bg-slate-100/90 rounded-2xl flex flex-wrap gap-1 text-xs font-bold text-slate-600 border border-slate-200/70">
+      <button type="button" onclick="switchManageTab('doctor')" id="tab-btn-doctor" class="py-2 px-3.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5 font-black cursor-pointer">
+        <span class="material-symbols-outlined text-sm text-[#16b3ac]">person</span>
         <span>1. Doctor</span>
       </button>
-      <button type="button" onclick="switchManageTab('institution')" id="tab-btn-institution" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+      <button type="button" onclick="switchManageTab('institution')" id="tab-btn-institution" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
         <span class="material-symbols-outlined text-sm">domain</span>
         <span>2. Institution (RS Jejaring)</span>
       </button>
-      <button type="button" onclick="switchManageTab('event')" id="tab-btn-event" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+      <button type="button" onclick="switchManageTab('event')" id="tab-btn-event" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
         <span class="material-symbols-outlined text-sm">calendar_month</span>
         <span>3. SKP Event Master</span>
       </button>
-      <button type="button" onclick="switchManageTab('category')" id="tab-btn-category" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+      <button type="button" onclick="switchManageTab('category')" id="tab-btn-category" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
         <span class="material-symbols-outlined text-sm">category</span>
         <span>4. Event Category</span>
       </button>
-      <button type="button" onclick="switchManageTab('user')" id="tab-btn-user" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+      <button type="button" onclick="switchManageTab('user')" id="tab-btn-user" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
         <span class="material-symbols-outlined text-sm">manage_accounts</span>
         <span>5. User &amp; Hak Akses</span>
       </button>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="zWm7IlShuYotKrb0GeGLfsp6AAGPGkYCnHKPKxfN">
+  <meta name="csrf-token" content="EzG0V4ROnRbxLRbW5pcBxyFPOluhqBirWyPzYVgr">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -428,59 +428,76 @@
         <!-- 4 Primary Metric Cards (Sesuai Dashboard Asli Klien) -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
           <!-- Total Doctors -->
-          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-            <div class="flex items-center justify-between text-slate-500 mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider">Total Doctors</span>
-              <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700">
-                <span class="material-symbols-outlined text-lg">group</span>
+          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
+            <div class="flex items-center justify-between gap-3 mb-2">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Doctors</span>
+              <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-[18px]">group</span>
               </div>
             </div>
-            <div id="metricTotalDoctors" class="text-2xl sm:text-3xl font-black text-slate-900">1</div>
-            <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
-              <span class="text-emerald-700 font-bold">100% Sp.OG</span> terdaftar aktif
+            <div>
+              <div id="metricTotalDoctors" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">1</div>
+              <div class="mt-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-[11px] font-bold">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  <span>100% Sp.OG Aktif</span>
+                </span>
+              </div>
             </div>
           </div>
 
           <!-- Average Progress Q4 2026 -->
-          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-            <div class="flex items-center justify-between text-slate-500 mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider">Average Progress Q4</span>
-              <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#16b3ac] flex items-center justify-center">
-                <span class="material-symbols-outlined text-lg">trending_up</span>
+          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
+            <div class="flex items-center justify-between gap-3 mb-2">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Average Progress Q4</span>
+              <div class="w-9 h-9 rounded-xl bg-emerald-50 text-[#16b3ac] border border-emerald-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-[18px]">trending_up</span>
               </div>
             </div>
-            <div id="metricAvgProgress" class="text-2xl sm:text-3xl font-black text-emerald-800">0%</div>
-            <div class="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
-              <div id="metricAvgProgressBar" class="bg-[#16b3ac] h-2 rounded-full" style="width: 0%"></div>
+            <div>
+              <div id="metricAvgProgress" class="text-2xl sm:text-3xl font-black text-emerald-800 tracking-tight">0%</div>
+              <div class="w-full bg-slate-100 rounded-full h-1.5 mt-2 overflow-hidden">
+                <div id="metricAvgProgressBar" class="bg-[#16b3ac] h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+              <div class="text-[10px] text-slate-400 font-medium mt-1.5">Target: 8.0 SKP / dokter</div>
             </div>
-            <div class="text-[10px] text-slate-500 mt-1">Target Kuartal: 8.0 SKP / dokter</div>
           </div>
 
           <!-- Complete -->
-          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-            <div class="flex items-center justify-between text-slate-500 mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider">Complete</span>
-              <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
-                <span class="material-symbols-outlined text-lg">check_circle</span>
+          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
+            <div class="flex items-center justify-between gap-3 mb-2">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Complete</span>
+              <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-[18px]">check_circle</span>
               </div>
             </div>
-            <div id="metricComplete" class="text-2xl sm:text-3xl font-black text-emerald-700">0</div>
-            <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
-              <span class="font-bold text-emerald-800">0%</span> telah penuhi target periode
+            <div>
+              <div id="metricComplete" class="text-2xl sm:text-3xl font-black text-emerald-700 tracking-tight">0</div>
+              <div class="mt-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[11px] font-bold">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  <span>0% Penuhi Target</span>
+                </span>
+              </div>
             </div>
           </div>
 
           <!-- Incomplete (Needs Follow-Up) -->
-          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-            <div class="flex items-center justify-between text-slate-500 mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider">Incomplete</span>
-              <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
-                <span class="material-symbols-outlined text-lg">warning</span>
+          <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
+            <div class="flex items-center justify-between gap-3 mb-2">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Incomplete</span>
+              <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 border border-amber-200/80 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-[18px]">warning</span>
               </div>
             </div>
-            <div id="metricIncomplete" class="text-2xl sm:text-3xl font-black text-amber-600">1</div>
-            <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
-              <span class="font-bold text-amber-800">100%</span> butuh follow-up ke RS/Cabang
+            <div>
+              <div id="metricIncomplete" class="text-2xl sm:text-3xl font-black text-amber-600 tracking-tight">1</div>
+              <div class="mt-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200/80 text-amber-800 text-[11px] font-bold">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                  <span>100% Butuh Follow-Up</span>
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -1160,7 +1177,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': 'zWm7IlShuYotKrb0GeGLfsp6AAGPGkYCnHKPKxfN',
+            'X-CSRF-TOKEN': 'EzG0V4ROnRbxLRbW5pcBxyFPOluhqBirWyPzYVgr',
             'Accept': 'application/json'
           },
           body: JSON.stringify({ target, channels, message })
@@ -1188,7 +1205,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'zWm7IlShuYotKrb0GeGLfsp6AAGPGkYCnHKPKxfN'
+          'X-CSRF-TOKEN': 'EzG0V4ROnRbxLRbW5pcBxyFPOluhqBirWyPzYVgr'
         },
         body: JSON.stringify({
           doctor_id: doctorId || null,

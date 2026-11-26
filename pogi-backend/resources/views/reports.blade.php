@@ -1,151 +1,142 @@
-<!DOCTYPE html>
-<html lang="id" class="h-full bg-[#f4f7f6]">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POGI SKP Tracker - Laporan &amp; Analisis Realisasi SKP</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js CDN -->
+@section('title', 'POGI SKP Tracker - Laporan & Analisis Realisasi SKP')
+
+@section('content')
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Core Styles -->
-  <link rel="stylesheet" href="/css/style.css">
-</head>
 
-<body class="h-full bg-[#f4f7f6] text-slate-800 antialiased font-sans">
-  <!-- Mobile Backdrop Overlay -->
-  <div id="sidebarOverlay" onclick="toggleMobileSidebar(false)"
-    class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden pointer-events-none transition-opacity lg:hidden">
-  </div>
+  <!-- Main Content Wrapper -->
+  <div class="space-y-6">
 
-  <div class="flex h-screen overflow-hidden">
-    <!-- APP SIDEBAR -->
-    @include('layouts.sidebar')
+    <!-- Clean Executive Page Header (Modern Enterprise Standard matching Activity Log) -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+      <div class="space-y-1.5 min-w-0">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Laporan Eksekutif &amp; Analisis SKP</span>
+          <span class="text-slate-300">•</span>
+          <span class="text-slate-500 font-semibold normal-case">Standar Kemenkes</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
+          <span>Laporan Bulanan &amp; Kepatuhan SKP</span>
+        </h1>
+        <p class="text-xs text-slate-500 max-w-3xl leading-relaxed">
+          Pengelolaan dan Penginputan Data Satuan Kredit Profesi (SKP) Dokter Spesialis Obstetri &amp; Ginekologi mengacu pada KMK HK.01.07/MENKES/1561/2024 &amp; KMK HK.01.07/MENKES/1111/2026. Laporan resmi berkas &amp; lampiran penagihan invoice.
+        </p>
+      </div>
 
-    <!-- MAIN CONSOLE WRAPPER -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-      <!-- Top Sticky Header -->
-      @include('layouts.header')
-
-      <!-- Main Body -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in print:p-0">
-
-        <!-- HEADER LAPORAN BULANAN RESMI (ONE POGI) -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-1">
-          <div class="space-y-1">
-            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              <span>LAPORAN BULANAN</span>
-            </h1>
-            <p class="text-xs text-slate-500 leading-relaxed max-w-7xl">
-              Pengelolaan dan Penginputan Data Satuan Kredit Profesi (SKP) Dokter Spesialis Obstetri &amp; Ginekologi mengacu pada KMK HK.01.07/MENKES/1561/2024 &amp; KMK HK.01.07/MENKES/1111/2026. Laporan resmi berkas &amp; lampiran penagihan invoice.
-            </p>
-          </div>
-
-
+      <!-- Action Toolbar Header -->
+      <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+        <!-- Month Navigator (< November 2026 >) -->
+        <div class="flex items-center bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden text-xs">
+          <button type="button" onclick="changeMonthStep(-1)" title="Bulan Sebelumnya" class="p-2 hover:bg-slate-50 text-slate-600 border-r border-slate-100 transition flex items-center justify-center cursor-pointer">
+            <span class="material-symbols-outlined text-base">chevron_left</span>
+          </button>
+          <button type="button" onclick="toggleMonthPickerModal(true)" class="px-3.5 py-2 font-bold text-slate-800 hover:text-[#16b3ac] hover:bg-emerald-50/50 transition flex items-center gap-1.5 select-none whitespace-nowrap cursor-pointer">
+            <span class="material-symbols-outlined text-sm text-[#16b3ac]">calendar_month</span>
+            <span id="currentMonthLabel">November 2026</span>
+            <span class="material-symbols-outlined text-xs text-slate-400">expand_more</span>
+          </button>
+          <button type="button" onclick="changeMonthStep(1)" title="Bulan Berikutnya" class="p-2 hover:bg-slate-50 text-slate-600 border-l border-slate-100 transition flex items-center justify-center cursor-pointer">
+            <span class="material-symbols-outlined text-base">chevron_right</span>
+          </button>
         </div>
 
-        <!-- Status Bar Update Admin -->
-        <div
-          class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/80 pb-3 text-xs text-slate-500">
-          <div class="flex items-center gap-2">
-            <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
-              <!-- Month Navigator (< November 2026 >) -->
-              <div
-                class="flex items-center bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden text-xs">
-                <button type="button" onclick="changeMonthStep(-1)" title="Bulan Sebelumnya"
-                  class="p-2 hover:bg-slate-50 text-slate-600 border-r border-slate-100 transition flex items-center justify-center cursor-pointer">
-                  <span class="material-symbols-outlined text-base">chevron_left</span>
-                </button>
-                <button type="button" onclick="toggleMonthPickerModal(true)"
-                  class="px-3.5 py-2 font-bold text-slate-800 hover:text-[#16b3ac] hover:bg-emerald-50/50 transition flex items-center gap-1.5 select-none whitespace-nowrap cursor-pointer">
-                  <span class="material-symbols-outlined text-sm text-[#16b3ac]">calendar_month</span>
-                  <span id="currentMonthLabel">November 2026</span>
-                  <span class="material-symbols-outlined text-xs text-slate-400">expand_more</span>
-                </button>
-                <button type="button" onclick="changeMonthStep(1)" title="Bulan Berikutnya"
-                  class="p-2 hover:bg-slate-50 text-slate-600 border-l border-slate-100 transition flex items-center justify-center cursor-pointer">
-                  <span class="material-symbols-outlined text-base">chevron_right</span>
-                </button>
-              </div>
+        <!-- Tombol Arsip Laporan Bulanan -->
+        <button type="button" onclick="openArchiveModal(true)" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95">
+          <span class="material-symbols-outlined text-base text-amber-600">folder_zip</span>
+          <span>Arsip Laporan</span>
+        </button>
+
+        <!-- Tombol Report SKP -->
+        <button type="button" onclick="downloadCurrentMonthSkpReport()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95" title="Unduh PDF Resmi SKP Report (1 Halaman)">
+          <span class="material-symbols-outlined text-base">assessment</span>
+          <span>Report SKP</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="pane-dashboard" class="space-y-6">
+
+      <!-- 4 Summary KPI Cards (Modern Enterprise Style matching Activity Log) -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+
+        <!-- Card 1: Target -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Target Bulan Ini</span>
+            <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[18px]">flag</span>
             </div>
           </div>
-          <div class="text-xs text-slate-400 font-medium flex items-center justify-end gap-1.5">
-            <!-- Tombol Arsip Laporan Bulanan (Flashback) -->
-            <button type="button" onclick="openArchiveModal(true)"
-              class="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer">
-              <span class="material-symbols-outlined text-base text-amber-600">folder_zip</span>
-              <span>Arsip Laporan</span>
-            </button>
-
-            <!-- Tombol Report SKP (Dipindahkan ke sebelah Arsip Laporan) -->
-            <button type="button" onclick="downloadCurrentMonthSkpReport()"
-              class="px-3.5 py-2 rounded-xl bg-sky-700 hover:bg-sky-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
-              title="Unduh PDF Resmi SKP Report (1 Halaman)">
-              <span class="material-symbols-outlined text-base">assessment</span>
-              <span>Report SKP</span>
-            </button>
+          <div>
+            <div id="cardTargetValue" class="text-2xl sm:text-3xl font-black text-slate-900 font-mono tracking-tight">0,00</div>
+            <div class="mt-2">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold">
+                <span id="cardTargetSubtitle">0 dokter &times; 2,67 credits</span>
+              </span>
+            </div>
           </div>
         </div>
 
-        <div id="pane-dashboard" class="space-y-6">
-
-          <!-- 4 Summary KPI Cards (Murni Bulanan) -->
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-
-            <!-- Card 1: Target -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-              <div class="flex items-center justify-between text-slate-500 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider">Target Bulan Ini</span>
-                <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700">
-                  <span class="material-symbols-outlined text-lg">flag</span>
-                </div>
-              </div>
-              <div id="cardTargetValue" class="text-2xl sm:text-3xl font-black text-slate-900 font-mono tracking-tight">
-                0,00</div>
-              <div id="cardTargetSubtitle" class="text-[11px] text-slate-500 mt-1">0 dokter &times; 2,67 credits</div>
+        <!-- Card 2: Realization -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Realization</span>
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-[#16b3ac] border border-emerald-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[18px]">trending_up</span>
             </div>
-
-            <!-- Card 2: Realization -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-              <div class="flex items-center justify-between text-slate-500 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider">Realization</span>
-                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#16b3ac] flex items-center justify-center">
-                  <span class="material-symbols-outlined text-lg">trending_up</span>
-                </div>
-              </div>
-              <div id="cardRealValue" class="text-2xl sm:text-3xl font-black text-emerald-800 font-mono tracking-tight">
-                0,00</div>
-              <div id="cardRealSubtitle" class="text-[11px] text-slate-500 mt-1"><span class="text-emerald-700 font-bold">0%</span> of target</div>
-            </div>
-
-            <!-- Card 3: Dokter Capai Target -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-              <div class="flex items-center justify-between text-slate-500 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider">Dokter Capai Target</span>
-                <div class="w-8 h-8 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-lg">task_alt</span>
-                </div>
-              </div>
-              <div id="cardCompleteValue" class="text-2xl sm:text-3xl font-black text-sky-900 font-mono tracking-tight">
-                0 Dokter</div>
-              <div id="cardCompleteSubtitle" class="text-[11px] text-slate-500 mt-1"><span class="text-sky-800 font-bold">0%</span> dari 0 dokter aktif</div>
-            </div>
-
-            <!-- Card 4: Waiting for validation -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-              <div class="flex items-center justify-between text-slate-500 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider">Waiting for validation</span>
-                <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-lg">hourglass_top</span>
-                </div>
-              </div>
-              <div id="cardPendingValue"
-                class="text-2xl sm:text-3xl font-black text-amber-600 font-mono tracking-tight">0 SKP</div>
-              <div id="cardPendingSubtitle" class="text-[11px] text-slate-500 mt-1">0 dokter pending kurasi Kemenkes</div>
-            </div>
-
           </div>
+          <div>
+            <div id="cardRealValue" class="text-2xl sm:text-3xl font-black text-emerald-800 font-mono tracking-tight">0,00</div>
+            <div class="mt-2">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-[11px] font-bold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span id="cardRealSubtitle">0% of target</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Dokter Capai Target -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Dokter Capai Target</span>
+            <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-700 border border-sky-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[18px]">task_alt</span>
+            </div>
+          </div>
+          <div>
+            <div id="cardCompleteValue" class="text-2xl sm:text-3xl font-black text-sky-900 font-mono tracking-tight">0 Dokter</div>
+            <div class="mt-2">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-50 border border-sky-200/80 text-sky-700 text-[11px] font-bold">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                <span id="cardCompleteSubtitle">0% dari 0 dokter aktif</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Waiting for validation -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Waiting for Validation</span>
+            <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 border border-amber-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[18px]">hourglass_top</span>
+            </div>
+          </div>
+          <div>
+            <div id="cardPendingValue" class="text-2xl sm:text-3xl font-black text-amber-600 font-mono tracking-tight">0 SKP</div>
+            <div class="mt-2">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200/80 text-amber-700 text-[11px] font-bold">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span id="cardPendingSubtitle">0 dokter pending kurasi Kemenkes</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
 
           <!-- 4 CHARTS GRID (2x2) - Persis Gambar 2 dengan Layout Lega & Rapih -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
@@ -240,10 +231,7 @@
 
         </div>
 
-
-      </main>
-    </div>
-  </div>
+      </div>
 
   <!-- ========================================================================= -->
   <!-- MODAL POPUP 1: PILIHAN BULAN (PERSIS BPJS DI CHAT WHATSAPP)               -->
@@ -734,6 +722,4 @@
       }
     }
   </script>
-</body>
-
-</html>
+@endsection

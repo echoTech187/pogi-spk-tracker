@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="zWm7IlShuYotKrb0GeGLfsp6AAGPGkYCnHKPKxfN">
+  <meta name="csrf-token" content="EzG0V4ROnRbxLRbW5pcBxyFPOluhqBirWyPzYVgr">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -408,26 +408,28 @@
       <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in">
           <!-- PAGE CONTENT BODY -->
   <main class="flex-1 space-y-6 max-w-7xl w-full mx-auto">
-    <!-- Hero Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
-      <div>
-        <div class="flex items-center gap-2 text-xs font-bold text-[#16b3ac] uppercase tracking-wider">
-          <span class="material-symbols-outlined text-sm">speed</span>
-          <span>STANDAR OPERASIONAL B2B ENERGI CIPTA &bull; KEMENKES MANUAL-ASSISTED SYNC</span>
+    <!-- Clean Page Header (Modern Enterprise Standard matching Activity Log) -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
+      <div class="space-y-1.5 min-w-0">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Standar Operasional B2B &bull; Manual-Assisted Sync</span>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Admin Performance &amp; SLA Tracker</h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl leading-relaxed">
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
+          <span>Admin Performance &amp; SLA Tracker</span>
+        </h1>
+        <p class="text-xs text-slate-500 max-w-3xl leading-relaxed">
           Pemantauan terpusat kecepatan SLA verifikasi berkas (&le; 24 jam), rasio akurasi persetujuan Kemenkes, produktivitas tim data, dan penyeimbang beban kerja (*workload balancing*).
         </p>
       </div>
 
       <!-- Quick Action Buttons -->
-      <div class="flex items-center gap-2 shrink-0">
-                <button type="button" onclick="openWorkloadRebalanceModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs rbac-operational">
+      <div class="flex items-center gap-2 shrink-0 flex-wrap">
+                <button type="button" onclick="openWorkloadRebalanceModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-operational cursor-pointer active:scale-95">
           <span class="material-symbols-outlined text-sm text-emerald-400">balance</span>
           <span>Redistribusi Beban Dokter</span>
         </button>
-                <button type="button" onclick="exportKpiReport()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs">
+                <button type="button" onclick="exportKpiReport()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95">
           <span class="material-symbols-outlined text-sm">download</span>
           <span>Ekspor Rekap KPI</span>
         </button>
@@ -1003,7 +1005,7 @@
       if (!docId || !targetAdminId) return;
 
       try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'zWm7IlShuYotKrb0GeGLfsp6AAGPGkYCnHKPKxfN';
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'EzG0V4ROnRbxLRbW5pcBxyFPOluhqBirWyPzYVgr';
         const res = await fetch(`/doctors/${docId}/assign-pic`, {
           method: 'POST',
           headers: {

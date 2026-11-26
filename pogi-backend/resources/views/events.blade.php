@@ -6,29 +6,32 @@
       <!-- Main Body -->
       <div class="space-y-5">
 
-        <!-- MedCred Standard Heading Banner -->
-        <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div class="space-y-1.5">
-            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
-              <span>KATALOG RESMI TERAKREDITASI</span>
-            </div>
-            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              <span>Katalog Event &amp; Kegiatan SKP</span>
-              <span class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(10 Terakreditasi)</span>
-            </h1>
-            <p class="text-xs text-slate-500 max-w-2xl leading-relaxed">
-              Daftar kegiatan ilmiah, simposium, workshop, dan pelayanan klinis ber-SKP yang telah terverifikasi Kemenkes Plataran Sehat terintegrasi PP POGI.
-            </p>
-          </div>
-          @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
-          <div class="flex items-center gap-2.5 shrink-0">
-            <button type="button" onclick="openAddEventModal()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-write">
-              <span class="material-symbols-outlined text-base">add_circle</span>
-              <span>Tambah Event SKP</span>
-            </button>
-          </div>
-          @endif
+    <!-- Clean Page Header (Modern Enterprise Standard matching Activity Log) -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+      <div class="space-y-1.5 min-w-0">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Katalog Resmi Terakreditasi</span>
+          <span class="text-slate-300">•</span>
+          <span class="text-slate-500 font-semibold normal-case">Plataran Sehat Kemenkes</span>
         </div>
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
+          <span>Katalog Event &amp; Kegiatan SKP</span>
+          <span class="text-xs font-mono font-bold text-slate-500 bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 rounded-full">10 Terakreditasi</span>
+        </h1>
+        <p class="text-xs text-slate-500 max-w-3xl leading-relaxed">
+          Daftar kegiatan ilmiah, simposium, workshop, dan pelayanan klinis ber-SKP yang telah terverifikasi Kemenkes Plataran Sehat terintegrasi PP POGI.
+        </p>
+      </div>
+      @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
+      <div class="flex items-center gap-2 shrink-0 flex-wrap">
+        <button type="button" onclick="openAddEventModal()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 rbac-write cursor-pointer active:scale-95">
+          <span class="material-symbols-outlined text-base">add_circle</span>
+          <span>Tambah Event SKP</span>
+        </button>
+      </div>
+      @endif
+    </div>
 
         <!-- Filter Subbidang Tabs -->
         <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">

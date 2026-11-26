@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="zWm7IlShuYotKrb0GeGLfsp6AAGPGkYCnHKPKxfN">
+  <meta name="csrf-token" content="EzG0V4ROnRbxLRbW5pcBxyFPOluhqBirWyPzYVgr">
   <title>POGI SKP Tracker - Monitoring Kepatuhan 38 Provinsi</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -407,22 +407,25 @@
       <!-- Main Body Scrollable View -->
       <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in">
         
-    <!-- MedCred Standard Heading Banner -->
-    <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div class="space-y-1.5">
-        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-black uppercase tracking-wider">
-          <span>MONITORING 38 WILAYAH PROVINSI</span>
+    <!-- Clean Page Header (Modern Enterprise Standard matching Activity Log) -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+      <div class="space-y-1.5 min-w-0">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Monitoring Wilayah Nasional</span>
+          <span class="text-slate-300">•</span>
+          <span class="text-slate-500 font-semibold normal-case">38 Cabang POGI</span>
         </div>
-        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
           <span>Distribusi &amp; Kepatuhan Cabang POGI</span>
-          <span class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(38 Wilayah)</span>
+          <span class="text-xs font-mono font-bold text-slate-500 bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 rounded-full">38 Wilayah</span>
         </h1>
-        <p class="text-xs text-slate-500 max-w-2xl leading-relaxed">
+        <p class="text-xs text-slate-500 max-w-3xl leading-relaxed">
           Pemetaan persebaran dokter spesialis obstetri &amp; ginekologi dan tingkat kepatuhan pemenuhan standar 160 SKP di 38 cabang POGI seluruh Indonesia.
         </p>
       </div>
       <div class="flex items-center gap-2.5 shrink-0">
-        <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer bg-slate-50 hover:bg-slate-100 px-3 py-2 rounded-xl border border-slate-200 transition">
+        <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer bg-white hover:bg-slate-50 px-3 py-2 rounded-xl border border-slate-200/90 shadow-2xs transition">
           <input id="hideZeroDoctors" type="checkbox" onchange="toggleZeroDoctors()" class="rounded text-[#16b3ac] focus:ring-[#16b3ac]" />
           <span class="text-[11px]">Sembunyikan 0 Dokter</span>
         </label>

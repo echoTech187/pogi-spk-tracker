@@ -6,23 +6,30 @@
   <!-- Main Body -->
   <div class="space-y-5">
 
-    <!-- MEDCRED STANDARD HEADING (Persis Screenshot Klien) -->
+    <!-- Clean Page Header (Modern Enterprise Standard matching Activity Log) -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
-      <div class="space-y-1">
-        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-          Daftar Dokter &amp; Tenaga Kesehatan (<span id="headingTotalCount">{{ $metrics['total'] ?? count($doctors ?? []) }} Terdaftar</span>)
+      <div class="space-y-1.5 min-w-0">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Direktori Tenaga Medis</span>
+          <span class="text-slate-300">•</span>
+          <span class="text-slate-500 font-semibold normal-case">Integrasi SATUSEHAT</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
+          <span>Daftar Dokter &amp; Tenaga Kesehatan</span>
+          <span id="headingTotalCount" class="text-xs font-mono font-bold text-slate-500 bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 rounded-full">{{ $metrics['total'] ?? count($doctors ?? []) }} Terdaftar</span>
         </h1>
-        <p class="text-xs text-slate-500 leading-relaxed max-w-3xl">
+        <p class="text-xs text-slate-500 max-w-3xl leading-relaxed">
           Direktori kredensialing aktif, pemantauan pengurusan perizinan instansi &amp; akses pemenuhan kredit 160 SKP (Pelayanan, Pengabdian, Pembelajaran) terintegrasi SATUSEHAT.
         </p>
       </div>
       @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
       <div class="flex items-center gap-2 shrink-0 flex-wrap">
-        <button type="button" onclick="openWaBlastModal()" id="btnWaBlastMassal" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational cursor-pointer">
+        <button type="button" onclick="openWaBlastModal()" id="btnWaBlastMassal" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write rbac-operational cursor-pointer active:scale-95">
           <span class="material-symbols-outlined text-base">campaign</span>
           <span>Kirim WA Blast Massal</span>
         </button>
-        <button type="button" onclick="openAddDoctorModal()" id="btnAddDoctor" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational cursor-pointer">
+        <button type="button" onclick="openAddDoctorModal()" id="btnAddDoctor" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational cursor-pointer active:scale-95">
           <span class="material-symbols-outlined text-base">person_add</span>
           <span>Daftarkan Dokter Baru</span>
         </button>
