@@ -73,11 +73,11 @@
         <div class="flex items-center gap-2 shrink-0 flex-wrap">
           <button type="button" onclick="runCronJobSimulation('H-7')" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
             <span class="material-symbols-outlined text-sm text-emerald-300">play_circle</span>
-            <span>Simulasi Trigger H-7</span>
+            <span>Trigger H-7</span>
           </button>
           <button type="button" onclick="runCronJobSimulation('H-2')" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
             <span class="material-symbols-outlined text-sm text-amber-300">warning</span>
-            <span>Simulasi Trigger H-2</span>
+            <span>Trigger H-2</span>
           </button>
           <button type="button" onclick="refreshActivityLog()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
             <span class="material-symbols-outlined text-sm text-slate-200" id="refreshIcon">refresh</span>
@@ -527,7 +527,7 @@
         const data = await res.json();
         if (data && data.success && data.log) {
           LIVE_SERVER_LOGS.unshift(data.log);
-          showToast(`Simulasi Cron ${triggerType} Berhasil: ${data.count} dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
+          showToast(`Trigger Cron ${triggerType} Berhasil: ${data.count} dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
         } else {
           showToast(data?.message || 'Gagal menjalankan cron trigger di server.', 'error');
         }

@@ -235,7 +235,7 @@ class ActivityController extends Controller
             'trigger' => $triggerType,
             'target' => "{$incompleteCount} Dokter Incomplete (Nasional)",
             'channels' => ['whatsapp', 'email'],
-            'message' => "Simulasi trigger {$triggerType}: {$incompleteCount} dokter status Incomplete diproses & antrean pengingat dikirim."
+            'message' => "Eksekusi trigger {$triggerType}: {$incompleteCount} dokter status Incomplete diproses & antrean pengingat dikirim."
         ];
 
         DB::table('audit_logs')->insert([
@@ -247,7 +247,7 @@ class ActivityController extends Controller
             'old_values' => null,
             'new_values' => json_encode($details),
             'ip_address' => $request->ip() ?: '127.0.0.1',
-            'user_agent' => $request->userAgent() ?: 'Cron Worker Simulator',
+            'user_agent' => $request->userAgent() ?: 'Cron Worker Service',
             'created_at' => $now,
         ]);
 
