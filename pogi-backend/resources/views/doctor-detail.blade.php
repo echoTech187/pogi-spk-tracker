@@ -863,24 +863,6 @@
         renderDoctorRepositoryAndDetector(activeDoctor.id);
       }
 
-      if (window.jQuery && $.fn.select2) {
-        if ($('#newDocCategory').length && $('#addDocumentModal').length) {
-          $('#newDocCategory').select2({
-            dropdownParent: $('#addDocumentModal'),
-            width: '100%'
-          }).on('change', function() {
-            autoSuggestSkpByCategory(this.value);
-          });
-        }
-
-        if ($('#modalChangePicSelect').length && $('#changeDoctorPicModal').length) {
-          $('#modalChangePicSelect').select2({
-            dropdownParent: $('#changeDoctorPicModal'),
-            width: '100%'
-          });
-        }
-      }
-
       const dz = document.getElementById('dropZoneContainer');
       if (dz) {
         dz.addEventListener('dragover', (e) => {
@@ -1556,7 +1538,20 @@
       }
 
       const modal = document.getElementById('uploadDoctorDocModal');
-      if (modal) modal.classList.remove('hidden');
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (window.jQuery && $.fn.select2) {
+          try {
+            const $cat = $('#newDocCategory');
+            if ($cat.hasClass('select2-hidden-accessible')) {
+              $cat.select2('destroy');
+            }
+            $cat.select2({ width: '100%' }).off('change.autoSuggest').on('change.autoSuggest', function() {
+              autoSuggestSkpByCategory(this.value);
+            });
+          } catch (e) {}
+        }
+      }
     }
 
     function closeUploadDoctorDocModal() {
@@ -1665,9 +1660,18 @@
         }
       }
       document.getElementById('changeDoctorPicModal').classList.remove('hidden');
-      if (window.jQuery && $.fn.select2 && select) {
+      if (window.jQuery && $.fn.select2) {
         try {
-          $('#modalChangePicSelect').val(select.value).trigger('change.select2');
+          const $picSelect = $('#modalChangePicSelect');
+          if ($picSelect.hasClass('select2-hidden-accessible')) {
+            $picSelect.select2('destroy');
+          }
+          $picSelect.select2({
+            width: '100%'
+          });
+          if (select && select.value) {
+            $picSelect.val(select.value).trigger('change.select2');
+          }
         } catch (e) {}
       }
     }

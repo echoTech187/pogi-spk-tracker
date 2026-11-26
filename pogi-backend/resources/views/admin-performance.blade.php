@@ -496,16 +496,6 @@
         }).on('change', function() {
           filterAdminTable();
         });
-
-        $('#rebalanceDoctorSelect').select2({
-          dropdownParent: $('#workloadRebalanceModal'),
-          width: '100%'
-        });
-
-        $('#rebalanceTargetAdminSelect').select2({
-          dropdownParent: $('#workloadRebalanceModal'),
-          width: '100%'
-        });
       }
     }
 
@@ -713,6 +703,27 @@
       renderLeaderboardTable(filtered);
     }
 
+    function isDoctorAssignedToAdmin(d, admin) {
+      if (!d || !admin) return false;
+      // 1. Direct ID match
+      if (d.assignedPicId && String(d.assignedPicId) === String(admin.id)) return true;
+      // 2. Name or DisplayName match
+      if (d.assignedTo) {
+        const assignedTo = d.assignedTo.toLowerCase();
+        if (admin.name && assignedTo.includes(admin.name.toLowerCase())) return true;
+        if (admin.displayName && assignedTo.includes(admin.displayName.toLowerCase())) return true;
+      }
+      // 3. Fallback for unassigned doctors (assigned_pic_id is null / empty)
+      // Sesuai logika controller AdminPerformanceController baris 45-47:
+      // Dokter tanpa PIC dialokasikan ke Super Admin atau admin tunggal
+      if (!d.assignedPicId && (!d.assignedTo || d.assignedTo === 'Unassigned' || d.assignedTo === 'Belum Ditentukan')) {
+        const isSuper = (admin.role && admin.role.toLowerCase().includes('super'));
+        const isSingleAdmin = (performanceData && performanceData.admins && performanceData.admins.length === 1);
+        if (isSuper || isSingleAdmin) return true;
+      }
+      return false;
+    }
+
     function showAdminDetailModal(adminId) {
       if (!performanceData) return;
       const admin = performanceData.admins.find(a => a.id === adminId);
@@ -726,8 +737,8 @@
       document.getElementById('modalAdminScore').innerText = `${admin.overallScore} / 100`;
       document.getElementById('modalDoctorBadgeCount').innerText = `${admin.doctorCount} Dokter`;
 
-      // Render assigned doctors
-      const doctors = (LIVE_SERVER_DOCTORS || []).filter(d => (d.assignedTo && d.assignedTo.toLowerCase().includes(admin.name.toLowerCase())) || (admin.displayName && d.assignedTo && d.assignedTo.toLowerCase().includes(admin.displayName.toLowerCase())));
+      // Render assigned doctors with accurate matching
+      const doctors = (LIVE_SERVER_DOCTORS || []).filter(d => isDoctorAssignedToAdmin(d, admin));
       const docListCont = document.getElementById('modalDoctorListContainer');
       if (doctors.length === 0) {
         docListCont.innerHTML = `
@@ -744,13 +755,15 @@
       } else {
         docListCont.innerHTML = doctors.map(d => {
           const statusBadge = (d.status === 'Complete' || d.status === 'COMPLETE')
-            ? `<span class="px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-100 text-[#16b3ac]">Complete</span>`
-            : `<span class="px-2 py-0.2 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700">Incomplete</span>`;
+            ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-[#16b3ac]">Complete</span>`
+            : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700">Incomplete</span>`;
+          const isUnassigned = !d.assignedPicId && (!d.assignedTo || d.assignedTo === 'Unassigned' || d.assignedTo === 'Belum Ditentukan');
+          const unassignedNote = isUnassigned ? `<span class="text-amber-700 font-semibold ml-1">(PIC Belum Ditentukan - Pengampuan Super Admin)</span>` : '';
           return `
-            <div class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition text-xs">
+            <div class="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition text-xs border border-transparent hover:border-slate-100">
               <div>
                 <a href="/doctor-detail?id=${d.id}" class="font-bold text-slate-900 hover:text-[#16b3ac] hover:underline">${d.name}</a>
-                <div class="text-[10px] text-slate-400 font-mono">STR: ${d.strNumber || '-'} &bull; ${d.hospital || '-'}</div>
+                <div class="text-[10px] text-slate-400 font-mono mt-0.5">STR: ${d.strNumber || '-'} &bull; ${d.hospital || '-'} ${unassignedNote}</div>
               </div>
               <div class="flex items-center gap-2">
                 <span class="font-mono font-bold text-slate-700 text-[11px]">${d.q4Credits || 0} SKP</span>
@@ -817,10 +830,20 @@
         const docFromAdmin = doctors.find(d => d.assignedTo === preferredAdminName);
         if (docFromAdmin) {
           docSelect.value = docFromAdmin.id;
-          if (window.jQuery && $.fn.select2) $(docSelect).trigger('change.select2');
         }
       }
       document.getElementById('workloadRebalanceModal').classList.remove('hidden');
+
+      if (window.jQuery && $.fn.select2) {
+        $('#rebalanceDoctorSelect, #rebalanceTargetAdminSelect').each(function() {
+          if ($(this).hasClass('select2-hidden-accessible')) {
+            $(this).select2('destroy');
+          }
+          $(this).select2({
+            width: '100%'
+          });
+        });
+      }
     }
 
     function closeWorkloadRebalanceModal() {
@@ -874,11 +897,8 @@
       document.getElementById('transferOriginAdminName').innerText = admin.displayName || admin.name;
       document.getElementById('transferOriginAdminFull').innerText = `${admin.displayName || admin.name} (${admin.role || 'Admin'})`;
 
-      // Filter doctors assigned to this admin
-      const assignedDocs = (LIVE_SERVER_DOCTORS || []).filter(d => 
-        (d.assignedTo && d.assignedTo.toLowerCase().includes(admin.name.toLowerCase())) || 
-        (admin.displayName && d.assignedTo && d.assignedTo.toLowerCase().includes(admin.displayName.toLowerCase()))
-      );
+      // Filter doctors assigned to this admin with accurate matching
+      const assignedDocs = (LIVE_SERVER_DOCTORS || []).filter(d => isDoctorAssignedToAdmin(d, admin));
 
       document.getElementById('transferOriginDocCount').innerText = `${assignedDocs.length} Dokter`;
 
@@ -933,6 +953,18 @@
 
       updateTransferDocCount();
       document.getElementById('adminDoctorTransferModal').classList.remove('hidden');
+
+      if (window.jQuery && $.fn.select2) {
+        const $targetSelect = $('#transferTargetAdminSelect');
+        if ($targetSelect.hasClass('select2-hidden-accessible')) {
+          $targetSelect.select2('destroy');
+        }
+        $targetSelect.select2({
+          width: '100%'
+        }).off('change.select2Transfer').on('change.select2Transfer', function() {
+          updateTransferDocCount();
+        });
+      }
     }
 
     function closeAdminDoctorTransferModal() {
@@ -1065,11 +1097,8 @@
           // Rebalancing is recommended!
           const transferQty = maxCount > 40 ? Math.min(maxCount - 40, Math.ceil(diff / 2)) : Math.ceil(diff / 2);
 
-          // Get doctors from maxAdmin
-          const maxAdminDocs = allDocs.filter(d => 
-            (d.assignedTo && d.assignedTo.toLowerCase().includes(maxAdmin.name.toLowerCase())) || 
-            (maxAdmin.displayName && d.assignedTo && d.assignedTo.toLowerCase().includes(maxAdmin.displayName.toLowerCase()))
-          );
+          // Get doctors from maxAdmin with accurate matching
+          const maxAdminDocs = allDocs.filter(d => isDoctorAssignedToAdmin(d, maxAdmin));
 
           const doctorsToMove = maxAdminDocs.slice(0, transferQty);
 

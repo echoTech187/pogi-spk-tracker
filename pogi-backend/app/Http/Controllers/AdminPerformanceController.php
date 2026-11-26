@@ -199,6 +199,7 @@ class AdminPerformanceController extends Controller
                 'doctors.str_number as strNumber',
                 'institutions.name as hospital',
                 'doctors.status',
+                'doctors.assigned_pic_id as assignedPicId',
                 'pic.full_name as assignedTo',
                 DB::raw('COALESCE(period.achieved_total_credits, 0) as q4Credits')
             )
