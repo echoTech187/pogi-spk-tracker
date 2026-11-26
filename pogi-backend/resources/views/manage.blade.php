@@ -1593,8 +1593,40 @@
       if (!tbody && !mobileContainer) return;
 
       if (pageDoctors.length === 0) {
-        if (tbody) tbody.innerHTML = '<tr><td colspan="10" class="py-12 text-center text-slate-400 font-medium">Tidak ada dokter yang cocok dengan kriteria filter.</td></tr>';
-        if (mobileContainer) mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada data dokter.</div>';
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="10" class="py-14 px-4 text-center">
+                <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                  <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                    <span class="material-symbols-outlined text-2xl">person_off</span>
+                  </div>
+                  <div class="font-extrabold text-sm text-slate-800">Tidak Ada Data Dokter</div>
+                  <p class="text-xs text-slate-500 leading-relaxed">
+                    Tidak ditemukan data dokter spesialis yang sesuai dengan kriteria pencarian atau filter yang dipilih.
+                  </p>
+                  <button type="button" onclick="openAddModal()" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-write">
+                    <span class="material-symbols-outlined text-sm">person_add</span>
+                    <span>Tambah Dokter Baru</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+        if (mobileContainer) {
+          mobileContainer.innerHTML = `
+            <div class="py-12 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-xs mx-auto">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-xl">person_off</span>
+                </div>
+                <div class="font-extrabold text-xs text-slate-800">Tidak Ada Data Dokter</div>
+                <p class="text-[11px] text-slate-500">Tidak ada dokter yang cocok dengan filter saat ini.</p>
+              </div>
+            </div>
+          `;
+        }
       } else {
         // Desktop & Tablet Rows
         if (tbody) {
@@ -1800,8 +1832,40 @@
       if (!tbody && !mobileContainer) return;
 
       if (pageInst.length === 0) {
-        if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="py-12 text-center text-slate-400 font-medium">Tidak ada rumah sakit yang cocok dengan filter.</td></tr>';
-        if (mobileContainer) mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada data rumah sakit.</div>';
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" class="py-14 px-4 text-center">
+                <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                  <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                    <span class="material-symbols-outlined text-2xl">domain_disabled</span>
+                  </div>
+                  <div class="font-extrabold text-sm text-slate-800">Tidak Ada Rumah Sakit / Faskes</div>
+                  <p class="text-xs text-slate-500 leading-relaxed">
+                    Tidak ditemukan fasilitas kesehatan atau rumah sakit yang sesuai dengan filter wilayah atau kata kunci pencarian.
+                  </p>
+                  <button type="button" onclick="openAddModal()" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-write">
+                    <span class="material-symbols-outlined text-sm">add_business</span>
+                    <span>Tambah Faskes Baru</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+        if (mobileContainer) {
+          mobileContainer.innerHTML = `
+            <div class="py-12 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-xs mx-auto">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-xl">domain_disabled</span>
+                </div>
+                <div class="font-extrabold text-xs text-slate-800">Tidak Ada Data Faskes</div>
+                <p class="text-[11px] text-slate-500">Tidak ada rumah sakit yang cocok dengan filter saat ini.</p>
+              </div>
+            </div>
+          `;
+        }
       } else {
         // Desktop / Tablet Rows
         if (tbody) {
@@ -1944,8 +2008,40 @@
       if (!tbody && !mobileContainer) return;
 
       if (pageEvents.length === 0) {
-        if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="py-12 text-center text-slate-400 font-medium">Tidak ada kegiatan SKP yang cocok dengan kriteria filter.</td></tr>';
-        if (mobileContainer) mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada data kegiatan.</div>';
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" class="py-14 px-4 text-center">
+                <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                  <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                    <span class="material-symbols-outlined text-2xl">event_busy</span>
+                  </div>
+                  <div class="font-extrabold text-sm text-slate-800">Tidak Ada Kegiatan SKP</div>
+                  <p class="text-xs text-slate-500 leading-relaxed">
+                    Tidak ditemukan kegiatan ilmiah atau event SKP yang cocok dengan kriteria filter ranah atau pencarian.
+                  </p>
+                  <button type="button" onclick="openAddModal()" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-write">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    <span>Tambah Event Baru</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+        if (mobileContainer) {
+          mobileContainer.innerHTML = `
+            <div class="py-12 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-xs mx-auto">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-xl">event_busy</span>
+                </div>
+                <div class="font-extrabold text-xs text-slate-800">Tidak Ada Data Kegiatan</div>
+                <p class="text-[11px] text-slate-500">Tidak ada event SKP yang cocok dengan filter saat ini.</p>
+              </div>
+            </div>
+          `;
+        }
       } else {
         // Desktop / Tablet Rows
         if (tbody) {
@@ -2092,8 +2188,40 @@
       if (!tbody && !mobileContainer) return;
 
       if (pageCats.length === 0) {
-        if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="py-12 text-center text-slate-400 font-medium">Tidak ada kategori yang cocok dengan filter.</td></tr>';
-        if (mobileContainer) mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada data kategori.</div>';
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" class="py-14 px-4 text-center">
+                <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                  <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                    <span class="material-symbols-outlined text-2xl">category</span>
+                  </div>
+                  <div class="font-extrabold text-sm text-slate-800">Tidak Ada Kategori Kegiatan</div>
+                  <p class="text-xs text-slate-500 leading-relaxed">
+                    Tidak ditemukan kategori kegiatan SKP yang sesuai dengan filter ranah atau pencarian.
+                  </p>
+                  <button type="button" onclick="openAddModal()" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-write">
+                    <span class="material-symbols-outlined text-sm">add_box</span>
+                    <span>Tambah Kategori Baru</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+        if (mobileContainer) {
+          mobileContainer.innerHTML = `
+            <div class="py-12 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-xs mx-auto">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-xl">category</span>
+                </div>
+                <div class="font-extrabold text-xs text-slate-800">Tidak Ada Kategori</div>
+                <p class="text-[11px] text-slate-500">Tidak ada kategori yang cocok dengan filter saat ini.</p>
+              </div>
+            </div>
+          `;
+        }
       } else {
         // Desktop / Tablet Rows
         if (tbody) {
@@ -2221,8 +2349,40 @@
       if (!tbody && !mobileContainer) return;
 
       if (pageUsers.length === 0) {
-        if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="py-12 text-center text-slate-400 font-medium">Tidak ada pengguna yang cocok dengan filter.</td></tr>';
-        if (mobileContainer) mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada data pengguna.</div>';
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="py-14 px-4 text-center">
+                <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                  <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                    <span class="material-symbols-outlined text-2xl">manage_accounts</span>
+                  </div>
+                  <div class="font-extrabold text-sm text-slate-800">Tidak Ada Pengguna Ditemukan</div>
+                  <p class="text-xs text-slate-500 leading-relaxed">
+                    Tidak ditemukan pengguna yang cocok dengan filter hak akses atau kata kunci pencarian.
+                  </p>
+                  <button type="button" onclick="openAddModal()" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-write">
+                    <span class="material-symbols-outlined text-sm">person_add</span>
+                    <span>Tambah Pengguna Baru</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+        if (mobileContainer) {
+          mobileContainer.innerHTML = `
+            <div class="py-12 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-xs mx-auto">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-xl">manage_accounts</span>
+                </div>
+                <div class="font-extrabold text-xs text-slate-800">Tidak Ada Pengguna</div>
+                <p class="text-[11px] text-slate-500">Tidak ada pengguna yang cocok dengan filter saat ini.</p>
+              </div>
+            </div>
+          `;
+        }
       } else {
         const getRoleBadge = (role) => {
           if (role === 'Super Admin') return '<span class="px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-extrabold text-[10px]">Super Admin</span>';

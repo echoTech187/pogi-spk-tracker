@@ -608,10 +608,16 @@
         if (pageActivities.length === 0) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="6" class="py-16 text-center text-slate-400">
-                <span class="material-symbols-outlined text-4xl text-slate-300 block mb-2">find_in_page</span>
-                <span class="font-bold text-sm text-slate-600 block">Tidak ada log aktivitas ditemukan</span>
-                <span class="text-xs text-slate-400 mt-0.5 block">Coba ubah kata kunci pencarian atau ganti filter kategori di atas.</span>
+              <td colspan="6" class="py-14 px-4 text-center">
+                <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                  <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                    <span class="material-symbols-outlined text-2xl">find_in_page</span>
+                  </div>
+                  <div class="font-extrabold text-sm text-slate-800">Tidak Ada Log Aktivitas Ditemukan</div>
+                  <p class="text-xs text-slate-500 leading-relaxed">
+                    Tidak ditemukan riwayat log aktivitas yang sesuai dengan kriteria pencarian atau filter kategori saat ini.
+                  </p>
+                </div>
               </td>
             </tr>
           `;
@@ -678,7 +684,17 @@
       // Mobile Touch Cards (< md)
       if (mobileContainer) {
         if (pageActivities.length === 0) {
-          mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada riwayat log aktivitas yang sesuai.</div>';
+          mobileContainer.innerHTML = `
+            <div class="py-12 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-xs mx-auto">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-xl">find_in_page</span>
+                </div>
+                <div class="font-extrabold text-xs text-slate-800">Tidak Ada Log Aktivitas</div>
+                <p class="text-[11px] text-slate-500">Tidak ada log aktivitas yang cocok dengan filter saat ini.</p>
+              </div>
+            </div>
+          `;
         } else {
           mobileContainer.innerHTML = pageActivities.map(a => {
             let badgeStyle = 'bg-slate-50 text-slate-700 border-slate-200';

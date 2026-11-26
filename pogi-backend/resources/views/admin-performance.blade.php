@@ -590,7 +590,17 @@
       const doctors = (LIVE_SERVER_DOCTORS || []).filter(d => (d.assignedTo && d.assignedTo.toLowerCase().includes(admin.name.toLowerCase())) || (admin.displayName && d.assignedTo && d.assignedTo.toLowerCase().includes(admin.displayName.toLowerCase())));
       const docListCont = document.getElementById('modalDoctorListContainer');
       if (doctors.length === 0) {
-        docListCont.innerHTML = `<div class="p-3 text-center text-slate-400 italic">Belum ada dokter yang ditugaskan ke admin ini.</div>`;
+        docListCont.innerHTML = `
+          <div class="py-8 px-4 text-center">
+            <div class="flex flex-col items-center justify-center gap-2 max-w-xs mx-auto">
+              <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-2xs">
+                <span class="material-symbols-outlined text-xl">person_off</span>
+              </div>
+              <div class="font-extrabold text-xs text-slate-800">Belum Ada Dokter Binaan</div>
+              <p class="text-[11px] text-slate-500">Admin ini belum memiliki dokter binaan yang dialokasikan.</p>
+            </div>
+          </div>
+        `;
       } else {
         docListCont.innerHTML = doctors.map(d => {
           const statusBadge = (d.status === 'Complete' || d.status === 'COMPLETE')

@@ -469,7 +469,21 @@
 
       const doctors = (LIVE_SERVER_DOCTORS && LIVE_SERVER_DOCTORS.length > 0) ? LIVE_SERVER_DOCTORS : [];
       if (doctors.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400 italic">Belum ada peserta dokter terdaftar untuk kegiatan ini.</td></tr>`;
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="py-12 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-2xl">group_off</span>
+                </div>
+                <div class="font-extrabold text-sm text-slate-800">Belum Ada Peserta Terdaftar</div>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Belum ada dokter anggota POGI yang tercatat hadir atau berpartisipasi pada kegiatan ilmiah ini.
+                </p>
+              </div>
+            </td>
+          </tr>
+        `;
       } else {
         tbody.innerHTML = doctors.map(d => `
           <tr class="hover:bg-slate-50 transition">

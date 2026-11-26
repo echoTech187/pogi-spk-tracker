@@ -379,11 +379,15 @@
                 </tr>
               @empty
                 <tr>
-                  <td colspan="5" class="py-8 px-4 text-center text-slate-400">
-                    <div class="flex flex-col items-center justify-center gap-1.5 py-4">
-                      <span class="material-symbols-outlined text-3xl text-slate-300">folder_off</span>
-                      <span class="text-xs font-semibold text-slate-500">Belum ada arsip snapshot bulanan tersimpan.</span>
-                      <span class="text-[11px] text-slate-400">Arsip otomatis terbuat secara permanen pada tanggal 1 setiap bulan saat masa cutoff.</span>
+                  <td colspan="5" class="py-12 px-4 text-center">
+                    <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                      <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                        <span class="material-symbols-outlined text-2xl">folder_off</span>
+                      </div>
+                      <div class="font-extrabold text-sm text-slate-800">Belum Ada Arsip Snapshot Bulanan</div>
+                      <p class="text-xs text-slate-500 leading-relaxed">
+                        Arsip dokumen resmi dibuat otomatis secara permanen pada tanggal 1 setiap bulan saat masa cutoff sistem.
+                      </p>
                     </div>
                   </td>
                 </tr>
