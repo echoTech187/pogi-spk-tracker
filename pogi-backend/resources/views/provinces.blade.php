@@ -190,7 +190,8 @@
         ? LIVE_SERVER_PROVINCES
         : [];
       const tbody = document.getElementById('provincesTableBody');
-      if (!tbody) return;
+      const mobileContainer = document.getElementById('provincesMobileCards');
+      if (!tbody && !mobileContainer) return;
 
       const filtered = provinces.filter(p => {
         const matchText = p.name.toLowerCase().includes(filterText.toLowerCase());
@@ -210,70 +211,159 @@
       const pageProvinces = filtered.slice(start, end);
 
       if (pageProvinces.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="8" class="py-14 px-4 text-center">
-              <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
-                <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
-                  <span class="material-symbols-outlined text-2xl">location_off</span>
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" class="py-14 px-4 text-center">
+                <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                  <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                    <span class="material-symbols-outlined text-2xl">location_off</span>
+                  </div>
+                  <div class="font-bold text-sm text-slate-800">Tidak Ada Wilayah Cabang</div>
+                  <p class="text-xs text-slate-500 leading-relaxed">
+                    Tidak ditemukan provinsi atau cabang POGI yang cocok dengan kriteria pencarian dan filter saat ini.
+                  </p>
+                  <button type="button" onclick="const s = document.getElementById('searchProvinceInput'); if (s) { s.value = ''; filterProvinces(); }" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer">
+                    <span class="material-symbols-outlined text-sm">filter_alt_off</span>
+                    <span>Reset Filter Wilayah</span>
+                  </button>
                 </div>
-                <div class="font-bold text-sm text-slate-800">Tidak Ada Wilayah Cabang</div>
-                <p class="text-xs text-slate-500 leading-relaxed">
-                  Tidak ditemukan provinsi atau cabang POGI yang cocok dengan kriteria pencarian dan filter saat ini.
-                </p>
-                <button type="button" onclick="const s = document.getElementById('provinceSearch'); if (s) { s.value = ''; filterProvinces(); }" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer">
-                  <span class="material-symbols-outlined text-sm">filter_alt_off</span>
-                  <span>Reset Filter Wilayah</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-        `;
-      } else {
-        tbody.innerHTML = pageProvinces.map((p, idx) => {
-          let statusBadge = '';
-          let barColor = 'bg-[#16b3ac]';
-
-          if (p.completionRate >= 85) {
-            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">Terpenuhi (Aman)</span>';
-            barColor = 'bg-[#eab308]';
-          } else if (p.completionRate >= 50) {
-            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-[#16b3ac] border border-emerald-200">Hampir Memenuhi</span>';
-            barColor = 'bg-[#16a34a]';
-          } else {
-            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 border border-red-200">Sangat Kurang (&lt;50%)</span>';
-            barColor = 'bg-[#dc2626]';
-          }
-
-          return `
-            <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-              <td class="py-3 px-4 text-center text-slate-400 font-mono text-[11px]">${start + idx + 1}</td>
-              <td class="py-3 px-4">
-                <div class="font-extrabold text-slate-900">${p.name}</div>
-                <div class="text-[10px] text-slate-400">Pengurus Cabang POGI Daerah</div>
-              </td>
-              <td class="py-3 px-4 text-center font-bold text-slate-800">${p.doctors}</td>
-              <td class="py-3 px-4 text-center font-black text-emerald-700">${p.complete}</td>
-              <td class="py-3 px-4 text-center font-black ${p.incomplete > 0 ? 'text-amber-600' : 'text-slate-400'}">${p.incomplete}</td>
-              <td class="py-3 px-4">
-                <div class="flex items-center justify-between text-[11px] font-bold mb-1">
-                  <span class="text-slate-700">${p.completionRate.toFixed(1)}%</span>
-                  <span class="text-slate-400 font-normal">${p.complete}/${p.doctors} Dr</span>
-                </div>
-                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                  <div class="${barColor} h-2 rounded-full" style="width: ${p.completionRate}%"></div>
-                </div>
-              </td>
-              <td class="py-3 px-4 text-center">${statusBadge}</td>
-              <td class="py-3 px-4 text-center">
-                <a href="/doctors?search=${encodeURIComponent(p.name)}" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition inline-flex items-center gap-1">
-                  <span class="material-symbols-outlined text-xs">group</span>
-                  <span>Lihat Dokter (${p.doctors})</span>
-                </a>
               </td>
             </tr>
           `;
-        }).join('');
+        }
+        if (mobileContainer) {
+          mobileContainer.innerHTML = `
+            <div class="py-12 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-xs mx-auto">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-xl">location_off</span>
+                </div>
+                <div class="font-bold text-xs text-slate-800">Tidak Ada Wilayah Cabang</div>
+                <p class="text-[11px] text-slate-500">Tidak ditemukan cabang POGI yang cocok dengan filter saat ini.</p>
+                <button type="button" onclick="const s = document.getElementById('searchProvinceInput'); if (s) { s.value = ''; filterProvinces(); }" class="mt-1 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1 shadow-2xs cursor-pointer">
+                  <span class="material-symbols-outlined text-xs">filter_alt_off</span>
+                  <span>Reset Filter</span>
+                </button>
+              </div>
+            </div>
+          `;
+        }
+      } else {
+        if (tbody) {
+          tbody.innerHTML = pageProvinces.map((p, idx) => {
+            let statusBadge = '';
+            let barColor = 'bg-[#16b3ac]';
+
+            if (p.completionRate >= 85) {
+              statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">Terpenuhi (Aman)</span>';
+              barColor = 'bg-[#eab308]';
+            } else if (p.completionRate >= 50) {
+              statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-[#16b3ac] border border-emerald-200">Hampir Memenuhi</span>';
+              barColor = 'bg-[#16a34a]';
+            } else {
+              statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 border border-red-200">Sangat Kurang (&lt;50%)</span>';
+              barColor = 'bg-[#dc2626]';
+            }
+
+            return `
+              <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                <td class="py-3 px-4 text-center text-slate-400 font-mono text-[11px]">${start + idx + 1}</td>
+                <td class="py-3 px-4">
+                  <div class="font-extrabold text-slate-900">${p.name}</div>
+                  <div class="text-[10px] text-slate-400">Pengurus Cabang POGI Daerah</div>
+                </td>
+                <td class="py-3 px-4 text-center font-bold text-slate-800">${p.doctors}</td>
+                <td class="py-3 px-4 text-center font-black text-emerald-700">${p.complete}</td>
+                <td class="py-3 px-4 text-center font-black ${p.incomplete > 0 ? 'text-amber-600' : 'text-slate-400'}">${p.incomplete}</td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center justify-between text-[11px] font-bold mb-1">
+                    <span class="text-slate-700">${p.completionRate.toFixed(1)}%</span>
+                    <span class="text-slate-400 font-normal">${p.complete}/${p.doctors} Dr</span>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                    <div class="${barColor} h-2 rounded-full" style="width: ${p.completionRate}%"></div>
+                  </div>
+                </td>
+                <td class="py-3 px-4 text-center">${statusBadge}</td>
+                <td class="py-3 px-4 text-center">
+                  <a href="/doctors?search=${encodeURIComponent(p.name)}" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition inline-flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs">group</span>
+                    <span>Lihat Dokter (${p.doctors})</span>
+                  </a>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        if (mobileContainer) {
+          mobileContainer.innerHTML = pageProvinces.map((p, idx) => {
+            let statusBadge = '';
+            let barColor = 'bg-[#16b3ac]';
+
+            if (p.completionRate >= 85) {
+              statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 shrink-0">Terpenuhi (Aman)</span>';
+              barColor = 'bg-[#eab308]';
+            } else if (p.completionRate >= 50) {
+              statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-[#16b3ac] border border-emerald-200 shrink-0">Hampir Memenuhi</span>';
+              barColor = 'bg-[#16a34a]';
+            } else {
+              statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 border border-red-200 shrink-0">Sangat Kurang (&lt;50%)</span>';
+              barColor = 'bg-[#dc2626]';
+            }
+
+            return `
+              <div class="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3 transition hover:border-[#16b3ac]">
+                <div class="flex items-start justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="w-6 h-6 rounded-lg bg-slate-100 text-slate-500 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
+                      ${start + idx + 1}
+                    </span>
+                    <div class="min-w-0">
+                      <div class="font-extrabold text-slate-900 text-xs leading-snug truncate">${p.name}</div>
+                      <div class="text-[10px] text-slate-400 truncate">Pengurus Cabang POGI Daerah</div>
+                    </div>
+                  </div>
+                  ${statusBadge}
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                  <div class="p-2 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Total Dokter</div>
+                    <div class="font-extrabold text-slate-900 text-xs mt-0.5">${p.doctors}</div>
+                  </div>
+                  <div class="p-2 rounded-xl bg-emerald-50/70 border border-emerald-100/90">
+                    <div class="text-[9px] text-emerald-800 font-bold uppercase tracking-wider">Complete</div>
+                    <div class="font-black text-emerald-700 text-xs mt-0.5">${p.complete}</div>
+                  </div>
+                  <div class="p-2 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Incomplete</div>
+                    <div class="font-extrabold ${p.incomplete > 0 ? 'text-amber-600' : 'text-slate-400'} text-xs mt-0.5">${p.incomplete}</div>
+                  </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="space-y-1">
+                  <div class="flex items-center justify-between text-[11px] font-bold">
+                    <span class="text-slate-500 text-[10px]">Progress Kepatuhan</span>
+                    <span class="text-slate-800 text-[11px] font-mono">${p.completionRate.toFixed(1)}% (${p.complete}/${p.doctors})</span>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                    <div class="${barColor} h-2 rounded-full" style="width: ${p.completionRate}%"></div>
+                  </div>
+                </div>
+
+                <!-- Action Link -->
+                <a href="/doctors?search=${encodeURIComponent(p.name)}" class="w-full py-2 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition inline-flex items-center justify-center gap-1.5 shadow-2xs border border-emerald-200/80">
+                  <span class="material-symbols-outlined text-sm">group</span>
+                  <span>Lihat Dokter (${p.doctors})</span>
+                </a>
+              </div>
+            `;
+          }).join('');
+        }
       }
 
       renderMedCredPaginationControls({

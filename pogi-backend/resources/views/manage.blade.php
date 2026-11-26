@@ -181,6 +181,11 @@
           </table>
         </div>
 
+        <!-- Mobile Touch Cards (< md) -->
+        <div id="manageDoctorMobileCards" class="md:hidden space-y-3 p-3 sm:p-4">
+          <!-- Rendered dynamically for mobile -->
+        </div>
+
         <!-- MedCred Pagination Footer -->
         <div id="manageDoctorPagination" class="px-4 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
       </div>
