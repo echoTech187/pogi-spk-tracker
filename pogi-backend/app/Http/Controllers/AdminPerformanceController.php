@@ -51,9 +51,6 @@ class AdminPerformanceController extends Controller
                     COUNT(*) as total_docs,
                     SUM(CASE WHEN status = "COMPLETE" THEN 1 ELSE 0 END) as complete_docs
                 ')->first();
-                    COUNT(*) as total_docs,
-                    SUM(CASE WHEN status = "COMPLETE" THEN 1 ELSE 0 END) as complete_docs
-                ')->first();
 
             $totalDocs = (int) ($docStats->total_docs ?? 0);
             $completeDocs = (int) ($docStats->complete_docs ?? 0);

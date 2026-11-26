@@ -380,31 +380,15 @@
 
       <!-- PANE 2: REPOSITORI BERKAS CLOUD (OBJECT STORAGE PER ANGGOTA) -->
       <div id="pane-repository" class="space-y-4 hidden">
-        <!-- Object Storage Header Info & Actions -->
-        <div
-          class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
-          <div class="space-y-1">
-            <div class="flex items-center gap-2">
-              <span class="font-extrabold text-slate-900">Folder Object Storage Cloud Anggota:</span>
-              <span
-                class="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-100 text-[#16b3ac] font-bold border border-emerald-200"
-                id="repoVaultBadge">pogi-skp-vault/{{ $doctor->id ?? 'vault' }}/</span>
-            </div>
-            <p class="text-[11px] text-slate-500">
-              Seluruh berkas bukti fisik SKP tersimpan dan terenkripsi di cloud internal sebelum
-              disinkronkan manual ke portal Kemenkes.
-            </p>
-          </div>
-          @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
-          <div class="flex items-center gap-2 shrink-0">
-            <button type="button" onclick="openUploadDoctorDocModal()"
-              class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write">
-              <span class="material-symbols-outlined text-base">upload_file</span>
-              <span>Unggah Berkas Baru</span>
-            </button>
-          </div>
-          @endif
+        @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
+        <div class="flex items-center justify-end pb-1">
+          <button type="button" onclick="openUploadDoctorDocModal()"
+            class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write cursor-pointer active:scale-95">
+            <span class="material-symbols-outlined text-base">upload_file</span>
+            <span>Unggah Berkas Baru</span>
+          </button>
         </div>
+        @endif
 
         <!-- Tabel Dokumen Object Storage -->
         <div class="overflow-x-auto">

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="pACfTaSrpt9OV5Y54AEhcOHbXV0AuBaoytGyjgm1">
+  <meta name="csrf-token" content="HmzcvnVBH3wR7Mb1pAmtl5UKXc3GVZLdiQxg57zb">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -730,30 +730,14 @@
 
       <!-- PANE 2: REPOSITORI BERKAS CLOUD (OBJECT STORAGE PER ANGGOTA) -->
       <div id="pane-repository" class="space-y-4 hidden">
-        <!-- Object Storage Header Info & Actions -->
-        <div
-          class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
-          <div class="space-y-1">
-            <div class="flex items-center gap-2">
-              <span class="font-extrabold text-slate-900">Folder Object Storage Cloud Anggota:</span>
-              <span
-                class="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-100 text-[#16b3ac] font-bold border border-emerald-200"
-                id="repoVaultBadge">pogi-skp-vault/04680f57-b8b3-4873-898e-754974a29bb1/</span>
-            </div>
-            <p class="text-[11px] text-slate-500">
-              Seluruh berkas bukti fisik SKP tersimpan dan terenkripsi di cloud internal sebelum
-              disinkronkan manual ke portal Kemenkes.
-            </p>
-          </div>
-                    <div class="flex items-center gap-2 shrink-0">
-            <button type="button" onclick="openUploadDoctorDocModal()"
-              class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write">
-              <span class="material-symbols-outlined text-base">upload_file</span>
-              <span>Unggah Berkas Baru</span>
-            </button>
-          </div>
-                  </div>
-
+                <div class="flex items-center justify-end pb-1">
+          <button type="button" onclick="openUploadDoctorDocModal()"
+            class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write cursor-pointer active:scale-95">
+            <span class="material-symbols-outlined text-base">upload_file</span>
+            <span>Unggah Berkas Baru</span>
+          </button>
+        </div>
+        
         <!-- Tabel Dokumen Object Storage -->
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs whitespace-nowrap">
@@ -1844,7 +1828,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'pACfTaSrpt9OV5Y54AEhcOHbXV0AuBaoytGyjgm1',
+          'X-CSRF-TOKEN': 'HmzcvnVBH3wR7Mb1pAmtl5UKXc3GVZLdiQxg57zb',
           'Accept': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -1920,7 +1904,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'pACfTaSrpt9OV5Y54AEhcOHbXV0AuBaoytGyjgm1',
+          'X-CSRF-TOKEN': 'HmzcvnVBH3wR7Mb1pAmtl5UKXc3GVZLdiQxg57zb',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ assigned_pic_id: newAdminId })
@@ -1954,7 +1938,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'pACfTaSrpt9OV5Y54AEhcOHbXV0AuBaoytGyjgm1',
+          'X-CSRF-TOKEN': 'HmzcvnVBH3wR7Mb1pAmtl5UKXc3GVZLdiQxg57zb',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ status: newStatus })
@@ -2882,7 +2866,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'pACfTaSrpt9OV5Y54AEhcOHbXV0AuBaoytGyjgm1',
+          'X-CSRF-TOKEN': 'HmzcvnVBH3wR7Mb1pAmtl5UKXc3GVZLdiQxg57zb',
           'Accept': 'application/json'
         }
       })
