@@ -444,7 +444,11 @@ class DoctorController extends Controller
         }
 
         $detector = [
+            'hasMissing' => count($missingItems) > 0,
             'missingCount' => count($missingItems),
+            'summary' => count($missingItems) > 0 
+                ? 'Terdeteksi ' . count($missingItems) . ' berkas bukti wajib yang belum lengkap berdasarkan standar terbaru KMK 1561/2024 & KMK 1111/2026.' 
+                : 'Semua dokumen wajib telah lengkap dan terverifikasi sesuai standar terbaru KMK 1561/2024 & KMK 1111/2026.',
             'items' => $missingItems,
         ];
 

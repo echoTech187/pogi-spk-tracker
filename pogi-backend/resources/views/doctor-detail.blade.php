@@ -422,7 +422,10 @@
         <div class="space-y-2">
           <div class="flex items-center justify-between text-xs font-bold text-slate-800">
             <span>Daftar Kewajiban Dokumen &amp; Status Pelacakan Sistem:</span>
-            <span class="text-[11px] text-slate-400">Aturan KMK 1561/2024</span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-black" title="Berdasarkan Keputusan Menteri Kesehatan RI terbaru">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span>
+              Standar Regulasi Baru: KMK 1561/2024 &amp; KMK 1111/2026
+            </span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs whitespace-nowrap">
@@ -1314,21 +1317,28 @@
 
       // Render Missing Document Detector Box
       const alertBox = document.getElementById('missingDetectorAlertBox');
+      const hasMissing = detector.hasMissing !== undefined 
+        ? detector.hasMissing 
+        : ((detector.missingCount > 0) || (detector.items && detector.items.length > 0));
+      const summaryText = detector.summary || (hasMissing 
+        ? `Terdeteksi <strong>${detector.missingCount || detector.items.length} berkas bukti wajib</strong> belum lengkap di repositori cloud berdasarkan standar KMK 1561/2024 &amp; KMK 1111/2026.`
+        : 'Tidak ada kekurangan berkas bukti SKP untuk dokter ini.');
+
       if (alertBox) {
-        if (detector.hasMissing) {
+        if (hasMissing) {
           alertBox.className = 'p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs space-y-2';
           alertBox.innerHTML = `
             <div class="flex items-start justify-between gap-3">
               <div class="flex items-start gap-2.5">
                 <span class="material-symbols-outlined text-amber-700 text-xl shrink-0 mt-0.5">warning</span>
                 <div>
-                  <h4 class="font-extrabold text-amber-900 text-sm">Peringatan: Missing Document Detector Aktif</h4>
+                  <h4 class="font-extrabold text-amber-900 text-sm">Peringatan: Missing Document Detector Aktif (Standar Baru KMK 1561/2024 &amp; KMK 1111/2026)</h4>
                   <p class="text-amber-800 text-xs mt-0.5 leading-relaxed">
-                    ${detector.summary} Berkas yang berstatus <strong>NOT_SUBMITTED</strong> atau <strong>REJECTED</strong> wajib disimpan di cloud internal sebelum batas akhir (*cutoff*) penagihan bulanan.
+                    ${summaryText} Berkas bukti fisik yang berstatus <strong>NOT_SUBMITTED</strong> atau <strong>REJECTED</strong> wajib disimpan di cloud internal sebelum batas akhir (*cutoff*) penagihan bulanan.
                   </p>
                 </div>
               </div>
-              <button type="button" onclick="openUploadDoctorDocModal()" class="px-3 py-1.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shrink-0 transition flex items-center gap-1 shadow-xs rbac-write">
+              <button type="button" onclick="openUploadDoctorDocModal()" class="px-3 py-1.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shrink-0 transition flex items-center gap-1 shadow-xs rbac-write cursor-pointer">
                 <span class="material-symbols-outlined text-sm">add_circle</span>
                 <span>Unggah Berkas Susulan</span>
               </button>
@@ -1342,7 +1352,7 @@
               <div>
                 <h4 class="font-extrabold text-emerald-950 text-sm">Seluruh Dokumen Lengkap &amp; Terverifikasi</h4>
                 <p class="text-emerald-800 text-xs mt-0.5">
-                  ${detector.summary} Tidak ada kekurangan berkas bukti SKP untuk dokter ini.
+                  ${summaryText} Seluruh berkas bukti fisik telah lengkap tersimpan di repositori cloud dan sinkron dengan standar terbaru Kemenkes RI.
                 </p>
               </div>
             </div>
