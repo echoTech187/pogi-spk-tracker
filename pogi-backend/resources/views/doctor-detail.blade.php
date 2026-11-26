@@ -105,11 +105,35 @@
 
         <!-- Action Buttons -->
         <div id="doctorActionButtonsContainer" class="flex items-center gap-2.5 flex-wrap shrink-0">
-          <button type="button" onclick="approveDoctorCredits()"
-            class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
-            <span class="material-symbols-outlined text-base">verified</span>
-            <span>Verifikasi Kredit (+4.5 SKP)</span>
-          </button>
+          @php
+            $pendingCredits = floatval($doctor->pending_credits ?? 0);
+            if ($pendingCredits <= 0 && isset($documents)) {
+              foreach ($documents as $d) {
+                if (($d->status ?? '') === 'SUBMITTED') {
+                  $pendingCredits += floatval($d->credit_amount ?? 0);
+                }
+              }
+            }
+            $isDocComp = ($doctor->status ?? '') === 'COMPLETE' || ($doctor->status ?? '') === 'Complete';
+          @endphp
+          @if($pendingCredits > 0)
+            <button type="button" onclick="approveDoctorCredits()"
+              class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational cursor-pointer"
+              title="Validasi kesesuaian dokumen & verifikasi kredit SKP dokter">
+              <span class="material-symbols-outlined text-base">verified</span>
+              <span>Verifikasi Kredit (+{{ number_format($pendingCredits, 1) }} SKP)</span>
+            </button>
+          @elseif($isDocComp)
+            <div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#16b3ac] font-extrabold text-xs flex items-center gap-1.5 shadow-2xs">
+              <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
+              <span>Seluruh Kredit Terverifikasi</span>
+            </div>
+          @else
+            <div class="px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/90 text-slate-500 font-bold text-xs flex items-center gap-1.5 shadow-2xs">
+              <span class="material-symbols-outlined text-base text-slate-400">task_alt</span>
+              <span>Tidak Ada Kredit Pending</span>
+            </div>
+          @endif
         </div>
       </div>
 
@@ -841,17 +865,21 @@
       }
 
       if (window.jQuery && $.fn.select2) {
-        $('#newDocCategory').select2({
-          dropdownParent: $('#addDocumentModal'),
-          width: '100%'
-        }).on('change', function() {
-          autoSuggestSkpByCategory(this.value);
-        });
+        if ($('#newDocCategory').length && $('#addDocumentModal').length) {
+          $('#newDocCategory').select2({
+            dropdownParent: $('#addDocumentModal'),
+            width: '100%'
+          }).on('change', function() {
+            autoSuggestSkpByCategory(this.value);
+          });
+        }
 
-        $('#modalChangePicSelect').select2({
-          dropdownParent: $('#changePicModal'),
-          width: '100%'
-        });
+        if ($('#modalChangePicSelect').length && $('#changeDoctorPicModal').length) {
+          $('#modalChangePicSelect').select2({
+            dropdownParent: $('#changeDoctorPicModal'),
+            width: '100%'
+          });
+        }
       }
 
       const dz = document.getElementById('dropZoneContainer');
@@ -973,8 +1001,19 @@
       const actionContainer = document.getElementById("doctorActionButtonsContainer");
       if (actionContainer) {
         const rawRole = (currentUser && currentUser.role) ? currentUser.role.toUpperCase() : 'SUPER_ADMIN';
-        const pending = doc.pendingCredits || 0;
-        const pendingAmount = (pending > 0 ? pending : 4.5).toFixed(1);
+
+        // Hitung skor pending sebenarnya dari database & berkas yang diajukan
+        let docPending = Number(doc.pendingCredits || 0);
+        (LIVE_SERVER_DOCUMENTS || []).forEach(d => {
+          if (d.status === 'SUBMITTED') {
+            docPending += Number(d.skpValue !== undefined ? d.skpValue : (d.credit_amount || 0));
+          }
+        });
+        (LIVE_SERVER_ENTRIES || []).forEach(e => {
+          if (e.status === 'SUBMITTED' || e.status === 'PENDING') {
+            docPending += Number(e.credits !== undefined ? e.credits : (e.credit || 0));
+          }
+        });
 
         if (rawRole === 'DOKTER' || rawRole === 'USER/DOKTER' || rawRole === 'USER') {
           // 5. User/Dokter: Mode Mandiri — Unggah Berkas Bukti Mandiri
@@ -1005,35 +1044,49 @@
                 <span>Dokter Cabang ${doc.province} (Hanya Lihat)</span>
               </span>
             `;
-          } else if (pending > 0 || !isComplete) {
+          } else if (docPending > 0) {
             actionContainer.innerHTML = `
               <button type="button" onclick="approveDoctorCredits()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer rbac-operational" title="Verifikasi dan setujui pemenuhan kredit SKP dokter cabang ${doc.province}">
                 <span class="material-symbols-outlined text-base">verified</span>
-                <span>Verifikasi Kredit (+${pendingAmount} SKP)</span>
+                <span>Verifikasi Kredit (+${docPending.toFixed(1)} SKP)</span>
               </button>
             `;
-          } else {
+          } else if (isComplete) {
             actionContainer.innerHTML = `
               <div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#16b3ac] font-extrabold text-xs flex items-center gap-1.5 shadow-2xs">
                 <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
                 <span>Seluruh Kredit Terverifikasi</span>
               </div>
             `;
+          } else {
+            actionContainer.innerHTML = `
+              <div class="px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/90 text-slate-500 font-bold text-xs flex items-center gap-1.5 shadow-2xs">
+                <span class="material-symbols-outlined text-base text-slate-400">task_alt</span>
+                <span>Tidak Ada Kredit Pending</span>
+              </div>
+            `;
           }
         } else {
           // 1. Super Admin & 3. Admin POGI: Melakukan kesesuaian dokumen & verifikasi kredit dokter PJ / nasional
-          if (pending > 0 || !isComplete) {
+          if (docPending > 0) {
             actionContainer.innerHTML = `
               <button type="button" onclick="approveDoctorCredits()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 cursor-pointer rbac-operational" title="Validasi kesesuaian dokumen & verifikasi kredit SKP dokter">
                 <span class="material-symbols-outlined text-base">verified</span>
-                <span>Verifikasi Kredit (+${pendingAmount} SKP)</span>
+                <span>Verifikasi Kredit (+${docPending.toFixed(1)} SKP)</span>
               </button>
             `;
-          } else {
+          } else if (isComplete) {
             actionContainer.innerHTML = `
               <div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#16b3ac] font-extrabold text-xs flex items-center gap-1.5 shadow-2xs">
                 <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
                 <span>Seluruh Kredit Terverifikasi</span>
+              </div>
+            `;
+          } else {
+            actionContainer.innerHTML = `
+              <div class="px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/90 text-slate-500 font-bold text-xs flex items-center gap-1.5 shadow-2xs">
+                <span class="material-symbols-outlined text-base text-slate-400">task_alt</span>
+                <span>Tidak Ada Kredit Pending</span>
               </div>
             `;
           }
@@ -1612,6 +1665,11 @@
         }
       }
       document.getElementById('changeDoctorPicModal').classList.remove('hidden');
+      if (window.jQuery && $.fn.select2 && select) {
+        try {
+          $('#modalChangePicSelect').val(select.value).trigger('change.select2');
+        } catch (e) {}
+      }
     }
 
     function closeChangePicModal() {
