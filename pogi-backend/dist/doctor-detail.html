@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="Q90dZ8Wo1gKtUsub7DH15166GUPJR620guwX8dhW">
+  <meta name="csrf-token" content="Pkgtu9cy3bg1bGomoKTTtWfpnCR7wo7fLi9fzkme">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -346,7 +346,7 @@
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
                 <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">6 menit yang lalu</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">10 menit yang lalu</div>
               </div>
             </div>
           </div>
@@ -409,18 +409,6 @@
         
   <!-- MAIN SCROLLABLE CONTENT -->
   <main class="flex-1 overflow-y-auto bg-white  space-y-6 page-fade-in">
-
-    <!-- Navigation Breadcrumb & Back Button -->
-    <div class="flex items-center justify-between gap-3">
-      <a href="/doctors"
-        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs">
-        <span class="material-symbols-outlined text-sm text-[#16b3ac]">arrow_back</span>
-        <span>Kembali </span>
-      </a>
-      <div class="text-[11px] text-slate-500 font-medium">
-        Monitoring SKP Dokter Obgyn &bull; <strong id="breadcrumbDoctorName">dr. Budi Santoso, Sp.PD</strong>
-      </div>
-    </div>
 
         
     <!-- DOCTOR PROFILE HERO CARD -->
@@ -1259,16 +1247,17 @@
       const pemb = doc.pembelajaranCredits !== undefined ? doc.pembelajaranCredits : (doc.pembelajaran?.achieved || 0);
       const isComplete = (doc.status === 'Complete');
 
-      document.getElementById('breadcrumbDoctorName').innerText = doc.name;
+      if (document.getElementById('breadcrumbDoctorName')) {
+        document.getElementById('breadcrumbDoctorName').innerText = doc.name;
+      }
 
-
-      document.getElementById('doctorAvatar').innerText = initials;
-      document.getElementById('doctorPogiId').innerText = doc.pogiId;
-      document.getElementById('doctorName').innerText = doc.name;
-      document.getElementById('doctorProvince').innerText = doc.province;
-      document.getElementById('doctorHospital').innerText = doc.hospital;
-      document.getElementById('doctorNik').innerText = doc.nik || '-';
-      document.getElementById('doctorStr').innerText = doc.strNumber || '-';
+      if (document.getElementById('doctorAvatar')) document.getElementById('doctorAvatar').innerText = initials;
+      if (document.getElementById('doctorPogiId')) document.getElementById('doctorPogiId').innerText = doc.pogiId;
+      if (document.getElementById('doctorName')) document.getElementById('doctorName').innerText = doc.name;
+      if (document.getElementById('doctorProvince')) document.getElementById('doctorProvince').innerText = doc.province;
+      if (document.getElementById('doctorHospital')) document.getElementById('doctorHospital').innerText = doc.hospital;
+      if (document.getElementById('doctorNik')) document.getElementById('doctorNik').innerText = doc.nik || '-';
+      if (document.getElementById('doctorStr')) document.getElementById('doctorStr').innerText = doc.strNumber || '-';
       const picName = doc.assignedTo || 'Belum Ditentukan';
       if (document.getElementById('doctorAssignedTo')) document.getElementById('doctorAssignedTo').innerText = picName;
       if (document.getElementById('doctorPicCardName')) document.getElementById('doctorPicCardName').innerText = picName;
@@ -1410,9 +1399,9 @@
       const targetPemb = 72;
       const targetFleks = 24;
 
-      document.getElementById('valPelayanan').innerText = pel;
-      document.getElementById('valPengabdian').innerText = peng;
-      document.getElementById('valPembelajaran').innerText = pemb;
+      if (document.getElementById('valPelayanan')) document.getElementById('valPelayanan').innerText = pel;
+      if (document.getElementById('valPengabdian')) document.getElementById('valPengabdian').innerText = peng;
+      if (document.getElementById('valPembelajaran')) document.getElementById('valPembelajaran').innerText = pemb;
 
       // Realisasi fleksibilitas dihitung dari surplus ranah atau total kumulatif
       const excessPel = Math.max(0, pel - targetPel);
@@ -1429,16 +1418,16 @@
       const pctPemb = Math.min(100, Math.round((pemb / targetPemb) * 100));
       const pctFleks = Math.min(100, Math.round((achievedFleks / targetFleks) * 100));
 
-      document.getElementById('badgePelayanan').innerText = pctPel + '%';
-      document.getElementById('badgePengabdian').innerText = pctPeng + '%';
-      document.getElementById('badgePembelajaran').innerText = pctPemb + '%';
+      if (document.getElementById('badgePelayanan')) document.getElementById('badgePelayanan').innerText = pctPel + '%';
+      if (document.getElementById('badgePengabdian')) document.getElementById('badgePengabdian').innerText = pctPeng + '%';
+      if (document.getElementById('badgePembelajaran')) document.getElementById('badgePembelajaran').innerText = pctPemb + '%';
       if (document.getElementById('badgeFleksibilitas')) {
         document.getElementById('badgeFleksibilitas').innerText = pctFleks + '%';
       }
 
-      document.getElementById('barPelayanan').style.width = pctPel + '%';
-      document.getElementById('barPengabdian').style.width = pctPeng + '%';
-      document.getElementById('barPembelajaran').style.width = pctPemb + '%';
+      if (document.getElementById('barPelayanan')) document.getElementById('barPelayanan').style.width = pctPel + '%';
+      if (document.getElementById('barPengabdian')) document.getElementById('barPengabdian').style.width = pctPeng + '%';
+      if (document.getElementById('barPembelajaran')) document.getElementById('barPembelajaran').style.width = pctPemb + '%';
       if (document.getElementById('barFleksibilitas')) {
         document.getElementById('barFleksibilitas').style.width = pctFleks + '%';
       }
@@ -1918,7 +1907,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'Q90dZ8Wo1gKtUsub7DH15166GUPJR620guwX8dhW',
+          'X-CSRF-TOKEN': 'Pkgtu9cy3bg1bGomoKTTtWfpnCR7wo7fLi9fzkme',
           'Accept': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -1999,7 +1988,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'Q90dZ8Wo1gKtUsub7DH15166GUPJR620guwX8dhW',
+          'X-CSRF-TOKEN': 'Pkgtu9cy3bg1bGomoKTTtWfpnCR7wo7fLi9fzkme',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ assigned_pic_id: newAdminId })
@@ -2033,7 +2022,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'Q90dZ8Wo1gKtUsub7DH15166GUPJR620guwX8dhW',
+          'X-CSRF-TOKEN': 'Pkgtu9cy3bg1bGomoKTTtWfpnCR7wo7fLi9fzkme',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ status: newStatus })
@@ -2961,7 +2950,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'Q90dZ8Wo1gKtUsub7DH15166GUPJR620guwX8dhW',
+          'X-CSRF-TOKEN': 'Pkgtu9cy3bg1bGomoKTTtWfpnCR7wo7fLi9fzkme',
           'Accept': 'application/json'
         }
       })

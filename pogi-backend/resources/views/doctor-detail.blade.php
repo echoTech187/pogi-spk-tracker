@@ -936,16 +936,17 @@
       const pemb = doc.pembelajaranCredits !== undefined ? doc.pembelajaranCredits : (doc.pembelajaran?.achieved || 0);
       const isComplete = (doc.status === 'Complete');
 
-      document.getElementById('breadcrumbDoctorName').innerText = doc.name;
+      if (document.getElementById('breadcrumbDoctorName')) {
+        document.getElementById('breadcrumbDoctorName').innerText = doc.name;
+      }
 
-
-      document.getElementById('doctorAvatar').innerText = initials;
-      document.getElementById('doctorPogiId').innerText = doc.pogiId;
-      document.getElementById('doctorName').innerText = doc.name;
-      document.getElementById('doctorProvince').innerText = doc.province;
-      document.getElementById('doctorHospital').innerText = doc.hospital;
-      document.getElementById('doctorNik').innerText = doc.nik || '-';
-      document.getElementById('doctorStr').innerText = doc.strNumber || '-';
+      if (document.getElementById('doctorAvatar')) document.getElementById('doctorAvatar').innerText = initials;
+      if (document.getElementById('doctorPogiId')) document.getElementById('doctorPogiId').innerText = doc.pogiId;
+      if (document.getElementById('doctorName')) document.getElementById('doctorName').innerText = doc.name;
+      if (document.getElementById('doctorProvince')) document.getElementById('doctorProvince').innerText = doc.province;
+      if (document.getElementById('doctorHospital')) document.getElementById('doctorHospital').innerText = doc.hospital;
+      if (document.getElementById('doctorNik')) document.getElementById('doctorNik').innerText = doc.nik || '-';
+      if (document.getElementById('doctorStr')) document.getElementById('doctorStr').innerText = doc.strNumber || '-';
       const picName = doc.assignedTo || 'Belum Ditentukan';
       if (document.getElementById('doctorAssignedTo')) document.getElementById('doctorAssignedTo').innerText = picName;
       if (document.getElementById('doctorPicCardName')) document.getElementById('doctorPicCardName').innerText = picName;
@@ -1087,9 +1088,9 @@
       const targetPemb = 72;
       const targetFleks = 24;
 
-      document.getElementById('valPelayanan').innerText = pel;
-      document.getElementById('valPengabdian').innerText = peng;
-      document.getElementById('valPembelajaran').innerText = pemb;
+      if (document.getElementById('valPelayanan')) document.getElementById('valPelayanan').innerText = pel;
+      if (document.getElementById('valPengabdian')) document.getElementById('valPengabdian').innerText = peng;
+      if (document.getElementById('valPembelajaran')) document.getElementById('valPembelajaran').innerText = pemb;
 
       // Realisasi fleksibilitas dihitung dari surplus ranah atau total kumulatif
       const excessPel = Math.max(0, pel - targetPel);
@@ -1106,16 +1107,16 @@
       const pctPemb = Math.min(100, Math.round((pemb / targetPemb) * 100));
       const pctFleks = Math.min(100, Math.round((achievedFleks / targetFleks) * 100));
 
-      document.getElementById('badgePelayanan').innerText = pctPel + '%';
-      document.getElementById('badgePengabdian').innerText = pctPeng + '%';
-      document.getElementById('badgePembelajaran').innerText = pctPemb + '%';
+      if (document.getElementById('badgePelayanan')) document.getElementById('badgePelayanan').innerText = pctPel + '%';
+      if (document.getElementById('badgePengabdian')) document.getElementById('badgePengabdian').innerText = pctPeng + '%';
+      if (document.getElementById('badgePembelajaran')) document.getElementById('badgePembelajaran').innerText = pctPemb + '%';
       if (document.getElementById('badgeFleksibilitas')) {
         document.getElementById('badgeFleksibilitas').innerText = pctFleks + '%';
       }
 
-      document.getElementById('barPelayanan').style.width = pctPel + '%';
-      document.getElementById('barPengabdian').style.width = pctPeng + '%';
-      document.getElementById('barPembelajaran').style.width = pctPemb + '%';
+      if (document.getElementById('barPelayanan')) document.getElementById('barPelayanan').style.width = pctPel + '%';
+      if (document.getElementById('barPengabdian')) document.getElementById('barPengabdian').style.width = pctPeng + '%';
+      if (document.getElementById('barPembelajaran')) document.getElementById('barPembelajaran').style.width = pctPemb + '%';
       if (document.getElementById('barFleksibilitas')) {
         document.getElementById('barFleksibilitas').style.width = pctFleks + '%';
       }
