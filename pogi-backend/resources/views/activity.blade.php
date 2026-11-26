@@ -2,53 +2,62 @@
 
 @section('title', 'POGI SKP Tracker - Log Aktivitas & Jejak Audit')
 @section('content')
-  <!-- Main Body -->
-  <main class="flex-1 overflow-y-auto space-y-6 page-fade-in pb-8">
+  <!-- Main Body with Ambient Glassmorphism Gradient Glows -->
+  <main class="flex-1 overflow-y-auto space-y-6 page-fade-in pb-10 relative">
 
-    <!-- Clean Page Header (Modern Enterprise Standard) -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
-      <div class="space-y-1.5 min-w-0">
-        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+    <!-- Ambient Primary Gradient Backdrops for Real Glassmorphism Blur Refraction -->
+    <div class="fixed top-12 left-1/4 w-96 h-96 bg-gradient-to-tr from-[#16b3ac]/18 to-emerald-300/12 rounded-full blur-3xl pointer-events-none -z-10 transform -translate-x-1/2"></div>
+    <div class="fixed top-1/3 right-10 w-[440px] h-[440px] bg-gradient-to-bl from-teal-400/15 via-sky-300/10 to-emerald-200/8 rounded-full blur-3xl pointer-events-none -z-10"></div>
+    <div class="fixed bottom-10 left-1/3 w-80 h-80 bg-gradient-to-br from-[#16b3ac]/12 to-transparent rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+    <!-- Heading Banner: Glassmorphism + Primary Gradient Shimmer -->
+    <div class="p-6 sm:p-7 rounded-3xl glass-card-primary relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-5">
+      <!-- Subtle top border primary accent -->
+      <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#16b3ac] to-transparent opacity-80"></div>
+      
+      <div class="space-y-2 relative z-10 min-w-0">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-emerald-800 border-emerald-500/20 text-[10px] font-black uppercase tracking-wider shadow-2xs">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac] animate-pulse"></span>
           <span>Log Operasional &amp; Audit Trail</span>
-          <span class="text-slate-300">•</span>
-          <span class="text-slate-500 font-semibold normal-case">Real-Time Sync</span>
+          <span class="text-teal-400">•</span>
+          <span class="text-slate-600 font-bold normal-case">Real-Time Sync</span>
         </div>
-        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
+        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
           <span>Log Aktivitas &amp; Jejak Audit Operasional</span>
         </h1>
-        <p class="text-xs text-slate-500 max-w-3xl leading-relaxed">
+        <p class="text-xs sm:text-sm text-slate-600 max-w-3xl leading-relaxed">
           Rekaman jejak audit waktu nyata (real-time) setiap aktivitas input, pembaruan status, verifikasi kredit SKP, dan sinkronisasi SATUSEHAT terenkripsi.
         </p>
       </div>
 
-      <!-- Action Toolbar Header -->
-      <div class="flex items-center gap-2 shrink-0 flex-wrap">
-        <button type="button" onclick="triggerRefreshActivityLog()" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="Muat ulang jejak audit terbaru dari basis data">
-          <span class="material-symbols-outlined text-base text-[#16b3ac]" id="refreshIcon">refresh</span>
+      <!-- Action Toolbar Header with Glass Controls -->
+      <div class="flex items-center gap-2.5 shrink-0 flex-wrap relative z-10">
+        <button type="button" onclick="triggerRefreshActivityLog()" class="px-4 py-2.5 rounded-2xl glass-pill hover:bg-white text-slate-700 text-xs font-bold transition flex items-center gap-2 shadow-sm hover:shadow-md cursor-pointer active:scale-95 group" title="Muat ulang jejak audit terbaru dari basis data">
+          <span class="material-symbols-outlined text-base text-[#16b3ac] group-hover:rotate-180 transition-transform duration-500" id="refreshIcon">refresh</span>
           <span>Segarkan Log</span>
         </button>
-        <button type="button" onclick="triggerExportAuditPdf()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95" title="Cetak dan ekspor dokumen resmi PDF Audit Trail">
+        <button type="button" onclick="triggerExportAuditPdf()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#16b3ac] to-[#0ea5e9] hover:from-[#129993] hover:to-[#0284c7] text-white text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-teal-500/25 cursor-pointer active:scale-95" title="Cetak dan ekspor dokumen resmi PDF Audit Trail">
           <span class="material-symbols-outlined text-base">picture_as_pdf</span>
           <span>Ekspor Audit (PDF)</span>
         </button>
       </div>
     </div>
 
-    <!-- 4 Modern Metric Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+    <!-- 4 Glassmorphism Metric Cards with Primary Gradient Accents -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- Active Users -->
-      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
-        <div class="flex items-center justify-between gap-3">
+      <div class="p-5 rounded-3xl glass-card-emerald hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between group relative overflow-hidden">
+        <div class="absolute -top-12 -right-12 w-28 h-28 bg-emerald-400/20 rounded-full blur-2xl group-hover:scale-125 transition-transform pointer-events-none"></div>
+        <div class="flex items-center justify-between gap-3 relative z-10">
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Active Users</span>
-          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-            <span class="material-symbols-outlined text-[18px]">group</span>
+          <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-110 transition-transform backdrop-blur-md">
+            <span class="material-symbols-outlined text-[20px]">group</span>
           </div>
         </div>
-        <div class="mt-3">
-          <div id="metric-unique-users" class="text-2.5xl sm:text-3xl font-black text-slate-900 tracking-tight">{{ $metrics['unique_users'] ?? 0 }}</div>
-          <div class="mt-1.5">
-            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-700 text-[10px] font-bold">
+        <div class="mt-4 relative z-10">
+          <div id="metric-unique-users" class="text-3xl font-black text-slate-900 tracking-tight">{{ $metrics['unique_users'] ?? 0 }}</div>
+          <div class="mt-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full glass-pill text-emerald-800 border-emerald-500/20 text-[10px] font-bold">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
               <span>Admin &bull; Terdaftar</span>
             </span>
@@ -57,18 +66,19 @@
       </div>
 
       <!-- Total Audit Logs -->
-      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
-        <div class="flex items-center justify-between gap-3">
+      <div class="p-5 rounded-3xl glass-card-primary hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between group relative overflow-hidden">
+        <div class="absolute -top-12 -right-12 w-28 h-28 bg-[#16b3ac]/25 rounded-full blur-2xl group-hover:scale-125 transition-transform pointer-events-none"></div>
+        <div class="flex items-center justify-between gap-3 relative z-10">
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Audit Logs</span>
-          <div class="w-9 h-9 rounded-xl bg-teal-50 text-[#16b3ac] border border-teal-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-            <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+          <div class="w-10 h-10 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-110 transition-transform backdrop-blur-md">
+            <span class="material-symbols-outlined text-[20px]">receipt_long</span>
           </div>
         </div>
-        <div class="mt-3">
-          <div id="metric-total-logs" class="text-2.5xl sm:text-3xl font-black text-slate-900 tracking-tight">{{ $metrics['total_logs'] ?? 0 }}</div>
-          <div class="mt-1.5">
-            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-[10px] font-bold">
-              <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+        <div class="mt-4 relative z-10">
+          <div id="metric-total-logs" class="text-3xl font-black text-slate-900 tracking-tight">{{ $metrics['total_logs'] ?? 0 }}</div>
+          <div class="mt-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full glass-pill text-teal-800 border-teal-500/20 text-[10px] font-bold">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span>
               <span>Jejak Permanen (Immutable)</span>
             </span>
           </div>
@@ -76,17 +86,18 @@
       </div>
 
       <!-- Aktivitas Hari Ini -->
-      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
-        <div class="flex items-center justify-between gap-3">
+      <div class="p-5 rounded-3xl glass-card-sky hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between group relative overflow-hidden">
+        <div class="absolute -top-12 -right-12 w-28 h-28 bg-sky-400/20 rounded-full blur-2xl group-hover:scale-125 transition-transform pointer-events-none"></div>
+        <div class="flex items-center justify-between gap-3 relative z-10">
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Aktivitas Hari Ini</span>
-          <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 border border-sky-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-            <span class="material-symbols-outlined text-[18px]">bolt</span>
+          <div class="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-110 transition-transform backdrop-blur-md">
+            <span class="material-symbols-outlined text-[20px]">bolt</span>
           </div>
         </div>
-        <div class="mt-3">
-          <div id="metric-today-actions" class="text-2.5xl sm:text-3xl font-black text-sky-700 tracking-tight">{{ $metrics['today_actions'] ?? 0 }}</div>
-          <div class="mt-1.5">
-            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200/70 text-sky-700 text-[10px] font-bold">
+        <div class="mt-4 relative z-10">
+          <div id="metric-today-actions" class="text-3xl font-black text-sky-700 tracking-tight">{{ $metrics['today_actions'] ?? 0 }}</div>
+          <div class="mt-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full glass-pill text-sky-800 border-sky-500/20 text-[10px] font-bold">
               <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
               <span>Real-Time Sync Terverifikasi</span>
             </span>
@@ -95,17 +106,18 @@
       </div>
 
       <!-- Aksi Kredensial & PIC -->
-      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
-        <div class="flex items-center justify-between gap-3">
+      <div class="p-5 rounded-3xl glass-card-indigo hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between group relative overflow-hidden">
+        <div class="absolute -top-12 -right-12 w-28 h-28 bg-indigo-400/20 rounded-full blur-2xl group-hover:scale-125 transition-transform pointer-events-none"></div>
+        <div class="flex items-center justify-between gap-3 relative z-10">
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Aksi Kredensial &amp; PIC</span>
-          <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-            <span class="material-symbols-outlined text-[18px]">shield_person</span>
+          <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-110 transition-transform backdrop-blur-md">
+            <span class="material-symbols-outlined text-[20px]">shield_person</span>
           </div>
         </div>
-        <div class="mt-3">
-          <div id="metric-security-actions" class="text-2.5xl sm:text-3xl font-black text-indigo-700 tracking-tight">{{ $metrics['security_actions'] ?? 0 }}</div>
-          <div class="mt-1.5">
-            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-indigo-50 border border-indigo-200/70 text-indigo-700 text-[10px] font-bold">
+        <div class="mt-4 relative z-10">
+          <div id="metric-security-actions" class="text-3xl font-black text-indigo-700 tracking-tight">{{ $metrics['security_actions'] ?? 0 }}</div>
+          <div class="mt-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full glass-pill text-indigo-800 border-indigo-500/20 text-[10px] font-bold">
               <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
               <span>Audit Security &amp; Hak Akses</span>
             </span>
@@ -114,60 +126,64 @@
       </div>
     </div>
 
-    <!-- Unified Master Card: Toolbar & Log Table -->
-    <div class="rounded-3xl bg-white border border-slate-200/80 shadow-2xs overflow-hidden">
+    <!-- Unified Master Card: Glassmorphism Toolbar & Log Table -->
+    <div class="rounded-3xl glass-panel overflow-hidden relative shadow-[0_15px_35px_-5px_rgba(22,179,172,0.1)]">
+      <!-- Subtle top shimmer line -->
+      <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#16b3ac]/50 to-transparent"></div>
+
       <!-- Toolbar Header -->
-      <div class="p-5 sm:p-6 border-b border-slate-100 space-y-4">
+      <div class="p-5 sm:p-6 border-b border-white/60 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div class="flex items-center gap-2 flex-wrap">
               <h3 class="font-black text-base text-slate-900 leading-tight">Riwayat Transaksi &amp; Verifikasi Kredit SKP</h3>
-              <span class="text-[10px] font-mono text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/70">Audit Trail SHA-256</span>
+              <span class="text-[10px] font-mono text-teal-800 bg-teal-500/10 border border-teal-500/20 px-2 py-0.5 rounded-md font-bold">Audit Trail SHA-256</span>
             </div>
-            <p class="text-xs text-slate-400 mt-1">Daftar rekaman kronologis aktivitas operasional, penugasan PIC, sinkronisasi SATUSEHAT, dan otomasi latar belakang.</p>
+            <p class="text-xs text-slate-500 mt-1">Daftar rekaman kronologis aktivitas operasional, penugasan PIC, sinkronisasi SATUSEHAT, dan otomasi latar belakang.</p>
           </div>
           <div class="shrink-0">
-            <span id="activityLogCounter" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-slate-600 font-bold text-xs">
-              <span class="w-2 h-2 rounded-full bg-[#16b3ac]"></span>
+            <span id="activityLogCounter" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-pill text-slate-700 font-bold text-xs shadow-2xs">
+              <span class="w-2 h-2 rounded-full bg-[#16b3ac] animate-pulse"></span>
               <span>Memuat log...</span>
             </span>
           </div>
         </div>
 
-        <!-- Filter Category Tabs & Integrated Search -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2 border-t border-slate-100">
-          <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100/90 rounded-2xl text-xs font-bold text-slate-600" id="activityCategoryFilterTabs">
-            <button type="button" onclick="filterActivityCategory('ALL')" id="tab-act-all" class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition font-black flex items-center gap-1.5 cursor-pointer">
+        <!-- Filter Category Tabs & Integrated Glass Search Box -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2 border-t border-white/50">
+          <!-- Glass Filter Tabs -->
+          <div class="flex flex-wrap gap-1.5 p-1.5 bg-slate-200/50 backdrop-blur-md rounded-2xl text-xs font-bold text-slate-600 border border-white/60 shadow-inner" id="activityCategoryFilterTabs">
+            <button type="button" onclick="filterActivityCategory('ALL')" id="tab-act-all" class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-sm transition font-black flex items-center gap-1.5 cursor-pointer">
               <span>Semua Log</span>
               <span id="badge-count-all" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600 font-bold">0</span>
             </button>
-            <button type="button" onclick="filterActivityCategory('Sync')" id="tab-act-sync" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
+            <button type="button" onclick="filterActivityCategory('Sync')" id="tab-act-sync" class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/50 transition flex items-center gap-1.5 font-bold cursor-pointer">
               <span class="w-2 h-2 rounded-full bg-sky-500"></span>
               <span>Sync SATUSEHAT</span>
               <span id="badge-count-sync" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
             </button>
-            <button type="button" onclick="filterActivityCategory('Verification')" id="tab-act-verif" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
+            <button type="button" onclick="filterActivityCategory('Verification')" id="tab-act-verif" class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/50 transition flex items-center gap-1.5 font-bold cursor-pointer">
               <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
               <span>Verifikasi Kredit</span>
               <span id="badge-count-verif" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
             </button>
-            <button type="button" onclick="filterActivityCategory('FollowUp')" id="tab-act-fu" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
+            <button type="button" onclick="filterActivityCategory('FollowUp')" id="tab-act-fu" class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/50 transition flex items-center gap-1.5 font-bold cursor-pointer">
               <span class="w-2 h-2 rounded-full bg-amber-500"></span>
               <span>Follow-Up Cabang</span>
               <span id="badge-count-fu" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
             </button>
-            <button type="button" onclick="filterActivityCategory('Automation')" id="tab-act-auto" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
+            <button type="button" onclick="filterActivityCategory('Automation')" id="tab-act-auto" class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/50 transition flex items-center gap-1.5 font-bold cursor-pointer">
               <span class="w-2 h-2 rounded-full bg-purple-500"></span>
               <span>Otomasi Cron</span>
               <span id="badge-count-auto" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
             </button>
           </div>
 
-          <!-- Integrated Search Box with Clear Button -->
+          <!-- Glass Search Box with Clear Button -->
           <div class="w-full lg:w-80 relative flex items-center">
             <span class="material-symbols-outlined text-slate-400 text-lg absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">search</span>
-            <input type="text" id="searchActivityInput" onkeyup="filterActivities()" placeholder="Cari aksi, aktor, atau rincian..." class="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]/20 focus:border-[#16b3ac] transition" />
-            <button type="button" id="clearSearchBtn" onclick="clearActivitySearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm">
+            <input type="text" id="searchActivityInput" onkeyup="filterActivities()" placeholder="Cari aksi, aktor, atau rincian..." class="w-full pl-9 pr-8 py-2 glass-input rounded-2xl text-xs font-semibold focus:outline-none transition shadow-2xs" />
+            <button type="button" id="clearSearchBtn" onclick="clearActivitySearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm cursor-pointer">
               <span class="material-symbols-outlined text-base">close</span>
             </button>
           </div>
@@ -177,7 +193,7 @@
       <!-- Desktop Table -->
       <div class="hidden md:block overflow-x-auto">
         <table class="w-full text-left text-xs whitespace-nowrap">
-          <thead class="bg-slate-50/80 border-b border-slate-200/80 text-slate-400 font-black uppercase text-[10px] tracking-wider">
+          <thead class="bg-slate-100/60 backdrop-blur-md border-b border-white/60 text-slate-400 font-black uppercase text-[10px] tracking-wider">
             <tr>
               <th class="py-3.5 px-5">Pengguna / Aktor</th>
               <th class="py-3.5 px-4">Aksi Dilakukan</th>
@@ -187,29 +203,32 @@
               <th class="py-3.5 px-5 text-right">Rincian</th>
             </tr>
           </thead>
-          <tbody id="activityTableBody" class="divide-y divide-slate-100 font-medium">
+          <tbody id="activityTableBody" class="divide-y divide-white/50 font-medium">
             <!-- Rendered dynamically -->
           </tbody>
         </table>
       </div>
 
       <!-- Mobile Touch Cards (< md) -->
-      <div id="activityMobileCards" class="md:hidden divide-y divide-slate-100 p-3 sm:p-4 space-y-3">
+      <div id="activityMobileCards" class="md:hidden divide-y divide-white/50 p-3 sm:p-4 space-y-3">
         <!-- Rendered dynamically for mobile -->
       </div>
 
-      <!-- Interactive MedCred Pagination Footer -->
-      <div id="activityTablePagination" class="px-5 py-4 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
+      <!-- Interactive MedCred Pagination Footer with Glassmorphism -->
+      <div id="activityTablePagination" class="px-5 py-4 bg-slate-100/50 backdrop-blur-md border-t border-white/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"></div>
     </div>
   </main>
 
-  <!-- MODAL: DETAIL JEJAK AUDIT (AUDIT LOG INSPECTOR) -->
-  <div id="auditDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-200/90 overflow-hidden transform transition-all page-fade-in">
+  <!-- MODAL: DETAIL JEJAK AUDIT (AUDIT LOG INSPECTOR) WITH GLASSMORPHISM -->
+  <div id="auditDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/50 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-panel bg-white/90 backdrop-blur-2xl rounded-3xl max-w-xl w-full shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-white/90 overflow-hidden transform transition-all page-fade-in relative">
+      <!-- Subtle top primary gradient line -->
+      <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#16b3ac] to-transparent"></div>
+
       <!-- Modal Header -->
-      <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/60">
+      <div class="p-5 sm:p-6 border-b border-white/60 flex items-center justify-between bg-teal-50/20 backdrop-blur-md">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-teal-50 border border-teal-100 text-[#16b3ac] flex items-center justify-center shadow-2xs">
+          <div class="w-10 h-10 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-[#16b3ac] flex items-center justify-center shadow-2xs backdrop-blur-md">
             <span class="material-symbols-outlined text-[20px]">policy</span>
           </div>
           <div>
@@ -217,7 +236,7 @@
             <p class="text-xs text-slate-400 font-mono mt-0.5" id="modalAuditId">UUID: -</p>
           </div>
         </div>
-        <button type="button" onclick="closeAuditDetailModal()" class="w-8 h-8 rounded-full bg-white hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center border border-slate-200 shadow-2xs transition cursor-pointer">
+        <button type="button" onclick="closeAuditDetailModal()" class="w-8 h-8 rounded-full glass-pill hover:bg-white text-slate-400 hover:text-slate-600 flex items-center justify-center shadow-2xs transition cursor-pointer">
           <span class="material-symbols-outlined text-base">close</span>
         </button>
       </div>
@@ -225,7 +244,7 @@
       <!-- Modal Body -->
       <div class="p-5 sm:p-6 space-y-4 max-h-[70vh] overflow-y-auto">
         <!-- User & Timestamp Bar -->
-        <div class="grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 text-xs">
+        <div class="grid grid-cols-2 gap-3 p-3.5 rounded-2xl glass-card-primary text-xs">
           <div>
             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Pengguna / Aktor</span>
             <span class="font-bold text-slate-900 text-sm mt-0.5 block truncate" id="modalActorName">-</span>
@@ -234,14 +253,14 @@
           <div>
             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Waktu Pencatatan</span>
             <span class="font-bold text-slate-800 text-xs mt-0.5 block" id="modalTimestamp">-</span>
-            <span class="text-[10px] font-mono text-emerald-600 font-semibold" id="modalIpAddress">IP: 127.0.0.1</span>
+            <span class="text-[10px] font-mono text-teal-600 font-semibold" id="modalIpAddress">IP: 127.0.0.1</span>
           </div>
         </div>
 
         <!-- Action & Category -->
         <div class="space-y-1.5">
           <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Aksi Sistem / Operasional</span>
-          <div class="flex items-center justify-between gap-2 p-3 rounded-xl border border-slate-200/80 bg-white">
+          <div class="flex items-center justify-between gap-2 p-3 rounded-2xl glass-pill bg-white/70">
             <div class="font-black text-slate-900 text-xs truncate" id="modalActionName">-</div>
             <div id="modalCategoryBadge"></div>
           </div>
@@ -250,7 +269,7 @@
         <!-- Description -->
         <div class="space-y-1.5">
           <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rincian Narasi Perubahan</span>
-          <div class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50 text-slate-700 text-xs leading-relaxed font-medium" id="modalDetailsText">
+          <div class="p-3.5 rounded-2xl glass-panel bg-white/60 text-slate-700 text-xs leading-relaxed font-medium" id="modalDetailsText">
             -
           </div>
         </div>
@@ -264,14 +283,14 @@
               <span>Salin JSON</span>
             </button>
           </div>
-          <pre id="modalJsonPayload" class="p-3.5 rounded-xl bg-slate-900 text-emerald-400 font-mono text-[11px] overflow-x-auto max-h-48 leading-normal border border-slate-800 select-all whitespace-pre-wrap"></pre>
+          <pre id="modalJsonPayload" class="p-3.5 rounded-2xl bg-slate-950/95 text-emerald-400 font-mono text-[11px] overflow-x-auto max-h-48 leading-normal border border-slate-800 select-all whitespace-pre-wrap shadow-inner backdrop-blur-md"></pre>
         </div>
       </div>
 
       <!-- Modal Footer -->
-      <div class="p-4 sm:p-5 border-t border-slate-100 bg-slate-50/60 flex items-center justify-between">
-        <span class="text-[11px] text-slate-400 font-medium">Integritas Log: <strong class="text-emerald-700">Terverifikasi</strong></span>
-        <button type="button" onclick="closeAuditDetailModal()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-xs cursor-pointer">
+      <div class="p-4 sm:p-5 border-t border-white/60 bg-teal-50/10 backdrop-blur-md flex items-center justify-between">
+        <span class="text-[11px] text-slate-400 font-medium">Integritas Log: <strong class="text-teal-700">Terverifikasi</strong></span>
+        <button type="button" onclick="closeAuditDetailModal()" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 text-white text-xs font-bold transition shadow-sm cursor-pointer active:scale-95">
           Tutup
         </button>
       </div>
@@ -280,7 +299,7 @@
 
   <script src="/js/pdf_exporter.js"></script>
   <script>
-    // Robust Global Toast Notification Helper
+    // Robust Global Toast Notification Helper with Glassmorphism
     function showToast(message, type = 'info') {
       let toastContainer = document.getElementById('toastContainer');
       if (!toastContainer) {
@@ -292,10 +311,10 @@
 
       const toast = document.createElement('div');
       const bgColors = {
-        success: 'bg-emerald-900/90 text-white border-emerald-700',
-        error: 'bg-rose-900/90 text-white border-rose-700',
-        warning: 'bg-amber-900/90 text-white border-amber-700',
-        info: 'bg-slate-900/90 text-white border-slate-700'
+        success: 'bg-emerald-950/85 text-emerald-100 border-emerald-500/30',
+        error: 'bg-rose-950/85 text-rose-100 border-rose-500/30',
+        warning: 'bg-amber-950/85 text-amber-100 border-amber-500/30',
+        info: 'bg-slate-950/85 text-slate-100 border-teal-500/30'
       };
       const icons = {
         success: 'check_circle',
@@ -307,9 +326,9 @@
       const bg = bgColors[type] || bgColors.info;
       const icon = icons[type] || icons.info;
 
-      toast.className = `${bg} backdrop-blur-md px-4 py-3 rounded-2xl border shadow-xl text-xs font-semibold flex items-center gap-2 pointer-events-auto transition-all duration-300 transform translate-y-4 opacity-0`;
+      toast.className = `${bg} backdrop-blur-xl px-4 py-3 rounded-2xl border shadow-2xl text-xs font-semibold flex items-center gap-2 pointer-events-auto transition-all duration-300 transform translate-y-4 opacity-0`;
       toast.innerHTML = `
-        <span class="material-symbols-outlined text-base">${icon}</span>
+        <span class="material-symbols-outlined text-base text-[#16b3ac]">${icon}</span>
         <span>${message}</span>
       `;
 
@@ -328,7 +347,7 @@
     }
     window.showToast = showToast;
 
-    // MedCred Standard Pagination Component
+    // MedCred Standard Pagination Component with Glassmorphism
     function renderMedCredPaginationControls({ containerId, currentPage, totalPages, totalItems, startIdx, endIdx, itemLabel, onPageChangeFn, onLimitChangeFn, currentLimit, limits = [10, 25, 50] }) {
       const el = document.getElementById(containerId);
       if (!el) return;
@@ -343,7 +362,7 @@
       // Prev Button
       const isFirst = currentPage <= 1;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer"'}>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-3 py-1.5 rounded-xl bg-slate-200/50 text-slate-400 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-xl glass-pill hover:bg-white text-slate-700 text-xs font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer active:scale-95"'}>
           <span class="material-symbols-outlined text-sm">chevron_left</span>
           <span>Sebelumnya</span>
         </button>
@@ -358,7 +377,7 @@
       }
 
       if (startP > 1) {
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 cursor-pointer">1</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-8 h-8 rounded-xl text-xs font-bold transition flex items-center justify-center glass-pill text-slate-600 hover:bg-white cursor-pointer">1</button>`;
         if (startP > 2) {
           btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
         }
@@ -367,7 +386,7 @@
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs font-black' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer ${isActive ? 'bg-gradient-to-r from-[#16b3ac] to-[#0ea5e9] text-white shadow-md shadow-teal-500/20 font-black' : 'glass-pill text-slate-600 hover:bg-white'}">
             ${p}
           </button>
         `;
@@ -377,13 +396,13 @@
         if (endP < totalPages - 1) {
           btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
         }
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 cursor-pointer">${totalPages}</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-8 h-8 rounded-xl text-xs font-bold transition flex items-center justify-center glass-pill text-slate-600 hover:bg-white cursor-pointer">${totalPages}</button>`;
       }
 
       // Next Button
       const isLast = currentPage >= totalPages;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer"'}>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-3 py-1.5 rounded-xl bg-slate-200/50 text-slate-400 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-xl glass-pill hover:bg-white text-slate-700 text-xs font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer active:scale-95"'}>
           <span>Selanjutnya</span>
           <span class="material-symbols-outlined text-sm">chevron_right</span>
         </button>
@@ -394,7 +413,7 @@
         limitSelectorHtml = `
           <div class="flex items-center gap-1.5 ml-0 sm:ml-2">
             <span class="text-slate-400 text-[11px]">Tampilkan:</span>
-            <select onchange="${onLimitChangeFn}(this.value)" class="py-1 px-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs font-bold focus:outline-none">
+            <select onchange="${onLimitChangeFn}(this.value)" class="py-1 px-2 border border-white/80 rounded-xl glass-input text-slate-700 text-xs font-bold focus:outline-none cursor-pointer">
               ${limits.map(l => `<option value="${l}" ${l === currentLimit ? 'selected' : ''}>${l}</option>`).join('')}
             </select>
           </div>
@@ -593,7 +612,7 @@
       const counterEl = document.getElementById('activityLogCounter');
       if (counterEl) {
         counterEl.innerHTML = `
-          <span class="w-2 h-2 rounded-full bg-[#16b3ac]"></span>
+          <span class="w-2 h-2 rounded-full bg-[#16b3ac] animate-pulse"></span>
           <span>Menampilkan <strong>${activityPagination.total}</strong> log aktivitas</span>
         `;
       }
@@ -612,23 +631,23 @@
           `;
         } else {
           tbody.innerHTML = pageActivities.map(a => {
-            let badgeStyle = 'bg-slate-50 text-slate-700 border-slate-200/90';
+            let badgeStyle = 'glass-pill text-slate-700 border-slate-200/90';
             let dotColor = 'bg-slate-400';
             let catLabel = a.category;
             if (a.category === 'Sync') {
-              badgeStyle = 'bg-sky-50 text-sky-700 border-sky-200/80';
+              badgeStyle = 'glass-pill bg-sky-500/10 text-sky-800 border-sky-500/20';
               dotColor = 'bg-sky-500';
               catLabel = 'Sync SATUSEHAT';
             } else if (a.category === 'Verification') {
-              badgeStyle = 'bg-emerald-50 text-emerald-700 border-emerald-200/80';
+              badgeStyle = 'glass-pill bg-emerald-500/10 text-emerald-800 border-emerald-500/20';
               dotColor = 'bg-emerald-500';
               catLabel = 'Verifikasi Kredit';
             } else if (a.category === 'FollowUp') {
-              badgeStyle = 'bg-amber-50 text-amber-700 border-amber-200/80';
+              badgeStyle = 'glass-pill bg-amber-500/10 text-amber-800 border-amber-500/20';
               dotColor = 'bg-amber-500';
               catLabel = 'Follow-Up Cabang';
             } else if (a.category === 'Automation') {
-              badgeStyle = 'bg-purple-50 text-purple-700 border-purple-200/80';
+              badgeStyle = 'glass-pill bg-purple-500/10 text-purple-800 border-purple-500/20';
               dotColor = 'bg-purple-500';
               catLabel = 'Otomasi Cron';
             }
@@ -636,15 +655,15 @@
             const initial = (a.actor || 'S').charAt(0).toUpperCase();
 
             return `
-              <tr class="hover:bg-slate-50/80 transition-colors group cursor-pointer" onclick="openAuditDetailModal('${a.id}')">
+              <tr class="hover:bg-white/80 hover:backdrop-blur-sm transition-colors group cursor-pointer" onclick="openAuditDetailModal('${a.id}')">
                 <td class="py-3.5 px-5">
                   <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-100 border border-emerald-200/80 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                    <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-teal-500/20 via-emerald-400/15 to-transparent border border-teal-300/40 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform backdrop-blur-md">
                       ${initial}
                     </div>
                     <div class="min-w-0">
                       <div class="font-bold text-slate-900 text-xs truncate max-w-[200px]">${a.actor}</div>
-                      <div class="text-[10px] font-semibold text-slate-400 font-mono mt-0.5">${a.role || 'USER'}</div>
+                      <div class="text-[10px] font-semibold text-slate-500 font-mono mt-0.5">${a.role || 'USER'}</div>
                     </div>
                   </div>
                 </td>
@@ -653,14 +672,14 @@
                   <div class="line-clamp-2">${a.details}</div>
                 </td>
                 <td class="py-3.5 px-4 text-center whitespace-nowrap">
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold ${badgeStyle} border shadow-2xs">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold ${badgeStyle} shadow-2xs">
                     <span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>
                     <span>${catLabel}</span>
                   </span>
                 </td>
-                <td class="py-3.5 px-4 text-slate-400 font-mono text-[11px] whitespace-nowrap">${a.timestamp}</td>
+                <td class="py-3.5 px-4 text-slate-500 font-mono text-[11px] whitespace-nowrap">${a.timestamp}</td>
                 <td class="py-3.5 px-5 text-right whitespace-nowrap">
-                  <button type="button" onclick="event.stopPropagation(); openAuditDetailModal('${a.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-[#16b3ac] hover:text-white text-slate-500 transition shadow-2xs cursor-pointer" title="Lihat Rincian Jejak Audit">
+                  <button type="button" onclick="event.stopPropagation(); openAuditDetailModal('${a.id}')" class="p-1.5 rounded-xl glass-pill hover:bg-[#16b3ac] hover:text-white text-slate-500 transition shadow-2xs cursor-pointer" title="Lihat Rincian Jejak Audit">
                     <span class="material-symbols-outlined text-sm">visibility</span>
                   </button>
                 </td>
@@ -676,23 +695,23 @@
           mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada riwayat log aktivitas yang sesuai.</div>';
         } else {
           mobileContainer.innerHTML = pageActivities.map(a => {
-            let badgeStyle = 'bg-slate-50 text-slate-700 border-slate-200';
+            let badgeStyle = 'glass-pill text-slate-700';
             let dotColor = 'bg-slate-400';
             let catLabel = a.category;
             if (a.category === 'Sync') {
-              badgeStyle = 'bg-sky-50 text-sky-700 border-sky-200/80';
+              badgeStyle = 'glass-pill bg-sky-500/10 text-sky-800 border-sky-500/20';
               dotColor = 'bg-sky-500';
               catLabel = 'Sync SATUSEHAT';
             } else if (a.category === 'Verification') {
-              badgeStyle = 'bg-emerald-50 text-emerald-700 border-emerald-200/80';
+              badgeStyle = 'glass-pill bg-emerald-500/10 text-emerald-800 border-emerald-500/20';
               dotColor = 'bg-emerald-500';
               catLabel = 'Verifikasi Kredit';
             } else if (a.category === 'FollowUp') {
-              badgeStyle = 'bg-amber-50 text-amber-700 border-amber-200/80';
+              badgeStyle = 'glass-pill bg-amber-500/10 text-amber-800 border-amber-500/20';
               dotColor = 'bg-amber-500';
               catLabel = 'Follow-Up Cabang';
             } else if (a.category === 'Automation') {
-              badgeStyle = 'bg-purple-50 text-purple-700 border-purple-200/80';
+              badgeStyle = 'glass-pill bg-purple-500/10 text-purple-800 border-purple-500/20';
               dotColor = 'bg-purple-500';
               catLabel = 'Otomasi Cron';
             }
@@ -700,10 +719,10 @@
             const initial = (a.actor || 'S').charAt(0).toUpperCase();
 
             return `
-              <div class="bg-white rounded-2xl border border-slate-200/90 p-4 space-y-2.5 shadow-2xs hover:border-[#16b3ac]/50 transition cursor-pointer" onclick="openAuditDetailModal('${a.id}')">
+              <div class="glass-card-primary rounded-2xl p-4 space-y-2.5 shadow-2xs hover:border-[#16b3ac]/50 transition cursor-pointer" onclick="openAuditDetailModal('${a.id}')">
                 <div class="flex items-center justify-between gap-2">
                   <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-100 border border-emerald-200/80 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-400/20 border border-teal-300/40 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
                       ${initial}
                     </div>
                     <div class="min-w-0">
@@ -711,14 +730,14 @@
                       <div class="text-[10px] font-mono text-slate-400 leading-none mt-0.5">${a.role || 'USER'}</div>
                     </div>
                   </div>
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeStyle} border shrink-0">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeStyle} shrink-0">
                     <span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>
                     <span>${catLabel}</span>
                   </span>
                 </div>
                 <div class="font-bold text-slate-800 text-xs">${a.action}</div>
-                <div class="text-slate-600 text-xs leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100">${a.details}</div>
-                <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-slate-400 font-mono text-[10px]">
+                <div class="text-slate-600 text-xs leading-relaxed glass-panel p-2.5 rounded-xl border border-white/60">${a.details}</div>
+                <div class="flex items-center justify-between pt-1 border-t border-white/50 text-slate-400 font-mono text-[10px]">
                   <span>${a.timestamp}</span>
                   <span class="text-[#16b3ac] font-bold flex items-center gap-0.5">Detail <span class="material-symbols-outlined text-xs">arrow_forward</span></span>
                 </div>
@@ -757,9 +776,9 @@
         const btn = document.getElementById(tabIds[k]);
         if (btn) {
           if (k.toUpperCase() === cat.toUpperCase()) {
-            btn.className = 'px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition font-black flex items-center gap-1.5 cursor-pointer';
+            btn.className = 'px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-sm transition font-black flex items-center gap-1.5 cursor-pointer';
           } else {
-            btn.className = 'px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer';
+            btn.className = 'px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/50 transition flex items-center gap-1.5 font-bold cursor-pointer';
           }
         }
       }
@@ -805,11 +824,11 @@
       document.getElementById('modalDetailsText').innerText = item.details || '-';
 
       // Badge
-      let badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">${item.category}</span>`;
-      if (item.category === 'Sync') badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200">Sync SATUSEHAT</span>`;
-      else if (item.category === 'Verification') badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Verifikasi Kredit</span>`;
-      else if (item.category === 'FollowUp') badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Follow-Up Cabang</span>`;
-      else if (item.category === 'Automation') badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">Otomasi Cron</span>`;
+      let badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold glass-pill text-slate-700">${item.category}</span>`;
+      if (item.category === 'Sync') badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold glass-pill bg-sky-500/10 text-sky-800 border-sky-500/20">Sync SATUSEHAT</span>`;
+      else if (item.category === 'Verification') badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold glass-pill bg-emerald-500/10 text-emerald-800 border-emerald-500/20">Verifikasi Kredit</span>`;
+      else if (item.category === 'FollowUp') badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold glass-pill bg-amber-500/10 text-amber-800 border-amber-500/20">Follow-Up Cabang</span>`;
+      else if (item.category === 'Automation') badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold glass-pill bg-purple-500/10 text-purple-800 border-purple-500/20">Otomasi Cron</span>`;
       document.getElementById('modalCategoryBadge').innerHTML = badgeHtml;
 
       // JSON Payload
