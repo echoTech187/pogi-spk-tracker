@@ -1108,7 +1108,7 @@
       if (activities.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="6" class="py-12 px-4 text-center">
+            <td colspan="6" class="py-14 px-4 text-center">
               <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
                 <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
                   <span class="material-symbols-outlined text-2xl">history_edu</span>
@@ -1117,6 +1117,10 @@
                 <p class="text-xs text-slate-500 leading-relaxed">
                   Belum ada rekaman entri logbook kegiatan klinis, pembelajaran, atau pengabdian masyarakat untuk dokter ini.
                 </p>
+                <button type="button" onclick="openUploadDoctorDocModal()" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-write">
+                  <span class="material-symbols-outlined text-sm">upload_file</span>
+                  <span>Unggah Bukti Kegiatan</span>
+                </button>
               </div>
             </td>
           </tr>

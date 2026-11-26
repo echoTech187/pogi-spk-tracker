@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="6U35UPnMJuyV8ZwKU1ByQwWW0r9gQQy9A8MOiuW3">
+  <meta name="csrf-token" content="hx8AzQZxhCHfI9snfAccZ9T2zTsRaJ0h4itVFqit">
   <title>POGI SKP Tracker - Log Aktivitas &amp; Jejak Audit</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -1017,10 +1017,14 @@
                   <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
                     <span class="material-symbols-outlined text-2xl">find_in_page</span>
                   </div>
-                  <div class="font-extrabold text-sm text-slate-800">Tidak Ada Log Aktivitas Ditemukan</div>
+                  <div class="font-bold text-sm text-slate-800">Tidak Ada Log Aktivitas Ditemukan</div>
                   <p class="text-xs text-slate-500 leading-relaxed">
                     Tidak ditemukan riwayat log aktivitas yang sesuai dengan kriteria pencarian atau filter kategori saat ini.
                   </p>
+                  <button type="button" onclick="const s = document.getElementById('activitySearch'); if (s) { s.value = ''; filterActivities(); }" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer">
+                    <span class="material-symbols-outlined text-sm">filter_alt_off</span>
+                    <span>Reset Filter Log</span>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -1094,8 +1098,12 @@
                 <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-2xs">
                   <span class="material-symbols-outlined text-xl">find_in_page</span>
                 </div>
-                <div class="font-extrabold text-xs text-slate-800">Tidak Ada Log Aktivitas</div>
+                <div class="font-bold text-xs text-slate-800">Tidak Ada Log Aktivitas</div>
                 <p class="text-[11px] text-slate-500">Tidak ada log aktivitas yang cocok dengan filter saat ini.</p>
+                <button type="button" onclick="const s = document.getElementById('activitySearch'); if (s) { s.value = ''; filterActivities(); }" class="mt-1 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1 shadow-2xs cursor-pointer">
+                  <span class="material-symbols-outlined text-xs">filter_alt_off</span>
+                  <span>Reset Filter</span>
+                </button>
               </div>
             </div>
           `;

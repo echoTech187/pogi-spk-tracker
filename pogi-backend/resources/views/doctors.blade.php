@@ -814,10 +814,14 @@
                   <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
                     <span class="material-symbols-outlined text-2xl">person_off</span>
                   </div>
-                  <div class="font-extrabold text-sm text-slate-800">Tidak Ada Data Dokter</div>
+                  <div class="font-bold text-sm text-slate-800">Tidak Ada Data Dokter</div>
                   <p class="text-xs text-slate-500 leading-relaxed">
                     Tidak ditemukan dokter yang sesuai dengan kriteria filter atau pencarian saat ini.
                   </p>
+                  <button type="button" onclick="openAddDoctorModal()" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-write">
+                    <span class="material-symbols-outlined text-sm">person_add</span>
+                    <span>Tambah Dokter Baru</span>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -826,10 +830,16 @@
         if (mobileContainer) {
           mobileContainer.innerHTML = `
             <div class="py-12 px-4 text-center">
-              <div class="flex flex-col items-center justify-center gap-2 max-w-xs mx-auto">
-                <span class="material-symbols-outlined text-3xl text-slate-300">person_off</span>
-                <div class="font-extrabold text-xs text-slate-800">Tidak Ada Data Dokter</div>
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-xs mx-auto">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-xl">person_off</span>
+                </div>
+                <div class="font-bold text-xs text-slate-800">Tidak Ada Data Dokter</div>
                 <p class="text-[11px] text-slate-500">Tidak ada dokter yang cocok dengan filter saat ini.</p>
+                <button type="button" onclick="openAddDoctorModal()" class="mt-1 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1 shadow-2xs cursor-pointer rbac-write">
+                  <span class="material-symbols-outlined text-xs">person_add</span>
+                  <span>Tambah Dokter Baru</span>
+                </button>
               </div>
             </div>
           `;

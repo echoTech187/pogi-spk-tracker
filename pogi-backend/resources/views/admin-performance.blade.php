@@ -483,10 +483,14 @@
                 <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
                   <span class="material-symbols-outlined text-2xl">person_off</span>
                 </div>
-                <div class="font-extrabold text-sm text-slate-800">Belum Ada Data Personil Admin</div>
+                <div class="font-bold text-sm text-slate-800">Belum Ada Data Personil Admin</div>
                 <p class="text-xs text-slate-500 leading-relaxed">
                   Tidak ditemukan personil admin yang sesuai dengan kriteria pencarian atau filter tier kinerja yang dipilih.
                 </p>
+                <button type="button" onclick="openRebalanceModal()" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-write">
+                  <span class="material-symbols-outlined text-sm">balance</span>
+                  <span>Buka Tool Seimbangkan Beban</span>
+                </button>
               </div>
             </td>
           </tr>

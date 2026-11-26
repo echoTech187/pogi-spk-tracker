@@ -217,10 +217,14 @@
                 <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
                   <span class="material-symbols-outlined text-2xl">location_off</span>
                 </div>
-                <div class="font-extrabold text-sm text-slate-800">Tidak Ada Wilayah Cabang</div>
+                <div class="font-bold text-sm text-slate-800">Tidak Ada Wilayah Cabang</div>
                 <p class="text-xs text-slate-500 leading-relaxed">
                   Tidak ditemukan provinsi atau cabang POGI yang cocok dengan kriteria pencarian dan filter saat ini.
                 </p>
+                <button type="button" onclick="const s = document.getElementById('provinceSearch'); if (s) { s.value = ''; filterProvinces(); }" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer">
+                  <span class="material-symbols-outlined text-sm">filter_alt_off</span>
+                  <span>Reset Filter Wilayah</span>
+                </button>
               </div>
             </td>
           </tr>

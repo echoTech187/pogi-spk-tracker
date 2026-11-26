@@ -379,15 +379,19 @@
                 </tr>
               @empty
                 <tr>
-                  <td colspan="5" class="py-12 px-4 text-center">
+                  <td colspan="5" class="py-14 px-4 text-center">
                     <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
                       <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
                         <span class="material-symbols-outlined text-2xl">folder_off</span>
                       </div>
-                      <div class="font-extrabold text-sm text-slate-800">Belum Ada Arsip Snapshot Bulanan</div>
+                      <div class="font-bold text-sm text-slate-800">Belum Ada Arsip Snapshot Bulanan</div>
                       <p class="text-xs text-slate-500 leading-relaxed">
                         Arsip dokumen resmi dibuat otomatis secara permanen pada tanggal 1 setiap bulan saat masa cutoff sistem.
                       </p>
+                      <button type="button" onclick="printOnePogiMonthlyReportPdf('11/2026')" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer">
+                        <span class="material-symbols-outlined text-sm">print</span>
+                        <span>Cetak Pratinjau Rekap Bulan Berjalan</span>
+                      </button>
                     </div>
                   </td>
                 </tr>

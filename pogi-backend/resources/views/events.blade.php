@@ -303,10 +303,14 @@
                   <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
                     <span class="material-symbols-outlined text-2xl">event_busy</span>
                   </div>
-                  <div class="font-extrabold text-sm text-slate-800">Tidak Ada Kegiatan SKP</div>
+                  <div class="font-bold text-sm text-slate-800">Tidak Ada Kegiatan SKP</div>
                   <p class="text-xs text-slate-500 leading-relaxed">
                     Tidak ditemukan kegiatan ilmiah atau event terakreditasi pada kriteria pencarian dan subbidang ini.
                   </p>
+                  <a href="/manage?tab=event" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-write">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    <span>Kelola Master Event SKP</span>
+                  </a>
                 </div>
               </td>
             </tr>
@@ -314,11 +318,17 @@
         }
         if (mobileContainer) {
           mobileContainer.innerHTML = `
-            <div class="py-10 px-4 text-center">
-              <div class="flex flex-col items-center justify-center gap-2 max-w-xs mx-auto">
-                <span class="material-symbols-outlined text-3xl text-slate-300">event_busy</span>
-                <div class="font-extrabold text-xs text-slate-800">Tidak Ada Kegiatan SKP</div>
+            <div class="py-12 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-xs mx-auto">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-xl">event_busy</span>
+                </div>
+                <div class="font-bold text-xs text-slate-800">Tidak Ada Kegiatan SKP</div>
                 <p class="text-[11px] text-slate-500">Tidak ada kegiatan yang ditemukan pada subbidang ini.</p>
+                <a href="/manage?tab=event" class="mt-1 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1 shadow-2xs cursor-pointer rbac-write">
+                  <span class="material-symbols-outlined text-xs">add_circle</span>
+                  <span>Kelola Event</span>
+                </a>
               </div>
             </div>
           `;
