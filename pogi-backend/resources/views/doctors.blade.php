@@ -631,8 +631,31 @@
       if (instSelect && instSelect.options.length <= 1) {
         populateInstitutionFilter(allDoctors);
       }
+      initDoctorSelect2();
       applyDoctorFilters();
     });
+
+    function initDoctorSelect2() {
+      if (window.jQuery && $.fn.select2) {
+        $('#quarterFilter, #yearFilter, #statusFilter, #institutionFilter, #provinceFilter').select2({
+          width: '100%'
+        }).on('change', function() {
+          applyDoctorFilters();
+        });
+
+        $('#newDocProv, #newDocInst, #newDocAssignedTo').select2({
+          dropdownParent: $('#addDoctorModal'),
+          width: '100%'
+        });
+
+        $('#waBlastTargetSelect').select2({
+          dropdownParent: $('#waBlastModal'),
+          width: '100%'
+        }).on('change', function() {
+          updateWaBlastRecipientCount();
+        });
+      }
+    }
 
     function populateInstitutionFilter(doctors) {
       const select = document.getElementById('institutionFilter');
@@ -651,6 +674,9 @@
       select.innerHTML = html;
       if (currentVal && Array.from(select.options).some(o => o.value === currentVal)) {
         select.value = currentVal;
+      }
+      if (window.jQuery && $.fn.select2) {
+        $(select).trigger('change.select2');
       }
     }
 
@@ -780,8 +806,34 @@
       }
 
       if (pageDoctors.length === 0) {
-        if (tbody) tbody.innerHTML = '<tr><td colspan="9" class="py-12 text-center text-slate-400 font-medium">Tidak ada dokter yang cocok dengan kriteria filter.</td></tr>';
-        if (mobileContainer) mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada dokter yang cocok dengan kriteria filter.</div>';
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="9" class="py-14 px-4 text-center">
+                <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                  <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                    <span class="material-symbols-outlined text-2xl">person_off</span>
+                  </div>
+                  <div class="font-extrabold text-sm text-slate-800">Tidak Ada Data Dokter</div>
+                  <p class="text-xs text-slate-500 leading-relaxed">
+                    Tidak ditemukan dokter yang sesuai dengan kriteria filter atau pencarian saat ini.
+                  </p>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+        if (mobileContainer) {
+          mobileContainer.innerHTML = `
+            <div class="py-12 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2 max-w-xs mx-auto">
+                <span class="material-symbols-outlined text-3xl text-slate-300">person_off</span>
+                <div class="font-extrabold text-xs text-slate-800">Tidak Ada Data Dokter</div>
+                <p class="text-[11px] text-slate-500">Tidak ada dokter yang cocok dengan filter saat ini.</p>
+              </div>
+            </div>
+          `;
+        }
       } else {
         // Desktop / Tablet Rows (9 Kolom sesuai referensi gambar)
         if (tbody) {
@@ -1152,7 +1204,12 @@
       }
 
       const modal = document.getElementById('addDoctorModal');
-      if (modal) modal.classList.remove('hidden');
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (window.jQuery && $.fn.select2) {
+          $('#newDocProv, #newDocInst, #newDocAssignedTo').trigger('change.select2');
+        }
+      }
     }
 
     function closeAddDoctorModal() {

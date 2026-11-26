@@ -678,10 +678,10 @@
           <label class="block font-bold text-slate-700">Pilih PIC Admin Baru</label>
           <select id="modalChangePicSelect" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
             @php
-              $adminPogiList = \Illuminate\Support\Facades\DB::table('users')->where('role', 'ADMIN_POGI')->orderBy('full_name')->get();
+              $adminPogiList = \Illuminate\Support\Facades\DB::table('users')->whereIn('role', ['ADMIN_POGI', 'ADMIN_PUSAT', 'SUPER_ADMIN', 'Admin POGI', 'Admin Pusat', 'Super Admin'])->orderBy('full_name')->get();
             @endphp
             @foreach($adminPogiList as $adm)
-              <option value="{{ $adm->id }}">{{ $adm->full_name }} (Admin POGI)</option>
+              <option value="{{ $adm->id }}">{{ $adm->full_name }} ({{ $adm->role }})</option>
             @endforeach
           </select>
           <p class="text-[11px] text-slate-400">Pengalihan akan dicatat secara otomatis dalam log audit sistem.</p>
@@ -853,6 +853,20 @@
       if (activeDoctor) {
         renderDoctorDetails(activeDoctor);
         renderDoctorRepositoryAndDetector(activeDoctor.id);
+      }
+
+      if (window.jQuery && $.fn.select2) {
+        $('#newDocCategory').select2({
+          dropdownParent: $('#addDocumentModal'),
+          width: '100%'
+        }).on('change', function() {
+          autoSuggestSkpByCategory(this.value);
+        });
+
+        $('#modalChangePicSelect').select2({
+          dropdownParent: $('#changePicModal'),
+          width: '100%'
+        });
       }
 
       const dz = document.getElementById('dropZoneContainer');

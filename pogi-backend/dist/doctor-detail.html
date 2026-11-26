@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="5zr7amx2bI2eIz7ztCwoXg0ivHFtOSqrGKhytSq2">
+  <meta name="csrf-token" content="xnNtlLLRMiIdumlX0KvaXwRB7xCzmd5mM2Tsk8ub">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -1024,7 +1024,8 @@
         <div class="space-y-1.5 text-xs">
           <label class="block font-bold text-slate-700">Pilih PIC Admin Baru</label>
           <select id="modalChangePicSelect" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]">
-                                  </select>
+                                      <option value="14eac2f0-bb8c-4771-8c8d-8de6355003af">Dian Imas (SUPER_ADMIN)</option>
+                      </select>
           <p class="text-[11px] text-slate-400">Pengalihan akan dicatat secara otomatis dalam log audit sistem.</p>
         </div>
       </div>
@@ -1188,6 +1189,20 @@
       if (activeDoctor) {
         renderDoctorDetails(activeDoctor);
         renderDoctorRepositoryAndDetector(activeDoctor.id);
+      }
+
+      if (window.jQuery && $.fn.select2) {
+        $('#newDocCategory').select2({
+          dropdownParent: $('#addDocumentModal'),
+          width: '100%'
+        }).on('change', function() {
+          autoSuggestSkpByCategory(this.value);
+        });
+
+        $('#modalChangePicSelect').select2({
+          dropdownParent: $('#changePicModal'),
+          width: '100%'
+        });
       }
 
       const dz = document.getElementById('dropZoneContainer');
@@ -1829,7 +1844,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': '5zr7amx2bI2eIz7ztCwoXg0ivHFtOSqrGKhytSq2',
+          'X-CSRF-TOKEN': 'xnNtlLLRMiIdumlX0KvaXwRB7xCzmd5mM2Tsk8ub',
           'Accept': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -1905,7 +1920,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': '5zr7amx2bI2eIz7ztCwoXg0ivHFtOSqrGKhytSq2',
+          'X-CSRF-TOKEN': 'xnNtlLLRMiIdumlX0KvaXwRB7xCzmd5mM2Tsk8ub',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ assigned_pic_id: newAdminId })
@@ -1939,7 +1954,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': '5zr7amx2bI2eIz7ztCwoXg0ivHFtOSqrGKhytSq2',
+          'X-CSRF-TOKEN': 'xnNtlLLRMiIdumlX0KvaXwRB7xCzmd5mM2Tsk8ub',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ status: newStatus })
@@ -2867,7 +2882,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': '5zr7amx2bI2eIz7ztCwoXg0ivHFtOSqrGKhytSq2',
+          'X-CSRF-TOKEN': 'xnNtlLLRMiIdumlX0KvaXwRB7xCzmd5mM2Tsk8ub',
           'Accept': 'application/json'
         }
       })

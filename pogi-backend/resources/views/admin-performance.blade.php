@@ -170,14 +170,16 @@
         </div>
 
         <!-- Table Filters -->
-        <div class="flex items-center gap-2">
-          <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="Cari admin..." class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700 w-44">
-          <select id="adminTierFilter" onchange="filterAdminTable()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700">
-            <option value="ALL">Semua Tier Kinerja</option>
-            <option value="Top Performer">Top Performer 🌟</option>
-            <option value="Good Performer">Good Performer ✅</option>
-            <option value="Needs Attention">Needs Attention ⚠️</option>
-          </select>
+        <div class="flex items-center gap-2.5">
+          <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="Cari admin..." class="px-3.5 py-2 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#16b3ac] focus:ring-2 focus:ring-[#16b3ac]/15 w-48 shadow-2xs transition">
+          <div class="w-52">
+            <select id="adminTierFilter" class="w-full">
+              <option value="ALL">Semua Tier Kinerja</option>
+              <option value="Top Performer">Top Performer 🌟</option>
+              <option value="Good Performer">Good Performer ✅</option>
+              <option value="Needs Attention">Needs Attention ⚠️</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -347,7 +349,29 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       loadPerformanceData();
+      initAdminSelect2();
     });
+
+    function initAdminSelect2() {
+      if (window.jQuery && $.fn.select2) {
+        $('#adminTierFilter').select2({
+          minimumResultsForSearch: Infinity,
+          width: '100%'
+        }).on('change', function() {
+          filterAdminTable();
+        });
+
+        $('#rebalanceDoctorSelect').select2({
+          dropdownParent: $('#workloadRebalanceModal'),
+          width: '100%'
+        });
+
+        $('#rebalanceTargetAdminSelect').select2({
+          dropdownParent: $('#workloadRebalanceModal'),
+          width: '100%'
+        });
+      }
+    }
 
     function loadPerformanceData() {
       performanceData = {
@@ -372,6 +396,16 @@
     function renderSlaBars(admins) {
       const container = document.getElementById('slaBarContainer');
       if (!container) return;
+
+      if (!admins || admins.length === 0) {
+        container.innerHTML = `
+          <div class="py-10 text-center flex flex-col items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-3xl text-slate-300">speed</span>
+            <span class="text-xs font-semibold text-slate-400">Belum ada data perbandingan SLA admin.</span>
+          </div>
+        `;
+        return;
+      }
 
       container.innerHTML = admins.map(a => {
         // Percentage of 24 hours SLA limit
@@ -411,6 +445,16 @@
       const container = document.getElementById('workloadMiniList');
       if (!container) return;
 
+      if (!admins || admins.length === 0) {
+        container.innerHTML = `
+          <div class="py-10 text-center flex flex-col items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-3xl text-slate-300">group_off</span>
+            <span class="text-xs font-semibold text-slate-400">Belum ada data kapasitas admin.</span>
+          </div>
+        `;
+        return;
+      }
+
       container.innerHTML = admins.map(a => {
         return `
           <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100 text-xs">
@@ -430,6 +474,25 @@
     function renderLeaderboardTable(admins) {
       const tbody = document.getElementById('adminLeaderboardBody');
       if (!tbody) return;
+
+      if (!admins || admins.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="py-14 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-2xl">person_off</span>
+                </div>
+                <div class="font-extrabold text-sm text-slate-800">Belum Ada Data Personil Admin</div>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Tidak ditemukan personil admin yang sesuai dengan kriteria pencarian atau filter tier kinerja yang dipilih.
+                </p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
 
       tbody.innerHTML = admins.map((a, idx) => {
         const rank = idx + 1;
@@ -588,6 +651,11 @@
       adminSelect.innerHTML = admins.map(a => `
         <option value="${a.id}">${a.name} (${a.doctorCount || 0} Dokter)</option>
       `).join('');
+
+      if (window.jQuery && $.fn.select2) {
+        $(docSelect).trigger('change.select2');
+        $(adminSelect).trigger('change.select2');
+      }
     }
 
     function openWorkloadRebalanceModal(preferredAdminName) {
@@ -597,7 +665,10 @@
         const docSelect = document.getElementById('rebalanceDoctorSelect');
         const doctors = LIVE_SERVER_DOCTORS || [];
         const docFromAdmin = doctors.find(d => d.assignedTo === preferredAdminName);
-        if (docFromAdmin) docSelect.value = docFromAdmin.id;
+        if (docFromAdmin) {
+          docSelect.value = docFromAdmin.id;
+          if (window.jQuery && $.fn.select2) $(docSelect).trigger('change.select2');
+        }
       }
       document.getElementById('workloadRebalanceModal').classList.remove('hidden');
     }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="5zr7amx2bI2eIz7ztCwoXg0ivHFtOSqrGKhytSq2">
+  <meta name="csrf-token" content="xnNtlLLRMiIdumlX0KvaXwRB7xCzmd5mM2Tsk8ub">
   <title>POGI SKP Tracker - Monitoring Kepatuhan 38 Provinsi</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -622,7 +622,21 @@
       const pageProvinces = filtered.slice(start, end);
 
       if (pageProvinces.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="py-12 text-center text-slate-400 font-medium">Tidak ada provinsi yang sesuai dengan filter pencarian.</td></tr>';
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-14 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-2xl">location_off</span>
+                </div>
+                <div class="font-extrabold text-sm text-slate-800">Tidak Ada Wilayah Cabang</div>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Tidak ditemukan provinsi atau cabang POGI yang cocok dengan kriteria pencarian dan filter saat ini.
+                </p>
+              </div>
+            </td>
+          </tr>
+        `;
       } else {
         tbody.innerHTML = pageProvinces.map((p, idx) => {
           let statusBadge = '';

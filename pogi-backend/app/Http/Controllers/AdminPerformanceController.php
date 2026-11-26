@@ -15,9 +15,9 @@ class AdminPerformanceController extends Controller
      */
     public function index(Request $request): View
     {
-        // Ambil seluruh user dengan role ADMIN_POGI
+        // Ambil seluruh user dengan peran operasional/admin (ADMIN_POGI, ADMIN_PUSAT, SUPER_ADMIN)
         $adminUsers = DB::table('users')
-            ->where('role', 'ADMIN_POGI')
+            ->whereIn('role', ['ADMIN_POGI', 'ADMIN_PUSAT', 'SUPER_ADMIN', 'Admin POGI', 'Admin Pusat', 'Super Admin'])
             ->orderBy('full_name')
             ->get();
 
@@ -39,14 +39,18 @@ class AdminPerformanceController extends Controller
 
         foreach ($adminUsers as $idx => $admin) {
             // 1. Hitung dokter binaan di bawah admin ini dari tabel doctors
-            $docStats = DB::table('doctors')
-                ->where('assigned_pic_id', $admin->id)
-                ->whereNull('deleted_at')
-                ->selectRaw('
+            $docStatsQuery = DB::table('doctors')->whereNull('deleted_at');
+            $docStatsQuery->where(function ($q) use ($admin, $adminUsers) {
+                $q->where('assigned_pic_id', $admin->id);
+                if ($adminUsers->count() === 1 || in_array($admin->role, ['SUPER_ADMIN', 'Super Admin'])) {
+                    $q->orWhereNull('assigned_pic_id');
+                }
+            });
+
+            $docStats = $docStatsQuery->selectRaw('
                     COUNT(*) as total_docs,
                     SUM(CASE WHEN status = "COMPLETE" THEN 1 ELSE 0 END) as complete_docs
-                ')
-                ->first();
+                ')->first();
 
             $totalDocs = (int) ($docStats->total_docs ?? 0);
             $completeDocs = (int) ($docStats->complete_docs ?? 0);
@@ -142,7 +146,7 @@ class AdminPerformanceController extends Controller
                 'avatar' => $avatar,
                 'avatarBg' => $avatarBg,
                 'initials' => $avatar,
-                'role' => 'Admin POGI Tim Data Pusat',
+                'role' => in_array($admin->role, ['SUPER_ADMIN', 'Super Admin']) ? 'Super Admin Operasional POGI' : 'Admin POGI Tim Data Pusat',
                 'doctorCount' => $totalDocs,
                 'completeCount' => $completeDocs,
                 'complianceRate' => $complianceRate,

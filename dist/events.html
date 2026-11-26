@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="5zr7amx2bI2eIz7ztCwoXg0ivHFtOSqrGKhytSq2">
+  <meta name="csrf-token" content="xnNtlLLRMiIdumlX0KvaXwRB7xCzmd5mM2Tsk8ub">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -704,8 +704,34 @@
       const pageEvents = filtered.slice(start, end);
 
       if (pageEvents.length === 0) {
-        if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="py-12 text-center text-slate-400 font-medium">Tidak ada kegiatan yang ditemukan pada subbidang ini.</td></tr>';
-        if (mobileContainer) mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada data kegiatan.</div>';
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" class="py-14 px-4 text-center">
+                <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                  <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                    <span class="material-symbols-outlined text-2xl">event_busy</span>
+                  </div>
+                  <div class="font-extrabold text-sm text-slate-800">Tidak Ada Kegiatan SKP</div>
+                  <p class="text-xs text-slate-500 leading-relaxed">
+                    Tidak ditemukan kegiatan ilmiah atau event terakreditasi pada kriteria pencarian dan subbidang ini.
+                  </p>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+        if (mobileContainer) {
+          mobileContainer.innerHTML = `
+            <div class="py-10 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2 max-w-xs mx-auto">
+                <span class="material-symbols-outlined text-3xl text-slate-300">event_busy</span>
+                <div class="font-extrabold text-xs text-slate-800">Tidak Ada Kegiatan SKP</div>
+                <p class="text-[11px] text-slate-500">Tidak ada kegiatan yang ditemukan pada subbidang ini.</p>
+              </div>
+            </div>
+          `;
+        }
       } else {
         // Desktop Table Rows
         if (tbody) {

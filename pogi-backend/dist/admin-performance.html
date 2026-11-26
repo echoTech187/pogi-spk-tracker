@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="5zr7amx2bI2eIz7ztCwoXg0ivHFtOSqrGKhytSq2">
+  <meta name="csrf-token" content="xnNtlLLRMiIdumlX0KvaXwRB7xCzmd5mM2Tsk8ub">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -445,7 +445,7 @@
           <span class="material-symbols-outlined text-sky-600 text-xl">timer</span>
         </div>
         <div class="flex items-baseline gap-2">
-          <span id="kpiTeamSla" class="text-3xl font-black text-slate-900 font-mono">0 Jam</span>
+          <span id="kpiTeamSla" class="text-3xl font-black text-slate-900 font-mono">0.1 Jam</span>
           <span class="text-xs text-slate-400 font-medium">/ 24 Jam</span>
         </div>
         <div class="mt-2 flex items-center gap-1.5">
@@ -481,7 +481,7 @@
           <span class="material-symbols-outlined text-indigo-600 text-xl">task_alt</span>
         </div>
         <div class="flex items-baseline gap-2">
-          <span id="kpiTeamProcessed" class="text-3xl font-black text-slate-900 font-mono">0</span>
+          <span id="kpiTeamProcessed" class="text-3xl font-black text-slate-900 font-mono">1</span>
           <span class="text-xs text-slate-400 font-medium">Dokumen</span>
         </div>
         <div class="mt-2 flex items-center gap-1.5">
@@ -570,14 +570,16 @@
         </div>
 
         <!-- Table Filters -->
-        <div class="flex items-center gap-2">
-          <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="Cari admin..." class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700 w-44">
-          <select id="adminTierFilter" onchange="filterAdminTable()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700">
-            <option value="ALL">Semua Tier Kinerja</option>
-            <option value="Top Performer">Top Performer 🌟</option>
-            <option value="Good Performer">Good Performer ✅</option>
-            <option value="Needs Attention">Needs Attention ⚠️</option>
-          </select>
+        <div class="flex items-center gap-2.5">
+          <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="Cari admin..." class="px-3.5 py-2 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#16b3ac] focus:ring-2 focus:ring-[#16b3ac]/15 w-48 shadow-2xs transition">
+          <div class="w-52">
+            <select id="adminTierFilter" class="w-full">
+              <option value="ALL">Semua Tier Kinerja</option>
+              <option value="Top Performer">Top Performer 🌟</option>
+              <option value="Good Performer">Good Performer ✅</option>
+              <option value="Needs Attention">Needs Attention ⚠️</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -742,8 +744,8 @@
     <!-- Shared Scripts -->
   <script>
     const IS_SUPER_ADMIN = true;
-    const LIVE_SERVER_ADMINS = [];
-    const LIVE_SERVER_SUMMARY = {"avgTeamSla":0,"avgTeamApproval":0,"totalProcessedDocs":0,"totalAssignedDocs":1,"totalCompleteDocs":0,"teamComplianceRate":0};
+    const LIVE_SERVER_ADMINS = [{"id":"14eac2f0-bb8c-4771-8c8d-8de6355003af","name":"Dian Imas","displayName":"Dian","avatar":"DI","avatarBg":"bg-[#16b3ac] text-white","initials":"DI","role":"Super Admin Operasional POGI","doctorCount":1,"completeCount":0,"complianceRate":0,"processedDocs":1,"avgSla":0.1,"approvalRate":0,"rejections":0,"overallScore":35,"tier":"Needs Attention \u26a0\ufe0f","tierBadgeClass":"bg-amber-50 text-amber-800 border-amber-200","workloadStatus":"Under Capacity (3%)","workloadClass":"bg-sky-50 text-sky-700 border-sky-200"}];
+    const LIVE_SERVER_SUMMARY = {"avgTeamSla":0.1,"avgTeamApproval":0,"totalProcessedDocs":1,"totalAssignedDocs":1,"totalCompleteDocs":0,"teamComplianceRate":0};
     const LIVE_SERVER_DOCTORS = [{"id":"04680f57-b8b3-4873-898e-754974a29bb1","name":"dr. Budi Santoso, Sp.PD","strNumber":"32.73.100.2.21.0883","hospital":"Klinik Pratama Sehat Sentosa","status":"INCOMPLETE","assignedTo":null,"q4Credits":"0.00"}];
     const LIVE_SERVER_ACTIVITIES = [{"id":"72f74a89-e6eb-4a28-9206-d2687920518c","action":"CRON_TRIGGER_H7_REMINDER","details":"cron_scheduler","timestamp":"26 Nov 2026, 10.48","actor":"Dian Imas"},{"id":"20abb61f-c9ae-40e5-89df-acd20d2a4f7f","action":"CREATE_CATEGORY","details":"category","timestamp":"26 Nov 2026, 10.27","actor":"Admin POGI"},{"id":"71af3033-4ffb-442d-83cf-0c8c1e2be411","action":"CRON_TRIGGER_H7_REMINDER","details":"cron_scheduler","timestamp":"26 Nov 2026, 10.09","actor":"Dian Imas"},{"id":"b87aa670-1424-486c-91a8-dadfd03a48fd","action":"KEMENKES_PORTAL_ACCESS","details":"kemenkes_portal","timestamp":"26 Nov 2026, 10.09","actor":"Dian Imas"},{"id":"fce5e6a8-251a-44c3-89d5-3ae88cbb8502","action":"VERIFY_DOCTOR_CREDITS","details":"doctors","timestamp":"26 Nov 2026, 10.09","actor":"Dian Imas"},{"id":"7200b8d1-762d-415c-895c-4af987b232f4","action":"SEND_FOLLOW_UP_NOTIFICATION","details":"wa_blast_campaigns","timestamp":"26 Nov 2026, 10.09","actor":"Admin POGI"},{"id":"d174162d-9652-4bb2-a695-33a900d9d7fa","action":"CREATE_DOCTOR","details":"doctor","timestamp":"25 Nov 2026, 17.32","actor":"Admin POGI"},{"id":"3a108b63-1f9c-4561-88b9-401e2579be66","action":"UPDATE_INSTITUTION","details":"institution","timestamp":"25 Nov 2026, 17.24","actor":"Dian Imas"},{"id":"451ea37e-b87e-435e-8a3b-46bc5172a0f1","action":"UPDATE_INSTITUTION","details":"institution","timestamp":"25 Nov 2026, 17.24","actor":"Dian Imas"},{"id":"1bd81024-347f-429f-84ec-be3131030b99","action":"UPDATE_INSTITUTION","details":"institution","timestamp":"25 Nov 2026, 17.11","actor":"Dian Imas"},{"id":"de3e8b1e-cb7b-49a0-8d98-003d467e871d","action":"CREATE_INSTITUTION","details":"institution","timestamp":"25 Nov 2026, 16.45","actor":"Dian Imas"},{"id":"8bd9eff0-9f16-4aca-adcb-28069dcf17fb","action":"CREATE_EVENT","details":"event","timestamp":"25 Nov 2026, 16.24","actor":"Dian Imas"},{"id":"ac579e77-48b6-4800-875f-25010f6e96e3","action":"DELETE_USER","details":"user","timestamp":"25 Nov 2026, 16.14","actor":"Dian Imas"},{"id":"bd21d0ea-415d-4ee6-94e0-82c9f6485059","action":"UPDATE_USER","details":"user","timestamp":"25 Nov 2026, 16.14","actor":"Dian Imas"},{"id":"4d97629b-798b-42ad-88de-e2eb220f8d3f","action":"CREATE_USER","details":"user","timestamp":"25 Nov 2026, 16.14","actor":"Dian Imas"},{"id":"531a6ab3-31ce-42ca-950f-42ec4c602819","action":"UPDATE_USER","details":"user","timestamp":"25 Nov 2026, 15.37","actor":"Dian Imas"},{"id":"672d5729-7c7d-4247-9ddb-09c4ef5a351d","action":"UPDATE_USER","details":"user","timestamp":"25 Nov 2026, 15.27","actor":"Dian Imas"},{"id":"c4673dc0-df03-45af-92a0-e95485e25d52","action":"UPDATE_USER","details":"user","timestamp":"25 Nov 2026, 15.19","actor":"Dian Imas"},{"id":"96ca9ba9-55a6-4e44-89be-ca6f66808d30","action":"UPDATE_USER","details":"user","timestamp":"25 Nov 2026, 14.56","actor":"Dian Imas"},{"id":"c291f701-6086-4749-8f34-81258cf49df1","action":"UPDATE_USER","details":"user","timestamp":"25 Nov 2026, 14.56","actor":"Dian Imas"},{"id":"018a16cb-90e1-44b4-a39f-e7545693ab52","action":"UPDATE_USER","details":"user","timestamp":"25 Nov 2026, 14.49","actor":"Dian Imas"},{"id":"3b561978-fdd4-4add-aafb-9c69d2b0583f","action":"DELETE_EVENT","details":"event","timestamp":"25 Nov 2026, 14.39","actor":"Dian Imas"},{"id":"ea433862-8a55-477f-8fee-e768b700bbca","action":"UPDATE_EVENT","details":"event","timestamp":"25 Nov 2026, 14.39","actor":"Dian Imas"},{"id":"653ea2ef-8f46-4520-8762-23710e54dad7","action":"CREATE_EVENT","details":"event","timestamp":"25 Nov 2026, 14.38","actor":"Dian Imas"},{"id":"a2ec99f9-d87d-4928-8702-2d8765e1c947","action":"DELETE_CATEGORY","details":"category","timestamp":"25 Nov 2026, 14.35","actor":"Dian Imas"},{"id":"7f1786dc-1e16-49cd-a129-f090ceeb6990","action":"CREATE_CATEGORY","details":"category","timestamp":"25 Nov 2026, 14.35","actor":"Dian Imas"},{"id":"5f18bdff-d71e-433a-83b9-cfc21d7a3623","action":"DELETE_CATEGORY","details":"category","timestamp":"25 Nov 2026, 14.35","actor":"Dian Imas"},{"id":"b21ecdae-7e07-4fe7-b6bc-a0effd3e9a0d","action":"DELETE_USER","details":"user","timestamp":"25 Nov 2026, 14.35","actor":"Dian Imas"},{"id":"31389b70-60d2-463a-9883-4f3d41cc7455","action":"DELETE_DOCTOR","details":"doctor","timestamp":"25 Nov 2026, 14.35","actor":"Dian Imas"},{"id":"26dd9362-fd33-4b64-a926-f9b6b1f28ee3","action":"DELETE_EVENT","details":"event","timestamp":"25 Nov 2026, 14.35","actor":"Dian Imas"}];
     window.LIVE_SERVER_DOCTORS = LIVE_SERVER_DOCTORS;
@@ -752,7 +754,29 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       loadPerformanceData();
+      initAdminSelect2();
     });
+
+    function initAdminSelect2() {
+      if (window.jQuery && $.fn.select2) {
+        $('#adminTierFilter').select2({
+          minimumResultsForSearch: Infinity,
+          width: '100%'
+        }).on('change', function() {
+          filterAdminTable();
+        });
+
+        $('#rebalanceDoctorSelect').select2({
+          dropdownParent: $('#workloadRebalanceModal'),
+          width: '100%'
+        });
+
+        $('#rebalanceTargetAdminSelect').select2({
+          dropdownParent: $('#workloadRebalanceModal'),
+          width: '100%'
+        });
+      }
+    }
 
     function loadPerformanceData() {
       performanceData = {
@@ -777,6 +801,16 @@
     function renderSlaBars(admins) {
       const container = document.getElementById('slaBarContainer');
       if (!container) return;
+
+      if (!admins || admins.length === 0) {
+        container.innerHTML = `
+          <div class="py-10 text-center flex flex-col items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-3xl text-slate-300">speed</span>
+            <span class="text-xs font-semibold text-slate-400">Belum ada data perbandingan SLA admin.</span>
+          </div>
+        `;
+        return;
+      }
 
       container.innerHTML = admins.map(a => {
         // Percentage of 24 hours SLA limit
@@ -816,6 +850,16 @@
       const container = document.getElementById('workloadMiniList');
       if (!container) return;
 
+      if (!admins || admins.length === 0) {
+        container.innerHTML = `
+          <div class="py-10 text-center flex flex-col items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-3xl text-slate-300">group_off</span>
+            <span class="text-xs font-semibold text-slate-400">Belum ada data kapasitas admin.</span>
+          </div>
+        `;
+        return;
+      }
+
       container.innerHTML = admins.map(a => {
         return `
           <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100 text-xs">
@@ -835,6 +879,25 @@
     function renderLeaderboardTable(admins) {
       const tbody = document.getElementById('adminLeaderboardBody');
       if (!tbody) return;
+
+      if (!admins || admins.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="py-14 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-2xl">person_off</span>
+                </div>
+                <div class="font-extrabold text-sm text-slate-800">Belum Ada Data Personil Admin</div>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Tidak ditemukan personil admin yang sesuai dengan kriteria pencarian atau filter tier kinerja yang dipilih.
+                </p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
 
       tbody.innerHTML = admins.map((a, idx) => {
         const rank = idx + 1;
@@ -993,6 +1056,11 @@
       adminSelect.innerHTML = admins.map(a => `
         <option value="${a.id}">${a.name} (${a.doctorCount || 0} Dokter)</option>
       `).join('');
+
+      if (window.jQuery && $.fn.select2) {
+        $(docSelect).trigger('change.select2');
+        $(adminSelect).trigger('change.select2');
+      }
     }
 
     function openWorkloadRebalanceModal(preferredAdminName) {
@@ -1002,7 +1070,10 @@
         const docSelect = document.getElementById('rebalanceDoctorSelect');
         const doctors = LIVE_SERVER_DOCTORS || [];
         const docFromAdmin = doctors.find(d => d.assignedTo === preferredAdminName);
-        if (docFromAdmin) docSelect.value = docFromAdmin.id;
+        if (docFromAdmin) {
+          docSelect.value = docFromAdmin.id;
+          if (window.jQuery && $.fn.select2) $(docSelect).trigger('change.select2');
+        }
       }
       document.getElementById('workloadRebalanceModal').classList.remove('hidden');
     }
@@ -1018,7 +1089,7 @@
       if (!docId || !targetAdminId) return;
 
       try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '5zr7amx2bI2eIz7ztCwoXg0ivHFtOSqrGKhytSq2';
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'xnNtlLLRMiIdumlX0KvaXwRB7xCzmd5mM2Tsk8ub';
         const res = await fetch(`/doctors/${docId}/assign-pic`, {
           method: 'POST',
           headers: {
