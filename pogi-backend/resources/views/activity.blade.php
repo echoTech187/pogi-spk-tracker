@@ -51,61 +51,6 @@
       </div>
     </div>
 
-    <!-- MESIN OTOMASI PENGINGAT (CRON JOB SCHEDULER H-7 & H-2 - RULES.md BAB 3.2.A) -->
-    <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-900/90 to-teal-900 text-white shadow-xl space-y-4">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-emerald-300 shrink-0">
-            <span class="material-symbols-outlined text-2xl">schedule_send</span>
-          </div>
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <h3 class="font-black text-sm text-white">Mesin Otomasi Pengingat &amp; Cron Job Scheduler</h3>
-              <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-black uppercase flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Worker Aktif
-              </span>
-            </div>
-            <p class="text-xs text-emerald-100/70 mt-0.5">
-              Eksekusi otomatis tugas terjadwal H-7 &amp; H-2 sebelum Cutoff 1 Des 2026 (00:00 WIB) sesuai regulasi RULES.md Bab 3.2.A
-            </p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2 shrink-0 flex-wrap">
-          <button type="button" onclick="runCronJobSimulation('H-7')" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
-            <span class="material-symbols-outlined text-sm text-emerald-300">play_circle</span>
-            <span>Trigger H-7</span>
-          </button>
-          <button type="button" onclick="runCronJobSimulation('H-2')" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
-            <span class="material-symbols-outlined text-sm text-amber-300">warning</span>
-            <span>Trigger H-2</span>
-          </button>
-          <button type="button" onclick="refreshActivityLog()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
-            <span class="material-symbols-outlined text-sm text-slate-200" id="refreshIcon">refresh</span>
-            <span>Segarkan</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Schedule & Status Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10 text-xs">
-        <div class="p-3 rounded-xl bg-white/5 border border-white/10">
-          <div class="text-[10px] text-emerald-200/60 font-bold uppercase tracking-wider">Jadwal Cutoff Bulanan</div>
-          <div class="text-sm font-black text-white mt-0.5">01 Des 2026 &bull; 00:00 WIB</div>
-          <div class="text-[10px] text-emerald-100/60 mt-0.5">Kunci data &amp; arsip laporan bulanan</div>
-        </div>
-        <div class="p-3 rounded-xl bg-white/5 border border-white/10">
-          <div class="text-[10px] text-emerald-200/60 font-bold uppercase tracking-wider">Next Trigger: Pengingat Rutin H-7</div>
-          <div class="text-sm font-black text-emerald-300 mt-0.5">24 Nov 2026 &bull; 00:00 WIB</div>
-          <div class="text-[10px] text-emerald-100/60 mt-0.5">Sasaran: {{ $metrics['incomplete_doctors'] ?? 0 }} Dokter Incomplete (Nasional)</div>
-        </div>
-        <div class="p-3 rounded-xl bg-white/5 border border-white/10">
-          <div class="text-[10px] text-amber-200/60 font-bold uppercase tracking-wider">Next Trigger: Deadline Kritis H-2</div>
-          <div class="text-sm font-black text-amber-300 mt-0.5">29 Nov 2026 &bull; 00:00 WIB</div>
-          <div class="text-[10px] text-amber-100/60 mt-0.5">Eskalasi final sisa kekurangan kredit</div>
-        </div>
-      </div>
-    </div>
-
     <!-- Tabel Log Aktivitas -->
     <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-3">
@@ -135,7 +80,12 @@
     <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
       <div class="p-4 border-b border-slate-100 flex items-center justify-between gap-3">
         <h3 class="font-extrabold text-sm text-slate-900">Riwayat Transaksi &amp; Verifikasi Kredit SKP</h3>
-        <span id="activityLogCounter" class="text-xs text-slate-400 font-medium">Dicatat otomatis oleh sistem</span>
+        <div class="flex items-center gap-2">
+          <span id="activityLogCounter" class="text-xs text-slate-400 font-medium">Dicatat otomatis oleh sistem</span>
+          <button type="button" onclick="refreshActivityLog()" class="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-800 border border-slate-200 text-xs transition flex items-center justify-center cursor-pointer" title="Segarkan Log Aktivitas">
+            <span class="material-symbols-outlined text-[16px]" id="refreshIcon">refresh</span>
+          </button>
+        </div>
       </div>
 
       <div class="hidden md:block overflow-x-auto">
