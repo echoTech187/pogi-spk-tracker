@@ -75,6 +75,9 @@ Route::middleware(['auth', 'active'])->group(function () {
         ->middleware('role:SUPER_ADMIN,ADMIN_POGI');
 
     // 2.5 Ubah & Tentukan PIC Pengelola Dokter (Eksklusif SUPER_ADMIN - Bu Dian, Bp Ade, Bp Ircham)
+    Route::post('/doctors/batch-assign-pic', [DoctorController::class, 'batchAssignPic'])
+        ->name('doctors.batch-assign-pic')
+        ->middleware('role:SUPER_ADMIN');
     Route::post('/doctors/{id}/assign-pic', [DoctorController::class, 'assignPic'])
         ->name('doctors.assign-pic')
         ->middleware('role:SUPER_ADMIN');

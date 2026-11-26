@@ -23,8 +23,8 @@
       <div class="flex items-center gap-2 shrink-0 flex-wrap">
         @if(Auth::user()?->role === 'SUPER_ADMIN')
         <button type="button" onclick="openWorkloadRebalanceModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-operational cursor-pointer active:scale-95">
-          <span class="material-symbols-outlined text-sm text-emerald-400">balance</span>
-          <span>Redistribusi Beban Kerja</span>
+          <span class="material-symbols-outlined text-sm text-emerald-400">tune</span>
+          <span>Redistribusi Manual</span>
         </button>
         @endif
         <button type="button" onclick="exportKpiReport()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95">
@@ -151,6 +151,13 @@
             <!-- Rendered via JS -->
           </div>
         </div>
+
+        @if(Auth::user()?->role === 'SUPER_ADMIN')
+        <button type="button" onclick="openAutoBalanceModal()" class="w-full mt-4 py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-200 rbac-operational cursor-pointer shadow-2xs">
+          <span class="material-symbols-outlined text-sm">auto_fix_high</span>
+          <span>Auto-Balance &amp; Rekomendasi Kuota</span>
+        </button>
+        @endif
       </div>
     </div>
 
@@ -316,6 +323,148 @@
         <button type="button" onclick="submitRebalance()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs transition cursor-pointer">
           <span class="material-symbols-outlined text-sm">check</span>
           <span>Simpan &amp; Alihkan Dokter</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Alihkan Dokter Asuhan Spesifik Admin (Targeted Transfer Modal) -->
+  <div id="adminDoctorTransferModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+            <span class="material-symbols-outlined text-xl">swap_horiz</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">Alihkan Dokter Asuhan: <span id="transferOriginAdminName">-</span></h3>
+            <p class="text-xs text-slate-500 truncate">Pindahkan tanggung jawab verifikasi dokter binaan ke personil admin lain</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAdminDoctorTransferModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 flex-1 overflow-y-auto space-y-4 text-xs bg-white min-h-0">
+        <!-- Ringkasan Admin Asal -->
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-xs">
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Admin Asal</span>
+            <span id="transferOriginAdminFull" class="font-bold text-slate-900 text-sm">-</span>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Beban Dokter Saat Ini</span>
+            <span id="transferOriginDocCount" class="font-black text-[#16b3ac] font-mono text-sm">0 Dokter</span>
+          </div>
+        </div>
+
+        <!-- Target Admin Dropdown -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+            <span>Pilih Admin Penerima Tugas Baru <span class="text-rose-500 font-bold">*</span></span>
+            <span class="text-[10px] text-slate-400 font-normal">Kapasitas aman: &le; 40 dokter</span>
+          </label>
+          <select id="transferTargetAdminSelect" onchange="updateTransferDocCount()" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+            <!-- Populated via JS -->
+          </select>
+        </div>
+
+        <!-- Daftar Dokter Asuhan (Checklist) -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="font-bold text-slate-700 text-xs flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span>
+              <span>Pilih Dokter yang Akan Dipindahkan:</span>
+            </label>
+            <label class="inline-flex items-center gap-1.5 font-bold text-xs text-[#16b3ac] hover:text-[#129993] cursor-pointer">
+              <input type="checkbox" id="transferSelectAllDocs" onchange="toggleTransferSelectAll(this)" class="w-3.5 h-3.5 rounded text-[#16b3ac] border-slate-300 focus:ring-[#16b3ac]" />
+              <span>Pilih Semua</span>
+            </label>
+          </div>
+          <div id="transferDocChecklistContainer" class="max-h-56 overflow-y-auto border border-slate-200/80 rounded-2xl bg-white shadow-2xs divide-y divide-slate-100 p-1">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-[11px] text-emerald-900 leading-relaxed">
+          <strong>Pencatatan Otomatis:</strong> Seluruh mutasi dokter binaan akan langsung tersinkronisasi ke basis data dan dicatat pada Jejak Audit Sistem.
+        </div>
+      </div>
+
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeAdminDoctorTransferModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">Batal</button>
+        <button type="button" id="btnSubmitDoctorTransfer" onclick="submitDoctorTransfer()" disabled class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <span class="material-symbols-outlined text-sm">swap_horiz</span>
+          <span id="btnSubmitTransferText">Alihkan (0) Dokter Terpilih</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: Auto-Balance & Rekomendasi Kuota Cerdas -->
+  <div id="autoBalanceModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+            <span class="material-symbols-outlined text-xl">auto_fix_high</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">Rekomendasi Auto-Balance Beban Kerja</h3>
+            <p class="text-xs text-slate-500 truncate">Algoritma pemerataan kuota dokter asuhan tim admin berbasis SLA &amp; kapasitas</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAutoBalanceModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 flex-1 overflow-y-auto space-y-4 text-xs bg-white min-h-0">
+        <!-- Highlight Status Beban Tim -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-center shadow-2xs">
+            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Dokter Binaan</div>
+            <div id="autoBalanceTotalDocs" class="text-lg font-black text-slate-900 mt-0.5 font-mono">0 Dokter</div>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-center shadow-2xs">
+            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Jumlah Admin Aktif</div>
+            <div id="autoBalanceAdminCount" class="text-lg font-black text-slate-900 mt-0.5 font-mono">0 Admin</div>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100/90 text-center shadow-2xs">
+            <div class="text-[10px] text-emerald-700 font-bold uppercase tracking-wider">Target Ideal Kuota</div>
+            <div class="text-lg font-black text-[#16b3ac] mt-0.5 font-mono">35 - 40 / Admin</div>
+          </div>
+        </div>
+
+        <!-- Analysis Result Card -->
+        <div id="autoBalanceAnalysisCard" class="p-4 rounded-2xl border transition">
+          <!-- Populated dynamically via JS: status seimbang vs overload -->
+        </div>
+
+        <!-- Proposed Rebalancing Actions List -->
+        <div class="space-y-2">
+          <h4 class="font-extrabold text-slate-800 text-xs flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span>Rencana Alokasi Penyeimbangan Disarankan</span>
+            <span id="autoBalancePlanCount" class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold">0 Aksi Disarankan</span>
+          </h4>
+          <div id="autoBalancePlanContainer" class="border border-slate-200/80 rounded-2xl bg-white shadow-2xs divide-y divide-slate-100 max-h-56 overflow-y-auto p-1">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeAutoBalanceModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">Tutup</button>
+        <button type="button" id="btnExecuteAutoBalance" onclick="executeAutoBalance()" disabled class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <span class="material-symbols-outlined text-sm">auto_fix_high</span>
+          <span id="btnExecuteAutoBalanceText">Terapkan Penyeimbangan Otomatis</span>
         </button>
       </div>
     </div>
@@ -532,10 +681,18 @@
               </div>
             </td>
             <td class="py-3 px-3 text-center">
-              <button type="button" onclick="showAdminDetailModal('${a.id}')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition inline-flex items-center gap-1 cursor-pointer">
-                <span class="material-symbols-outlined text-xs">visibility</span>
-                <span>Rincian</span>
-              </button>
+              <div class="inline-flex items-center gap-1.5">
+                <button type="button" onclick="showAdminDetailModal('${a.id}')" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition inline-flex items-center gap-1 cursor-pointer">
+                  <span class="material-symbols-outlined text-xs">visibility</span>
+                  <span>Rincian</span>
+                </button>
+                ${IS_SUPER_ADMIN ? `
+                <button type="button" onclick="openAdminDoctorTransferModal('${a.id}')" class="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition inline-flex items-center gap-1 border border-emerald-200/80 cursor-pointer shadow-2xs">
+                  <span class="material-symbols-outlined text-xs">swap_horiz</span>
+                  <span>Alihkan Tugas</span>
+                </button>
+                ` : ''}
+              </div>
             </td>
           </tr>
         `;
@@ -697,6 +854,344 @@
         }
       } catch (err) {
         showToast('Terjadi kesalahan koneksi server', 'error');
+      }
+    }
+
+    // ==========================================
+    // OPTION A: Alihkan Dokter Asuhan Spesifik Admin (Targeted Transfer)
+    // ==========================================
+    let currentTransferOriginAdminId = null;
+    let currentTransferSelectedDocIds = [];
+
+    function openAdminDoctorTransferModal(adminId) {
+      if (!performanceData) return;
+      const admin = performanceData.admins.find(a => a.id === adminId);
+      if (!admin) return;
+
+      currentTransferOriginAdminId = adminId;
+      currentTransferSelectedDocIds = [];
+
+      document.getElementById('transferOriginAdminName').innerText = admin.displayName || admin.name;
+      document.getElementById('transferOriginAdminFull').innerText = `${admin.displayName || admin.name} (${admin.role || 'Admin'})`;
+
+      // Filter doctors assigned to this admin
+      const assignedDocs = (LIVE_SERVER_DOCTORS || []).filter(d => 
+        (d.assignedTo && d.assignedTo.toLowerCase().includes(admin.name.toLowerCase())) || 
+        (admin.displayName && d.assignedTo && d.assignedTo.toLowerCase().includes(admin.displayName.toLowerCase()))
+      );
+
+      document.getElementById('transferOriginDocCount').innerText = `${assignedDocs.length} Dokter`;
+
+      // Populate Target Admin Select (exclude current admin)
+      const targetSelect = document.getElementById('transferTargetAdminSelect');
+      const otherAdmins = (LIVE_SERVER_ADMINS || []).filter(a => a.id !== adminId);
+      if (otherAdmins.length === 0) {
+        targetSelect.innerHTML = `<option value="">Tidak ada admin lain yang tersedia</option>`;
+      } else {
+        targetSelect.innerHTML = otherAdmins.map(a => `
+          <option value="${a.id}">${a.name} (${a.doctorCount || 0} Dokter)</option>
+        `).join('');
+      }
+
+      // Populate doctor checklist
+      const checklistCont = document.getElementById('transferDocChecklistContainer');
+      const selectAllCb = document.getElementById('transferSelectAllDocs');
+      if (selectAllCb) selectAllCb.checked = false;
+
+      if (assignedDocs.length === 0) {
+        checklistCont.innerHTML = `
+          <div class="py-8 px-4 text-center">
+            <div class="flex flex-col items-center justify-center gap-2 max-w-xs mx-auto">
+              <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-2xs">
+                <span class="material-symbols-outlined text-xl">person_off</span>
+              </div>
+              <div class="font-extrabold text-xs text-slate-800">Tidak Ada Dokter Binaan</div>
+              <p class="text-[11px] text-slate-500">Admin ini saat ini tidak memiliki dokter asuhan yang dapat dialihkan.</p>
+            </div>
+          </div>
+        `;
+      } else {
+        checklistCont.innerHTML = assignedDocs.map(d => {
+          const isComplete = (d.status === 'Complete' || d.status === 'COMPLETE');
+          return `
+            <label class="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition cursor-pointer select-none">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <input type="checkbox" value="${d.id}" onchange="updateTransferDocCount()" class="transfer-doc-checkbox w-4 h-4 rounded text-[#16b3ac] focus:ring-[#16b3ac] border-slate-300 cursor-pointer">
+                <div class="min-w-0">
+                  <div class="font-bold text-slate-800 text-xs truncate">${d.name}</div>
+                  <div class="text-[10px] text-slate-400 font-mono truncate">STR: ${d.strNumber || '-'} &bull; ${d.hospital || '-'}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="font-mono font-bold text-slate-600 text-[11px]">${d.q4Credits || 0} SKP</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isComplete ? 'bg-emerald-100 text-[#16b3ac]' : 'bg-rose-50 text-rose-700'}">${d.status || 'Incomplete'}</span>
+              </div>
+            </label>
+          `;
+        }).join('');
+      }
+
+      updateTransferDocCount();
+      document.getElementById('adminDoctorTransferModal').classList.remove('hidden');
+    }
+
+    function closeAdminDoctorTransferModal() {
+      document.getElementById('adminDoctorTransferModal').classList.add('hidden');
+    }
+
+    function toggleTransferSelectAll(masterCb) {
+      const cbs = document.querySelectorAll('.transfer-doc-checkbox');
+      cbs.forEach(cb => cb.checked = masterCb.checked);
+      updateTransferDocCount();
+    }
+
+    function updateTransferDocCount() {
+      const checkedCbs = Array.from(document.querySelectorAll('.transfer-doc-checkbox:checked'));
+      currentTransferSelectedDocIds = checkedCbs.map(cb => cb.value);
+
+      const targetSelect = document.getElementById('transferTargetAdminSelect');
+      const hasTarget = targetSelect && targetSelect.value && targetSelect.value !== '';
+      const count = currentTransferSelectedDocIds.length;
+
+      const btnText = document.getElementById('btnSubmitTransferText');
+      if (btnText) btnText.innerText = `Alihkan (${count}) Dokter Terpilih`;
+
+      const btn = document.getElementById('btnSubmitDoctorTransfer');
+      if (btn) btn.disabled = (count === 0 || !hasTarget);
+
+      // sync select all checkbox state
+      const allCbs = document.querySelectorAll('.transfer-doc-checkbox');
+      const selectAllCb = document.getElementById('transferSelectAllDocs');
+      if (selectAllCb && allCbs.length > 0) {
+        selectAllCb.checked = (checkedCbs.length === allCbs.length);
+      }
+    }
+
+    async function submitDoctorTransfer() {
+      if (currentTransferSelectedDocIds.length === 0) return;
+      const targetAdminId = document.getElementById('transferTargetAdminSelect').value;
+      if (!targetAdminId) return;
+
+      const btn = document.getElementById('btnSubmitDoctorTransfer');
+      const btnText = document.getElementById('btnSubmitTransferText');
+      const originalText = btnText ? btnText.innerText : '';
+      if (btn) btn.disabled = true;
+      if (btnText) btnText.innerText = 'Mengalihkan...';
+
+      try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+        const res = await fetch('/doctors/batch-assign-pic', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+          },
+          body: JSON.stringify({
+            doctor_ids: currentTransferSelectedDocIds,
+            assigned_pic_id: targetAdminId
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(data.message || 'Dokter binaan berhasil dialihkan!', 'success');
+          closeAdminDoctorTransferModal();
+          setTimeout(() => window.location.reload(), 600);
+        } else {
+          showToast(data.message || 'Gagal mengalihkan dokter binaan', 'error');
+          if (btn) btn.disabled = false;
+          if (btnText) btnText.innerText = originalText;
+        }
+      } catch (err) {
+        showToast('Terjadi kesalahan jaringan atau server', 'error');
+        if (btn) btn.disabled = false;
+        if (btnText) btnText.innerText = originalText;
+      }
+    }
+
+    // ==========================================
+    // OPTION B: Auto-Balance & Rekomendasi Kuota Cerdas
+    // ==========================================
+    let autoBalanceRecommendedPlans = [];
+
+    function openAutoBalanceModal() {
+      const allDocs = LIVE_SERVER_DOCTORS || [];
+      const admins = LIVE_SERVER_ADMINS || [];
+
+      document.getElementById('autoBalanceTotalDocs').innerText = `${allDocs.length} Dokter`;
+      document.getElementById('autoBalanceAdminCount').innerText = `${admins.length} Admin`;
+
+      const cardCont = document.getElementById('autoBalanceAnalysisCard');
+      const planCont = document.getElementById('autoBalancePlanContainer');
+      const planCountEl = document.getElementById('autoBalancePlanCount');
+      const execBtn = document.getElementById('btnExecuteAutoBalance');
+
+      autoBalanceRecommendedPlans = [];
+
+      if (admins.length <= 1 || allDocs.length === 0) {
+        // Not enough data to balance
+        cardCont.className = 'p-4 rounded-2xl border border-emerald-200 bg-emerald-50/70 text-xs';
+        cardCont.innerHTML = `
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+              <span class="material-symbols-outlined text-lg">check_circle</span>
+            </div>
+            <div>
+              <div class="font-extrabold text-slate-900 text-xs">Beban Tim Operasional Normal &amp; Terpusat</div>
+              <p class="text-slate-600 text-[11px] mt-0.5 leading-relaxed">
+                Jumlah admin aktif atau dokter binaan saat ini masih terpusat secara merata. Tidak ada disparitas beban kerja yang melebihi batas toleransi.
+              </p>
+            </div>
+          </div>
+        `;
+        planCountEl.innerText = '0 Aksi Diperlukan';
+        planCont.innerHTML = `
+          <div class="py-6 px-4 text-center">
+            <div class="text-slate-400 font-bold text-xs">Semua kuota dalam batas aman operasional (&le; 40 dokter/admin)</div>
+          </div>
+        `;
+        execBtn.disabled = true;
+      } else {
+        // Calculate distribution
+        const sortedAdmins = [...admins].sort((a, b) => (b.doctorCount || 0) - (a.doctorCount || 0));
+        const maxAdmin = sortedAdmins[0];
+        const minAdmin = sortedAdmins[sortedAdmins.length - 1];
+        const maxCount = maxAdmin.doctorCount || 0;
+        const minCount = minAdmin.doctorCount || 0;
+        const diff = maxCount - minCount;
+
+        if (maxCount > 40 || diff >= 2) {
+          // Rebalancing is recommended!
+          const transferQty = maxCount > 40 ? Math.min(maxCount - 40, Math.ceil(diff / 2)) : Math.ceil(diff / 2);
+
+          // Get doctors from maxAdmin
+          const maxAdminDocs = allDocs.filter(d => 
+            (d.assignedTo && d.assignedTo.toLowerCase().includes(maxAdmin.name.toLowerCase())) || 
+            (maxAdmin.displayName && d.assignedTo && d.assignedTo.toLowerCase().includes(maxAdmin.displayName.toLowerCase()))
+          );
+
+          const doctorsToMove = maxAdminDocs.slice(0, transferQty);
+
+          if (doctorsToMove.length > 0) {
+            autoBalanceRecommendedPlans.push({
+              fromAdmin: maxAdmin,
+              toAdmin: minAdmin,
+              doctors: doctorsToMove
+            });
+          }
+
+          cardCont.className = 'p-4 rounded-2xl border border-amber-200 bg-amber-50/70 text-xs';
+          cardCont.innerHTML = `
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold shrink-0">
+                <span class="material-symbols-outlined text-lg">warning</span>
+              </div>
+              <div>
+                <div class="font-extrabold text-amber-950 text-xs">Peringatan Disparitas Beban Terdeteksi</div>
+                <p class="text-amber-800 text-[11px] mt-0.5 leading-relaxed">
+                  Terdapat selisih kuota <strong>${diff} dokter</strong> antara <strong>${maxAdmin.name}</strong> (${maxCount} dokter) dan <strong>${minAdmin.name}</strong> (${minCount} dokter). Direkomendasikan memindahkan <strong>${doctorsToMove.length} dokter</strong> untuk menjaga SLA &lt; 24 jam.
+                </p>
+              </div>
+            </div>
+          `;
+
+          planCountEl.innerText = `${autoBalanceRecommendedPlans.length} Rekomendasi Alokasi`;
+          planCont.innerHTML = autoBalanceRecommendedPlans.map(plan => `
+            <div class="p-3 bg-white hover:bg-slate-50 transition rounded-xl flex items-center justify-between text-xs">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#16b3ac] flex items-center justify-center font-bold">
+                  <span class="material-symbols-outlined text-base">alt_route</span>
+                </div>
+                <div>
+                  <div class="font-extrabold text-slate-800 text-xs flex items-center gap-1.5">
+                    <span class="text-slate-600">${plan.fromAdmin.name}</span>
+                    <span class="material-symbols-outlined text-xs text-slate-400">arrow_forward</span>
+                    <span class="text-[#16b3ac]">${plan.toAdmin.name}</span>
+                  </div>
+                  <div class="text-[11px] text-slate-500 mt-0.5">
+                    Pindahkan <strong>${plan.doctors.length} Dokter</strong>: ${plan.doctors.map(d => d.name).join(', ')}
+                  </div>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-[#16b3ac] shrink-0">
+                Saran Optimal
+              </span>
+            </div>
+          `).join('');
+
+          execBtn.disabled = false;
+        } else {
+          // Everything is well balanced
+          cardCont.className = 'p-4 rounded-2xl border border-emerald-200 bg-emerald-50/70 text-xs';
+          cardCont.innerHTML = `
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+                <span class="material-symbols-outlined text-lg">verified</span>
+              </div>
+              <div>
+                <div class="font-extrabold text-slate-900 text-xs">Kapasitas dan Distribusi Tim Ideal</div>
+                <p class="text-slate-600 text-[11px] mt-0.5 leading-relaxed">
+                  Semua personil admin berada dalam ambang batas aman kuota (&le; 40 dokter/admin). Tidak ada risiko kelebihan beban menjelang tanggal 1 ("cutoff" bulanan).
+                </p>
+              </div>
+            </div>
+          `;
+          planCountEl.innerText = '0 Aksi Diperlukan';
+          planCont.innerHTML = `
+            <div class="py-6 px-4 text-center">
+              <div class="text-slate-500 font-bold text-xs">Seluruh admin beroperasi pada beban optimal.</div>
+            </div>
+          `;
+          execBtn.disabled = true;
+        }
+      }
+
+      document.getElementById('autoBalanceModal').classList.remove('hidden');
+    }
+
+    function closeAutoBalanceModal() {
+      document.getElementById('autoBalanceModal').classList.add('hidden');
+    }
+
+    async function executeAutoBalance() {
+      if (autoBalanceRecommendedPlans.length === 0) return;
+
+      const btn = document.getElementById('btnExecuteAutoBalance');
+      const btnText = document.getElementById('btnExecuteAutoBalanceText');
+      if (btn) btn.disabled = true;
+      if (btnText) btnText.innerText = 'Menerapkan Penyeimbangan...';
+
+      try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+        
+        for (const plan of autoBalanceRecommendedPlans) {
+          const docIds = plan.doctors.map(d => d.id);
+          const res = await fetch('/doctors/batch-assign-pic', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({
+              doctor_ids: docIds,
+              assigned_pic_id: plan.toAdmin.id
+            })
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) {
+            throw new Error(data.message || 'Gagal menerapkan penyeimbangan');
+          }
+        }
+
+        showToast('Auto-Balance berhasil diterapkan! Beban kerja telah diseimbangkan.', 'success');
+        closeAutoBalanceModal();
+        setTimeout(() => window.location.reload(), 600);
+      } catch (err) {
+        showToast(err.message || 'Gagal mengeksekusi penyeimbangan otomatis', 'error');
+        if (btn) btn.disabled = false;
+        if (btnText) btnText.innerText = 'Terapkan Penyeimbangan Otomatis';
       }
     }
 

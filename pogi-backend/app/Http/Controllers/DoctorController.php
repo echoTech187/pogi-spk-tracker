@@ -1007,4 +1007,74 @@ class DoctorController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Batch / Mass Reassign Doctor PIC (Eksklusif SUPER_ADMIN)
+     */
+    public function batchAssignPic(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+
+        if (strtoupper($user->role) !== 'SUPER_ADMIN') {
+            return response()->json([
+                'success' => false,
+                'status' => 'error',
+                'message' => 'Akses ditolak: Hanya Super Admin yang berwenang melakukan pengalihan massal dokter binaan.',
+            ], 403);
+        }
+
+        $request->validate([
+            'doctor_ids' => 'required|array|min:1',
+            'doctor_ids.*' => 'uuid|exists:doctors,id',
+            'assigned_pic_id' => 'required|uuid|exists:users,id',
+        ]);
+
+        $targetPic = DB::table('users')->where('id', $request->input('assigned_pic_id'))->first();
+        if (!$targetPic) {
+            return response()->json([
+                'success' => false,
+                'status' => 'error',
+                'message' => 'Admin PIC tujuan tidak ditemukan.',
+            ], 404);
+        }
+
+        $doctorIds = $request->input('doctor_ids');
+        $now = Carbon::now();
+
+        // Update database in batch
+        DB::table('doctors')->whereIn('id', $doctorIds)->update([
+            'assigned_pic_id' => $targetPic->id,
+            'updated_at' => $now,
+        ]);
+
+        // Rekam jejak audit
+        DB::table('audit_logs')->insert([
+            'id' => (string) Str::uuid(),
+            'user_id' => $user->id,
+            'action' => 'BATCH_REASSIGN_DOCTOR_PIC',
+            'entity_name' => 'doctors',
+            'entity_id' => implode(',', array_slice($doctorIds, 0, 5)),
+            'old_values' => json_encode(['affected_count' => count($doctorIds)]),
+            'new_values' => json_encode([
+                'target_pic_id' => $targetPic->id,
+                'target_pic_name' => $targetPic->full_name,
+                'doctor_count' => count($doctorIds),
+            ]),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'created_at' => $now,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'status' => 'success',
+            'message' => count($doctorIds) . " dokter binaan berhasil dialihkan ke {$targetPic->full_name}.",
+            'affected_count' => count($doctorIds),
+            'pic' => [
+                'id' => $targetPic->id,
+                'name' => $targetPic->full_name,
+                'role' => $targetPic->role,
+            ],
+        ]);
+    }
 }
