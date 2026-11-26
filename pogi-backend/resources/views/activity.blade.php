@@ -28,7 +28,7 @@
     </div>
 
     <!-- 5 Metric Cards Sesuai Screenshot Asli Klien (09.12.05) -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
       <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
         <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active users</div>
         <div class="text-2xl font-black text-slate-900 mt-1">{{ $metrics['unique_users'] ?? 0 }}</div>
@@ -48,11 +48,6 @@
         <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aksi Kredensial &amp; PIC</div>
         <div class="text-2xl font-black text-[#16b3ac] mt-1">{{ $metrics['security_actions'] ?? 0 }}</div>
         <div class="text-[10px] text-emerald-800 font-bold mt-0.5">Audit Security</div>
-      </div>
-      <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs col-span-2 sm:col-span-1">
-        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Enkripsi</div>
-        <div class="text-2xl font-black text-purple-700 mt-1">AES-256</div>
-        <div class="text-[10px] text-purple-800 font-bold mt-0.5">UU PDP No. 27/2022</div>
       </div>
     </div>
 
