@@ -5,89 +5,110 @@
   <!-- Main Body -->
   <main class="flex-1 overflow-y-auto space-y-6 page-fade-in pb-8">
 
-    <!-- Modern Heading Banner -->
-    <div class="p-6 sm:p-7 rounded-3xl bg-white flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden">
-      <div class="space-y-2 relative z-10 min-w-0">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+    <!-- Clean Page Header (Modern Enterprise Standard) -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+      <div class="space-y-1.5 min-w-0">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>LOG OPERASIONAL &amp; AUDIT TRAIL</span>
+          <span>Log Operasional &amp; Audit Trail</span>
+          <span class="text-slate-300">•</span>
+          <span class="text-slate-500 font-semibold normal-case">Real-Time Sync</span>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
           <span>Log Aktivitas &amp; Jejak Audit Operasional</span>
-          <span class="text-xs font-bold text-slate-500 bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 rounded-full">Real-Time Sync</span>
         </h1>
-        <p class="text-xs sm:text-sm text-slate-500 max-w-3xl leading-relaxed">
+        <p class="text-xs text-slate-500 max-w-3xl leading-relaxed">
           Rekaman jejak audit waktu nyata (real-time) setiap aktivitas input, pembaruan status, verifikasi kredit SKP, dan sinkronisasi SATUSEHAT terenkripsi.
         </p>
+      </div>
+
+      <!-- Action Toolbar Header -->
+      <div class="flex items-center gap-2 shrink-0 flex-wrap">
+        <button type="button" onclick="refreshActivityLog()" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer">
+          <span class="material-symbols-outlined text-base text-[#16b3ac]" id="refreshIcon">refresh</span>
+          <span>Segarkan Log</span>
+        </button>
+        <button type="button" onclick="exportActivityPdf()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+          <span class="material-symbols-outlined text-base">picture_as_pdf</span>
+          <span>Ekspor Audit (PDF)</span>
+        </button>
       </div>
     </div>
 
     <!-- 4 Modern Metric Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
       <!-- Active Users -->
-      <div class="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group">
+      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
         <div class="flex items-center justify-between gap-3">
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Active Users</span>
-          <div class="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-100/80 text-[#16b3ac] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
-            <span class="material-symbols-outlined text-[20px]">group</span>
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+            <span class="material-symbols-outlined text-[18px]">group</span>
           </div>
         </div>
-        <div class="mt-4">
-          <div class="text-3xl font-black text-slate-900 tracking-tight">{{ $metrics['unique_users'] ?? 0 }}</div>
-          <div class="flex items-center gap-1.5 mt-1 text-xs font-semibold text-emerald-600">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            <span>Admin &bull; Terdaftar</span>
+        <div class="mt-3">
+          <div class="text-2.5xl sm:text-3xl font-black text-slate-900 tracking-tight">{{ $metrics['unique_users'] ?? 0 }}</div>
+          <div class="mt-1.5">
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-700 text-[10px] font-bold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>Admin &bull; Terdaftar</span>
+            </span>
           </div>
         </div>
       </div>
 
       <!-- Total Audit Logs -->
-      <div class="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group">
+      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
         <div class="flex items-center justify-between gap-3">
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Audit Logs</span>
-          <div class="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
-            <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+          <div class="w-9 h-9 rounded-xl bg-teal-50 text-[#16b3ac] border border-teal-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+            <span class="material-symbols-outlined text-[18px]">receipt_long</span>
           </div>
         </div>
-        <div class="mt-4">
-          <div class="text-3xl font-black text-slate-900 tracking-tight">{{ $metrics['total_logs'] ?? 0 }}</div>
-          <div class="flex items-center gap-1.5 mt-1 text-xs font-semibold text-slate-400">
-            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-            <span>Jejak Permanen (Immutable)</span>
+        <div class="mt-3">
+          <div class="text-2.5xl sm:text-3xl font-black text-slate-900 tracking-tight">{{ $metrics['total_logs'] ?? 0 }}</div>
+          <div class="mt-1.5">
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-[10px] font-bold">
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+              <span>Jejak Permanen (Immutable)</span>
+            </span>
           </div>
         </div>
       </div>
 
       <!-- Aktivitas Hari Ini -->
-      <div class="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group">
+      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
         <div class="flex items-center justify-between gap-3">
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Aktivitas Hari Ini</span>
-          <div class="w-10 h-10 rounded-2xl bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
-            <span class="material-symbols-outlined text-[20px]">bolt</span>
+          <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 border border-sky-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+            <span class="material-symbols-outlined text-[18px]">bolt</span>
           </div>
         </div>
-        <div class="mt-4">
-          <div class="text-3xl font-black text-sky-700 tracking-tight">{{ $metrics['today_actions'] ?? 0 }}</div>
-          <div class="flex items-center gap-1.5 mt-1 text-xs font-semibold text-sky-600">
-            <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
-            <span>Real-Time Sync Terverifikasi</span>
+        <div class="mt-3">
+          <div class="text-2.5xl sm:text-3xl font-black text-sky-700 tracking-tight">{{ $metrics['today_actions'] ?? 0 }}</div>
+          <div class="mt-1.5">
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200/70 text-sky-700 text-[10px] font-bold">
+              <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+              <span>Real-Time Sync Terverifikasi</span>
+            </span>
           </div>
         </div>
       </div>
 
       <!-- Aksi Kredensial & PIC -->
-      <div class="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group">
+      <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
         <div class="flex items-center justify-between gap-3">
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Aksi Kredensial &amp; PIC</span>
-          <div class="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
-            <span class="material-symbols-outlined text-[20px]">shield_person</span>
+          <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+            <span class="material-symbols-outlined text-[18px]">shield_person</span>
           </div>
         </div>
-        <div class="mt-4">
-          <div class="text-3xl font-black text-indigo-700 tracking-tight">{{ $metrics['security_actions'] ?? 0 }}</div>
-          <div class="flex items-center gap-1.5 mt-1 text-xs font-semibold text-indigo-600">
-            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-            <span>Audit Security &amp; Hak Akses</span>
+        <div class="mt-3">
+          <div class="text-2.5xl sm:text-3xl font-black text-indigo-700 tracking-tight">{{ $metrics['security_actions'] ?? 0 }}</div>
+          <div class="mt-1.5">
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-indigo-50 border border-indigo-200/70 text-indigo-700 text-[10px] font-bold">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+              <span>Audit Security &amp; Hak Akses</span>
+            </span>
           </div>
         </div>
       </div>
@@ -97,42 +118,58 @@
     <div class="rounded-3xl bg-white border border-slate-200/80 shadow-2xs overflow-hidden">
       <!-- Toolbar Header -->
       <div class="p-5 sm:p-6 border-b border-slate-100 space-y-4">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 class="font-black text-base text-slate-900 leading-tight">Riwayat Transaksi &amp; Verifikasi Kredit SKP</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Daftar rekaman kronologis aktivitas operasional, penugasan PIC, sinkronisasi SATUSEHAT, dan eksekusi background scheduler</p>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 class="font-black text-base text-slate-900 leading-tight">Riwayat Transaksi &amp; Verifikasi Kredit SKP</h3>
+              <span class="text-[10px] font-mono text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/70">Audit Trail SHA-256</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">Daftar rekaman kronologis aktivitas operasional, penugasan PIC, sinkronisasi SATUSEHAT, dan otomasi latar belakang.</p>
           </div>
-          <div class="w-full sm:w-72 relative flex items-center">
-            <span class="material-symbols-outlined text-slate-400 text-lg absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">search</span>
-            <input type="text" id="searchActivityInput" onkeyup="filterActivities()" placeholder="Cari aksi, aktor, rincian..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#16b3ac]/20 focus:border-[#16b3ac] transition" />
+          <div class="shrink-0">
+            <span id="activityLogCounter" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-slate-600 font-bold text-xs">
+              <span class="w-2 h-2 rounded-full bg-[#16b3ac]"></span>
+              <span>Memuat log...</span>
+            </span>
           </div>
         </div>
 
-        <!-- Filter Category Tabs & Counter -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-slate-100">
-          <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100/80 rounded-2xl text-xs font-bold text-slate-600" id="activityCategoryFilterTabs">
+        <!-- Filter Category Tabs & Integrated Search -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2 border-t border-slate-100">
+          <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100/90 rounded-2xl text-xs font-bold text-slate-600" id="activityCategoryFilterTabs">
             <button type="button" onclick="filterActivityCategory('ALL')" id="tab-act-all" class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition font-black flex items-center gap-1.5 cursor-pointer">
-              Semua Log
+              <span>Semua Log</span>
+              <span id="badge-count-all" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600 font-bold">0</span>
             </button>
             <button type="button" onclick="filterActivityCategory('Sync')" id="tab-act-sync" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
               <span class="w-2 h-2 rounded-full bg-sky-500"></span>
               <span>Sync SATUSEHAT</span>
+              <span id="badge-count-sync" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
             </button>
             <button type="button" onclick="filterActivityCategory('Verification')" id="tab-act-verif" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
               <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
               <span>Verifikasi Kredit</span>
+              <span id="badge-count-verif" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
             </button>
             <button type="button" onclick="filterActivityCategory('FollowUp')" id="tab-act-fu" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
               <span class="w-2 h-2 rounded-full bg-amber-500"></span>
               <span>Follow-Up Cabang</span>
+              <span id="badge-count-fu" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
             </button>
             <button type="button" onclick="filterActivityCategory('Automation')" id="tab-act-auto" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
               <span class="w-2 h-2 rounded-full bg-purple-500"></span>
               <span>Otomasi Cron</span>
+              <span id="badge-count-auto" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
             </button>
           </div>
-          <div class="text-xs font-semibold text-slate-400 self-end sm:self-center">
-            <span id="activityLogCounter" class="bg-slate-50 border border-slate-200/80 px-3 py-1 rounded-full text-slate-600 font-bold">Total 0 aktivitas</span>
+
+          <!-- Integrated Search Box with Clear Button -->
+          <div class="w-full lg:w-80 relative flex items-center">
+            <span class="material-symbols-outlined text-slate-400 text-lg absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">search</span>
+            <input type="text" id="searchActivityInput" onkeyup="filterActivities()" placeholder="Cari aksi, aktor, atau rincian..." class="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16b3ac]/20 focus:border-[#16b3ac] transition" />
+            <button type="button" id="clearSearchBtn" onclick="clearActivitySearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm">
+              <span class="material-symbols-outlined text-base">close</span>
+            </button>
           </div>
         </div>
       </div>
@@ -140,13 +177,14 @@
       <!-- Desktop Table -->
       <div class="hidden md:block overflow-x-auto">
         <table class="w-full text-left text-xs whitespace-nowrap">
-          <thead class="bg-slate-50/70 border-b border-slate-200/80 text-slate-400 font-black uppercase text-[10px] tracking-wider">
+          <thead class="bg-slate-50/80 border-b border-slate-200/80 text-slate-400 font-black uppercase text-[10px] tracking-wider">
             <tr>
               <th class="py-3.5 px-5">Pengguna / Aktor</th>
               <th class="py-3.5 px-4">Aksi Dilakukan</th>
-              <th class="py-3.5 px-4">Rincian Perubahan Data</th>
+              <th class="py-3.5 px-4 min-w-[320px]">Rincian Perubahan Data</th>
               <th class="py-3.5 px-4 text-center">Kategori</th>
-              <th class="py-3.5 px-5 text-right">Waktu</th>
+              <th class="py-3.5 px-4">Waktu</th>
+              <th class="py-3.5 px-5 text-right">Rincian</th>
             </tr>
           </thead>
           <tbody id="activityTableBody" class="divide-y divide-slate-100 font-medium">
@@ -165,10 +203,83 @@
     </div>
   </main>
 
+  <!-- MODAL: DETAIL JEJAK AUDIT (AUDIT LOG INSPECTOR) -->
+  <div id="auditDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-200/90 overflow-hidden transform transition-all page-fade-in">
+      <!-- Modal Header -->
+      <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/60">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-teal-50 border border-teal-100 text-[#16b3ac] flex items-center justify-center shadow-2xs">
+            <span class="material-symbols-outlined text-[20px]">policy</span>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900 leading-tight">Detail Jejak Audit Operasional</h3>
+            <p class="text-xs text-slate-400 font-mono mt-0.5" id="modalAuditId">UUID: -</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAuditDetailModal()" class="w-8 h-8 rounded-full bg-white hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center border border-slate-200 shadow-2xs transition">
+          <span class="material-symbols-outlined text-base">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 sm:p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+        <!-- User & Timestamp Bar -->
+        <div class="grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 text-xs">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Pengguna / Aktor</span>
+            <span class="font-bold text-slate-900 text-sm mt-0.5 block truncate" id="modalActorName">-</span>
+            <span class="text-[10px] font-mono text-slate-500 font-semibold" id="modalActorRole">ROLE: USER</span>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Waktu Pencatatan</span>
+            <span class="font-bold text-slate-800 text-xs mt-0.5 block" id="modalTimestamp">-</span>
+            <span class="text-[10px] font-mono text-emerald-600 font-semibold" id="modalIpAddress">IP: 127.0.0.1</span>
+          </div>
+        </div>
+
+        <!-- Action & Category -->
+        <div class="space-y-1.5">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Aksi Sistem / Operasional</span>
+          <div class="flex items-center justify-between gap-2 p-3 rounded-xl border border-slate-200/80 bg-white">
+            <div class="font-black text-slate-900 text-xs truncate" id="modalActionName">-</div>
+            <div id="modalCategoryBadge"></div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="space-y-1.5">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rincian Narasi Perubahan</span>
+          <div class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50 text-slate-700 text-xs leading-relaxed font-medium" id="modalDetailsText">
+            -
+          </div>
+        </div>
+
+        <!-- Raw Payload / JSON Viewer -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Payload Data Terenkripsi (JSON)</span>
+            <button type="button" onclick="copyAuditJson()" class="text-[11px] font-bold text-[#16b3ac] hover:text-[#129993] flex items-center gap-1 transition">
+              <span class="material-symbols-outlined text-xs">content_copy</span>
+              <span>Salin JSON</span>
+            </button>
+          </div>
+          <pre id="modalJsonPayload" class="p-3.5 rounded-xl bg-slate-900 text-emerald-400 font-mono text-[11px] overflow-x-auto max-h-48 leading-normal border border-slate-800 select-all whitespace-pre-wrap"></pre>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 sm:p-5 border-t border-slate-100 bg-slate-50/60 flex items-center justify-between">
+        <span class="text-[11px] text-slate-400 font-medium">Integritas Log: <strong class="text-emerald-700">Terverifikasi</strong></span>
+        <button type="button" onclick="closeAuditDetailModal()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-xs">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
 
   <script src="/js/pdf_exporter.js"></script>
   <script>
-    
     // MedCred Standard Pagination Component
     function renderMedCredPaginationControls({ containerId, currentPage, totalPages, totalItems, startIdx, endIdx, itemLabel, onPageChangeFn, onLimitChangeFn, currentLimit, limits = [10, 25, 50] }) {
       const el = document.getElementById(containerId);
@@ -184,7 +295,7 @@
       // Prev Button
       const isFirst = currentPage <= 1;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer"'}>
           <span class="material-symbols-outlined text-sm">chevron_left</span>
           <span>Sebelumnya</span>
         </button>
@@ -199,7 +310,7 @@
       }
 
       if (startP > 1) {
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">1</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 cursor-pointer">1</button>`;
         if (startP > 2) {
           btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
         }
@@ -208,7 +319,7 @@
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs font-black' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
             ${p}
           </button>
         `;
@@ -218,13 +329,13 @@
         if (endP < totalPages - 1) {
           btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
         }
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">${totalPages}</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 cursor-pointer">${totalPages}</button>`;
       }
 
       // Next Button
       const isLast = currentPage >= totalPages;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer"'}>
           <span>Selanjutnya</span>
           <span class="material-symbols-outlined text-sm">chevron_right</span>
         </button>
@@ -255,15 +366,47 @@
       `;
     }
 
-
     const LIVE_SERVER_LOGS = @json($logs ?? []);
     let activeCategory = 'ALL';
     let activityPagination = { page: 1, limit: 10, total: LIVE_SERVER_LOGS.length || 0 };
     let currentFilteredActivities = null;
+    let currentActiveLogModalData = null;
 
     document.addEventListener('DOMContentLoaded', () => {
+      updateCategoryCountBadges();
       renderActivityTable();
     });
+
+    function updateCategoryCountBadges() {
+      if (!LIVE_SERVER_LOGS) return;
+
+      const counts = { ALL: LIVE_SERVER_LOGS.length, Sync: 0, Verification: 0, FollowUp: 0, Automation: 0 };
+
+      LIVE_SERVER_LOGS.forEach(l => {
+        const actionUpper = (l.action || l.rawAction || '').toUpperCase();
+        if (actionUpper.includes('KEMENKES') || actionUpper.includes('SYNC') || actionUpper.includes('SATUSEHAT')) {
+          counts.Sync++;
+        } else if (actionUpper.includes('VERIF') || actionUpper.includes('APPROVE') || actionUpper.includes('REJECT') || actionUpper.includes('CREDIT')) {
+          counts.Verification++;
+        } else if (actionUpper.includes('FOLLOW') || actionUpper.includes('NOTIF') || actionUpper.includes('REMINDER') || actionUpper.includes('BLAST') || actionUpper.includes('PIC')) {
+          counts.FollowUp++;
+        } else if (actionUpper.includes('CRON') || actionUpper.includes('AUTO') || actionUpper.includes('SCHEDULER') || actionUpper.includes('TRIGGER')) {
+          counts.Automation++;
+        }
+      });
+
+      const bAll = document.getElementById('badge-count-all');
+      const bSync = document.getElementById('badge-count-sync');
+      const bVerif = document.getElementById('badge-count-verif');
+      const bFu = document.getElementById('badge-count-fu');
+      const bAuto = document.getElementById('badge-count-auto');
+
+      if (bAll) bAll.innerText = counts.ALL;
+      if (bSync) bSync.innerText = counts.Sync;
+      if (bVerif) bVerif.innerText = counts.Verification;
+      if (bFu) bFu.innerText = counts.FollowUp;
+      if (bAuto) bAuto.innerText = counts.Automation;
+    }
 
     function changeActivityPage(p) {
       const list = currentFilteredActivities || (LIVE_SERVER_LOGS.length > 0 ? LIVE_SERVER_LOGS : []);
@@ -312,28 +455,32 @@
 
             // 3. Rincian Data Human-Readable
             let details = l.details_text || l.details || '-';
-            if ((!l.details_text || details === '-') && l.new_values) {
+            let parsedPayload = null;
+            if (l.raw_new_values || l.new_values) {
               try {
-                const parsed = typeof l.new_values === 'string' ? JSON.parse(l.new_values) : l.new_values;
-                if (parsed.message) {
-                  details = parsed.message;
-                } else if (parsed.event && parsed.doctor_context) {
-                  details = `${parsed.event} — ${parsed.doctor_context}`;
-                } else if (parsed.doctor_name && parsed.total_credits !== undefined) {
-                  details = `${parsed.doctor_name} — Total: ${parsed.total_credits} SKP (${parsed.new_status || 'Diproses'})`;
-                } else if (parsed.doctor_name && parsed.new_pic_name) {
-                  details = `${parsed.doctor_name} ditugaskan ke PIC ${parsed.new_pic_name} (${parsed.new_pic_role || 'ADMIN'})`;
-                } else if (parsed.target && parsed.recipients) {
-                  details = `Target: ${parsed.target} (${parsed.recipients} dokter via ${(parsed.channels || ['whatsapp']).join(', ')})`;
-                } else if (parsed.credits) {
-                  details = `Status: ${parsed.status || 'DONE'} • ${parsed.credits} SKP`;
-                } else if (typeof parsed === 'string') {
-                  details = parsed;
-                } else {
-                  details = Object.entries(parsed).map(([k, v]) => `${k}: ${v}`).join(' • ');
-                }
+                parsedPayload = typeof (l.raw_new_values || l.new_values) === 'string'
+                  ? JSON.parse(l.raw_new_values || l.new_values)
+                  : (l.raw_new_values || l.new_values);
               } catch(e) {
-                details = String(l.new_values);
+                parsedPayload = { raw: l.raw_new_values || l.new_values };
+              }
+            }
+
+            if ((!l.details_text || details === '-') && parsedPayload) {
+              if (parsedPayload.message) {
+                details = parsedPayload.message;
+              } else if (parsedPayload.event && parsedPayload.doctor_context) {
+                details = `${parsedPayload.event} — ${parsedPayload.doctor_context}`;
+              } else if (parsedPayload.doctor_name && parsedPayload.total_credits !== undefined) {
+                details = `${parsedPayload.doctor_name} — Total: ${parsedPayload.total_credits} SKP (${parsedPayload.new_status || 'Diproses'})`;
+              } else if (parsedPayload.doctor_name && parsedPayload.new_pic_name) {
+                details = `${parsedPayload.doctor_name} ditugaskan ke PIC ${parsedPayload.new_pic_name} (${parsedPayload.new_pic_role || 'ADMIN'})`;
+              } else if (parsedPayload.target && parsedPayload.recipients) {
+                details = `Target: ${parsedPayload.target} (${parsedPayload.recipients} dokter via ${(parsedPayload.channels || ['whatsapp']).join(', ')})`;
+              } else if (parsedPayload.credits) {
+                details = `Status: ${parsedPayload.status || 'DONE'} • ${parsedPayload.credits} SKP`;
+              } else {
+                details = Object.entries(parsedPayload).map(([k, v]) => `${k}: ${v}`).join(' • ');
               }
             } else if ((!l.details_text || details === '-') && l.entity_name) {
               details = `Entitas: ${l.entity_name} (${l.entity_id || '-'})`;
@@ -359,7 +506,9 @@
               rawAction: l.action,
               details: details,
               category: cat,
-              timestamp: timestamp
+              timestamp: timestamp,
+              ip_address: l.ip_address || '127.0.0.1',
+              raw_payload: parsedPayload || { details: details, action: l.action }
             };
           })
         : [];
@@ -392,16 +541,27 @@
 
       const counterEl = document.getElementById('activityLogCounter');
       if (counterEl) {
-        counterEl.innerText = `Total ${activityPagination.total} aktivitas audit tercatat`;
+        counterEl.innerHTML = `
+          <span class="w-2 h-2 rounded-full bg-[#16b3ac]"></span>
+          <span>Menampilkan <strong>${activityPagination.total}</strong> log aktivitas</span>
+        `;
       }
 
       // Desktop Table
       if (tbody) {
         if (pageActivities.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5" class="py-12 text-center text-slate-400 font-medium">Tidak ada riwayat log aktivitas yang sesuai dengan kriteria filter.</td></tr>';
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="py-16 text-center text-slate-400">
+                <span class="material-symbols-outlined text-4xl text-slate-300 block mb-2">find_in_page</span>
+                <span class="font-bold text-sm text-slate-600 block">Tidak ada log aktivitas ditemukan</span>
+                <span class="text-xs text-slate-400 mt-0.5 block">Coba ubah kata kunci pencarian atau ganti filter kategori di atas.</span>
+              </td>
+            </tr>
+          `;
         } else {
           tbody.innerHTML = pageActivities.map(a => {
-            let badgeStyle = 'bg-slate-50 text-slate-700 border-slate-200';
+            let badgeStyle = 'bg-slate-50 text-slate-700 border-slate-200/90';
             let dotColor = 'bg-slate-400';
             let catLabel = a.category;
             if (a.category === 'Sync') {
@@ -425,27 +585,34 @@
             const initial = (a.actor || 'S').charAt(0).toUpperCase();
 
             return `
-              <tr class="hover:bg-slate-50/80 transition-colors">
+              <tr class="hover:bg-slate-50/80 transition-colors group cursor-pointer" onclick="openAuditDetailModal('${a.id}')">
                 <td class="py-3.5 px-5">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-100 border border-emerald-200/80 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-100 border border-emerald-200/80 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                       ${initial}
                     </div>
                     <div class="min-w-0">
-                      <div class="font-bold text-slate-900 text-xs truncate max-w-[190px]">${a.actor}</div>
+                      <div class="font-bold text-slate-900 text-xs truncate max-w-[200px]">${a.actor}</div>
                       <div class="text-[10px] font-semibold text-slate-400 font-mono mt-0.5">${a.role || 'USER'}</div>
                     </div>
                   </div>
                 </td>
-                <td class="py-3.5 px-4 font-bold text-slate-800 text-xs">${a.action}</td>
-                <td class="py-3.5 px-4 text-slate-600 max-w-md truncate text-xs font-medium" title="${a.details.replace(/"/g, '&quot;')}">${a.details}</td>
-                <td class="py-3.5 px-4 text-center">
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold ${badgeStyle} border whitespace-nowrap shadow-2xs">
+                <td class="py-3.5 px-4 font-bold text-slate-800 text-xs whitespace-nowrap">${a.action}</td>
+                <td class="py-3.5 px-4 text-slate-600 max-w-xl text-xs font-medium leading-relaxed">
+                  <div class="line-clamp-2">${a.details}</div>
+                </td>
+                <td class="py-3.5 px-4 text-center whitespace-nowrap">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold ${badgeStyle} border shadow-2xs">
                     <span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>
                     <span>${catLabel}</span>
                   </span>
                 </td>
-                <td class="py-3.5 px-5 text-right text-slate-400 font-mono text-[11px] whitespace-nowrap">${a.timestamp}</td>
+                <td class="py-3.5 px-4 text-slate-400 font-mono text-[11px] whitespace-nowrap">${a.timestamp}</td>
+                <td class="py-3.5 px-5 text-right whitespace-nowrap">
+                  <button type="button" onclick="event.stopPropagation(); openAuditDetailModal('${a.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-[#16b3ac] hover:text-white text-slate-500 transition shadow-2xs" title="Lihat Rincian Jejak Audit">
+                    <span class="material-symbols-outlined text-sm">visibility</span>
+                  </button>
+                </td>
               </tr>
             `;
           }).join('');
@@ -455,7 +622,7 @@
       // Mobile Touch Cards (< md)
       if (mobileContainer) {
         if (pageActivities.length === 0) {
-          mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada riwayat log aktivitas yang sesuai dengan kriteria filter.</div>';
+          mobileContainer.innerHTML = '<div class="py-8 text-center text-slate-400 font-medium text-xs">Tidak ada riwayat log aktivitas yang sesuai.</div>';
         } else {
           mobileContainer.innerHTML = pageActivities.map(a => {
             let badgeStyle = 'bg-slate-50 text-slate-700 border-slate-200';
@@ -482,7 +649,7 @@
             const initial = (a.actor || 'S').charAt(0).toUpperCase();
 
             return `
-              <div class="bg-white rounded-2xl border border-slate-200/90 p-4 space-y-2.5 shadow-2xs hover:border-[#16b3ac]/50 transition">
+              <div class="bg-white rounded-2xl border border-slate-200/90 p-4 space-y-2.5 shadow-2xs hover:border-[#16b3ac]/50 transition cursor-pointer" onclick="openAuditDetailModal('${a.id}')">
                 <div class="flex items-center justify-between gap-2">
                   <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-100 border border-emerald-200/80 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
@@ -500,7 +667,10 @@
                 </div>
                 <div class="font-bold text-slate-800 text-xs">${a.action}</div>
                 <div class="text-slate-600 text-xs leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100">${a.details}</div>
-                <div class="text-right text-slate-400 font-mono text-[10px] pt-1 border-t border-slate-100">${a.timestamp}</div>
+                <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-slate-400 font-mono text-[10px]">
+                  <span>${a.timestamp}</span>
+                  <span class="text-[#16b3ac] font-bold flex items-center gap-0.5">Detail <span class="material-symbols-outlined text-xs">arrow_forward</span></span>
+                </div>
               </div>
             `;
           }).join('');
@@ -548,50 +718,95 @@
     }
 
     function filterActivities() {
-      const q = (document.getElementById('searchActivityInput')?.value || '');
+      const input = document.getElementById('searchActivityInput');
+      const clearBtn = document.getElementById('clearSearchBtn');
+      const q = input?.value || '';
+
+      if (clearBtn) {
+        if (q.length > 0) clearBtn.classList.remove('hidden');
+        else clearBtn.classList.add('hidden');
+      }
+
       renderActivityTable(activeCategory, q, true);
     }
 
-    async function runCronJobSimulation(triggerType) {
-      const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-      try {
-        const res = await fetch('/activity/cron-simulation', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': csrf || ''
-          },
-          body: JSON.stringify({ trigger: triggerType })
-        });
-        const data = await res.json();
-        if (data && data.success && data.log) {
-          LIVE_SERVER_LOGS.unshift(data.log);
-          showToast(`Trigger Cron ${triggerType} Berhasil: ${data.count} dokter Incomplete diproses & dicatat ke jejak audit!`, 'success');
-        } else {
-          showToast(data?.message || 'Gagal menjalankan cron trigger di server.', 'error');
-        }
-      } catch (err) {
-        showToast('Gagal terhubung ke server untuk menjalankan cron trigger.', 'error');
-      }
-
-      // Langsung buka tab Otomasi Cron
-      filterActivityCategory('Automation');
+    function clearActivitySearch() {
+      const input = document.getElementById('searchActivityInput');
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (input) input.value = '';
+      if (clearBtn) clearBtn.classList.add('hidden');
+      renderActivityTable(activeCategory, '', true);
     }
+
+    function openAuditDetailModal(logId) {
+      const list = currentFilteredActivities || (LIVE_SERVER_LOGS.length > 0 ? LIVE_SERVER_LOGS : []);
+      const item = list.find(a => String(a.id) === String(logId));
+      if (!item) return;
+
+      currentActiveLogModalData = item;
+
+      document.getElementById('modalAuditId').innerText = `ID Log: ${item.id || '-'}`;
+      document.getElementById('modalActorName').innerText = item.actor || 'System Auto';
+      document.getElementById('modalActorRole').innerText = `PERAN: ${item.role || 'USER'}`;
+      document.getElementById('modalTimestamp').innerText = item.timestamp || '-';
+      document.getElementById('modalIpAddress').innerText = `IP: ${item.ip_address || '127.0.0.1'}`;
+      document.getElementById('modalActionName').innerText = item.action || '-';
+      document.getElementById('modalDetailsText').innerText = item.details || '-';
+
+      // Badge
+      let badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">${item.category}</span>`;
+      if (item.category === 'Sync') badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200">Sync SATUSEHAT</span>`;
+      else if (item.category === 'Verification') badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Verifikasi Kredit</span>`;
+      else if (item.category === 'FollowUp') badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Follow-Up Cabang</span>`;
+      else if (item.category === 'Automation') badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">Otomasi Cron</span>`;
+      document.getElementById('modalCategoryBadge').innerHTML = badgeHtml;
+
+      // JSON Payload
+      const payload = item.raw_payload || { details: item.details, action: item.rawAction || item.action };
+      document.getElementById('modalJsonPayload').innerText = JSON.stringify(payload, null, 2);
+
+      const modal = document.getElementById('auditDetailModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeAuditDetailModal() {
+      const modal = document.getElementById('auditDetailModal');
+      if (modal) modal.classList.add('hidden');
+      currentActiveLogModalData = null;
+    }
+
+    function copyAuditJson() {
+      const el = document.getElementById('modalJsonPayload');
+      if (el && el.innerText) {
+        navigator.clipboard.writeText(el.innerText).then(() => {
+          showToast('JSON payload berhasil disalin ke clipboard!', 'success');
+        }).catch(() => {
+          showToast('Gagal menyalin ke clipboard.', 'error');
+        });
+      }
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('auditDetailModal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'auditDetailModal') closeAuditDetailModal();
+    });
 
     function refreshActivityLog() {
       const icon = document.getElementById('refreshIcon');
       if (icon) icon.classList.add('animate-spin');
       setTimeout(() => {
         if (icon) icon.classList.remove('animate-spin');
+        updateCategoryCountBadges();
         renderActivityTable();
-        showToast('Log aktivitas berhasil dimutakhirkan!', 'info');
+        showToast('Log aktivitas berhasil dimutakhirkan secara real-time!', 'info');
       }, 500);
     }
 
     function exportActivityPdf() {
       if (typeof window.PogiPdfExporter !== 'undefined') {
         window.exportActivityPdf();
+      } else {
+        window.print();
       }
     }
     const exportActivityCSV = exportActivityPdf;

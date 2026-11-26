@@ -34,19 +34,8 @@
         <!-- HEADER LAPORAN BULANAN RESMI (ONE POGI) -->
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-1">
           <div class="space-y-1">
-            <div class="flex items-center gap-2 flex-wrap">
-              <span
-                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#112d4e] text-white tracking-wider uppercase shadow-2xs">
-                IMPRUVE.ID &bull; MONTHLY REPORT ONE POGI
-              </span>
-              <span
-                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#16b3ac] text-[10px] font-extrabold">
-                <span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span> Cutoff: Setiap Tgl 1 per Bulan
-              </span>
-            </div>
             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
               <span>LAPORAN BULANAN</span>
-              <span class="text-sm font-bold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">(ONE POGI)</span>
             </h1>
             <p class="text-xs text-slate-500 leading-relaxed max-w-7xl">
               Pengelolaan dan Penginputan Data Satuan Kredit Profesi (SKP) Dokter Spesialis Obstetri &amp; Ginekologi mengacu pada KMK HK.01.07/MENKES/1561/2024 &amp; KMK HK.01.07/MENKES/1111/2026. Laporan resmi berkas &amp; lampiran penagihan invoice.
