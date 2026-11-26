@@ -719,7 +719,7 @@
             const initial = (a.actor || 'S').charAt(0).toUpperCase();
 
             return `
-              <div class="bg-white rounded-2xl border border-slate-200/80 p-4 space-y-2.5 shadow-2xs hover:border-[#16b3ac]/50 transition cursor-pointer" onclick="openAuditDetailModal('${a.id}')">
+              <div class="glass-card-authentic rounded-2xl p-4 space-y-2.5 transition cursor-pointer" onclick="openAuditDetailModal('${a.id}')">
                 <div class="flex items-center justify-between gap-2">
                   <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-100 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">

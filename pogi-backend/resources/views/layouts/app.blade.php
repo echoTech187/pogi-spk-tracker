@@ -182,12 +182,12 @@
     @include('layouts.sidebar')
 
     <!-- MAIN CONTENT AREA -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-pogi-ambient-canvas">
       <!-- Top Sticky Header -->
       @include('layouts.header')
 
       <!-- Main Body Scrollable View with Ambient Canvas Gradient -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in bg-pogi-ambient-canvas">
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 page-fade-in">
         @yield('content')
       </main>
     </div>
