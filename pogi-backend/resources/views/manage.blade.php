@@ -589,116 +589,99 @@
     }
   </style>
   <!-- Modal Add Generic Master Item -->
-  <div id="manageAddModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden relative z-10 animate-scale-in">
-      <!-- Top Shimmer Line -->
-      <div class="h-1.5 bg-gradient-to-r from-[#16b3ac] via-emerald-400 to-[#0ea5e9] shrink-0"></div>
-      
+  <div id="manageAddModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
       <!-- Modal Header (Sticky) -->
-      <div class="px-6 py-4.5 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-3.5 min-w-0">
-          <div id="manageAddModalIconWrap" class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100/80 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs">
-            <span id="manageAddModalIcon" class="material-symbols-outlined text-[22px]">add_circle</span>
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div id="manageAddModalIconWrap" class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+            <span id="manageAddModalIcon" class="material-symbols-outlined text-xl">add_circle</span>
           </div>
           <div class="min-w-0">
-            <h3 id="manageAddModalTitle" class="font-black text-slate-900 text-lg leading-snug tracking-tight truncate">Tambah Data Master</h3>
-            <p id="manageAddModalSubtitle" class="text-xs font-medium text-slate-500 mt-0.5 truncate">Lengkapi informasi berikut untuk menyimpan ke basis data POGI</p>
+            <h3 id="manageAddModalTitle" class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">Tambah Data Master</h3>
+            <p id="manageAddModalSubtitle" class="text-xs text-slate-500 truncate">Lengkapi informasi berikut untuk menyimpan ke basis data POGI</p>
           </div>
         </div>
-        <button type="button" onclick="closeManageAddModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0">
-          <span class="material-symbols-outlined text-[18px]">close</span>
+        <button type="button" onclick="closeManageAddModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
+          <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
       <form id="manageAddForm" onsubmit="event.preventDefault(); submitManageAdd();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div id="manageAddFormFields" class="p-6 sm:p-7 space-y-5 text-xs flex-1 overflow-y-auto bg-slate-50/40">
+        <div id="manageAddFormFields" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
           <!-- Populated dynamically based on active tab -->
         </div>
-        <div class="px-6 py-4 flex items-center justify-between gap-3 border-t border-slate-100 bg-white shrink-0 sticky bottom-0 z-20">
-          <span class="text-[11px] text-slate-400 font-medium hidden sm:inline flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span>Kolom bertanda <span class="text-rose-500 font-bold">*</span> wajib diisi</span>
-          <div class="flex items-center gap-2.5 ml-auto">
-            <button type="button" onclick="closeManageAddModal()" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-slate-900 font-bold text-xs transition shadow-2xs cursor-pointer active:scale-95">Batal</button>
-            <button id="manageAddSubmitBtn" type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#16b3ac] to-[#0ea5e9] hover:from-[#129993] hover:to-[#0284c7] text-white font-black text-xs shadow-md shadow-teal-500/20 transition flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed">
-              <span class="material-symbols-outlined text-[16px]">check_circle</span>
-              <span>Simpan Data</span>
-            </button>
-          </div>
+        <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+          <button type="button" onclick="closeManageAddModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+          <button id="manageAddSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined text-sm">check_circle</span>
+            <span>Simpan Data</span>
+          </button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- Modal View Details -->
-  <div id="manageDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden relative z-10 animate-scale-in">
-      <!-- Top Shimmer Line -->
-      <div class="h-1.5 bg-gradient-to-r from-sky-400 via-cyan-400 to-[#16b3ac] shrink-0"></div>
-
+  <div id="manageDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
       <!-- Modal Header (Sticky) -->
-      <div class="px-6 py-4.5 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-3.5 min-w-0">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-50 to-blue-50 border border-sky-100 text-sky-600 flex items-center justify-center shrink-0 shadow-2xs">
-            <span id="manageDetailModalIcon" class="material-symbols-outlined text-[22px]">visibility</span>
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+            <span id="manageDetailModalIcon" class="material-symbols-outlined text-xl">visibility</span>
           </div>
           <div class="min-w-0">
-            <h3 id="manageDetailModalTitle" class="font-black text-slate-900 text-lg leading-snug tracking-tight truncate">Rincian Data Master</h3>
-            <p id="manageDetailModalSubtitle" class="text-xs font-medium text-slate-500 mt-0.5 truncate">Ringkasan informasi terverifikasi pada basis data POGI</p>
+            <h3 id="manageDetailModalTitle" class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">Rincian Data Master</h3>
+            <p id="manageDetailModalSubtitle" class="text-xs text-slate-500 truncate">Ringkasan informasi terverifikasi pada basis data POGI</p>
           </div>
         </div>
-        <button type="button" onclick="closeManageDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0">
-          <span class="material-symbols-outlined text-[18px]">close</span>
+        <button type="button" onclick="closeManageDetailModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
+          <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
       <!-- Modal Body (Scrollable) -->
-      <div id="manageDetailContent" class="p-6 sm:p-7 space-y-4 text-xs flex-1 overflow-y-auto bg-slate-50/40">
+      <div id="manageDetailContent" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
         <!-- Key value pairs -->
       </div>
       <!-- Modal Footer (Sticky) -->
-      <div class="px-6 py-4 flex items-center justify-end gap-3 border-t border-slate-100 bg-white shrink-0 sticky bottom-0 z-20">
-        <div class="flex items-center gap-2.5 ml-auto">
-          <button id="manageDetailEditBtn" type="button" class="px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200/80 font-bold text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs rbac-operational active:scale-95">
-            <span class="material-symbols-outlined text-[16px]">edit_square</span>
-            <span>Edit Data</span>
-          </button>
-          <button type="button" onclick="closeManageDetailModal()" class="px-5 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-slate-900 font-bold text-xs transition shadow-2xs cursor-pointer active:scale-95">Tutup</button>
-        </div>
+      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button id="manageDetailEditBtn" type="button" class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200/80 font-bold text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs rbac-operational">
+          <span class="material-symbols-outlined text-sm">edit_square</span>
+          <span>Edit Data</span>
+        </button>
+        <button type="button" onclick="closeManageDetailModal()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs transition cursor-pointer">Tutup</button>
       </div>
     </div>
   </div>
 
   <!-- Modal Edit Item -->
-  <div id="manageEditModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden relative z-10 animate-scale-in">
-      <!-- Top Shimmer Line -->
-      <div class="h-1.5 bg-gradient-to-r from-amber-400 via-orange-400 to-[#16b3ac] shrink-0"></div>
-
+  <div id="manageEditModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
       <!-- Modal Header (Sticky) -->
-      <div class="px-6 py-4.5 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-3.5 min-w-0">
-          <div id="manageEditModalIconWrap" class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 text-amber-600 flex items-center justify-center shrink-0 shadow-2xs">
-            <span id="manageEditModalIcon" class="material-symbols-outlined text-[22px]">edit_square</span>
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div id="manageEditModalIconWrap" class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+            <span id="manageEditModalIcon" class="material-symbols-outlined text-xl">edit_square</span>
           </div>
           <div class="min-w-0">
-            <h3 id="manageEditModalTitle" class="font-black text-slate-900 text-lg leading-snug tracking-tight truncate">Edit Data Master</h3>
-            <p id="manageEditModalSubtitle" class="text-xs font-medium text-slate-500 mt-0.5 truncate">Perbarui detail entitas di bawah ini lalu simpan perubahan</p>
+            <h3 id="manageEditModalTitle" class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">Edit Data Master</h3>
+            <p id="manageEditModalSubtitle" class="text-xs text-slate-500 truncate">Perbarui detail entitas di bawah ini lalu simpan perubahan</p>
           </div>
         </div>
-        <button type="button" onclick="closeManageEditModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0">
-          <span class="material-symbols-outlined text-[18px]">close</span>
+        <button type="button" onclick="closeManageEditModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
+          <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
       <form id="manageEditForm" onsubmit="event.preventDefault(); submitManageEdit();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div id="manageEditFormFields" class="p-6 sm:p-7 space-y-5 text-xs flex-1 overflow-y-auto bg-slate-50/40">
+        <div id="manageEditFormFields" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
           <!-- Populated dynamically -->
         </div>
-        <div class="px-6 py-4 flex items-center justify-between gap-3 border-t border-slate-100 bg-white shrink-0 sticky bottom-0 z-20">
-          <span class="text-[11px] text-slate-400 font-medium hidden sm:inline flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span>Periksa kebenaran data sebelum menyimpan</span>
-          <div class="flex items-center gap-2.5 ml-auto">
-            <button type="button" onclick="closeManageEditModal()" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-slate-900 font-bold text-xs transition shadow-2xs cursor-pointer active:scale-95">Batal</button>
-            <button id="manageEditSubmitBtn" type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#16b3ac] to-[#0ea5e9] hover:from-[#129993] hover:to-[#0284c7] text-white font-black text-xs shadow-md shadow-teal-500/20 transition flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed">
-              <span class="material-symbols-outlined text-[16px]">save</span>
-              <span>Simpan Perubahan</span>
-            </button>
-          </div>
+        <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+          <button type="button" onclick="closeManageEditModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+          <button id="manageEditSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined text-sm">save</span>
+            <span>Simpan Perubahan</span>
+          </button>
         </div>
       </form>
     </div>
@@ -707,33 +690,30 @@
   <!-- ========================================================================= -->
   <!-- MODAL POPUP: IMPORT EXCEL MASTER DATA (DOCTOR, INSTITUTION, EVENT, CATEGORY) -->
   <!-- ========================================================================= -->
-  <div id="manageImportModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden relative z-10 animate-scale-in">
-      <!-- Top Shimmer Line -->
-      <div class="h-1.5 bg-gradient-to-r from-[#16b3ac] via-emerald-400 to-[#0ea5e9] shrink-0"></div>
-
+  <div id="manageImportModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
       <!-- Modal Header (Sticky) -->
-      <div class="px-6 py-4.5 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-3.5 min-w-0">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs">
-            <span class="material-symbols-outlined text-[22px]">upload_file</span>
+      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+            <span class="material-symbols-outlined text-xl">upload_file</span>
           </div>
           <div class="min-w-0">
-            <h3 id="manageImportModalTitle" class="font-black text-slate-900 text-lg leading-snug tracking-tight truncate">Import Data Excel</h3>
-            <p id="manageImportModalSubtitle" class="text-xs font-medium text-slate-500 mt-0.5 truncate">Unggah file spreadsheet .xlsx atau .csv untuk menambahkan data secara massal</p>
+            <h3 id="manageImportModalTitle" class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">Import Data Excel</h3>
+            <p id="manageImportModalSubtitle" class="text-xs text-slate-500 truncate">Unggah file spreadsheet .xlsx atau .csv untuk menambahkan data secara massal</p>
           </div>
         </div>
-        <button type="button" onclick="closeManageImportModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0 ml-4">
-          <span class="material-symbols-outlined text-[18px]">close</span>
+        <button type="button" onclick="closeManageImportModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
+          <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
 
       <!-- Modal Body (Scrollable) -->
-      <div class="p-5 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-slate-50/60">
+      <div class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
         <!-- Template Download Section -->
-        <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-center gap-3 min-w-0">
-            <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
+            <div class="w-9 h-9 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
               <span class="material-symbols-outlined text-lg">description</span>
             </div>
             <div class="min-w-0">
@@ -748,9 +728,9 @@
         </div>
 
         <!-- File Upload Dropzone -->
-        <div id="importDropzone" onclick="document.getElementById('importFileInput').click()" class="p-6 rounded-2xl border-2 border-dashed border-slate-300 hover:border-[#16b3ac] bg-white hover:bg-emerald-50/30 transition flex flex-col items-center justify-center text-center cursor-pointer gap-2 group">
+        <div id="importDropzone" onclick="document.getElementById('importFileInput').click()" class="p-6 rounded-2xl border-2 border-dashed border-slate-300 hover:border-[#16b3ac] bg-slate-50 hover:bg-emerald-50/30 transition flex flex-col items-center justify-center text-center cursor-pointer gap-2 group">
           <input type="file" id="importFileInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleImportFileSelect(event)" />
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#16b3ac] group-hover:bg-[#16b3ac] group-hover:text-white transition flex items-center justify-center">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-[#16b3ac] group-hover:bg-[#16b3ac] group-hover:text-white transition flex items-center justify-center">
             <span class="material-symbols-outlined text-2xl">cloud_upload</span>
           </div>
           <div>
@@ -779,10 +759,10 @@
       </div>
 
       <!-- Modal Footer Sticky -->
-      <div class="px-6 py-4 flex items-center justify-between gap-3 border-t border-slate-200/80 bg-white shrink-0 sticky bottom-0 z-20">
-        <button type="button" onclick="closeManageImportModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
-        <button id="importSubmitBtn" type="button" onclick="submitImportExcel()" disabled class="px-5 py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-sm shadow-teal-500/20 transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-          <span class="material-symbols-outlined text-[16px]">upload</span>
+      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeManageImportModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+        <button id="importSubmitBtn" type="button" onclick="submitImportExcel()" disabled class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <span class="material-symbols-outlined text-sm">upload</span>
           <span id="importSubmitBtnText">Mulai Proses Import</span>
         </button>
       </div>

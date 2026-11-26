@@ -204,31 +204,28 @@
   </main>
 
   <!-- MODAL: DETAIL JEJAK AUDIT (AUDIT LOG INSPECTOR) -->
-  <div id="auditDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 transition-opacity">
-    <div class="bg-white rounded-3xl max-w-xl w-full shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden transform transition-all page-fade-in relative z-10 animate-scale-in">
-      <!-- Top Shimmer Line -->
-      <div class="h-1.5 bg-gradient-to-r from-[#16b3ac] via-emerald-400 to-[#0ea5e9] shrink-0"></div>
-
-      <!-- Modal Header -->
-      <div class="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-3.5 min-w-0">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100/80 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs">
-            <span class="material-symbols-outlined text-[22px]">policy</span>
+  <div id="auditDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 transition-opacity">
+    <div class="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+      <!-- Modal Header (Sticky) -->
+      <div class="p-6 pb-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+            <span class="material-symbols-outlined text-xl">policy</span>
           </div>
           <div class="min-w-0">
-            <h3 class="text-lg font-black text-slate-900 leading-snug tracking-tight truncate">Detail Jejak Audit Operasional</h3>
-            <p class="text-xs text-slate-400 font-mono mt-0.5 truncate" id="modalAuditId">UUID: -</p>
+            <h3 class="text-sm font-black text-slate-900 leading-snug tracking-tight truncate">Detail Jejak Audit Operasional</h3>
+            <p class="text-xs text-slate-500 font-mono truncate" id="modalAuditId">UUID: -</p>
           </div>
         </div>
-        <button type="button" onclick="closeAuditDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0">
-          <span class="material-symbols-outlined text-[18px]">close</span>
+        <button type="button" onclick="closeAuditDetailModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
+          <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
 
-      <!-- Modal Body -->
-      <div class="p-6 sm:p-7 space-y-4 max-h-[70vh] overflow-y-auto bg-slate-50/40 text-xs">
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 space-y-4 flex-1 overflow-y-auto bg-white text-xs min-h-0">
         <!-- User & Timestamp Bar -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-2xs text-xs">
           <div>
             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Pengguna / Aktor</span>
             <span class="font-extrabold text-slate-900 text-sm mt-0.5 block truncate" id="modalActorName">-</span>
@@ -244,7 +241,7 @@
         <!-- Action & Category -->
         <div class="space-y-1.5">
           <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Aksi Sistem / Operasional</span>
-          <div class="flex items-center justify-between gap-2 p-3.5 rounded-xl border border-slate-200/80 bg-white shadow-2xs">
+          <div class="flex items-center justify-between gap-2 p-3.5 rounded-xl border border-slate-200/80 bg-slate-50 shadow-2xs">
             <div class="font-black text-slate-900 text-xs truncate" id="modalActionName">-</div>
             <div id="modalCategoryBadge"></div>
           </div>
@@ -253,7 +250,7 @@
         <!-- Description -->
         <div class="space-y-1.5">
           <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rincian Narasi Perubahan</span>
-          <div class="p-4 rounded-2xl border border-slate-200/80 bg-white text-slate-700 text-xs leading-relaxed font-medium shadow-2xs" id="modalDetailsText">
+          <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50 text-slate-700 text-xs leading-relaxed font-medium shadow-2xs" id="modalDetailsText">
             -
           </div>
         </div>
@@ -271,12 +268,12 @@
         </div>
       </div>
 
-      <!-- Modal Footer -->
-      <div class="px-6 py-4 border-t border-slate-100 bg-white flex items-center justify-between shrink-0 sticky bottom-0 z-20">
+      <!-- Modal Footer (Sticky) -->
+      <div class="p-4 px-6 border-t border-slate-100 bg-slate-50/80 flex items-center justify-between shrink-0 sticky bottom-0 z-20">
         <span class="text-[11px] text-slate-400 font-medium flex items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Integritas Log: <strong class="text-emerald-700 font-bold">Terverifikasi</strong>
         </span>
-        <button type="button" onclick="closeAuditDetailModal()" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-xs cursor-pointer active:scale-95">
+        <button type="button" onclick="closeAuditDetailModal()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition cursor-pointer">
           Tutup
         </button>
       </div>

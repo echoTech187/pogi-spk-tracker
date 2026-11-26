@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="aCKfI3f0e2a8PyBuApM4JcvGDZsstcor1gkZVSjC">
+  <meta name="csrf-token" content="igN1jufXY1ydOmpxRVoLxQ1cKip45BFZcHmDHlPz">
   <title>POGI SKP Tracker - Laporan &amp; Analisis Realisasi SKP</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -346,7 +346,7 @@
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
                 <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">15 menit yang lalu</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">2 jam yang lalu</div>
               </div>
             </div>
           </div>
@@ -640,29 +640,26 @@
   <!-- MODAL POPUP 1: PILIHAN BULAN (PERSIS BPJS DI CHAT WHATSAPP)               -->
   <!-- ========================================================================= -->
   <div id="monthPickerModal"
-    class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 hidden transition-opacity">
+    class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden transition-opacity">
     <div
-      class="bg-white rounded-3xl border border-slate-100 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] w-full max-w-md max-h-[92vh] flex flex-col overflow-hidden animate-scale-in relative z-10">
-      <!-- Top Shimmer Line -->
-      <div class="h-1.5 bg-gradient-to-r from-[#16b3ac] via-emerald-400 to-[#0ea5e9] shrink-0"></div>
-
-      <div class="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100/80 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs">
-            <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+      class="bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden animate-scale-in relative z-10">
+      <div class="p-6 pb-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+            <span class="material-symbols-outlined text-xl">calendar_month</span>
           </div>
           <div>
-            <h3 class="font-black text-base text-slate-900 leading-snug">Pilih Bulan Laporan</h3>
+            <h3 class="font-black text-sm text-slate-900 leading-snug">Pilih Bulan Laporan</h3>
             <p class="text-xs text-slate-500">Rekapitulasi berkas SKP bulanan</p>
           </div>
         </div>
         <button type="button" onclick="toggleMonthPickerModal(false)"
-          class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0">
-          <span class="material-symbols-outlined text-[18px]">close</span>
+          class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
+          <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
 
-      <div class="p-6 space-y-4 flex-1 overflow-y-auto bg-slate-50/40 text-xs">
+      <div class="p-6 space-y-4 flex-1 overflow-y-auto bg-white text-xs min-h-0">
         <div class="flex items-center justify-between px-1">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tahun Laporan</span>
           <span class="text-xs font-black text-slate-900 bg-white border border-slate-200/80 px-3 py-1 rounded-xl shadow-2xs">Tahun 2026</span>
@@ -691,7 +688,7 @@
           <button type="button" onclick="selectMonth(9)" id="mbtn-9"
             class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Okt</button>
           <button type="button" onclick="selectMonth(10)" id="mbtn-10"
-            class="py-3 rounded-2xl bg-gradient-to-r from-[#16b3ac] to-[#0ea5e9] text-white font-black shadow-xs shadow-teal-500/20 transition cursor-pointer text-center">Nov</button>
+            class="py-3 rounded-2xl bg-[#16b3ac] text-white font-black shadow-xs transition cursor-pointer text-center">Nov</button>
           <button type="button" onclick="selectMonth(11)" id="mbtn-11"
             class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Des</button>
         </div>
@@ -702,9 +699,9 @@
         </div>
       </div>
 
-      <div class="px-6 py-4 bg-white border-t border-slate-100 flex items-center justify-end shrink-0 sticky bottom-0 z-20">
+      <div class="p-4 px-6 bg-slate-50/80 border-t border-slate-100 flex items-center justify-end shrink-0 sticky bottom-0 z-20">
         <button type="button" onclick="toggleMonthPickerModal(false)"
-          class="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold transition shadow-2xs cursor-pointer">
+          class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition cursor-pointer">
           Tutup
         </button>
       </div>
@@ -715,29 +712,26 @@
   <!-- MODAL POPUP 2: ARSIP FLASHBACK DOKUMEN (DIRAPIKAN TOTAL - MAX-W-5XL)      -->
   <!-- ========================================================================= -->
   <div id="archiveModal"
-    class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 hidden transition-opacity">
+    class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden transition-opacity">
     <div
-      class="bg-white rounded-3xl border border-slate-100 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden animate-scale-in relative z-10">
-      <!-- Top Shimmer Line -->
-      <div class="h-1.5 bg-gradient-to-r from-amber-500 via-orange-400 to-[#16b3ac] shrink-0"></div>
-
-      <div class="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-3 min-w-0">
-          <div class="w-11 h-11 rounded-2xl bg-amber-50 border border-amber-100 text-amber-700 flex items-center justify-center shrink-0 shadow-2xs">
-            <span class="material-symbols-outlined text-[22px]">folder_zip</span>
+      class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-in relative z-10">
+      <div class="p-6 pb-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+            <span class="material-symbols-outlined text-xl">folder_zip</span>
           </div>
           <div class="min-w-0">
-            <h3 class="font-black text-lg text-slate-900 leading-snug tracking-tight truncate">Arsip File Laporan Bulanan (PDF Siap Unduh)</h3>
-            <p class="text-xs text-slate-500 truncate">File tersimpan per bulan untuk kebutuhan flashback &amp; lampiran penagihan invoice.</p>
+            <h3 class="font-black text-sm text-slate-900 leading-snug tracking-tight truncate">Arsip File Laporan Bulanan (PDF Siap Unduh)</h3>
+            <p class="text-xs text-slate-500 truncate">File tersimpan per bulan untuk kebutuhan flashback &amp; lampiran penagihan invoice</p>
           </div>
         </div>
         <button type="button" onclick="openArchiveModal(false)"
-          class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0">
-          <span class="material-symbols-outlined text-[18px]">close</span>
+          class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
+          <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
 
-      <div class="p-6 sm:p-7 flex-1 overflow-y-auto bg-slate-50/40">
+      <div class="p-6 flex-1 overflow-y-auto bg-white min-h-0">
         <div class="overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-2xs">
           <table class="w-full text-left text-xs whitespace-nowrap">
             <thead class="bg-slate-50/80 border-b border-slate-200/80 text-slate-500 font-extrabold uppercase text-[10px]">
@@ -773,13 +767,13 @@
       </div>
 
       <div
-        class="px-6 py-4 bg-white border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 shrink-0 sticky bottom-0 z-20">
+        class="p-4 px-6 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 shrink-0 sticky bottom-0 z-20">
         <div class="flex items-center gap-1.5">
           <span class="material-symbols-outlined text-sm text-[#16b3ac]">verified</span>
           <span>Sistem Penyimpanan Terpadu Impruve.Id &bull; Cutoff tgl 1</span>
         </div>
         <button type="button" onclick="openArchiveModal(false)"
-          class="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold transition shadow-2xs cursor-pointer">
+          class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition cursor-pointer">
           Tutup
         </button>
       </div>
@@ -810,7 +804,7 @@
     let chartDonutInstance = null;
     let chartStatusInstance = null;
 
-    const LIVE_MONTHLY_DATA = [{"name":"Januari 2026","short":"Jan","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Februari 2026","short":"Feb","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Maret 2026","short":"Mar","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"April 2026","short":"Apr","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Mei 2026","short":"Mei","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Juni 2026","short":"Jun","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Juli 2026","short":"Jul","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Agustus 2026","short":"Agu","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"September 2026","short":"Sep","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Oktober 2026","short":"Okt","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"November 2026","short":"Nov","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":1,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"26 Nov 2026, 14:34 WIB"},{"name":"Desember 2026","short":"Des","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Cutoff (1 Des 2026)"}];
+    const LIVE_MONTHLY_DATA = [{"name":"Januari 2026","short":"Jan","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Februari 2026","short":"Feb","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Maret 2026","short":"Mar","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"April 2026","short":"Apr","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Mei 2026","short":"Mei","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Juni 2026","short":"Jun","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Juli 2026","short":"Jul","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Agustus 2026","short":"Agu","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"September 2026","short":"Sep","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"Oktober 2026","short":"Okt","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Ada Snapshot"},{"name":"November 2026","short":"Nov","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":1,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"26 Nov 2026, 16:41 WIB"},{"name":"Desember 2026","short":"Des","target":2.67,"target_pel":0.93,"target_peng":0.13,"target_pemb":1.2,"real":0,"total_doctors":1,"complete":0,"incomplete":0,"pending_skp":0,"pending_doctors":0,"pel":0,"peng":0,"pemb":0,"status_breakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"update":"Belum Cutoff (1 Des 2026)"}];
     const LIVE_REPORT_PDF_CONTEXT = {"metrics":{"total_reports":0,"total_verified_skp":0,"total_doctors":1,"complete_doctors":0,"incomplete_doctors":1,"pending_doctors":0,"compliance_rate":0},"totalRecords":0,"domainBreakdown":{"PEMBELAJARAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PELAYANAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0},"PENGABDIAN":{"DONE":0,"SUBMITTED":0,"REJECTED":0,"NOT_SUBMITTED":0}},"topDoctors":[{"name":"dr. Budi Santoso, Sp.PD","province":"DKI Jakarta","status":"INCOMPLETE","total_skp":"0.00","pemb_skp":"0.00","pel_skp":"0.00","peng_skp":"0.00"}],"topEvents":[{"title":"Simposium Akhir Tahun Kardiologi Klinis \u0026 Maternal","event_date":"2026-11-25","credit_value":"2.00","domain":"PEMBELAJARAN","participants":0}],"topProvinces":[{"name":"DKI Jakarta","doctors_count":1,"complete_count":"0"}]};
     window.LIVE_MONTHLY_DATA = LIVE_MONTHLY_DATA;
     window.LIVE_REPORT_PDF_CONTEXT = LIVE_REPORT_PDF_CONTEXT;
