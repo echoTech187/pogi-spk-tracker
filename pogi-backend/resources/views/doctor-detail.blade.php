@@ -7,18 +7,6 @@
   <!-- MAIN SCROLLABLE CONTENT -->
   <main class="flex-1 overflow-y-auto bg-white  space-y-6 page-fade-in">
 
-    <!-- Navigation Breadcrumb & Back Button -->
-    <div class="flex items-center justify-between gap-3">
-      <a href="/doctors"
-        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs">
-        <span class="material-symbols-outlined text-sm text-[#16b3ac]">arrow_back</span>
-        <span>Kembali </span>
-      </a>
-      <div class="text-[11px] text-slate-500 font-medium">
-        Monitoring SKP Dokter Obgyn &bull; <strong id="breadcrumbDoctorName">{{ $doctor?->full_name ?? 'Data Tidak Ditemukan' }}</strong>
-      </div>
-    </div>
-
     @if(!$doctor)
       <!-- Empty State: Data Dokter Tidak Ditemukan -->
       <div class="p-10 sm:p-14 rounded-3xl bg-white border border-slate-200/90 shadow-2xs text-center space-y-4">
@@ -35,7 +23,7 @@
           <a href="/doctors"
             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition">
             <span class="material-symbols-outlined text-base">groups</span>
-            <span>Kembali ke Direktori Dokter</span>
+            <span>Kembali</span>
           </a>
         </div>
       </div>
