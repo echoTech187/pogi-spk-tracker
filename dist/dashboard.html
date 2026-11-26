@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu">
+  <meta name="csrf-token" content="zBLCiB8pTfmUlpe4fUuTqaVtgsOH3XWMajQauRLU">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -17,6 +17,14 @@
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+  <!-- SheetJS (Excel XLSX Import & Export) -->
+  <script src="/js/vendor/xlsx.full.min.js"></script>
+  <script>
+    if (typeof XLSX === 'undefined') {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"><\/script>');
+    }
+  </script>
   
   <!-- Core Styles -->
   <link rel="stylesheet" href="/css/style.css">
@@ -338,7 +346,7 @@
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
                 <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">14 menit yang lalu</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">56 menit yang lalu</div>
               </div>
             </div>
           </div>
@@ -1152,7 +1160,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': 'QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu',
+            'X-CSRF-TOKEN': 'zBLCiB8pTfmUlpe4fUuTqaVtgsOH3XWMajQauRLU',
             'Accept': 'application/json'
           },
           body: JSON.stringify({ target, channels, message })
@@ -1180,7 +1188,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu'
+          'X-CSRF-TOKEN': 'zBLCiB8pTfmUlpe4fUuTqaVtgsOH3XWMajQauRLU'
         },
         body: JSON.stringify({
           doctor_id: doctorId || null,

@@ -31,22 +31,22 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
       <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
         <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active users</div>
-        <div class="text-2xl font-black text-slate-900 mt-1">{{ $metrics['unique_users'] ?? 14 }}</div>
+        <div class="text-2xl font-black text-slate-900 mt-1">{{ $metrics['unique_users'] ?? 0 }}</div>
         <div class="text-[10px] text-emerald-700 font-bold mt-0.5">Admin &bull; Terdaftar</div>
       </div>
       <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
         <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Audit Logs</div>
-        <div class="text-2xl font-black text-slate-900 mt-1">{{ $metrics['total_logs'] ?? 14 }}</div>
+        <div class="text-2xl font-black text-slate-900 mt-1">{{ $metrics['total_logs'] ?? 0 }}</div>
         <div class="text-[10px] text-slate-500 mt-0.5">Jejak Permanen</div>
       </div>
       <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
         <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aktivitas Hari Ini</div>
-        <div class="text-2xl font-black text-sky-700 mt-1">{{ $metrics['today_actions'] ?? 14 }}</div>
+        <div class="text-2xl font-black text-sky-700 mt-1">{{ $metrics['today_actions'] ?? 0 }}</div>
         <div class="text-[10px] text-sky-800 font-bold mt-0.5">Real-Time Sync</div>
       </div>
       <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
         <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aksi Kredensial &amp; PIC</div>
-        <div class="text-2xl font-black text-[#16b3ac] mt-1">{{ $metrics['security_actions'] ?? 10 }}</div>
+        <div class="text-2xl font-black text-[#16b3ac] mt-1">{{ $metrics['security_actions'] ?? 0 }}</div>
         <div class="text-[10px] text-emerald-800 font-bold mt-0.5">Audit Security</div>
       </div>
       <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs col-span-2 sm:col-span-1">

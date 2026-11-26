@@ -26,19 +26,21 @@ class ReportController extends Controller
 
         // Total metrik riil dari basis data
         $totalReports = $snapshots->count();
-        $totalDoctors = DB::table('doctors')->count();
-        $completeDoctors = DB::table('doctors')->where('status', 'COMPLETE')->count();
-        $incompleteDoctors = DB::table('doctors')->where('status', 'INCOMPLETE')->count();
-        $pendingDoctors = DB::table('doctors')->where('status', 'PENDING_REVIEW')->count();
+        $totalDoctors = DB::table('doctors')->whereNull('deleted_at')->count();
+        $completeDoctors = DB::table('doctors')->whereNull('deleted_at')->where('status', 'COMPLETE')->count();
+        $incompleteDoctors = DB::table('doctors')->whereNull('deleted_at')->where('status', 'INCOMPLETE')->count();
+        $pendingDoctors = DB::table('doctors')->whereNull('deleted_at')->where('status', 'PENDING_REVIEW')->count();
         $avgCompliance = $totalDoctors > 0 ? round(($completeDoctors / $totalDoctors) * 100, 1) : 0;
 
         $periodAgg = DB::table('doctor_skp_periods')
-            ->where('is_active', true)
+            ->join('doctors', 'doctor_skp_periods.doctor_id', '=', 'doctors.id')
+            ->whereNull('doctors.deleted_at')
+            ->where('doctor_skp_periods.is_active', true)
             ->selectRaw('
-                SUM(achieved_total_credits) as total_skp,
-                SUM(achieved_pelayanan_credits) as pel_skp,
-                SUM(achieved_pengabdian_credits) as peng_skp,
-                SUM(achieved_pembelajaran_credits) as pemb_skp
+                COALESCE(SUM(doctor_skp_periods.achieved_total_credits), 0) as total_skp,
+                COALESCE(SUM(doctor_skp_periods.achieved_pelayanan_credits), 0) as pel_skp,
+                COALESCE(SUM(doctor_skp_periods.achieved_pengabdian_credits), 0) as peng_skp,
+                COALESCE(SUM(doctor_skp_periods.achieved_pembelajaran_credits), 0) as pemb_skp
             ')
             ->first();
 
@@ -46,6 +48,47 @@ class ReportController extends Controller
         $pelSkp = round((float) ($periodAgg->pel_skp ?? 0), 1);
         $pengSkp = round((float) ($periodAgg->peng_skp ?? 0), 1);
         $pembSkp = round((float) ($periodAgg->pemb_skp ?? 0), 1);
+
+        // Pending SKP entries calculation
+        $pendingSkpRow = DB::table('skp_entries')
+            ->whereIn('status', ['SUBMITTED', 'PENDING'])
+            ->selectRaw('COALESCE(SUM(credit_amount), 0) as pending_skp, COUNT(DISTINCT doctor_id) as pending_docs')
+            ->first();
+        $pendingSkp = round((float) ($pendingSkpRow->pending_skp ?? 0), 1);
+        $pendingDocsCount = (int) ($pendingSkpRow->pending_docs ?? $pendingDoctors);
+
+        // Targets per domain per month based on Kemenkes 160 SKP / 5-year standard
+        $targetTotalMonth = round($totalDoctors * 2.67, 2);
+        $targetPelMonth = round($totalDoctors * (56.0 / 60.0), 2);
+        $targetPengMonth = round($totalDoctors * (8.0 / 60.0), 2);
+        $targetPembMonth = round($totalDoctors * (72.0 / 60.0), 2);
+
+        // Konteks Data Riil Database untuk Ekspor PDF & Chart
+        $entryStats = DB::table('skp_entries')
+            ->select('domain', 'status', DB::raw('COUNT(*) as entry_count'), DB::raw('COALESCE(SUM(credit_amount), 0) as total_credits'))
+            ->groupBy('domain', 'status')
+            ->get();
+
+        $domainBreakdown = [
+            'PEMBELAJARAN' => ['DONE' => 0.0, 'SUBMITTED' => 0.0, 'REJECTED' => 0.0, 'NOT_SUBMITTED' => 0.0],
+            'PELAYANAN' => ['DONE' => 0.0, 'SUBMITTED' => 0.0, 'REJECTED' => 0.0, 'NOT_SUBMITTED' => 0.0],
+            'PENGABDIAN' => ['DONE' => 0.0, 'SUBMITTED' => 0.0, 'REJECTED' => 0.0, 'NOT_SUBMITTED' => 0.0],
+        ];
+        $totalRecords = 0;
+        foreach ($entryStats as $row) {
+            $dom = strtoupper((string) $row->domain);
+            $st = strtoupper((string) $row->status);
+            if ($st === 'PENDING') $st = 'NOT_SUBMITTED';
+            if ($st === 'VERIFIED') $st = 'DONE';
+            if (isset($domainBreakdown[$dom][$st])) {
+                $domainBreakdown[$dom][$st] += round((float) $row->total_credits, 1);
+            }
+            $totalRecords += (int) $row->entry_count;
+        }
+
+        if ($domainBreakdown['PEMBELAJARAN']['DONE'] == 0 && $pembSkp > 0) $domainBreakdown['PEMBELAJARAN']['DONE'] = $pembSkp;
+        if ($domainBreakdown['PELAYANAN']['DONE'] == 0 && $pelSkp > 0) $domainBreakdown['PELAYANAN']['DONE'] = $pelSkp;
+        if ($domainBreakdown['PENGABDIAN']['DONE'] == 0 && $pengSkp > 0) $domainBreakdown['PENGABDIAN']['DONE'] = $pengSkp;
 
         $monthNames = [
             1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
@@ -70,7 +113,6 @@ class ReportController extends Controller
         for ($m = 1; $m <= 12; $m++) {
             $snap = $snapshotByMonth->get($m);
             $isCurrent = $m === $currentMonth;
-            $targetCredits = round($totalDoctors * 2.67, 2);
 
             if ($snap) {
                 $snapComplete = (int) ($snap->complete_doctors ?? 0);
@@ -82,39 +124,64 @@ class ReportController extends Controller
                 $monthlyData[] = [
                     'name' => "{$monthNames[$m]} {$currentYear}",
                     'short' => $monthShorts[$m],
-                    'target' => $targetCredits,
+                    'target' => $targetTotalMonth,
+                    'target_pel' => $targetPelMonth,
+                    'target_peng' => $targetPengMonth,
+                    'target_pemb' => $targetPembMonth,
                     'real' => $isCurrent ? $totalSkp : (float) ($snap->total_verified_skp ?? 0),
+                    'total_doctors' => $totalDoctors,
                     'complete' => $snapComplete,
-                    'pending' => $snapIncomplete,
+                    'incomplete' => $snapIncomplete,
+                    'pending_skp' => $pendingSkp,
+                    'pending_doctors' => $pendingDocsCount,
                     'pel' => $isCurrent ? $pelSkp : 0,
                     'peng' => $isCurrent ? $pengSkp : 0,
                     'pemb' => $isCurrent ? $pembSkp : 0,
+                    'status_breakdown' => $domainBreakdown,
                     'update' => $snapUpdate,
                 ];
             } elseif ($isCurrent) {
                 $monthlyData[] = [
                     'name' => "{$monthNames[$m]} {$currentYear}",
                     'short' => $monthShorts[$m],
-                    'target' => $targetCredits,
+                    'target' => $targetTotalMonth,
+                    'target_pel' => $targetPelMonth,
+                    'target_peng' => $targetPengMonth,
+                    'target_pemb' => $targetPembMonth,
                     'real' => $totalSkp,
+                    'total_doctors' => $totalDoctors,
                     'complete' => $completeDoctors,
-                    'pending' => $pendingDoctors,
+                    'incomplete' => $incompleteDoctors,
+                    'pending_skp' => $pendingSkp,
+                    'pending_doctors' => $pendingDocsCount,
                     'pel' => $pelSkp,
                     'peng' => $pengSkp,
                     'pemb' => $pembSkp,
+                    'status_breakdown' => $domainBreakdown,
                     'update' => $now->format('d M Y, H:i') . ' WIB',
                 ];
             } else {
                 $monthlyData[] = [
                     'name' => "{$monthNames[$m]} {$currentYear}",
                     'short' => $monthShorts[$m],
-                    'target' => $targetCredits,
+                    'target' => $targetTotalMonth,
+                    'target_pel' => $targetPelMonth,
+                    'target_peng' => $targetPengMonth,
+                    'target_pemb' => $targetPembMonth,
                     'real' => 0,
+                    'total_doctors' => $totalDoctors,
                     'complete' => 0,
-                    'pending' => 0,
+                    'incomplete' => 0,
+                    'pending_skp' => 0,
+                    'pending_doctors' => 0,
                     'pel' => 0,
                     'peng' => 0,
                     'pemb' => 0,
+                    'status_breakdown' => [
+                        'PEMBELAJARAN' => ['DONE' => 0, 'SUBMITTED' => 0, 'REJECTED' => 0, 'NOT_SUBMITTED' => 0],
+                        'PELAYANAN' => ['DONE' => 0, 'SUBMITTED' => 0, 'REJECTED' => 0, 'NOT_SUBMITTED' => 0],
+                        'PENGABDIAN' => ['DONE' => 0, 'SUBMITTED' => 0, 'REJECTED' => 0, 'NOT_SUBMITTED' => 0],
+                    ],
                     'update' => $m < $currentMonth ? 'Belum Ada Snapshot' : "Belum Cutoff (1 {$monthShorts[$m]} {$currentYear})",
                 ];
             }
@@ -129,29 +196,6 @@ class ReportController extends Controller
             'pending_doctors' => $pendingDoctors,
             'compliance_rate' => $avgCompliance,
         ];
-
-        // Konteks Data Riil Database untuk Ekspor PDF Resmi (Bebas Hardcode)
-        $entryStats = DB::table('skp_entries')
-            ->select('domain', 'status', DB::raw('COUNT(*) as entry_count'), DB::raw('COALESCE(SUM(credit_amount), 0) as total_credits'))
-            ->groupBy('domain', 'status')
-            ->get();
-
-        $domainBreakdown = [
-            'PEMBELAJARAN' => ['DONE' => 0, 'SUBMITTED' => 0, 'REJECTED' => 0, 'NOT_SUBMITTED' => 0],
-            'PELAYANAN' => ['DONE' => 0, 'SUBMITTED' => 0, 'REJECTED' => 0, 'NOT_SUBMITTED' => 0],
-            'PENGABDIAN' => ['DONE' => 0, 'SUBMITTED' => 0, 'REJECTED' => 0, 'NOT_SUBMITTED' => 0],
-        ];
-        $totalRecords = 0;
-        foreach ($entryStats as $row) {
-            $dom = strtoupper((string) $row->domain);
-            $st = strtoupper((string) $row->status);
-            if ($st === 'PENDING') $st = 'NOT_SUBMITTED';
-            if ($st === 'VERIFIED') $st = 'DONE';
-            if (isset($domainBreakdown[$dom][$st])) {
-                $domainBreakdown[$dom][$st] += round((float) $row->total_credits, 1);
-            }
-            $totalRecords += (int) $row->entry_count;
-        }
 
         $topDoctors = DB::table('doctors')
             ->leftJoin('provinces', 'doctors.province_id', '=', 'provinces.id')

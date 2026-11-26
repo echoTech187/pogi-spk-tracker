@@ -23,6 +23,7 @@ class Doctor extends Model
         'npa_pogi',
         'full_name',
         'specialization_title',
+        'is_active',
         'nik_encrypted',
         'nik_hash',
         'str_number',
@@ -37,6 +38,10 @@ class Doctor extends Model
         'plataran_sehat_username',
         'plataran_sehat_pass_encrypted',
         'status',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     public function province(): BelongsTo

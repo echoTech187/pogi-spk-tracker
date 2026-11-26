@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu">
+  <meta name="csrf-token" content="zBLCiB8pTfmUlpe4fUuTqaVtgsOH3XWMajQauRLU">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -17,6 +17,14 @@
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+  <!-- SheetJS (Excel XLSX Import & Export) -->
+  <script src="/js/vendor/xlsx.full.min.js"></script>
+  <script>
+    if (typeof XLSX === 'undefined') {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"><\/script>');
+    }
+  </script>
   
   <!-- Core Styles -->
   <link rel="stylesheet" href="/css/style.css">
@@ -338,7 +346,7 @@
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
                 <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">14 menit yang lalu</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">56 menit yang lalu</div>
               </div>
             </div>
           </div>
@@ -515,12 +523,12 @@
           <div>
             <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Internal Updated
               (Energi Cipta)</span>
-            <span id="tsInternal" class="font-mono font-bold text-slate-800">25 Nov 2026, 17.32 WIB</span>
+            <span id="tsInternal" class="font-mono font-bold text-slate-800">26 Nov 2026, 10.09 WIB</span>
           </div>
           <div>
             <span class="block text-slate-400 font-bold text-[9px] uppercase tracking-wider">Kemenkes Synced (Portal
               Plataran)</span>
-            <span id="tsKemenkes" class="font-mono font-bold text-emerald-700">Menunggu Sinkronisasi</span>
+            <span id="tsKemenkes" class="font-mono font-bold text-emerald-700">26 Nov 2026, 10.09 WIB</span>
           </div>
         </div>
       </div>
@@ -1110,9 +1118,9 @@
   <script src="/js/navigation.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
-    const LIVE_SERVER_DOCTOR = {"id":"04680f57-b8b3-4873-898e-754974a29bb1","user_id":null,"npa_pogi":"#POGI-2026-5774","full_name":"dr. Budi Santoso, Sp.PD","specialization_title":"Sp.OG","nik_encrypted":"GCM1:fdjSlPScKQi2oHvA9ErMzj\/VpE54RUY5OB1ghj96MboYgP8vHK23RQ8Ygg==","nik_hash":"08cab81591ae7342b39cd73a914609da19b891483ba972c2e4df73c9b79ae45c","str_number":"32.73.100.2.21.0883","sip_number":"446\/926\/SIP\/2026","sip_expiry_date":"2031-11-25","email":"dr.budi.santoso.sp.pd@pogi-member.id","whatsapp_number":"+628123456789","branch_id":"b800841f-8173-44eb-a99e-3eea6b954ae1","province_id":"31","primary_institution_id":"59df83b0-fd7e-476c-bf44-e7cff7ce515a","assigned_pic_id":null,"plataran_sehat_username":"super@example.com","plataran_sehat_pass_encrypted":"secret123","status":"INCOMPLETE","dashboard_updated_at":"2026-11-25 17:32:35","kemenkes_updated_at":null,"created_at":"2026-11-25 17:32:35","updated_at":"2026-11-25 17:32:35","deleted_at":null,"branch_name":"POGI Cabang DKI Jakarta","branch_code":"POGI-31","province_name":"DKI Jakarta","institution_name":"Klinik Pratama Sehat Sentosa","institution_city":"Jakarta Selatan","assigned_pic_name":null,"assigned_pic_email":null,"assigned_pic_phone":null};
+    const LIVE_SERVER_DOCTOR = {"id":"04680f57-b8b3-4873-898e-754974a29bb1","user_id":null,"npa_pogi":"#POGI-2026-5774","full_name":"dr. Budi Santoso, Sp.PD","specialization_title":"Sp.OG","is_active":1,"nik_encrypted":"GCM1:fdjSlPScKQi2oHvA9ErMzj\/VpE54RUY5OB1ghj96MboYgP8vHK23RQ8Ygg==","nik_hash":"08cab81591ae7342b39cd73a914609da19b891483ba972c2e4df73c9b79ae45c","str_number":"32.73.100.2.21.0883","sip_number":"446\/926\/SIP\/2026","sip_expiry_date":"2031-11-25","email":"dr.budi.santoso.sp.pd@pogi-member.id","whatsapp_number":"+628123456789","branch_id":"b800841f-8173-44eb-a99e-3eea6b954ae1","province_id":"31","primary_institution_id":"59df83b0-fd7e-476c-bf44-e7cff7ce515a","assigned_pic_id":null,"plataran_sehat_username":"super@example.com","plataran_sehat_pass_encrypted":"secret123","status":"INCOMPLETE","dashboard_updated_at":"2026-11-26 10:09:33","kemenkes_updated_at":"2026-11-26 10:09:34","created_at":"2026-11-25 17:32:35","updated_at":"2026-11-26 10:09:34","deleted_at":null,"branch_name":"POGI Cabang DKI Jakarta","branch_code":"POGI-31","province_name":"DKI Jakarta","institution_name":"Klinik Pratama Sehat Sentosa","institution_city":"Jakarta Selatan","assigned_pic_name":null,"assigned_pic_email":null,"assigned_pic_phone":null};
     const LIVE_SERVER_DOCUMENTS = [];
-    const LIVE_SERVER_PERIOD = {"id":"950fc41e-a764-4281-8c10-8a1352c62fcd","doctor_id":"04680f57-b8b3-4873-898e-754974a29bb1","cycle_number":1,"start_date":"2026-01-01","end_date":"2030-12-31","target_total_credits":"160.00","target_pembelajaran_credits":"72.00","target_pelayanan_credits":"56.00","target_pengabdian_credits":"8.00","target_flexibility_credits":"24.00","achieved_pembelajaran_credits":"0.00","achieved_pelayanan_credits":"0.00","achieved_pengabdian_credits":"0.00","achieved_total_credits":"0.00","is_active":1,"is_completed":0,"created_at":"2026-11-25 17:32:35","updated_at":"2026-11-25 17:32:35"};
+    const LIVE_SERVER_PERIOD = {"id":"950fc41e-a764-4281-8c10-8a1352c62fcd","doctor_id":"04680f57-b8b3-4873-898e-754974a29bb1","cycle_number":1,"start_date":"2026-01-01","end_date":"2030-12-31","target_total_credits":"160.00","target_pembelajaran_credits":"72.00","target_pelayanan_credits":"56.00","target_pengabdian_credits":"8.00","target_flexibility_credits":"24.00","achieved_pembelajaran_credits":"0.00","achieved_pelayanan_credits":"0.00","achieved_pengabdian_credits":"0.00","achieved_total_credits":"0.00","is_active":1,"is_completed":0,"created_at":"2026-11-25 17:32:35","updated_at":"2026-11-26 10:38:54"};
     const LIVE_SERVER_ENTRIES = [];
     const LIVE_SERVER_MISSING_DOCS = {"missingCount":3,"items":[{"code":"DOC-REQ-01","name":"Logbook Pelayanan Klinis \/ Bedah Maternal","domain":"Pelayanan","status":"Wajib Segera (Missing)","statusBadgeClass":"bg-rose-50 text-rose-700 border-rose-200","reason":"Belum ada berkas logbook pelayanan tindakan untuk memenuhi minimal 56 SKP (KMK 1561\/2024)"},{"code":"DOC-REQ-02","name":"Sertifikat PIT POGI \/ Simposium Terakreditasi","domain":"Pembelajaran","status":"Wajib Segera (Missing)","statusBadgeClass":"bg-rose-50 text-rose-700 border-rose-200","reason":"Belum ada bukti sertifikat simposium\/workshop terakreditasi untuk memenuhi minimal 72 SKP"},{"code":"DOC-REQ-03","name":"Surat Tugas \/ Bukti Pengabdian Masyarakat","domain":"Pengabdian","status":"Peringatan (Warning)","statusBadgeClass":"bg-amber-50 text-amber-800 border-amber-200","reason":"Perlu bukti kegiatan bakti sosial, edukasi KB, atau penyuluhan deteksi kanker serviks (minimal 8 SKP)"}]};
 
@@ -1821,7 +1829,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu',
+          'X-CSRF-TOKEN': 'zBLCiB8pTfmUlpe4fUuTqaVtgsOH3XWMajQauRLU',
           'Accept': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -1897,7 +1905,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu',
+          'X-CSRF-TOKEN': 'zBLCiB8pTfmUlpe4fUuTqaVtgsOH3XWMajQauRLU',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ assigned_pic_id: newAdminId })
@@ -1931,7 +1939,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu',
+          'X-CSRF-TOKEN': 'zBLCiB8pTfmUlpe4fUuTqaVtgsOH3XWMajQauRLU',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ status: newStatus })
@@ -2859,7 +2867,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'QDsP1P2I5RFRsbZ7wLgMnUdSd6kCxlyTXNlZ3oAu',
+          'X-CSRF-TOKEN': 'zBLCiB8pTfmUlpe4fUuTqaVtgsOH3XWMajQauRLU',
           'Accept': 'application/json'
         }
       })

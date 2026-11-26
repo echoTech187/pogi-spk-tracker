@@ -120,8 +120,10 @@ class EloquentManageRepository
                     'plataran_sehat_username' => $doc->plataran_sehat_username,
                     'period_start' => $period?->start_date ? Carbon::parse($period->start_date)->format('Y-m-d') : '2026-01-01',
                     'period_end' => $period?->end_date ? Carbon::parse($period->end_date)->format('Y-m-d') : '2030-12-31',
-                    'raw_status' => $doc->status,
-                    'status' => ($doc->status === 'COMPLETE' || $achievedTotal >= 8.0) ? 'Complete' : 'Incomplete',
+                    'is_active' => (bool) ($doc->is_active ?? true),
+                    'status' => ($doc->is_active ?? true) ? 'Active' : 'Non-Active',
+                    'raw_status' => ($doc->is_active ?? true) ? 'ACTIVE' : 'INACTIVE',
+                    'compliance_status' => ($doc->status === 'COMPLETE' || $achievedTotal >= 8.0) ? 'Complete' : 'Incomplete',
                     'province_id' => $doc->province_id,
                     'province' => $doc->province?->name ?? '-',
                     'branch_id' => $doc->branch_id,
@@ -270,7 +272,10 @@ class EloquentManageRepository
             } elseif (!str_starts_with($docPhone, '+')) {
                 $docPhone = '+62' . $docPhone;
             }
-            $rawStatus = !empty($v['status']) ? $v['status'] : 'INCOMPLETE';
+            $rawStatus = !empty($v['status']) ? $v['status'] : 'ACTIVE';
+            $isActive = array_key_exists('is_active', $v)
+                ? (bool) $v['is_active']
+                : !in_array(strtoupper(trim((string)$rawStatus)), ['INACTIVE', 'NON-ACTIVE', 'NONAKTIF', '0', 'FALSE'], true);
             $rawNik = (string) (!empty($v['nik']) ? $v['nik'] : $npa);
 
             $plataranUser = !empty($v['plataran_sehat_username']) ? trim($v['plataran_sehat_username']) : null;
@@ -286,6 +291,7 @@ class EloquentManageRepository
                 'sip_expiry_date' => $sipExpiry,
                 'full_name' => $v['name'],
                 'specialization_title' => $specTitle,
+                'is_active' => $isActive,
                 'email' => $docEmail,
                 'whatsapp_number' => $docPhone,
                 'province_id' => $provinceRow?->id,
@@ -293,7 +299,7 @@ class EloquentManageRepository
                 'primary_institution_id' => $instRow?->id,
                 'plataran_sehat_username' => $plataranUser,
                 'plataran_sehat_pass_encrypted' => $plataranPass,
-                'status' => $rawStatus,
+                'status' => 'INCOMPLETE',
             ]);
 
             try {
@@ -352,8 +358,10 @@ class EloquentManageRepository
                 'qAchieved' => 0,
                 'skpDisplay' => '0 / 160',
                 'total5YearAchieved' => 0,
-                'raw_status' => $rawStatus,
-                'status' => $rawStatus === 'COMPLETE' ? 'Complete' : 'Incomplete',
+                'is_active' => $isActive,
+                'status' => $isActive ? 'Active' : 'Non-Active',
+                'raw_status' => $isActive ? 'ACTIVE' : 'INACTIVE',
+                'compliance_status' => 'Incomplete',
             ];
         } elseif ($entityType === 'institution') {
             $provinceRow = Province::where('id', $v['province'])->orWhere('name', 'like', '%' . $v['province'] . '%')->first()
@@ -556,7 +564,18 @@ class EloquentManageRepository
             if (!empty($v['plataran_sehat_password'])) {
                 $upd['plataran_sehat_pass_encrypted'] = trim($v['plataran_sehat_password']);
             }
-            if (!empty($v['status'])) $upd['status'] = $v['status'];
+            if (array_key_exists('is_active', $v)) {
+                $upd['is_active'] = (bool) $v['is_active'];
+            } elseif (!empty($v['status'])) {
+                $st = strtoupper(trim($v['status']));
+                if (in_array($st, ['ACTIVE', 'AKTIF'], true)) {
+                    $upd['is_active'] = true;
+                } elseif (in_array($st, ['INACTIVE', 'NON-ACTIVE', 'NONAKTIF'], true)) {
+                    $upd['is_active'] = false;
+                } elseif (in_array($st, ['COMPLETE', 'INCOMPLETE', 'PENDING_REVIEW'], true)) {
+                    $upd['status'] = $st;
+                }
+            }
             if ($prov) $upd['province_id'] = $prov->id;
             if ($branch) $upd['branch_id'] = $branch->id;
             if ($inst) $upd['primary_institution_id'] = $inst->id;

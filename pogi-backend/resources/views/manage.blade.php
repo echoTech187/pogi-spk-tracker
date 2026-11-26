@@ -108,19 +108,27 @@
           </div>
 
           <div>
-            <label class="block font-bold text-slate-700 mb-1 text-xs">Status Kepatuhan SKP</label>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Status Dokter</label>
             <select id="manageDoctorStatusFilter" onchange="filterManageDoctorTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-              <option value="ALL">Semua Status (Complete &amp; Incomplete)</option>
-              <option value="Complete">Complete (Target Terpenuhi)</option>
-              <option value="Incomplete">Incomplete (Perlu Follow-Up)</option>
+              <option value="ALL">Semua Status (Active &amp; Non-Active)</option>
+              <option value="ACTIVE">Active (Aktif)</option>
+              <option value="INACTIVE">Non-Active (Non-Aktif)</option>
             </select>
           </div>
         </div>
 
         <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
           <div>Menampilkan <span id="manageDoctorCounter" class="font-bold text-slate-900">0</span> dokter dari total pangkalan data</div>
-          <div class="flex items-center gap-3">
-            <button type="button" onclick="resetManageDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" onclick="resetManageDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline mr-1">Reset Filter</button>
+            <button type="button" onclick="openManageImportModal('doctor')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Dokter dari File Excel">
+              <span class="material-symbols-outlined text-emerald-600 text-base">upload_file</span>
+              <span>Import (Excel)</span>
+            </button>
+            <button type="button" onclick="exportManageTabExcel('doctor')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Dokter ke File Excel (.xlsx)">
+              <span class="material-symbols-outlined text-emerald-700 text-base">file_download</span>
+              <span>Export (Excel)</span>
+            </button>
             <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">person_add</span>
               <span>Tambah Dokter</span>
@@ -246,8 +254,16 @@
 
         <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
           <div>Menampilkan <span id="manageInstCounter" class="font-bold text-slate-900">0</span> faskes jejaring</div>
-          <div class="flex items-center gap-3">
-            <button type="button" onclick="resetManageInstFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" onclick="resetManageInstFilters()" class="text-[#16b3ac] font-bold hover:underline mr-1">Reset Filter</button>
+            <button type="button" onclick="openManageImportModal('institution')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data RS / Faskes dari File Excel">
+              <span class="material-symbols-outlined text-emerald-600 text-base">upload_file</span>
+              <span>Import (Excel)</span>
+            </button>
+            <button type="button" onclick="exportManageTabExcel('institution')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data RS / Faskes ke File Excel (.xlsx)">
+              <span class="material-symbols-outlined text-emerald-700 text-base">file_download</span>
+              <span>Export (Excel)</span>
+            </button>
             <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">domain_add</span>
               <span>Tambah Institusi</span>
@@ -324,8 +340,16 @@
 
         <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
           <div>Menampilkan <span id="manageEventCounter" class="font-bold text-slate-900">0</span> event SKP terdaftar</div>
-          <div class="flex items-center gap-3">
-            <button type="button" onclick="resetManageEventFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" onclick="resetManageEventFilters()" class="text-[#16b3ac] font-bold hover:underline mr-1">Reset Filter</button>
+            <button type="button" onclick="openManageImportModal('event')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Event SKP dari File Excel">
+              <span class="material-symbols-outlined text-emerald-600 text-base">upload_file</span>
+              <span>Import (Excel)</span>
+            </button>
+            <button type="button" onclick="exportManageTabExcel('event')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Event SKP ke File Excel (.xlsx)">
+              <span class="material-symbols-outlined text-emerald-700 text-base">file_download</span>
+              <span>Export (Excel)</span>
+            </button>
             <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">add_circle</span>
               <span>Tambah Event SKP</span>
@@ -402,8 +426,16 @@
 
         <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
           <div>Menampilkan <span id="manageCatCounter" class="font-bold text-slate-900">0</span> kategori terverifikasi</div>
-          <div class="flex items-center gap-3">
-            <button type="button" onclick="resetManageCatFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" onclick="resetManageCatFilters()" class="text-[#16b3ac] font-bold hover:underline mr-1">Reset Filter</button>
+            <button type="button" onclick="openManageImportModal('category')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Kategori dari File Excel">
+              <span class="material-symbols-outlined text-emerald-600 text-base">upload_file</span>
+              <span>Import (Excel)</span>
+            </button>
+            <button type="button" onclick="exportManageTabExcel('category')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Kategori ke File Excel (.xlsx)">
+              <span class="material-symbols-outlined text-emerald-700 text-base">file_download</span>
+              <span>Export (Excel)</span>
+            </button>
             <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">category</span>
               <span>Tambah Kategori</span>
@@ -654,6 +686,90 @@
       </form>
     </div>
   </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL POPUP: IMPORT EXCEL MASTER DATA (DOCTOR, INSTITUTION, EVENT, CATEGORY) -->
+  <!-- ========================================================================= -->
+  <div id="manageImportModal" class="fixed inset-0 z-[9999] bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
+    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200/80 overflow-hidden relative z-10">
+      
+      <!-- Modal Header (Sticky) -->
+      <div class="px-6 py-4 sm:py-5 flex items-center justify-between border-b border-slate-200/80 bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs">
+            <span class="material-symbols-outlined text-[20px]">upload_file</span>
+          </div>
+          <div class="min-w-0">
+            <h3 id="manageImportModalTitle" class="font-black text-slate-900 text-base leading-tight truncate">Import Data Excel</h3>
+            <p id="manageImportModalSubtitle" class="text-[11px] font-medium text-slate-500 mt-1 truncate">Unggah file spreadsheet .xlsx atau .csv untuk menambahkan data secara massal</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeManageImportModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition cursor-pointer shrink-0 ml-4">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-5 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-slate-50/60">
+        <!-- Template Download Section -->
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-lg">description</span>
+            </div>
+            <div class="min-w-0">
+              <div class="font-bold text-slate-800 text-xs">Format Template Excel (.xlsx)</div>
+              <p class="text-[11px] text-slate-500 mt-0.5 truncate">Gunakan format kolom resmi agar data terimpor dengan akurat</p>
+            </div>
+          </div>
+          <button type="button" onclick="downloadImportTemplate()" class="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition flex items-center gap-1.5 shrink-0 shadow-2xs cursor-pointer">
+            <span class="material-symbols-outlined text-sm">file_download</span>
+            <span>Unduh Template</span>
+          </button>
+        </div>
+
+        <!-- File Upload Dropzone -->
+        <div id="importDropzone" onclick="document.getElementById('importFileInput').click()" class="p-6 rounded-2xl border-2 border-dashed border-slate-300 hover:border-[#16b3ac] bg-white hover:bg-emerald-50/30 transition flex flex-col items-center justify-center text-center cursor-pointer gap-2 group">
+          <input type="file" id="importFileInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleImportFileSelect(event)" />
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#16b3ac] group-hover:bg-[#16b3ac] group-hover:text-white transition flex items-center justify-center">
+            <span class="material-symbols-outlined text-2xl">cloud_upload</span>
+          </div>
+          <div>
+            <p class="font-bold text-slate-800 text-xs">Klik untuk pilih file atau seret &amp; lepas file ke sini</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Mendukung format Microsoft Excel (.xlsx, .xls) dan CSV</p>
+          </div>
+          <span id="importSelectedFileName" class="hidden text-xs font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300"></span>
+        </div>
+
+        <!-- Preview Table Section -->
+        <div id="importPreviewContainer" class="hidden space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-sm text-[#16b3ac]">table_view</span>
+              <span>Pratinjau Data Terbaca: <span id="importPreviewCount" class="text-[#16b3ac]">0</span> baris</span>
+            </span>
+            <span class="text-[10px] text-slate-400">Menampilkan hingga 5 baris pertama</span>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-white overflow-hidden overflow-x-auto max-h-48">
+            <table class="w-full text-left text-[11px] whitespace-nowrap">
+              <thead id="importPreviewThead" class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[9px]"></thead>
+              <tbody id="importPreviewTbody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer Sticky -->
+      <div class="px-6 py-4 flex items-center justify-between gap-3 border-t border-slate-200/80 bg-white shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeManageImportModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+        <button id="importSubmitBtn" type="button" onclick="submitImportExcel()" disabled class="px-5 py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-sm shadow-teal-500/20 transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <span class="material-symbols-outlined text-[16px]">upload</span>
+          <span id="importSubmitBtnText">Mulai Proses Import</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
 @endsection
 
 @section('scripts')
@@ -832,7 +948,511 @@
         switchManageTab('doctor');
       }
       setTimeout(initManageFilterSelect2, 50);
+
+      // Drag and drop for Excel Import Dropzone
+      const dropzone = document.getElementById('importDropzone');
+      if (dropzone) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('border-[#16b3ac]', 'bg-emerald-50/50');
+          }, false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+          dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('border-[#16b3ac]', 'bg-emerald-50/50');
+          }, false);
+        });
+        dropzone.addEventListener('drop', (e) => {
+          const dt = e.dataTransfer;
+          const files = dt.files;
+          if (files && files.length) {
+            const input = document.getElementById('importFileInput');
+            if (input) {
+              input.files = files;
+              handleImportFileSelect({ target: { files: files } });
+            }
+          }
+        }, false);
+      }
     });
+
+    // ==========================================
+    // EXCEL EXPORT & IMPORT MODULE (SHEETJS)
+    // ==========================================
+    let currentImportTab = 'doctor';
+    let currentImportParsedRows = [];
+
+    function exportManageTabExcel(tab) {
+      if (typeof XLSX === 'undefined') {
+        alert('Library SheetJS (Excel) belum dimuat. Mohon periksa koneksi internet Anda atau muat ulang halaman.');
+        return;
+      }
+
+      const now = new Date();
+      const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+
+      if (tab === 'doctor') {
+        const list = currentFilteredCache.doctor || getDefaultListForTab('doctor');
+        if (list.length === 0) {
+          if (typeof showToast === 'function') showToast('Tidak ada data dokter untuk diekspor.', 'warning');
+          return;
+        }
+
+        const exportRows = list.map((d, index) => {
+          const qAchieved = d.q4Credits !== undefined ? d.q4Credits : (d.qAchieved !== undefined ? d.qAchieved : 0);
+          const total5 = d.total5YearAchieved !== undefined ? d.total5YearAchieved : 0;
+          return {
+            'No': index + 1,
+            'ID POGI / No Anggota': d.pogiId || d.npa || '-',
+            'Nama Lengkap': d.name || '-',
+            'Gelar Spesialis': d.specialization_title || 'Sp.OG',
+            'Provinsi': d.province || '-',
+            'Rumah Sakit / Faskes': d.institution || d.hospital || '-',
+            'No STR': d.str_number || '-',
+            'No SIP': d.sip_number || '-',
+            'Masa Berlaku SIP': d.sip_expiry_date || '-',
+            'Email': d.email || '-',
+            'No WhatsApp / HP': d.phone || '-',
+            'Status': (d.is_active === true || d.status === 'Active' || d.status === 'ACTIVE' || d.status === 'Aktif') ? 'Active' : 'Non-Active',
+            'SKP Pelayanan': Number(d.pelAchieved || 0),
+            'SKP Pengabdian': Number(d.pengAchieved || 0),
+            'SKP Pembelajaran': Number(d.pembAchieved || 0),
+            'SKP Kuartal Ini (Q4)': Number(qAchieved),
+            'Total Capaian SKP': Number(total5)
+          };
+        });
+
+        const ws = XLSX.utils.json_to_sheet(exportRows);
+        ws['!cols'] = [
+          { wch: 5 },  // No
+          { wch: 22 }, // ID POGI
+          { wch: 30 }, // Nama
+          { wch: 15 }, // Gelar
+          { wch: 20 }, // Provinsi
+          { wch: 30 }, // RS
+          { wch: 20 }, // STR
+          { wch: 22 }, // SIP
+          { wch: 16 }, // Masa Berlaku
+          { wch: 26 }, // Email
+          { wch: 18 }, // WhatsApp
+          { wch: 18 }, // Status
+          { wch: 14 }, // Pelayanan
+          { wch: 14 }, // Pengabdian
+          { wch: 16 }, // Pembelajaran
+          { wch: 18 }, // Q4
+          { wch: 18 }  // Total
+        ];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Master Dokter Obgyn');
+        XLSX.writeFile(wb, `POGI_Master_Dokter_${dateStr}.xlsx`);
+        if (typeof showToast === 'function') showToast(`Berhasil mengekspor ${exportRows.length} data dokter ke Excel (.xlsx)!`, 'success');
+      }
+
+      else if (tab === 'institution') {
+        const list = currentFilteredCache.institution || getDefaultListForTab('institution');
+        if (list.length === 0) {
+          if (typeof showToast === 'function') showToast('Tidak ada data institusi untuk diekspor.', 'warning');
+          return;
+        }
+
+        const exportRows = list.map((inst, index) => ({
+          'No': index + 1,
+          'Kode RS': inst.code || '-',
+          'Nama Rumah Sakit / Faskes': inst.name || '-',
+          'Tipe Faskes': inst.type || inst.institution_type || 'RS Jejaring',
+          'Kelas RS': inst.hospital_class || '-',
+          'Provinsi': inst.province || '-',
+          'Kota / Kabupaten': inst.city || '-',
+          'Alamat Lengkap': inst.address || '-',
+          'Jumlah Dokter Obgyn': Number(inst.doctorsCount || 0),
+          'Status Faskes': inst.status || (inst.is_active ? 'Aktif' : 'Nonaktif')
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(exportRows);
+        ws['!cols'] = [
+          { wch: 5 },  // No
+          { wch: 16 }, // Kode
+          { wch: 35 }, // Nama
+          { wch: 20 }, // Tipe
+          { wch: 12 }, // Kelas
+          { wch: 22 }, // Provinsi
+          { wch: 22 }, // Kota
+          { wch: 40 }, // Alamat
+          { wch: 20 }, // Dokter
+          { wch: 15 }  // Status
+        ];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Master Institusi RS');
+        XLSX.writeFile(wb, `POGI_Master_Institusi_RS_${dateStr}.xlsx`);
+        if (typeof showToast === 'function') showToast(`Berhasil mengekspor ${exportRows.length} data faskes ke Excel (.xlsx)!`, 'success');
+      }
+
+      else if (tab === 'event') {
+        const list = currentFilteredCache.event || getDefaultListForTab('event');
+        if (list.length === 0) {
+          if (typeof showToast === 'function') showToast('Tidak ada data kegiatan SKP untuk diekspor.', 'warning');
+          return;
+        }
+
+        const exportRows = list.map((ev, index) => ({
+          'No': index + 1,
+          'Judul Kegiatan Ilmiah': ev.name || ev.title || '-',
+          'Ranah SKP': ev.type || 'Pembelajaran',
+          'Kategori Kegiatan': ev.category || '-',
+          'Nilai Kredit SKP': Number(ev.credits || ev.credit_value || 0),
+          'Tanggal Pelaksanaan': ev.date || ev.event_date || '-',
+          'Penyelenggara': ev.organizer || 'PP POGI',
+          'No Akreditasi Kemenkes': ev.kemenkes_accreditation_number || '-',
+          'Course ID Plataran Sehat': ev.plataran_sehat_course_id || '-',
+          'Status Kegiatan': ev.status || 'Dibuka'
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(exportRows);
+        ws['!cols'] = [
+          { wch: 5 },  // No
+          { wch: 40 }, // Judul
+          { wch: 18 }, // Ranah
+          { wch: 24 }, // Kategori
+          { wch: 16 }, // Nilai Kredit
+          { wch: 20 }, // Tanggal
+          { wch: 24 }, // Penyelenggara
+          { wch: 26 }, // Akreditasi
+          { wch: 24 }, // Plataran Sehat
+          { wch: 16 }  // Status
+        ];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Master Event SKP');
+        XLSX.writeFile(wb, `POGI_Master_Event_SKP_${dateStr}.xlsx`);
+        if (typeof showToast === 'function') showToast(`Berhasil mengekspor ${exportRows.length} data event SKP ke Excel (.xlsx)!`, 'success');
+      }
+
+      else if (tab === 'category') {
+        const list = currentFilteredCache.category || getDefaultListForTab('category');
+        if (list.length === 0) {
+          if (typeof showToast === 'function') showToast('Tidak ada data kategori untuk diekspor.', 'warning');
+          return;
+        }
+
+        const exportRows = list.map((c, index) => ({
+          'No': index + 1,
+          'Nama Kategori': c.name || '-',
+          'Ranah SKP': c.type || c.domain || 'Pembelajaran',
+          'Standar Nilai SKP': Number(c.default_credit_value || 2.0),
+          'Deskripsi Kategori': c.description || '-'
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(exportRows);
+        ws['!cols'] = [
+          { wch: 5 },  // No
+          { wch: 35 }, // Nama
+          { wch: 20 }, // Ranah
+          { wch: 18 }, // Nilai SKP
+          { wch: 50 }  // Deskripsi
+        ];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Master Kategori SKP');
+        XLSX.writeFile(wb, `POGI_Master_Kategori_SKP_${dateStr}.xlsx`);
+        if (typeof showToast === 'function') showToast(`Berhasil mengekspor ${exportRows.length} kategori ke Excel (.xlsx)!`, 'success');
+      }
+    }
+
+    function openManageImportModal(tab) {
+      currentImportTab = tab;
+      currentImportParsedRows = [];
+
+      const modal = document.getElementById('manageImportModal');
+      const titleEl = document.getElementById('manageImportModalTitle');
+      const subtitleEl = document.getElementById('manageImportModalSubtitle');
+      const fileInput = document.getElementById('importFileInput');
+      const selectedNameEl = document.getElementById('importSelectedFileName');
+      const previewContainer = document.getElementById('importPreviewContainer');
+      const submitBtn = document.getElementById('importSubmitBtn');
+      const submitText = document.getElementById('importSubmitBtnText');
+
+      if (fileInput) fileInput.value = '';
+      if (selectedNameEl) {
+        selectedNameEl.classList.add('hidden');
+        selectedNameEl.innerText = '';
+      }
+      if (previewContainer) previewContainer.classList.add('hidden');
+      if (submitBtn) submitBtn.disabled = true;
+      if (submitText) submitText.innerText = 'Mulai Proses Import';
+
+      const meta = {
+        doctor: { title: 'Import Data Dokter Spesialis Obgyn', sub: 'Unggah file Excel daftar dokter untuk dimasukkan langsung ke basis data nasional POGI.' },
+        institution: { title: 'Import Data Rumah Sakit & Faskes Jejaring', sub: 'Unggah file Excel fasilitas kesehatan jejaring POGI beserta klasifikasi dan wilayah.' },
+        event: { title: 'Import Data Katalog Event SKP Terakreditasi', sub: 'Unggah file Excel kegiatan ilmiah dengan bobot SKP dan integrasi nomor akreditasi.' },
+        category: { title: 'Import Data Kategori Kegiatan SKP', sub: 'Unggah file Excel klasifikasi kategori aktivitas SKP sesuai ranah resmi Kemenkes.' }
+      };
+
+      if (titleEl) titleEl.innerText = meta[tab]?.title || 'Import Data Excel';
+      if (subtitleEl) subtitleEl.innerText = meta[tab]?.sub || 'Unggah file spreadsheet .xlsx untuk memproses data secara massal.';
+
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeManageImportModal() {
+      const modal = document.getElementById('manageImportModal');
+      if (modal) modal.classList.add('hidden');
+      currentImportParsedRows = [];
+    }
+
+    function downloadImportTemplate() {
+      if (typeof XLSX === 'undefined') {
+        alert('Library SheetJS (Excel) belum dimuat.');
+        return;
+      }
+
+      let sampleRows = [];
+      let fileName = '';
+      let sheetName = '';
+
+      if (currentImportTab === 'doctor') {
+        sampleRows = [
+          {
+            'Nama Lengkap': 'dr. Budi Santoso, Sp.OG',
+            'Gelar Spesialis': 'Sp.OG',
+            'NPA POGI': '#POGI-2026-1001',
+            'NIK': '3171012345678901',
+            'No STR': '31.1.2.100.1.26',
+            'No SIP': '446/101/SIP/2026',
+            'Masa Berlaku SIP': '2030-12-31',
+            'Email': 'dr.budi@pogi-member.id',
+            'No WhatsApp': '+6281234567890',
+            'Provinsi': 'DKI Jakarta',
+            'Rumah Sakit': 'RSUPN Dr. Cipto Mangunkusumo',
+            'Status': 'Active'
+          },
+          {
+            'Nama Lengkap': 'dr. Siti Rahma, Sp.OG(K)',
+            'Gelar Spesialis': 'Sp.OG(K)',
+            'NPA POGI': '#POGI-2026-1002',
+            'NIK': '3271012345678902',
+            'No STR': '32.1.2.102.1.26',
+            'No SIP': '446/102/SIP/2026',
+            'Masa Berlaku SIP': '2030-12-31',
+            'Email': 'dr.siti@pogi-member.id',
+            'No WhatsApp': '+6281234567891',
+            'Provinsi': 'Jawa Barat',
+            'Rumah Sakit': 'RSUP Dr. Hasan Sadikin',
+            'Status': 'Incomplete'
+          }
+        ];
+        fileName = 'Template_Import_Dokter_POGI.xlsx';
+        sheetName = 'Template Dokter';
+      } else if (currentImportTab === 'institution') {
+        sampleRows = [
+          {
+            'Kode RS': 'RS-JKT-001',
+            'Nama Rumah Sakit': 'RSUPN Dr. Cipto Mangunkusumo',
+            'Tipe Faskes': 'RSUP (Pusat Rujukan Nasional)',
+            'Kelas RS': 'Kelas A',
+            'Provinsi': 'DKI Jakarta',
+            'Kota / Kabupaten': 'Jakarta Pusat',
+            'Alamat Lengkap': 'Jl. Diponegoro No. 71, Kenari, Senen',
+            'Status': 'Aktif'
+          },
+          {
+            'Kode RS': 'KLN-BDG-002',
+            'Nama Rumah Sakit': 'Klinik Obgyn Sehati Utama',
+            'Tipe Faskes': 'Klinik Utama',
+            'Kelas RS': 'Kelas C',
+            'Provinsi': 'Jawa Barat',
+            'Kota / Kabupaten': 'Bandung',
+            'Alamat Lengkap': 'Jl. Ir. H. Juanda No. 88, Dago',
+            'Status': 'Aktif'
+          }
+        ];
+        fileName = 'Template_Import_Institusi_POGI.xlsx';
+        sheetName = 'Template Faskes';
+      } else if (currentImportTab === 'event') {
+        sampleRows = [
+          {
+            'Judul Kegiatan': 'Simposium Nasional Obgyn 2026 & USG Update',
+            'Ranah SKP': 'Pembelajaran',
+            'Kategori Kegiatan': 'Simposium Ilmiah',
+            'Nilai Kredit SKP': 3.0,
+            'Tanggal Pelaksanaan': '2026-12-15',
+            'Penyelenggara': 'PP POGI',
+            'No Akreditasi Kemenkes': 'AKR/KEMENKES/2026/1101',
+            'Course ID Plataran Sehat': 'CRS-PLT-2026-001'
+          },
+          {
+            'Judul Kegiatan': 'Bakti Sosial Operasi Caesar & Layanan Ibu Hamil 3T',
+            'Ranah SKP': 'Pengabdian',
+            'Kategori Kegiatan': 'Bakti Sosial & Penyuluhan',
+            'Nilai Kredit SKP': 2.0,
+            'Tanggal Pelaksanaan': '2026-12-20',
+            'Penyelenggara': 'POGI Cabang Papua',
+            'No Akreditasi Kemenkes': 'AKR/KEMENKES/2026/1102',
+            'Course ID Plataran Sehat': 'CRS-PLT-2026-002'
+          }
+        ];
+        fileName = 'Template_Import_Event_SKP_POGI.xlsx';
+        sheetName = 'Template Event SKP';
+      } else if (currentImportTab === 'category') {
+        sampleRows = [
+          {
+            'Nama Kategori': 'Workshop Bedah Laparoskopi Ginekologi',
+            'Ranah SKP': 'Pembelajaran',
+            'Default Nilai SKP': 4.0,
+            'Deskripsi': 'Pelatihan teknis hands-on laparoskopi ginekologi bersertifikat resmi'
+          },
+          {
+            'Nama Kategori': 'Pelayanan Rawat Inap & VK Kamar Bersalin',
+            'Ranah SKP': 'Pelayanan',
+            'Default Nilai SKP': 2.0,
+            'Deskripsi': 'Aktivitas pelayanan medis primer obstetri & penanganan persalinan faskes'
+          }
+        ];
+        fileName = 'Template_Import_Kategori_SKP_POGI.xlsx';
+        sheetName = 'Template Kategori';
+      }
+
+      const ws = XLSX.utils.json_to_sheet(sampleRows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, sheetName);
+      XLSX.writeFile(wb, fileName);
+      if (typeof showToast === 'function') showToast(`Template ${fileName} berhasil diunduh!`, 'info');
+    }
+
+    function handleImportFileSelect(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const selectedNameEl = document.getElementById('importSelectedFileName');
+      if (selectedNameEl) {
+        selectedNameEl.innerText = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        selectedNameEl.classList.remove('hidden');
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const jsonRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+          if (!jsonRows || jsonRows.length === 0) {
+            alert('File Excel kosong atau format tidak terbaca.');
+            return;
+          }
+
+          currentImportParsedRows = jsonRows;
+          renderImportPreviewTable(jsonRows);
+
+          const submitBtn = document.getElementById('importSubmitBtn');
+          const submitText = document.getElementById('importSubmitBtnText');
+          if (submitBtn) submitBtn.disabled = false;
+          if (submitText) submitText.innerText = `Mulai Proses Import (${jsonRows.length} Data)`;
+
+        } catch (err) {
+          console.error('Error reading excel file:', err);
+          alert('Gagal membaca file Excel: ' + err.message);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function renderImportPreviewTable(rows) {
+      const container = document.getElementById('importPreviewContainer');
+      const thead = document.getElementById('importPreviewThead');
+      const tbody = document.getElementById('importPreviewTbody');
+      const countEl = document.getElementById('importPreviewCount');
+
+      if (!container || !thead || !tbody) return;
+
+      countEl.innerText = rows.length;
+      container.classList.remove('hidden');
+
+      const headers = Object.keys(rows[0] || {}).slice(0, 6);
+      thead.innerHTML = '<tr><th class="py-2 px-3 w-8">#</th>' + headers.map(h => `<th class="py-2 px-3">${h}</th>`).join('') + '</tr>';
+
+      const previewRows = rows.slice(0, 5);
+      tbody.innerHTML = previewRows.map((r, idx) => {
+        const cells = headers.map(h => `<td class="py-2 px-3 text-slate-700">${r[h] !== undefined ? String(r[h]) : '-'}</td>`).join('');
+        return `<tr class="hover:bg-slate-50"><td class="py-2 px-3 font-bold text-slate-400">${idx + 1}</td>${cells}</tr>`;
+      }).join('');
+    }
+
+    async function submitImportExcel() {
+      if (!currentImportParsedRows || currentImportParsedRows.length === 0) {
+        alert('Tidak ada data yang siap diimpor.');
+        return;
+      }
+
+      const submitBtn = document.getElementById('importSubmitBtn');
+      const submitText = document.getElementById('importSubmitBtnText');
+      if (submitBtn) submitBtn.disabled = true;
+      if (submitText) submitText.innerText = 'Mengimpor Data...';
+
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+      try {
+        const response = await fetch('/manage/import', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+          },
+          body: JSON.stringify({
+            entity_type: currentImportTab,
+            rows: currentImportParsedRows
+          })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          // Update live array with newly created items
+          if (Array.isArray(result.items) && result.items.length > 0) {
+            if (currentImportTab === 'doctor') {
+              window.LIVE_MANAGE_DOCTORS = [...result.items, ...(window.LIVE_MANAGE_DOCTORS || [])];
+              currentFilteredCache.doctor = window.LIVE_MANAGE_DOCTORS;
+              renderManageDoctorTable(currentFilteredCache.doctor, true);
+            } else if (currentImportTab === 'institution') {
+              window.LIVE_MANAGE_INSTITUTIONS = [...result.items, ...(window.LIVE_MANAGE_INSTITUTIONS || [])];
+              currentFilteredCache.institution = window.LIVE_MANAGE_INSTITUTIONS;
+              renderManageInstTable(currentFilteredCache.institution, true);
+            } else if (currentImportTab === 'event') {
+              window.LIVE_MANAGE_EVENTS = [...result.items, ...(window.LIVE_MANAGE_EVENTS || [])];
+              currentFilteredCache.event = window.LIVE_MANAGE_EVENTS;
+              renderManageEventTable(currentFilteredCache.event, true);
+            } else if (currentImportTab === 'category') {
+              window.LIVE_MANAGE_CATEGORIES = [...result.items, ...(window.LIVE_MANAGE_CATEGORIES || [])];
+              currentFilteredCache.category = window.LIVE_MANAGE_CATEGORIES;
+              renderManageCatTable(currentFilteredCache.category, true);
+            }
+          }
+
+          closeManageImportModal();
+
+          if (typeof showToast === 'function') {
+            showToast(result.message || 'Import data berhasil diselesaikan!', 'success');
+          } else {
+            alert(result.message || 'Import data berhasil diselesaikan!');
+          }
+        } else {
+          alert('Gagal mengimpor data: ' + (result.message || 'Terjadi kesalahan pada server.'));
+          if (result.errors && result.errors.length > 0) {
+            console.warn('Import errors:', result.errors);
+          }
+        }
+      } catch (err) {
+        console.error('Import error:', err);
+        alert('Terjadi kesalahan koneksi saat mengimpor data: ' + err.message);
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+        if (submitText) submitText.innerText = 'Mulai Proses Import';
+      }
+    }
 
     
     function exportActiveManageTabPdf(targetTab) {
@@ -963,10 +1583,10 @@
             const qAchieved = d.q4Credits !== undefined ? d.q4Credits : (d.qAchieved !== undefined ? d.qAchieved : 8.0);
             const qTarget = 8.0;
             const percent = Math.min(100, Math.round((qAchieved / qTarget) * 100));
-            const isComplete = (d.status === 'Complete' || qAchieved >= 8.0);
-            const statusBadge = isComplete
-              ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Complete</span>'
-              : '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>Incomplete</span>';
+            const isDocActive = (d.is_active === true || d.status === 'Active' || d.status === 'ACTIVE' || d.status === 'Aktif' || d.raw_status === 'ACTIVE');
+            const statusBadge = isDocActive
+              ? '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Active</span>'
+              : '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-slate-100 text-slate-600 border border-slate-200"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>Non-Active</span>';
 
             const initials = d.initials || d.avatar || 'DR';
             const hospital = d.hospital || d.institution || 'RS Jejaring POGI';
@@ -1050,7 +1670,7 @@
         if (mobileContainer) {
           mobileContainer.innerHTML = pageDoctors.map(d => {
             const qAchieved = d.q4Credits !== undefined ? d.q4Credits : 8.0;
-            const isComplete = (d.status === 'Complete' || qAchieved >= 8.0);
+            const isDocActive = (d.is_active === true || d.status === 'Active' || d.status === 'ACTIVE' || d.status === 'Aktif' || d.raw_status === 'ACTIVE');
             const initials = d.initials || d.avatar || 'DR';
             const hospital = d.hospital || d.institution || 'RS Jejaring POGI';
 
@@ -1066,8 +1686,9 @@
                       <div class="text-[10px] text-slate-400 font-mono">${d.pogiId || '-'}</div>
                     </div>
                   </div>
-                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${isComplete ? 'bg-emerald-50 text-[#16b3ac] border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'} border shrink-0">
-                    ${isComplete ? 'Complete' : 'Incomplete'}
+                  <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold ${isDocActive ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'} border shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full ${isDocActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
+                    ${isDocActive ? 'Active' : 'Non-Active'}
                   </span>
                 </div>
                 <div class="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 space-y-0.5">
@@ -1111,7 +1732,13 @@
       const filtered = all.filter(d => {
         const matchQ = (d.name || '').toLowerCase().includes(q) || (d.nik && d.nik.includes(q)) || (d.pogiId && d.pogiId.toLowerCase().includes(q)) || (d.strNumber && d.strNumber.includes(q));
         const matchProv = prov === 'ALL' || d.province === prov;
-        const matchStat = stat === 'ALL' || d.status === stat;
+        const isDocActive = (d.is_active === true || d.status === 'Active' || d.status === 'ACTIVE' || d.status === 'Aktif' || d.raw_status === 'ACTIVE');
+        let matchStat = true;
+        if (stat === 'ACTIVE') {
+          matchStat = isDocActive;
+        } else if (stat === 'INACTIVE') {
+          matchStat = !isDocActive;
+        }
         return matchQ && matchProv && matchStat;
       });
 
@@ -1784,7 +2411,7 @@
         if (!item) return;
         title.innerText = 'Rincian Dokter: ' + item.name;
         if (subtitle) subtitle.innerText = 'Profil keanggotaan POGI, legalitas STR/SIP, dan progres SKP';
-        const isComp = item.status === 'Complete' || item.raw_status === 'COMPLETE';
+        const isDocActive = (item.is_active === true || item.status === 'Active' || item.status === 'ACTIVE' || item.status === 'Aktif' || item.raw_status === 'ACTIVE');
         html = `
           <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-gradient-to-br from-teal-50/80 via-white to-slate-50 border border-teal-100 shadow-2xs">
             <div class="w-12 h-12 rounded-2xl bg-[#16b3ac] text-white font-black text-base flex items-center justify-center shrink-0 shadow-sm">
@@ -1793,7 +2420,10 @@
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="font-black text-sm text-slate-900">${item.name}</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${isComp ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-rose-100 text-rose-700 border border-rose-200'}">${item.raw_status || item.status}</span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${isDocActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">
+                  <span class="w-1.5 h-1.5 rounded-full ${isDocActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
+                  ${isDocActive ? 'Active' : 'Non-Active'}
+                </span>
               </div>
               <div class="text-[11px] text-slate-500 font-mono mt-0.5 truncate">NPA: ${item.pogiId || item.npa_pogi || '-'} &bull; STR: ${item.str_number || '-'}</div>
             </div>
@@ -2211,7 +2841,7 @@
       if (type === 'doctor') {
         const item = getDefaultListForTab('doctor').find(d => String(d.id) === String(id));
         if (!item) return;
-        const rawStatus = item.raw_status || (item.status === 'Complete' ? 'COMPLETE' : 'INCOMPLETE');
+        const isDocActive = (item.is_active === true || item.status === 'Active' || item.status === 'ACTIVE' || item.status === 'Aktif' || item.raw_status === 'ACTIVE');
         const pStart = item.period_start || '2026-01-01';
         const pEnd = item.period_end || '2030-12-31';
         setModalMeta('edit', 'doctor', 'Edit Doctor: ' + item.name, 'Perbarui profil dokter, akun LMS Plataran, dan periode SKP');
@@ -2253,10 +2883,9 @@
                 <div>${uiField('Masa Berlaku SIP', false, `<input type="date" id="editDocSipExp" value="${item.sip_expiry_date || ''}" class="${UI_INPUT}" />`)}</div>
               </div>
               <div>${uiField('Email', false, uiIconInput('mail', `<input type="email" id="editDocEmail" value="${item.email || ''}" class="${UI_INPUT} pl-9" />`))}</div>
-              <div>${uiField('Status Kepatuhan SKP', false, uiSegmentedPills('editDocStatus', rawStatus, [
-                { value: 'INCOMPLETE', label: 'Incomplete', dotClass: 'bg-rose-500', activeClass: 'bg-rose-600 text-white border-rose-600 shadow-xs' },
-                { value: 'PENDING_REVIEW', label: 'Pending Review', dotClass: 'bg-amber-500', activeClass: 'bg-amber-500 text-white border-amber-500 shadow-xs' },
-                { value: 'COMPLETE', label: 'Complete', dotClass: 'bg-emerald-500', activeClass: 'bg-emerald-600 text-white border-emerald-600 shadow-xs' }
+              <div>${uiField('Status Dokter (Master Data)', true, uiSegmentedPills('editDocStatus', isDocActive ? 'ACTIVE' : 'INACTIVE', [
+                { value: 'ACTIVE', label: 'Active', dotClass: 'bg-emerald-500', activeClass: 'bg-emerald-600 text-white border-emerald-600 shadow-xs' },
+                { value: 'INACTIVE', label: 'Non-Active', dotClass: 'bg-slate-400', activeClass: 'bg-slate-600 text-white border-slate-600 shadow-xs' }
               ]))}</div>
             </div>
           </details>`;
@@ -2448,7 +3077,8 @@
             period_end: document.getElementById('editDocPeriodEnd')?.value || '',
             plataran_sehat_username: document.getElementById('editDocPlataranUser')?.value || null,
             plataran_sehat_password: document.getElementById('editDocPlataranPass')?.value || null,
-            status: document.getElementById('editDocStatus')?.value || 'INCOMPLETE'
+            status: document.getElementById('editDocStatus')?.value || 'ACTIVE',
+            is_active: (document.getElementById('editDocStatus')?.value === 'ACTIVE')
           };
           const res = await fetch('/manage/doctor/' + encodeURIComponent(id) + '/update', {
             method: 'POST',
@@ -2459,8 +3089,10 @@
           if (!res.ok || !data.success) { showToast(data.message || 'Gagal memperbarui dokter.', 'error'); return; }
           Object.assign(docs[docIdx], payload);
           docs[docIdx].pogiId = payload.npa_pogi || docs[docIdx].pogiId;
+          const isAct = (payload.status === 'ACTIVE' || payload.is_active === true);
+          docs[docIdx].is_active = isAct;
+          docs[docIdx].status = isAct ? 'Active' : 'Non-Active';
           docs[docIdx].raw_status = payload.status;
-          docs[docIdx].status = payload.status === 'COMPLETE' ? 'Complete' : 'Incomplete';
           docs[docIdx].primary_institution_id = payload.institution_id;
           if (instSel && instSel.value) {
             const txt = instSel.options[instSel.selectedIndex].text;
@@ -2717,6 +3349,7 @@
                 <div>${uiField('Masa Berlaku SIP', false, `<input type="date" id="addDocSipExp" value="${fiveYearsLater}" class="${UI_INPUT}" />`)}</div>
               </div>
               <div>${uiField('Email', false, uiIconInput('mail', `<input type="email" id="addDocEmail" placeholder="dokter@pogi.or.id" class="${UI_INPUT} pl-9" />`))}</div>
+              <div>${uiField('Status Dokter (Master Data)', false, `<select id="addDocStatus" class="${UI_SELECT}"><option value="ACTIVE" selected>Active (Aktif)</option><option value="INACTIVE">Non-Active (Non-Aktif)</option></select>`)}</div>
             </div>
           </details>`;
       } else if (currentTab === 'institution') {
@@ -2875,6 +3508,8 @@
         payload.sip_expiry_date = document.getElementById('addDocSipExp')?.value || '';
         payload.email = document.getElementById('addDocEmail')?.value || '';
         payload.branch_id = document.getElementById('addDocBranch')?.value || null;
+        payload.status = document.getElementById('addDocStatus')?.value || 'ACTIVE';
+        payload.is_active = (payload.status === 'ACTIVE');
       } else if (currentTab === 'institution') {
         payload.name = document.getElementById('addInstName').value;
         payload.code = document.getElementById('addInstCode').value;

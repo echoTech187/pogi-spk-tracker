@@ -113,8 +113,8 @@
                 </div>
               </div>
               <div id="cardTargetValue" class="text-2xl sm:text-3xl font-black text-slate-900 font-mono tracking-tight">
-                429,33</div>
-              <div class="text-[11px] text-slate-500 mt-1">161 doctors &times; 2,67 credits</div>
+                0,00</div>
+              <div id="cardTargetSubtitle" class="text-[11px] text-slate-500 mt-1">0 dokter &times; 2,67 credits</div>
             </div>
 
             <!-- Card 2: Realization -->
@@ -126,9 +126,8 @@
                 </div>
               </div>
               <div id="cardRealValue" class="text-2xl sm:text-3xl font-black text-emerald-800 font-mono tracking-tight">
-                464,50</div>
-              <div class="text-[11px] text-slate-500 mt-1"><span class="text-emerald-700 font-bold">108%</span> of
-                target (melampaui)</div>
+                0,00</div>
+              <div id="cardRealSubtitle" class="text-[11px] text-slate-500 mt-1"><span class="text-emerald-700 font-bold">0%</span> of target</div>
             </div>
 
             <!-- Card 3: Dokter Capai Target -->
@@ -140,9 +139,8 @@
                 </div>
               </div>
               <div id="cardCompleteValue" class="text-2xl sm:text-3xl font-black text-sky-900 font-mono tracking-tight">
-                142 Dokter</div>
-              <div class="text-[11px] text-slate-500 mt-1"><span class="text-sky-800 font-bold">88%</span> dari 161
-                dokter aktif</div>
+                0 Dokter</div>
+              <div id="cardCompleteSubtitle" class="text-[11px] text-slate-500 mt-1"><span class="text-sky-800 font-bold">0%</span> dari 0 dokter aktif</div>
             </div>
 
             <!-- Card 4: Waiting for validation -->
@@ -154,8 +152,8 @@
                 </div>
               </div>
               <div id="cardPendingValue"
-                class="text-2xl sm:text-3xl font-black text-amber-600 font-mono tracking-tight">552 SKP</div>
-              <div class="text-[11px] text-slate-500 mt-1">19 dokter pending kurasi Kemenkes</div>
+                class="text-2xl sm:text-3xl font-black text-amber-600 font-mono tracking-tight">0 SKP</div>
+              <div id="cardPendingSubtitle" class="text-[11px] text-slate-500 mt-1">0 dokter pending kurasi Kemenkes</div>
             </div>
 
           </div>
@@ -188,8 +186,7 @@
                 <div>
                   <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Target vs realization by
                     SKP type</h2>
-                  <p class="text-xs text-slate-400 font-normal mt-0.5">Pengabdian 101% &middot; Pelayanan 148% &middot;
-                    Pembelajaran 18%</p>
+                  <p id="chartTypeSubtitle" class="text-xs text-slate-400 font-normal mt-0.5">Pengabdian 0% &middot; Pelayanan 0% &middot; Pembelajaran 0%</p>
                 </div>
                 <div class="flex items-center gap-1.5 flex-wrap">
                   <span
@@ -226,7 +223,7 @@
               <div class="h-72 relative flex items-center justify-center">
                 <canvas id="chartDonut"></canvas>
                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-4">
-                  <span class="text-2xl sm:text-3xl font-black text-slate-900 font-mono leading-none">464,5</span>
+                  <span id="donutCenterValue" class="text-2xl sm:text-3xl font-black text-slate-900 font-mono leading-none">0,0</span>
                   <span class="text-xs text-slate-400 font-semibold mt-1">credits</span>
                 </div>
               </div>
@@ -363,135 +360,47 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-              @if(isset($snapshots) && count($snapshots) > 0)
-                @foreach($snapshots as $s)
-                  <tr class="{{ $loop->first ? 'bg-emerald-50/50' : '' }}">
-                    <td class="py-3.5 px-4 font-bold text-slate-900 flex items-center gap-2">
-                      @if($loop->first)<span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>@endif
-                      Bulan {{ $s->period_month }}/{{ $s->period_year }} {{ $loop->first ? '(Aktif)' : '' }}
-                    </td>
-                    <td class="py-3.5 px-4 text-slate-600 font-medium">1 {{ $s->period_month }} {{ $s->period_year }}</td>
-                    <td class="py-3.5 px-4 text-slate-600 font-mono">{{ \Carbon\Carbon::parse($s->cutoff_timestamp ?? $s->created_at)->format('d M Y, H:i') }} WIB</td>
-                    <td class="py-3.5 px-4 text-center">
-                      <span class="px-2.5 py-1 rounded-full text-[10px] font-black {{ ($s->is_locked ?? true) ? 'bg-emerald-100 text-[#16b3ac]' : 'bg-slate-100 text-slate-700' }}">
-                        {{ ($s->is_locked ?? true) ? 'Tersedia (Resmi)' : 'Draft' }}
-                      </span>
-                    </td>
-                    <td class="py-3.5 px-4 text-right">
-                      <div class="inline-flex items-center gap-2">
-                        <button type="button" onclick="printOnePogiMonthlyReportPdf('{{ $s->period_month }}/{{ $s->period_year }}')"
-                          title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
-                          class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
-                          <span>Lap. Bulanan</span>
-                        </button>
-                        <button type="button" onclick="printOfficialSkpReportPdf('{{ $s->period_month }}/{{ $s->period_year }}')"
-                          title="Unduh PDF Resmi SKP Report (1 Halaman)"
-                          class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                          <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
-                          <span>Report SKP</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                @endforeach
-              @else
-                <tr class="bg-emerald-50/50">
+              @forelse($snapshots ?? [] as $s)
+                <tr class="{{ $loop->first ? 'bg-emerald-50/50' : '' }}">
                   <td class="py-3.5 px-4 font-bold text-slate-900 flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> November 2026 (Aktif)
+                    @if($loop->first)<span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>@endif
+                    Bulan {{ $s->period_month }}/{{ $s->period_year }} {{ $loop->first ? '(Aktif)' : '' }}
                   </td>
-                  <td class="py-3.5 px-4 text-slate-600 font-medium">1 November 2026</td>
-                  <td class="py-3.5 px-4 text-slate-600 font-mono">20 Nov 2026, 09:14 WIB</td>
+                  <td class="py-3.5 px-4 text-slate-600 font-medium">1 {{ $s->period_month }} {{ $s->period_year }}</td>
+                  <td class="py-3.5 px-4 text-slate-600 font-mono">{{ \Carbon\Carbon::parse($s->cutoff_timestamp ?? $s->created_at)->format('d M Y, H:i') }} WIB</td>
                   <td class="py-3.5 px-4 text-center">
-                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-[#16b3ac]">Tersedia (Resmi)</span>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black {{ ($s->is_locked ?? true) ? 'bg-emerald-100 text-[#16b3ac]' : 'bg-slate-100 text-slate-700' }}">
+                      {{ ($s->is_locked ?? true) ? 'Tersedia (Resmi)' : 'Draft' }}
+                    </span>
                   </td>
                   <td class="py-3.5 px-4 text-right">
                     <div class="inline-flex items-center gap-2">
-                      <button type="button" onclick="printOnePogiMonthlyReportPdf('November 2026')"
+                      <button type="button" onclick="printOnePogiMonthlyReportPdf('{{ $s->period_month }}/{{ $s->period_year }}')"
+                        title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
                         class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                         <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
                         <span>Lap. Bulanan</span>
                       </button>
+                      <button type="button" onclick="printOfficialSkpReportPdf('{{ $s->period_month }}/{{ $s->period_year }}')"
+                        title="Unduh PDF Resmi SKP Report (1 Halaman)"
+                        class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                        <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
+                        <span>Report SKP</span>
+                      </button>
                     </div>
                   </td>
                 </tr>
-              @endif
-            </tbody>
-              <tr>
-                <td class="py-3.5 px-4 font-bold text-slate-800">Agustus 2026</td>
-                <td class="py-3.5 px-4 text-slate-600">1 Agustus 2026</td>
-                <td class="py-3.5 px-4 text-slate-600 font-mono">31 Agu 2026, 17:00 WIB</td>
-                <td class="py-3.5 px-4 text-center">
-                  <span
-                    class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
-                </td>
-                <td class="py-3.5 px-4 text-right">
-                  <div class="inline-flex items-center gap-2">
-                    <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
-                      title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
-                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
-                      <span>Lap. Bulanan</span>
-                    </button>
-                    <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
-                      title="Unduh PDF Resmi SKP Report (1 Halaman)"
-                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
-                      <span>Report SKP</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="py-3.5 px-4 font-bold text-slate-800">Juli 2026</td>
-                <td class="py-3.5 px-4 text-slate-600">1 Juli 2026</td>
-                <td class="py-3.5 px-4 text-slate-600 font-mono">31 Jul 2026, 17:00 WIB</td>
-                <td class="py-3.5 px-4 text-center">
-                  <span
-                    class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
-                </td>
-                <td class="py-3.5 px-4 text-right">
-                  <div class="inline-flex items-center gap-2">
-                    <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
-                      title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
-                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
-                      <span>Lap. Bulanan</span>
-                    </button>
-                    <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
-                      title="Unduh PDF Resmi SKP Report (1 Halaman)"
-                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
-                      <span>Report SKP</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="py-3.5 px-4 font-bold text-slate-800">Juni 2026</td>
-                <td class="py-3.5 px-4 text-slate-600">1 Juni 2026</td>
-                <td class="py-3.5 px-4 text-slate-600 font-mono">30 Jun 2026, 17:00 WIB</td>
-                <td class="py-3.5 px-4 text-center">
-                  <span
-                    class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">Tersedia</span>
-                </td>
-                <td class="py-3.5 px-4 text-right">
-                  <div class="inline-flex items-center gap-2">
-                    <button type="button" onclick="printOnePogiMonthlyReportPdf('Oktober 2026')"
-                      title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
-                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
-                      <span>Lap. Bulanan</span>
-                    </button>
-                    <button type="button" onclick="printOfficialSkpReportPdf('Oktober 2026')"
-                      title="Unduh PDF Resmi SKP Report (1 Halaman)"
-                      class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                      <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
-                      <span>Report SKP</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
+              @empty
+                <tr>
+                  <td colspan="5" class="py-8 px-4 text-center text-slate-400">
+                    <div class="flex flex-col items-center justify-center gap-1.5 py-4">
+                      <span class="material-symbols-outlined text-3xl text-slate-300">folder_off</span>
+                      <span class="text-xs font-semibold text-slate-500">Belum ada arsip snapshot bulanan tersimpan.</span>
+                      <span class="text-[11px] text-slate-400">Arsip otomatis terbuat secara permanen pada tanggal 1 setiap bulan saat masa cutoff.</span>
+                    </div>
+                  </td>
+                </tr>
+              @endforelse
             </tbody>
           </table>
         </div>
@@ -585,13 +494,49 @@
     }
 
     function renderMonthView(idx) {
-      const data = monthlyData[idx];
+      const data = monthlyData[idx] || {};
+      const tDocs = Number(data.total_doctors || 0);
+      const targetVal = Number(data.target || 0);
+      const realVal = Number(data.real || 0);
+      const compVal = Number(data.complete || 0);
+      const pendingSkpVal = Number(data.pending_skp || 0);
+      const pendingDocsVal = Number(data.pending_doctors || 0);
 
-      document.getElementById('currentMonthLabel').innerText = data.name;
-      document.getElementById('cardTargetValue').innerText = data.target.toLocaleString('id-ID', { minimumFractionDigits: 2 });
-      document.getElementById('cardRealValue').innerText = data.real.toLocaleString('id-ID', { minimumFractionDigits: 2 });
-      document.getElementById('cardCompleteValue').innerText = data.complete + ' Dokter';
-      document.getElementById('cardPendingValue').innerText = (data.pending * 29) + ' SKP';
+      const realPct = targetVal > 0 ? Math.round((realVal / targetVal) * 100) : 0;
+      const compPct = tDocs > 0 ? Math.round((compVal / tDocs) * 100) : 0;
+
+      // Update Card 1 (Target)
+      const elMonthLabel = document.getElementById('currentMonthLabel');
+      if (elMonthLabel) elMonthLabel.innerText = data.name || '';
+      
+      const elTargetVal = document.getElementById('cardTargetValue');
+      if (elTargetVal) elTargetVal.innerText = targetVal.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const elTargetSub = document.getElementById('cardTargetSubtitle');
+      if (elTargetSub) elTargetSub.innerHTML = `${tDocs} doctors &times; 2,67 credits`;
+
+      // Update Card 2 (Realization)
+      const elRealVal = document.getElementById('cardRealValue');
+      if (elRealVal) elRealVal.innerText = realVal.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const elRealSub = document.getElementById('cardRealSubtitle');
+      if (elRealSub) {
+        if (realPct >= 100) {
+          elRealSub.innerHTML = `<span class="text-emerald-700 font-bold">${realPct}%</span> of target (melampaui)`;
+        } else {
+          elRealSub.innerHTML = `<span class="text-slate-600 font-bold">${realPct}%</span> of target`;
+        }
+      }
+
+      // Update Card 3 (Complete)
+      const elCompVal = document.getElementById('cardCompleteValue');
+      if (elCompVal) elCompVal.innerText = `${compVal} Dokter`;
+      const elCompSub = document.getElementById('cardCompleteSubtitle');
+      if (elCompSub) elCompSub.innerHTML = `<span class="text-sky-800 font-bold">${compPct}%</span> dari ${tDocs} dokter aktif`;
+
+      // Update Card 4 (Pending)
+      const elPendingVal = document.getElementById('cardPendingValue');
+      if (elPendingVal) elPendingVal.innerText = `${pendingSkpVal.toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} SKP`;
+      const elPendingSub = document.getElementById('cardPendingSubtitle');
+      if (elPendingSub) elPendingSub.innerText = `${pendingDocsVal} dokter pending kurasi Kemenkes`;
 
       // Update Month Picker Buttons
       for (let i = 0; i < 12; i++) {
@@ -605,21 +550,72 @@
         }
       }
 
+      // Update Chart 2 (Target vs Realization by SKP type)
+      const pengVal = Number(data.peng || 0);
+      const pelVal = Number(data.pel || 0);
+      const pembVal = Number(data.pemb || 0);
+      const targetPeng = Number(data.target_peng || 0);
+      const targetPel = Number(data.target_pel || 0);
+      const targetPemb = Number(data.target_pemb || 0);
+
+      const pctPeng = targetPeng > 0 ? Math.round((pengVal / targetPeng) * 100) : 0;
+      const pctPel = targetPel > 0 ? Math.round((pelVal / targetPel) * 100) : 0;
+      const pctPemb = targetPemb > 0 ? Math.round((pembVal / targetPemb) * 100) : 0;
+
+      const elChartTypeSub = document.getElementById('chartTypeSubtitle');
+      if (elChartTypeSub) {
+        elChartTypeSub.innerHTML = `Pengabdian ${pctPeng}% &middot; Pelayanan ${pctPel}% &middot; Pembelajaran ${pctPemb}%`;
+      }
+
       if (chartTypeInstance) {
-        chartTypeInstance.data.datasets[0].data = [data.peng, data.pel, data.pemb];
+        chartTypeInstance.data.datasets[0].data = [pengVal, pelVal, pembVal];
+        chartTypeInstance.data.datasets[1].data = [targetPeng, targetPel, targetPemb];
         chartTypeInstance.update();
       }
+
+      // Update Chart 3 (Donut)
+      const elDonutCenter = document.getElementById('donutCenterValue');
+      if (elDonutCenter) {
+        elDonutCenter.innerText = realVal.toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      }
+
       if (chartDonutInstance) {
-        chartDonutInstance.data.datasets[0].data = [data.pel, data.peng, data.pemb];
+        const totalCredits = pelVal + pengVal + pembVal;
+        if (totalCredits <= 0) {
+          chartDonutInstance.data.datasets[0].data = [1];
+          chartDonutInstance.data.datasets[0].backgroundColor = ['#e2e8f0'];
+        } else {
+          chartDonutInstance.data.datasets[0].data = [pelVal, pengVal, pembVal];
+          chartDonutInstance.data.datasets[0].backgroundColor = ['#0284c7', '#d97706', '#16b3ac'];
+        }
         chartDonutInstance.update();
       }
+
+      // Update Chart 4 (Stacked Status by Domain)
       if (chartStatusInstance) {
-        chartStatusInstance.data.datasets[0].data = [data.peng, data.pel, data.pemb];
+        const sb = data.status_breakdown || {
+          PEMBELAJARAN: { DONE: 0, NOT_SUBMITTED: 0, SUBMITTED: 0, REJECTED: 0 },
+          PELAYANAN: { DONE: 0, NOT_SUBMITTED: 0, SUBMITTED: 0, REJECTED: 0 },
+          PENGABDIAN: { DONE: 0, NOT_SUBMITTED: 0, SUBMITTED: 0, REJECTED: 0 }
+        };
+        chartStatusInstance.data.datasets[0].data = [sb.PENGABDIAN?.DONE || 0, sb.PELAYANAN?.DONE || 0, sb.PEMBELAJARAN?.DONE || 0];
+        chartStatusInstance.data.datasets[1].data = [sb.PENGABDIAN?.NOT_SUBMITTED || 0, sb.PELAYANAN?.NOT_SUBMITTED || 0, sb.PEMBELAJARAN?.NOT_SUBMITTED || 0];
+        chartStatusInstance.data.datasets[2].data = [sb.PENGABDIAN?.SUBMITTED || 0, sb.PELAYANAN?.SUBMITTED || 0, sb.PEMBELAJARAN?.SUBMITTED || 0];
+        chartStatusInstance.data.datasets[3].data = [sb.PENGABDIAN?.REJECTED || 0, sb.PELAYANAN?.REJECTED || 0, sb.PEMBELAJARAN?.REJECTED || 0];
         chartStatusInstance.update();
       }
     }
 
     function initReportCharts() {
+      const activeData = monthlyData[currentSelectedMonthIndex] || monthlyData[10] || {};
+      const curPeng = Number(activeData.peng || 0);
+      const curPel = Number(activeData.pel || 0);
+      const curPemb = Number(activeData.pemb || 0);
+      const curTargetPeng = Number(activeData.target_peng || 0);
+      const curTargetPel = Number(activeData.target_pel || 0);
+      const curTargetPemb = Number(activeData.target_pemb || 0);
+      const curTotal = curPeng + curPel + curPemb;
+
       // 1. Chart Month
       const ctxMonth = document.getElementById('chartMonth').getContext('2d');
       chartMonthInstance = new Chart(ctxMonth, {
@@ -649,7 +645,7 @@
             legend: { position: 'bottom', labels: { boxWidth: 10, boxHeight: 10, color: '#64748b', font: { size: 11 } } }
           },
           scales: {
-            y: { beginAtZero: true, max: 1200, ticks: { stepSize: 300, color: '#94a3b8', font: { size: 10 } }, grid: { color: '#f1f5f9' }, border: { dash: [4, 4] } },
+            y: { beginAtZero: true, suggestedMax: 10, ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#f1f5f9' }, border: { dash: [4, 4] } },
             x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { display: false } }
           }
         }
@@ -662,8 +658,8 @@
         data: {
           labels: ['Pengabdian', 'Pelayanan', 'Pembelajaran'],
           datasets: [
-            { label: 'Realization', data: [27, 416, 21.5], backgroundColor: ['#d97706', '#0284c7', '#16b3ac'], borderRadius: 4 },
-            { label: 'Target', data: [26.83, 281.75, 120.75], backgroundColor: '#cbd5e1', borderRadius: 4 }
+            { label: 'Realization', data: [curPeng, curPel, curPemb], backgroundColor: ['#d97706', '#0284c7', '#16b3ac'], borderRadius: 4 },
+            { label: 'Target', data: [curTargetPeng, curTargetPel, curTargetPemb], backgroundColor: '#cbd5e1', borderRadius: 4 }
           ]
         },
         options: {
@@ -672,7 +668,7 @@
           maintainAspectRatio: false,
           plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, boxHeight: 10, color: '#64748b', font: { size: 11 } } } },
           scales: {
-            x: { beginAtZero: true, max: 600, ticks: { stepSize: 150, color: '#94a3b8', font: { size: 10 } }, grid: { color: '#f1f5f9' }, border: { dash: [4, 4] } },
+            x: { beginAtZero: true, suggestedMax: 5, ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#f1f5f9' }, border: { dash: [4, 4] } },
             y: { ticks: { color: '#334155', font: { size: 11, weight: '500' } }, grid: { display: false } }
           }
         }
@@ -685,8 +681,8 @@
         data: {
           labels: ['Pelayanan', 'Pengabdian', 'Pembelajaran'],
           datasets: [{
-            data: [416, 27, 21.5],
-            backgroundColor: ['#0284c7', '#d97706', '#16b3ac'],
+            data: curTotal <= 0 ? [1] : [curPel, curPeng, curPemb],
+            backgroundColor: curTotal <= 0 ? ['#e2e8f0'] : ['#0284c7', '#d97706', '#16b3ac'],
             borderWidth: 2,
             borderColor: '#ffffff'
           }]
@@ -702,16 +698,21 @@
       });
 
       // 4. Chart Status
+      const sb = activeData.status_breakdown || {
+        PEMBELAJARAN: { DONE: 0, NOT_SUBMITTED: 0, SUBMITTED: 0, REJECTED: 0 },
+        PELAYANAN: { DONE: 0, NOT_SUBMITTED: 0, SUBMITTED: 0, REJECTED: 0 },
+        PENGABDIAN: { DONE: 0, NOT_SUBMITTED: 0, SUBMITTED: 0, REJECTED: 0 }
+      };
       const ctxStatus = document.getElementById('chartStatusHorizontal').getContext('2d');
       chartStatusInstance = new Chart(ctxStatus, {
         type: 'bar',
         data: {
           labels: ['Pengabdian', 'Pelayanan', 'Pembelajaran'],
           datasets: [
-            { label: 'Done', data: [27, 416, 21.5], backgroundColor: '#16b3ac', stack: 'status' },
-            { label: 'Not submitted', data: [11, 204, 8.5], backgroundColor: '#94a3b8', stack: 'status' },
-            { label: 'Submitted', data: [24.5, 499, 28.5], backgroundColor: '#0ea5e9', stack: 'status' },
-            { label: 'Rejected', data: [4, 59, 5.5], backgroundColor: '#ef4444', stack: 'status' }
+            { label: 'Done', data: [sb.PENGABDIAN?.DONE || 0, sb.PELAYANAN?.DONE || 0, sb.PEMBELAJARAN?.DONE || 0], backgroundColor: '#16b3ac', stack: 'status' },
+            { label: 'Not submitted', data: [sb.PENGABDIAN?.NOT_SUBMITTED || 0, sb.PELAYANAN?.NOT_SUBMITTED || 0, sb.PEMBELAJARAN?.NOT_SUBMITTED || 0], backgroundColor: '#94a3b8', stack: 'status' },
+            { label: 'Submitted', data: [sb.PENGABDIAN?.SUBMITTED || 0, sb.PELAYANAN?.SUBMITTED || 0, sb.PEMBELAJARAN?.SUBMITTED || 0], backgroundColor: '#0ea5e9', stack: 'status' },
+            { label: 'Rejected', data: [sb.PENGABDIAN?.REJECTED || 0, sb.PELAYANAN?.REJECTED || 0, sb.PEMBELAJARAN?.REJECTED || 0], backgroundColor: '#ef4444', stack: 'status' }
           ]
         },
         options: {
@@ -720,7 +721,7 @@
           maintainAspectRatio: false,
           plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, boxHeight: 8, usePointStyle: true, pointStyle: 'rectRounded', color: '#64748b', font: { size: 10 } } } },
           scales: {
-            x: { stacked: true, beginAtZero: true, max: 1200, ticks: { stepSize: 300, color: '#94a3b8', font: { size: 10 } }, grid: { color: '#f1f5f9' }, border: { dash: [4, 4] } },
+            x: { stacked: true, beginAtZero: true, suggestedMax: 5, ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#f1f5f9' }, border: { dash: [4, 4] } },
             y: { stacked: true, ticks: { color: '#334155', font: { size: 11, weight: '500' } }, grid: { display: false } }
           }
         }

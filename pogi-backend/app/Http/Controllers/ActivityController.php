@@ -26,10 +26,7 @@ class ActivityController extends Controller
         if ($cronCount === 0) {
             $superAdmin = DB::table('users')->where('role', 'SUPER_ADMIN')->first();
             $adminId = $superAdmin ? $superAdmin->id : null;
-            $incompleteDocs = DB::table('doctors')->where('status', '!=', 'COMPLETE')->count();
-            if ($incompleteDocs === 0) {
-                $incompleteDocs = 157;
-            }
+            $incompleteDocs = DB::table('doctors')->whereNull('deleted_at')->where('status', '!=', 'COMPLETE')->count();
 
             DB::table('audit_logs')->insert([
                 [
@@ -228,10 +225,7 @@ class ActivityController extends Controller
         $triggerType = $request->input('trigger', 'H-7');
         $user = Auth::user();
 
-        $incompleteCount = DB::table('doctors')->where('status', '!=', 'COMPLETE')->count();
-        if ($incompleteCount === 0) {
-            $incompleteCount = 157;
-        }
+        $incompleteCount = DB::table('doctors')->whereNull('deleted_at')->where('status', '!=', 'COMPLETE')->count();
 
         $actionName = $triggerType === 'H-2' ? 'CRON_TRIGGER_H2_CRITICAL' : 'CRON_TRIGGER_H7_REMINDER';
         $logId = (string) Str::uuid();
