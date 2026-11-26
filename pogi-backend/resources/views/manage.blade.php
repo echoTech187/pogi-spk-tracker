@@ -118,7 +118,7 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1 text-xs">Status Dokter</label>
             <select id="manageDoctorStatusFilter" onchange="filterManageDoctorTable()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
-              <option value="ALL">Semua Status (Active &amp; Non-Active)</option>
+              <option value="ALL">Semua Status</option>
               <option value="ACTIVE">Active (Aktif)</option>
               <option value="INACTIVE">Non-Active (Non-Aktif)</option>
             </select>
@@ -589,32 +589,35 @@
     }
   </style>
   <!-- Modal Add Generic Master Item -->
-  <div id="manageAddModal" class="fixed inset-0 z-[9999] bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200/80 overflow-hidden relative z-10">
+  <div id="manageAddModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
+    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden relative z-10 animate-scale-in">
+      <!-- Top Shimmer Line -->
+      <div class="h-1.5 bg-gradient-to-r from-[#16b3ac] via-emerald-400 to-[#0ea5e9] shrink-0"></div>
+      
       <!-- Modal Header (Sticky) -->
-      <div class="px-6 py-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="px-6 py-4.5 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-3.5 min-w-0">
-          <div id="manageAddModalIconWrap" class="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
-            <span id="manageAddModalIcon" class="material-symbols-outlined text-[20px]">add_circle</span>
+          <div id="manageAddModalIconWrap" class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100/80 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs">
+            <span id="manageAddModalIcon" class="material-symbols-outlined text-[22px]">add_circle</span>
           </div>
           <div class="min-w-0">
-            <h3 id="manageAddModalTitle" class="font-black text-slate-900 text-base leading-tight truncate">Tambah Data Master</h3>
-            <p id="manageAddModalSubtitle" class="text-[11px] font-medium text-slate-500 mt-0.5 truncate">Lengkapi informasi berikut untuk menyimpan ke basis data POGI</p>
+            <h3 id="manageAddModalTitle" class="font-black text-slate-900 text-lg leading-snug tracking-tight truncate">Tambah Data Master</h3>
+            <p id="manageAddModalSubtitle" class="text-xs font-medium text-slate-500 mt-0.5 truncate">Lengkapi informasi berikut untuk menyimpan ke basis data POGI</p>
           </div>
         </div>
-        <button type="button" onclick="closeManageAddModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition cursor-pointer shrink-0">
+        <button type="button" onclick="closeManageAddModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0">
           <span class="material-symbols-outlined text-[18px]">close</span>
         </button>
       </div>
       <form id="manageAddForm" onsubmit="event.preventDefault(); submitManageAdd();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div id="manageAddFormFields" class="p-5 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-slate-50/60">
+        <div id="manageAddFormFields" class="p-6 sm:p-7 space-y-5 text-xs flex-1 overflow-y-auto bg-slate-50/40">
           <!-- Populated dynamically based on active tab -->
         </div>
         <div class="px-6 py-4 flex items-center justify-between gap-3 border-t border-slate-100 bg-white shrink-0 sticky bottom-0 z-20">
-          <span class="text-[11px] text-slate-400 font-medium hidden sm:inline">Kolom bertanda <span class="text-rose-500 font-bold">*</span> wajib diisi</span>
+          <span class="text-[11px] text-slate-400 font-medium hidden sm:inline flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span>Kolom bertanda <span class="text-rose-500 font-bold">*</span> wajib diisi</span>
           <div class="flex items-center gap-2.5 ml-auto">
-            <button type="button" onclick="closeManageAddModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
-            <button id="manageAddSubmitBtn" type="submit" class="px-5 py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-sm shadow-teal-500/20 transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+            <button type="button" onclick="closeManageAddModal()" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-slate-900 font-bold text-xs transition shadow-2xs cursor-pointer active:scale-95">Batal</button>
+            <button id="manageAddSubmitBtn" type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#16b3ac] to-[#0ea5e9] hover:from-[#129993] hover:to-[#0284c7] text-white font-black text-xs shadow-md shadow-teal-500/20 transition flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed">
               <span class="material-symbols-outlined text-[16px]">check_circle</span>
               <span>Simpan Data</span>
             </button>
@@ -625,67 +628,73 @@
   </div>
 
   <!-- Modal View Details -->
-  <div id="manageDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200/80 overflow-hidden relative z-10">
+  <div id="manageDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
+    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden relative z-10 animate-scale-in">
+      <!-- Top Shimmer Line -->
+      <div class="h-1.5 bg-gradient-to-r from-sky-400 via-cyan-400 to-[#16b3ac] shrink-0"></div>
+
       <!-- Modal Header (Sticky) -->
-      <div class="px-6 py-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="px-6 py-4.5 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-3.5 min-w-0">
-          <div class="w-10 h-10 rounded-2xl bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center shrink-0">
-            <span id="manageDetailModalIcon" class="material-symbols-outlined text-[20px]">visibility</span>
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-50 to-blue-50 border border-sky-100 text-sky-600 flex items-center justify-center shrink-0 shadow-2xs">
+            <span id="manageDetailModalIcon" class="material-symbols-outlined text-[22px]">visibility</span>
           </div>
           <div class="min-w-0">
-            <h3 id="manageDetailModalTitle" class="font-black text-slate-900 text-base leading-tight truncate">Rincian Data Master</h3>
-            <p id="manageDetailModalSubtitle" class="text-[11px] font-medium text-slate-500 mt-0.5 truncate">Ringkasan informasi terverifikasi pada basis data POGI</p>
+            <h3 id="manageDetailModalTitle" class="font-black text-slate-900 text-lg leading-snug tracking-tight truncate">Rincian Data Master</h3>
+            <p id="manageDetailModalSubtitle" class="text-xs font-medium text-slate-500 mt-0.5 truncate">Ringkasan informasi terverifikasi pada basis data POGI</p>
           </div>
         </div>
-        <button type="button" onclick="closeManageDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition cursor-pointer shrink-0">
+        <button type="button" onclick="closeManageDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0">
           <span class="material-symbols-outlined text-[18px]">close</span>
         </button>
       </div>
       <!-- Modal Body (Scrollable) -->
-      <div id="manageDetailContent" class="p-5 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-slate-50/60">
+      <div id="manageDetailContent" class="p-6 sm:p-7 space-y-4 text-xs flex-1 overflow-y-auto bg-slate-50/40">
         <!-- Key value pairs -->
       </div>
       <!-- Modal Footer (Sticky) -->
       <div class="px-6 py-4 flex items-center justify-end gap-3 border-t border-slate-100 bg-white shrink-0 sticky bottom-0 z-20">
         <div class="flex items-center gap-2.5 ml-auto">
-          <button id="manageDetailEditBtn" type="button" class="px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200/80 font-extrabold text-xs transition flex items-center gap-1.5 cursor-pointer rbac-operational">
+          <button id="manageDetailEditBtn" type="button" class="px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200/80 font-bold text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs rbac-operational active:scale-95">
             <span class="material-symbols-outlined text-[16px]">edit_square</span>
             <span>Edit Data</span>
           </button>
-          <button type="button" onclick="closeManageDetailModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Tutup</button>
+          <button type="button" onclick="closeManageDetailModal()" class="px-5 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-slate-900 font-bold text-xs transition shadow-2xs cursor-pointer active:scale-95">Tutup</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Modal Edit Item -->
-  <div id="manageEditModal" class="fixed inset-0 z-[9999] bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200/80 overflow-hidden relative z-10">
+  <div id="manageEditModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
+    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden relative z-10 animate-scale-in">
+      <!-- Top Shimmer Line -->
+      <div class="h-1.5 bg-gradient-to-r from-amber-400 via-orange-400 to-[#16b3ac] shrink-0"></div>
+
       <!-- Modal Header (Sticky) -->
-      <div class="px-6 py-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="px-6 py-4.5 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-3.5 min-w-0">
-          <div id="manageEditModalIconWrap" class="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center shrink-0">
-            <span id="manageEditModalIcon" class="material-symbols-outlined text-[20px]">edit_square</span>
+          <div id="manageEditModalIconWrap" class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 text-amber-600 flex items-center justify-center shrink-0 shadow-2xs">
+            <span id="manageEditModalIcon" class="material-symbols-outlined text-[22px]">edit_square</span>
           </div>
           <div class="min-w-0">
-            <h3 id="manageEditModalTitle" class="font-black text-slate-900 text-base leading-tight truncate">Edit Data Master</h3>
-            <p id="manageEditModalSubtitle" class="text-[11px] font-medium text-slate-500 mt-0.5 truncate">Perbarui detail entitas di bawah ini lalu simpan perubahan</p>
+            <h3 id="manageEditModalTitle" class="font-black text-slate-900 text-lg leading-snug tracking-tight truncate">Edit Data Master</h3>
+            <p id="manageEditModalSubtitle" class="text-xs font-medium text-slate-500 mt-0.5 truncate">Perbarui detail entitas di bawah ini lalu simpan perubahan</p>
           </div>
         </div>
-        <button type="button" onclick="closeManageEditModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition cursor-pointer shrink-0">
+        <button type="button" onclick="closeManageEditModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0">
           <span class="material-symbols-outlined text-[18px]">close</span>
         </button>
       </div>
       <form id="manageEditForm" onsubmit="event.preventDefault(); submitManageEdit();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div id="manageEditFormFields" class="p-5 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-slate-50/60">
+        <div id="manageEditFormFields" class="p-6 sm:p-7 space-y-5 text-xs flex-1 overflow-y-auto bg-slate-50/40">
           <!-- Populated dynamically -->
         </div>
         <div class="px-6 py-4 flex items-center justify-between gap-3 border-t border-slate-100 bg-white shrink-0 sticky bottom-0 z-20">
-          <span class="text-[11px] text-slate-400 font-medium hidden sm:inline"></span>
+          <span class="text-[11px] text-slate-400 font-medium hidden sm:inline flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span>Periksa kebenaran data sebelum menyimpan</span>
           <div class="flex items-center gap-2.5 ml-auto">
-            <button type="button" onclick="closeManageEditModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
-            <button id="manageEditSubmitBtn" type="submit" class="px-5 py-2.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-sm shadow-teal-500/20 transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+            <button type="button" onclick="closeManageEditModal()" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-slate-900 font-bold text-xs transition shadow-2xs cursor-pointer active:scale-95">Batal</button>
+            <button id="manageEditSubmitBtn" type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#16b3ac] to-[#0ea5e9] hover:from-[#129993] hover:to-[#0284c7] text-white font-black text-xs shadow-md shadow-teal-500/20 transition flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed">
               <span class="material-symbols-outlined text-[16px]">save</span>
               <span>Simpan Perubahan</span>
             </button>
@@ -698,21 +707,23 @@
   <!-- ========================================================================= -->
   <!-- MODAL POPUP: IMPORT EXCEL MASTER DATA (DOCTOR, INSTITUTION, EVENT, CATEGORY) -->
   <!-- ========================================================================= -->
-  <div id="manageImportModal" class="fixed inset-0 z-[9999] bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200/80 overflow-hidden relative z-10">
-      
+  <div id="manageImportModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4 transition-opacity">
+    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden relative z-10 animate-scale-in">
+      <!-- Top Shimmer Line -->
+      <div class="h-1.5 bg-gradient-to-r from-[#16b3ac] via-emerald-400 to-[#0ea5e9] shrink-0"></div>
+
       <!-- Modal Header (Sticky) -->
-      <div class="px-6 py-4 sm:py-5 flex items-center justify-between border-b border-slate-200/80 bg-white shrink-0 sticky top-0 z-20">
+      <div class="px-6 py-4.5 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-3.5 min-w-0">
-          <div class="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs">
-            <span class="material-symbols-outlined text-[20px]">upload_file</span>
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs">
+            <span class="material-symbols-outlined text-[22px]">upload_file</span>
           </div>
           <div class="min-w-0">
-            <h3 id="manageImportModalTitle" class="font-black text-slate-900 text-base leading-tight truncate">Import Data Excel</h3>
-            <p id="manageImportModalSubtitle" class="text-[11px] font-medium text-slate-500 mt-1 truncate">Unggah file spreadsheet .xlsx atau .csv untuk menambahkan data secara massal</p>
+            <h3 id="manageImportModalTitle" class="font-black text-slate-900 text-lg leading-snug tracking-tight truncate">Import Data Excel</h3>
+            <p id="manageImportModalSubtitle" class="text-xs font-medium text-slate-500 mt-0.5 truncate">Unggah file spreadsheet .xlsx atau .csv untuk menambahkan data secara massal</p>
           </div>
         </div>
-        <button type="button" onclick="closeManageImportModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition cursor-pointer shrink-0 ml-4">
+        <button type="button" onclick="closeManageImportModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0 ml-4">
           <span class="material-symbols-outlined text-[18px]">close</span>
         </button>
       </div>
@@ -2576,18 +2587,22 @@
     }
 
     // EDIT ITEM MODAL
-    const UI_INPUT = 'w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-[#16b3ac] focus:ring-4 focus:ring-[#16b3ac]/15 outline-none transition-all';
-    const UI_SELECT = 'w-full px-3 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:bg-white focus:border-[#16b3ac] focus:ring-4 focus:ring-[#16b3ac]/15 outline-none transition-all cursor-pointer';
-    const UI_TEXTAREA = 'w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-[#16b3ac] focus:ring-4 focus:ring-[#16b3ac]/15 outline-none transition-all resize-none';
+    const UI_INPUT = 'w-full px-3.5 py-2.5 bg-slate-50/80 hover:bg-slate-50 focus:bg-white border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:border-[#16b3ac] focus:ring-4 focus:ring-[#16b3ac]/12 outline-none transition shadow-2xs';
+    const UI_SELECT = 'w-full px-3.5 py-2.5 bg-slate-50/80 hover:bg-slate-50 focus:bg-white border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 focus:border-[#16b3ac] focus:ring-4 focus:ring-[#16b3ac]/12 outline-none transition cursor-pointer shadow-2xs';
+    const UI_TEXTAREA = 'w-full px-3.5 py-2.5 bg-slate-50/80 hover:bg-slate-50 focus:bg-white border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:border-[#16b3ac] focus:ring-4 focus:ring-[#16b3ac]/12 outline-none transition resize-none shadow-2xs';
 
     function uiSection(icon, title, bodyHtml) {
       return `
-        <div class="bg-white rounded-2xl border border-slate-200/80 p-4 space-y-3.5 shadow-2xs">
-          <div class="flex items-center gap-2 pb-2 border-b border-slate-100">
-            <span class="material-symbols-outlined text-[16px] text-[#16b3ac]">${icon}</span>
-            <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-600">${title}</span>
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 space-y-4 shadow-2xs hover:border-slate-300 transition">
+          <div class="flex items-center gap-2.5 pb-2.5 border-b border-slate-100">
+            <div class="w-7 h-7 rounded-xl bg-emerald-50 border border-emerald-100/80 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs">
+              <span class="material-symbols-outlined text-[16px]">${icon}</span>
+            </div>
+            <span class="text-xs font-black uppercase tracking-wider text-slate-800">${title}</span>
           </div>
-          ${bodyHtml}
+          <div class="space-y-3.5">
+            ${bodyHtml}
+          </div>
         </div>
       `;
     }
@@ -2603,12 +2618,12 @@
 
     function uiField(label, required, controlHtml, hint = '') {
       return `
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1.5">
-            ${label} ${required ? '<span class="text-rose-500">*</span>' : ''}
+        <div class="space-y-1">
+          <label class="block text-xs font-bold text-slate-700">
+            ${label} ${required ? '<span class="text-rose-500 font-extrabold">*</span>' : ''}
           </label>
           ${controlHtml}
-          ${hint ? `<p class="text-[10px] text-slate-400 mt-1 font-medium">${hint}</p>` : ''}
+          ${hint ? `<p class="text-[10px] text-slate-400 font-medium">${hint}</p>` : ''}
         </div>
       `;
     }
@@ -2854,22 +2869,25 @@
         const pEnd = item.period_end || '2030-12-31';
         setModalMeta('edit', 'doctor', 'Edit Doctor: ' + item.name, 'Perbarui profil dokter, akun LMS Plataran, dan periode SKP');
         container.innerHTML =
-          uiSection('stethoscope', 'Doctor info', `
-            <div>${uiField('Name', true, `<input required type="text" id="editDocName" value="${item.name || ''}" placeholder="dr. Budi Santoso, Sp.PD" class="${UI_INPUT}" />`)}</div>
-            <div>${uiField('STR', false, `<input type="text" id="editDocStr" value="${item.str_number || ''}" placeholder="32.73.100.2.21.0883" class="${UI_INPUT} font-mono" />`)}</div>
-            <div>${uiField('Phone', true, `<input required type="text" id="editDocPhone" value="${item.phone || ''}" placeholder="08123456789" class="${UI_INPUT} font-mono" />`, 'Numbers starting with 0 are saved as +62.')}</div>
-            <div>${uiField('Province', true, `<select id="editDocProv" class="${UI_SELECT}">${buildProvinceOptions(item.province)}</select>`)}</div>
-            <div>${uiField('Institution', true, `<select id="editDocInstId" class="${UI_SELECT}">${buildInstitutionOptions(item.primary_institution_id, item.institution)}</select>`)}</div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>${uiField('Period start', true, `<input type="date" id="editDocPeriodStart" value="${pStart}" class="${UI_INPUT}" />`)}</div>
-              <div>${uiField('Period end', true, `<input type="date" id="editDocPeriodEnd" value="${pEnd}" class="${UI_INPUT}" />`)}</div>
+          uiSection('stethoscope', 'Informasi & Kredensial Dokter', `
+            <div>${uiField('Nama Lengkap Dokter', true, `<input required type="text" id="editDocName" value="${item.name || ''}" placeholder="dr. Budi Santoso, Sp.OG" class="${UI_INPUT}" />`)}</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>${uiField('Nomor STR', false, `<input type="text" id="editDocStr" value="${item.str_number || ''}" placeholder="32.73.100.2.21.0883" class="${UI_INPUT} font-mono" />`)}</div>
+              <div>${uiField('Nomor Telepon (WhatsApp)', true, `<input required type="text" id="editDocPhone" value="${item.phone || ''}" placeholder="08123456789" class="${UI_INPUT} font-mono" />`, 'Awalan 0 otomatis tersimpan sebagai +62.')}</div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>${uiField('Provinsi / Wilayah Cabang', true, `<select id="editDocProv" class="${UI_SELECT}">${buildProvinceOptions(item.province)}</select>`)}</div>
+              <div>${uiField('RS / Faskes Utama', true, `<select id="editDocInstId" class="${UI_SELECT}">${buildInstitutionOptions(item.primary_institution_id, item.institution)}</select>`)}</div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>${uiField('Periode Mulai SKP', true, `<input type="date" id="editDocPeriodStart" value="${pStart}" class="${UI_INPUT}" />`)}</div>
+              <div>${uiField('Periode Berakhir SKP', true, `<input type="date" id="editDocPeriodEnd" value="${pEnd}" class="${UI_INPUT}" />`)}</div>
             </div>
           `) +
-          uiSection('vpn_key', 'Credentials', `
-            <div class="text-[11px] text-slate-400 font-semibold mb-2">LMS Plataran Account</div>
-            <div class="space-y-3">
-              <div>${uiField('Username', false, `<input type="text" id="editDocPlataranUser" value="${item.plataran_sehat_username || ''}" placeholder="super@example.com" class="${UI_INPUT} bg-sky-50/70 border-sky-100" />`)}</div>
-              <div>${uiField('Password', false, `<input type="password" id="editDocPlataranPass" placeholder="•••••••• (Kosongkan jika tidak diubah)" class="${UI_INPUT} bg-sky-50/70 border-sky-100" />`)}</div>
+          uiSection('vpn_key', 'Akun Kredensial LMS Plataran Sehat', `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>${uiField('Username LMS', false, `<input type="text" id="editDocPlataranUser" value="${item.plataran_sehat_username || ''}" placeholder="super@example.com" class="${UI_INPUT} bg-sky-50/60 border-sky-200/80" />`)}</div>
+              <div>${uiField('Password LMS', false, `<input type="password" id="editDocPlataranPass" placeholder="•••••••• (Kosongkan jika tidak diubah)" class="${UI_INPUT} bg-sky-50/60 border-sky-200/80" />`)}</div>
             </div>
           `) +
           `<details class="group border border-slate-200 rounded-2xl p-3 bg-slate-50/50 mt-1" open>
@@ -3314,28 +3332,31 @@
       const fiveYearsLater = new Date(new Date().setFullYear(new Date().getFullYear() + 5)).toISOString().split('T')[0];
 
       if (currentTab === 'doctor') {
-        setModalMeta('add', 'doctor', 'Add Doctor', 'Daftarkan dokter baru beserta kredensial LMS Plataran dan periode SKP');
+        setModalMeta('add', 'doctor', 'Daftarkan Dokter Baru', 'Lengkapi profil dokter spesialis, akun kredensial LMS Plataran, dan periode SKP');
         const submitBtn = document.getElementById('manageAddSubmitBtn');
         if (submitBtn) {
-          submitBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">person_add</span><span>Add doctor</span>';
+          submitBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">person_add</span><span>Simpan Dokter</span>';
         }
         container.innerHTML =
-          uiSection('stethoscope', 'Doctor info', `
-            <div>${uiField('Name', true, `<input required type="text" id="addDocName" placeholder="dr. Budi Santoso, Sp.PD" class="${UI_INPUT}" />`)}</div>
-            <div>${uiField('STR', false, `<input type="text" id="addDocStr" placeholder="32.73.100.2.21.0883" class="${UI_INPUT} font-mono" />`)}</div>
-            <div>${uiField('Phone', true, `<input required type="text" id="addDocPhone" placeholder="08123456789" class="${UI_INPUT} font-mono" />`, 'Numbers starting with 0 are saved as +62.')}</div>
-            <div>${uiField('Province', true, `<select id="addDocProv" class="${UI_SELECT}">${buildProvinceOptions('DKI Jakarta')}</select>`)}</div>
-            <div>${uiField('Institution', true, `<select id="addDocInstId" class="${UI_SELECT}">${buildInstitutionOptions('', '')}</select>`)}</div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>${uiField('Period start', true, `<input type="date" id="addDocPeriodStart" value="2026-01-01" class="${UI_INPUT}" />`)}</div>
-              <div>${uiField('Period end', true, `<input type="date" id="addDocPeriodEnd" value="2030-12-31" class="${UI_INPUT}" />`)}</div>
+          uiSection('stethoscope', 'Informasi & Kredensial Dokter', `
+            <div>${uiField('Nama Lengkap Dokter', true, `<input required type="text" id="addDocName" placeholder="dr. Budi Santoso, Sp.OG" class="${UI_INPUT}" />`)}</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>${uiField('Nomor STR', false, `<input type="text" id="addDocStr" placeholder="32.73.100.2.21.0883" class="${UI_INPUT} font-mono" />`)}</div>
+              <div>${uiField('Nomor Telepon (WhatsApp)', true, `<input required type="text" id="addDocPhone" placeholder="08123456789" class="${UI_INPUT} font-mono" />`, 'Awalan 0 otomatis tersimpan sebagai +62.')}</div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>${uiField('Provinsi / Wilayah Cabang', true, `<select id="addDocProv" class="${UI_SELECT}">${buildProvinceOptions('DKI Jakarta')}</select>`)}</div>
+              <div>${uiField('RS / Faskes Utama', true, `<select id="addDocInstId" class="${UI_SELECT}">${buildInstitutionOptions('', '')}</select>`)}</div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>${uiField('Periode Mulai SKP', true, `<input type="date" id="addDocPeriodStart" value="2026-01-01" class="${UI_INPUT}" />`)}</div>
+              <div>${uiField('Periode Berakhir SKP', true, `<input type="date" id="addDocPeriodEnd" value="2030-12-31" class="${UI_INPUT}" />`)}</div>
             </div>
           `) +
-          uiSection('vpn_key', 'Credentials', `
-            <div class="text-[11px] text-slate-400 font-semibold mb-2">LMS Plataran Account</div>
-            <div class="space-y-3">
-              <div>${uiField('Username', false, `<input type="text" id="addDocPlataranUser" placeholder="super@example.com" class="${UI_INPUT} bg-sky-50/70 border-sky-100" />`)}</div>
-              <div>${uiField('Password', false, `<input type="password" id="addDocPlataranPass" placeholder="••••••••" class="${UI_INPUT} bg-sky-50/70 border-sky-100" />`)}</div>
+          uiSection('vpn_key', 'Akun Kredensial LMS Plataran Sehat', `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>${uiField('Username LMS', false, `<input type="text" id="addDocPlataranUser" placeholder="super@example.com" class="${UI_INPUT} bg-sky-50/60 border-sky-200/80" />`)}</div>
+              <div>${uiField('Password LMS', false, `<input type="password" id="addDocPlataranPass" placeholder="••••••••" class="${UI_INPUT} bg-sky-50/60 border-sky-200/80" />`)}</div>
             </div>
           `) +
           `<details class="group border border-slate-200 rounded-2xl p-3 bg-slate-50/50 mt-1">

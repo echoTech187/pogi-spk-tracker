@@ -237,63 +237,71 @@
   <!-- MODAL POPUP 1: PILIHAN BULAN (PERSIS BPJS DI CHAT WHATSAPP)               -->
   <!-- ========================================================================= -->
   <div id="monthPickerModal"
-    class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 hidden transition-opacity">
     <div
-      class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden animate-scale-in">
-      <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70 shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[#16b3ac] text-xl">calendar_month</span>
-          <h3 class="font-black text-sm text-slate-900">Pilih Bulan Laporan (Flashback)</h3>
+      class="bg-white rounded-3xl border border-slate-100 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] w-full max-w-md max-h-[92vh] flex flex-col overflow-hidden animate-scale-in relative z-10">
+      <!-- Top Shimmer Line -->
+      <div class="h-1.5 bg-gradient-to-r from-[#16b3ac] via-emerald-400 to-[#0ea5e9] shrink-0"></div>
+
+      <div class="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100/80 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs">
+            <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+          </div>
+          <div>
+            <h3 class="font-black text-base text-slate-900 leading-snug">Pilih Bulan Laporan</h3>
+            <p class="text-xs text-slate-500">Rekapitulasi berkas SKP bulanan</p>
+          </div>
         </div>
         <button type="button" onclick="toggleMonthPickerModal(false)"
-          class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-xl transition cursor-pointer">
-          <span class="material-symbols-outlined text-lg">close</span>
+          class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0">
+          <span class="material-symbols-outlined text-[18px]">close</span>
         </button>
       </div>
 
-      <div class="p-6 space-y-4 flex-1 overflow-y-auto">
+      <div class="p-6 space-y-4 flex-1 overflow-y-auto bg-slate-50/40 text-xs">
         <div class="flex items-center justify-between px-1">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tahun Laporan</span>
-          <span class="text-xs font-black text-slate-900 bg-slate-100 px-3 py-1 rounded-xl">Tahun 2026</span>
+          <span class="text-xs font-black text-slate-900 bg-white border border-slate-200/80 px-3 py-1 rounded-xl shadow-2xs">Tahun 2026</span>
         </div>
 
         <!-- 4x3 Grid Bulan (Persis Format BPJS) -->
         <div class="grid grid-cols-4 gap-2.5 text-xs font-bold">
           <button type="button" onclick="selectMonth(0)" id="mbtn-0"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Jan</button>
+            class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Jan</button>
           <button type="button" onclick="selectMonth(1)" id="mbtn-1"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Feb</button>
+            class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Feb</button>
           <button type="button" onclick="selectMonth(2)" id="mbtn-2"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Mar</button>
+            class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Mar</button>
           <button type="button" onclick="selectMonth(3)" id="mbtn-3"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Apr</button>
+            class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Apr</button>
           <button type="button" onclick="selectMonth(4)" id="mbtn-4"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Mei</button>
+            class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Mei</button>
           <button type="button" onclick="selectMonth(5)" id="mbtn-5"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Jun</button>
+            class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Jun</button>
           <button type="button" onclick="selectMonth(6)" id="mbtn-6"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Jul</button>
+            class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Jul</button>
           <button type="button" onclick="selectMonth(7)" id="mbtn-7"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Agu</button>
+            class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Agu</button>
           <button type="button" onclick="selectMonth(8)" id="mbtn-8"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Sep</button>
+            class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Sep</button>
           <button type="button" onclick="selectMonth(9)" id="mbtn-9"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Okt</button>
+            class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Okt</button>
           <button type="button" onclick="selectMonth(10)" id="mbtn-10"
-            class="py-3 rounded-2xl bg-[#16b3ac] text-white font-extrabold shadow-sm transition cursor-pointer text-center">Nov</button>
+            class="py-3 rounded-2xl bg-gradient-to-r from-[#16b3ac] to-[#0ea5e9] text-white font-black shadow-xs shadow-teal-500/20 transition cursor-pointer text-center">Nov</button>
           <button type="button" onclick="selectMonth(11)" id="mbtn-11"
-            class="py-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] transition cursor-pointer text-center">Des</button>
+            class="py-3 rounded-2xl bg-white border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-[#16b3ac] shadow-2xs transition cursor-pointer text-center">Des</button>
         </div>
 
         <div class="pt-2 text-[11px] text-slate-500 border-t border-slate-100 flex items-center justify-between">
           <span>Cutoff: Setiap tgl 1</span>
-          <span class="text-emerald-700 font-bold">&bull; File PDF otomatis tersedia</span>
+          <span class="text-emerald-700 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>File PDF otomatis tersedia</span>
         </div>
       </div>
 
-      <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end shrink-0 sticky bottom-0 z-20">
+      <div class="px-6 py-4 bg-white border-t border-slate-100 flex items-center justify-end shrink-0 sticky bottom-0 z-20">
         <button type="button" onclick="toggleMonthPickerModal(false)"
-          class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition cursor-pointer">
+          class="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold transition shadow-2xs cursor-pointer">
           Tutup
         </button>
       </div>
@@ -301,33 +309,35 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL POPUP 2: ARSIP FLASHBACK DOKUMEN (DIRAPIKAN TOTAL - MAX-W-4XL)      -->
+  <!-- MODAL POPUP 2: ARSIP FLASHBACK DOKUMEN (DIRAPIKAN TOTAL - MAX-W-5XL)      -->
   <!-- ========================================================================= -->
   <div id="archiveModal"
-    class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 hidden transition-opacity">
     <div
-      class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-in">
-      <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shadow-2xs">
-            <span class="material-symbols-outlined text-xl">folder_zip</span>
+      class="bg-white rounded-3xl border border-slate-100 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden animate-scale-in relative z-10">
+      <!-- Top Shimmer Line -->
+      <div class="h-1.5 bg-gradient-to-r from-amber-500 via-orange-400 to-[#16b3ac] shrink-0"></div>
+
+      <div class="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-11 h-11 rounded-2xl bg-amber-50 border border-amber-100 text-amber-700 flex items-center justify-center shrink-0 shadow-2xs">
+            <span class="material-symbols-outlined text-[22px]">folder_zip</span>
           </div>
-          <div>
-            <h3 class="font-black text-base text-slate-900">Arsip File Laporan Bulanan (PDF Siap Unduh)</h3>
-            <p class="text-xs text-slate-500">File tersimpan per bulan untuk kebutuhan flashback &amp; lampiran
-              penagihan invoice.</p>
+          <div class="min-w-0">
+            <h3 class="font-black text-lg text-slate-900 leading-snug tracking-tight truncate">Arsip File Laporan Bulanan (PDF Siap Unduh)</h3>
+            <p class="text-xs text-slate-500 truncate">File tersimpan per bulan untuk kebutuhan flashback &amp; lampiran penagihan invoice.</p>
           </div>
         </div>
         <button type="button" onclick="openArchiveModal(false)"
-          class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-xl transition cursor-pointer">
-          <span class="material-symbols-outlined text-xl">close</span>
+          class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0">
+          <span class="material-symbols-outlined text-[18px]">close</span>
         </button>
       </div>
 
-      <div class="p-5 sm:p-6 flex-1 overflow-y-auto">
-        <div class="overflow-x-auto rounded-2xl border border-slate-200">
+      <div class="p-6 sm:p-7 flex-1 overflow-y-auto bg-slate-50/40">
+        <div class="overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-2xs">
           <table class="w-full text-left text-xs whitespace-nowrap">
-            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
+            <thead class="bg-slate-50/80 border-b border-slate-200/80 text-slate-500 font-extrabold uppercase text-[10px]">
               <tr>
                 <th class="py-3 px-4 w-44">Periode Bulan</th>
                 <th class="py-3 px-4 w-36">Tanggal Cutoff</th>
@@ -338,15 +348,15 @@
             </thead>
             <tbody class="divide-y divide-slate-100">
               @forelse($snapshots ?? [] as $s)
-                <tr class="{{ $loop->first ? 'bg-emerald-50/50' : '' }}">
+                <tr class="{{ $loop->first ? 'bg-emerald-50/40' : 'hover:bg-slate-50/60' }} transition">
                   <td class="py-3.5 px-4 font-bold text-slate-900 flex items-center gap-2">
-                    @if($loop->first)<span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>@endif
+                    @if($loop->first)<span class="w-2.5 h-2.5 rounded-full bg-[#16b3ac]"></span>@endif
                     Bulan {{ $s->period_month }}/{{ $s->period_year }} {{ $loop->first ? '(Aktif)' : '' }}
                   </td>
                   <td class="py-3.5 px-4 text-slate-600 font-medium">1 {{ $s->period_month }} {{ $s->period_year }}</td>
                   <td class="py-3.5 px-4 text-slate-600 font-mono">{{ \Carbon\Carbon::parse($s->cutoff_timestamp ?? $s->created_at)->format('d M Y, H:i') }} WIB</td>
                   <td class="py-3.5 px-4 text-center">
-                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black {{ ($s->is_locked ?? true) ? 'bg-emerald-100 text-[#16b3ac]' : 'bg-slate-100 text-slate-700' }}">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black {{ ($s->is_locked ?? true) ? 'bg-emerald-50 border border-emerald-200/80 text-[#16b3ac]' : 'bg-slate-100 text-slate-700' }}">
                       {{ ($s->is_locked ?? true) ? 'Tersedia (Resmi)' : 'Draft' }}
                     </span>
                   </td>
@@ -354,14 +364,14 @@
                     <div class="inline-flex items-center gap-2">
                       <button type="button" onclick="printOnePogiMonthlyReportPdf('{{ $s->period_month }}/{{ $s->period_year }}')"
                         title="Unduh PDF Resmi Laporan Bulanan ONE POGI (3 Halaman)"
-                        class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                        class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                         <span class="material-symbols-outlined text-sm text-[#16b3ac]">description</span>
                         <span>Lap. Bulanan</span>
                       </button>
                       <button type="button" onclick="printOfficialSkpReportPdf('{{ $s->period_month }}/{{ $s->period_year }}')"
                         title="Unduh PDF Resmi SKP Report (1 Halaman)"
-                        class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                        <span class="material-symbols-outlined text-sm text-sky-600">assessment</span>
+                        class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#16b3ac] to-[#0ea5e9] hover:from-[#139e97] hover:to-[#0284c7] text-white font-black text-xs shadow-xs shadow-teal-500/20 transition inline-flex items-center gap-1.5 cursor-pointer active:scale-95">
+                        <span class="material-symbols-outlined text-sm">assessment</span>
                         <span>Report SKP</span>
                       </button>
                     </div>
@@ -384,16 +394,18 @@
       </div>
 
       <div
-        class="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 shrink-0 sticky bottom-0 z-20">
+        class="px-6 py-4 bg-white border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 shrink-0 sticky bottom-0 z-20">
         <div class="flex items-center gap-1.5">
           <span class="material-symbols-outlined text-sm text-[#16b3ac]">verified</span>
           <span>Sistem Penyimpanan Terpadu Impruve.Id &bull; Cutoff tgl 1</span>
         </div>
         <button type="button" onclick="openArchiveModal(false)"
-          class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition cursor-pointer">
+          class="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold transition shadow-2xs cursor-pointer">
           Tutup
         </button>
       </div>
+    </div>
+  </div>
     </div>
   </div>
 

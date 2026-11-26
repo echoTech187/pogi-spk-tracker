@@ -5,7 +5,7 @@
 @section('content')
 
   <!-- MAIN SCROLLABLE CONTENT -->
-  <main class="flex-1 overflow-y-auto space-y-6 page-fade-in">
+  <main class="flex-1 overflow-y-auto bg-white  space-y-6 page-fade-in">
 
     <!-- Navigation Breadcrumb & Back Button -->
     <div class="flex items-center justify-between gap-3">

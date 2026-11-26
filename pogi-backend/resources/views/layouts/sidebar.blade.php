@@ -112,8 +112,8 @@
   @endphp
 
   <!-- Bottom Profile Card -->
-  <div class="p-3 border-t border-slate-100 bg-slate-50/70">
-    <div id="sidebarUserProfileCard" class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2 shadow-2xs">
+  <div class="p-3">
+    <div id="sidebarUserProfileCard" class="p-2.5 rounded-xl  flex items-center justify-between gap-2 shadow-2xs">
       <div class="flex items-center gap-2.5 min-w-0">
         <div id="sidebarUserAvatar" class="w-9 h-9 rounded-full bg-[#16b3ac] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
           {{ $sidebarInitials }}

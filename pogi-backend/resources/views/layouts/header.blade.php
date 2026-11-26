@@ -20,7 +20,7 @@
       : 'Baru saja';
 @endphp
 
-<header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200/90 shrink-0 w-full print:hidden">
+<header class="px-0 py-1 sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200/90 shrink-0 w-full print:hidden">
   <div class="h-14 sm:h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
     <!-- Left: Mobile menu button -->
     <div class="flex items-center gap-2 sm:gap-3 min-w-0 shrink-0">

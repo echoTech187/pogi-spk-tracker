@@ -23,14 +23,6 @@
           Daftar kegiatan ilmiah, simposium, workshop, dan pelayanan klinis ber-SKP yang telah terverifikasi Kemenkes Plataran Sehat terintegrasi PP POGI.
         </p>
       </div>
-      @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
-      <div class="flex items-center gap-2 shrink-0 flex-wrap">
-        <button type="button" onclick="openAddEventModal()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 rbac-write cursor-pointer active:scale-95">
-          <span class="material-symbols-outlined text-base">add_circle</span>
-          <span>Tambah Event SKP</span>
-        </button>
-      </div>
-      @endif
     </div>
 
         <!-- Filter Subbidang Tabs -->
@@ -112,7 +104,7 @@
       </div>
 
       <!-- Modal Body (Scrollable) -->
-      <div class="flex-1 overflow-y-auto p-4 sm:p-6 min-h-0">
+      <div class="flex-1 overflow-y-auto bg-white  p-4 sm:p-6 min-h-0">
         <table class="w-full text-left text-xs whitespace-nowrap">
           <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px] sticky top-0 z-10">
             <tr>

@@ -3,7 +3,7 @@
 @section('title', 'POGI SKP Tracker - Log Aktivitas & Jejak Audit')
 @section('content')
   <!-- Main Body -->
-  <main class="flex-1 overflow-y-auto space-y-6 page-fade-in pb-8">
+  <main class="flex-1 overflow-y-auto bg-white  space-y-6 page-fade-in pb-8">
 
     <!-- Clean Page Header (Modern Enterprise Standard) -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
@@ -204,31 +204,34 @@
   </main>
 
   <!-- MODAL: DETAIL JEJAK AUDIT (AUDIT LOG INSPECTOR) -->
-  <div id="auditDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-200/90 overflow-hidden transform transition-all page-fade-in">
+  <div id="auditDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 transition-opacity">
+    <div class="bg-white rounded-3xl max-w-xl w-full shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden transform transition-all page-fade-in relative z-10 animate-scale-in">
+      <!-- Top Shimmer Line -->
+      <div class="h-1.5 bg-gradient-to-r from-[#16b3ac] via-emerald-400 to-[#0ea5e9] shrink-0"></div>
+
       <!-- Modal Header -->
-      <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/60">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-teal-50 border border-teal-100 text-[#16b3ac] flex items-center justify-center shadow-2xs">
-            <span class="material-symbols-outlined text-[20px]">policy</span>
+      <div class="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100/80 text-[#16b3ac] flex items-center justify-center shrink-0 shadow-2xs">
+            <span class="material-symbols-outlined text-[22px]">policy</span>
           </div>
-          <div>
-            <h3 class="text-base font-black text-slate-900 leading-tight">Detail Jejak Audit Operasional</h3>
-            <p class="text-xs text-slate-400 font-mono mt-0.5" id="modalAuditId">UUID: -</p>
+          <div class="min-w-0">
+            <h3 class="text-lg font-black text-slate-900 leading-snug tracking-tight truncate">Detail Jejak Audit Operasional</h3>
+            <p class="text-xs text-slate-400 font-mono mt-0.5 truncate" id="modalAuditId">UUID: -</p>
           </div>
         </div>
-        <button type="button" onclick="closeAuditDetailModal()" class="w-8 h-8 rounded-full bg-white hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center border border-slate-200 shadow-2xs transition cursor-pointer">
-          <span class="material-symbols-outlined text-base">close</span>
+        <button type="button" onclick="closeAuditDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/60 text-slate-400 hover:text-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer shrink-0">
+          <span class="material-symbols-outlined text-[18px]">close</span>
         </button>
       </div>
 
       <!-- Modal Body -->
-      <div class="p-5 sm:p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+      <div class="p-6 sm:p-7 space-y-4 max-h-[70vh] overflow-y-auto bg-slate-50/40 text-xs">
         <!-- User & Timestamp Bar -->
-        <div class="grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs text-xs">
           <div>
             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Pengguna / Aktor</span>
-            <span class="font-bold text-slate-900 text-sm mt-0.5 block truncate" id="modalActorName">-</span>
+            <span class="font-extrabold text-slate-900 text-sm mt-0.5 block truncate" id="modalActorName">-</span>
             <span class="text-[10px] font-mono text-slate-500 font-semibold" id="modalActorRole">ROLE: USER</span>
           </div>
           <div>
@@ -241,7 +244,7 @@
         <!-- Action & Category -->
         <div class="space-y-1.5">
           <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Aksi Sistem / Operasional</span>
-          <div class="flex items-center justify-between gap-2 p-3 rounded-xl border border-slate-200/80 bg-white">
+          <div class="flex items-center justify-between gap-2 p-3.5 rounded-xl border border-slate-200/80 bg-white shadow-2xs">
             <div class="font-black text-slate-900 text-xs truncate" id="modalActionName">-</div>
             <div id="modalCategoryBadge"></div>
           </div>
@@ -250,7 +253,7 @@
         <!-- Description -->
         <div class="space-y-1.5">
           <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rincian Narasi Perubahan</span>
-          <div class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50 text-slate-700 text-xs leading-relaxed font-medium" id="modalDetailsText">
+          <div class="p-4 rounded-2xl border border-slate-200/80 bg-white text-slate-700 text-xs leading-relaxed font-medium shadow-2xs" id="modalDetailsText">
             -
           </div>
         </div>
@@ -264,14 +267,16 @@
               <span>Salin JSON</span>
             </button>
           </div>
-          <pre id="modalJsonPayload" class="p-3.5 rounded-xl bg-slate-900 text-emerald-400 font-mono text-[11px] overflow-x-auto max-h-48 leading-normal border border-slate-800 select-all whitespace-pre-wrap"></pre>
+          <pre id="modalJsonPayload" class="p-4 rounded-2xl bg-slate-900 text-emerald-400 font-mono text-[11px] overflow-x-auto max-h-48 leading-normal border border-slate-800 select-all whitespace-pre-wrap shadow-inner"></pre>
         </div>
       </div>
 
       <!-- Modal Footer -->
-      <div class="p-4 sm:p-5 border-t border-slate-100 bg-slate-50/60 flex items-center justify-between">
-        <span class="text-[11px] text-slate-400 font-medium">Integritas Log: <strong class="text-emerald-700">Terverifikasi</strong></span>
-        <button type="button" onclick="closeAuditDetailModal()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-xs cursor-pointer">
+      <div class="px-6 py-4 border-t border-slate-100 bg-white flex items-center justify-between shrink-0 sticky bottom-0 z-20">
+        <span class="text-[11px] text-slate-400 font-medium flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Integritas Log: <strong class="text-emerald-700 font-bold">Terverifikasi</strong>
+        </span>
+        <button type="button" onclick="closeAuditDetailModal()" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-xs cursor-pointer active:scale-95">
           Tutup
         </button>
       </div>
