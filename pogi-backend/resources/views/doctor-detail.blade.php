@@ -1106,7 +1106,21 @@
       if (!tbody) return;
 
       if (activities.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="py-6 text-center text-slate-400 text-xs">Belum ada riwayat kegiatan logbook untuk dokter ini.</td></tr>';
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-12 px-4 text-center">
+              <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                  <span class="material-symbols-outlined text-2xl">history_edu</span>
+                </div>
+                <div class="font-bold text-sm text-slate-800">Belum Ada Riwayat Kegiatan SKP</div>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Belum ada rekaman entri logbook kegiatan klinis, pembelajaran, atau pengabdian masyarakat untuk dokter ini.
+                </p>
+              </div>
+            </td>
+          </tr>
+        `;
         return;
       }
 
@@ -1171,7 +1185,28 @@
       const CAN_EDIT_DOC_STATUS = @json(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']));
 
       if (repoTbody) {
-        repoTbody.innerHTML = docs.map(f => {
+        if (!docs || docs.length === 0) {
+          repoTbody.innerHTML = `
+            <tr>
+              <td colspan="9" class="py-14 px-4 text-center">
+                <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                  <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
+                    <span class="material-symbols-outlined text-2xl">folder_off</span>
+                  </div>
+                  <div class="font-bold text-sm text-slate-800">Belum Ada Berkas di Repositori Cloud</div>
+                  <p class="text-xs text-slate-500 leading-relaxed">
+                    Dokter ini belum memiliki dokumen bukti fisik SKP yang diunggah ke repositori cloud internal.
+                  </p>
+                  <button type="button" onclick="openUploadDoctorDocModal()" class="mt-1 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] border border-emerald-200 font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-write">
+                    <span class="material-symbols-outlined text-sm">upload_file</span>
+                    <span>Unggah Berkas Pertama</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        } else {
+          repoTbody.innerHTML = docs.map(f => {
           let selectClass = 'bg-amber-50 text-amber-800 border-amber-200';
           if (f.status === 'DONE') {
             selectClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
@@ -1270,6 +1305,7 @@
             </tr>
           `;
         }).join('');
+        }
       }
 
       // Render Missing Document Detector Box
@@ -1314,7 +1350,21 @@
       const missingTbody = document.getElementById('missingDocumentsTableBody');
       if (missingTbody) {
         if (detector.items.length === 0) {
-          missingTbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-emerald-700 font-bold">Semua dokumen wajib telah lengkap di repositori cloud &amp; terverifikasi Kemenkes.</td></tr>';
+          missingTbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="py-12 px-4 text-center">
+                <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                  <div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200/80 text-[#16b3ac] flex items-center justify-center shadow-2xs">
+                    <span class="material-symbols-outlined text-2xl">verified</span>
+                  </div>
+                  <div class="font-bold text-sm text-emerald-950">Semua Dokumen Lengkap</div>
+                  <p class="text-xs text-slate-500 leading-relaxed">
+                    Semua dokumen bukti fisik SKP wajib telah lengkap tersimpan di repositori cloud dan terverifikasi Kemenkes.
+                  </p>
+                </div>
+              </td>
+            </tr>
+          `;
         } else {
           missingTbody.innerHTML = detector.items.map(m => `
             <tr class="hover:bg-slate-50 transition">

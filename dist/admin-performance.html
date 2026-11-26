@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="3F2bGdQmYQqAzpYDeyRoviIKGXNgbelrXAoaG8yn">
+  <meta name="csrf-token" content="tGUk3ejQzJirWXgYfJRl7p7UJJN1t2NN8OeIhkBm">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -1089,7 +1089,7 @@
       if (!docId || !targetAdminId) return;
 
       try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '3F2bGdQmYQqAzpYDeyRoviIKGXNgbelrXAoaG8yn';
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'tGUk3ejQzJirWXgYfJRl7p7UJJN1t2NN8OeIhkBm';
         const res = await fetch(`/doctors/${docId}/assign-pic`, {
           method: 'POST',
           headers: {
