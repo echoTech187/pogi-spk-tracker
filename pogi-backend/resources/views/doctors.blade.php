@@ -357,7 +357,7 @@
               </div>
             </div>
 
-            <!-- Province & Institution (2 Cols) -->
+            <!-- Province & Branch (2 Cols) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
                 <label class="block font-bold text-slate-700 mb-1.5">Provinsi / Wilayah Cabang <span class="text-rose-500 font-extrabold">*</span></label>
@@ -366,23 +366,52 @@
                 </select>
               </div>
               <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Cabang POGI <span class="text-rose-500 font-extrabold">*</span></label>
+                <select id="newDocBranch" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+                  <option value="">Pilih Cabang POGI...</option>
+                  @foreach($branches ?? [] as $b)
+                    <option value="{{ $b->id }}">{{ $b->branch_name ?? $b->name ?? '' }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+
+            <!-- RS & PIC Admin (2 Cols) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
                 <label class="block font-bold text-slate-700 mb-1.5">RS / Faskes Utama <span class="text-rose-500 font-extrabold">*</span></label>
                 <select id="newDocInst" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
                   <option value="">Pilih institusi / RS...</option>
                 </select>
               </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
+                <select id="newDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+                  @forelse($adminPogiList ?? [] as $adm)
+                    <option value="{{ $adm->full_name }}">{{ $adm->full_name }} (Admin POGI)</option>
+                  @empty
+                    <option value="">Belum ada Admin POGI</option>
+                  @endforelse
+                </select>
+              </div>
             </div>
 
-            <!-- Assigned PIC Admin -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
-              <select id="newDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                @forelse($adminPogiList ?? [] as $adm)
-                  <option value="{{ $adm->full_name }}">{{ $adm->full_name }} (Admin POGI)</option>
-                @empty
-                  <option value="">Belum ada Admin POGI</option>
-                @endforelse
-              </select>
+            <!-- Email & Status Dokter (2 Cols) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Email <span class="text-rose-500 font-extrabold">*</span></label>
+                <div class="relative">
+                  <input id="newDocEmail" type="email" required placeholder="dokter@pogi.or.id" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">mail</span>
+                </div>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Status Dokter (Master Data) <span class="text-rose-500 font-extrabold">*</span></label>
+                <select id="newDocStatus" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+                  <option value="ACTIVE" selected>Active (Aktif)</option>
+                  <option value="INACTIVE">Non-Active (Non-Aktif)</option>
+                </select>
+              </div>
             </div>
 
             <!-- Period start & Period end (2 Cols) -->
@@ -626,7 +655,7 @@
           applyDoctorFilters();
         });
 
-        $('#newDocProv, #newDocInst, #newDocAssignedTo').select2({
+        $('#newDocProv, #newDocInst, #newDocAssignedTo, #newDocBranch, #newDocStatus').select2({
           dropdownParent: $('#addDoctorModal'),
           width: '100%'
         });
@@ -1200,7 +1229,7 @@
       if (modal) {
         modal.classList.remove('hidden');
         if (window.jQuery && $.fn.select2) {
-          $('#newDocProv, #newDocInst, #newDocAssignedTo').trigger('change.select2');
+          $('#newDocProv, #newDocInst, #newDocAssignedTo, #newDocBranch, #newDocStatus').trigger('change.select2');
         }
       }
     }
@@ -1215,7 +1244,10 @@
       const str = (document.getElementById('newDocStr')?.value || '').trim();
       let phone = (document.getElementById('newDocPhone')?.value || '').trim();
       const prov = document.getElementById('newDocProv')?.value || 'DKI Jakarta';
+      const branchId = document.getElementById('newDocBranch')?.value || '';
       const inst = document.getElementById('newDocInst')?.value || '-';
+      const email = (document.getElementById('newDocEmail')?.value || '').trim();
+      const status = document.getElementById('newDocStatus')?.value || 'ACTIVE';
       const periodStart = (document.getElementById('newDocPeriodStart')?.value || '1 Jan 2026').trim();
       const periodEnd = (document.getElementById('newDocPeriodEnd')?.value || '31 Des 2030').trim();
       const lmsUser = (document.getElementById('newDocLmsUsername')?.value || '').trim();
@@ -1224,6 +1256,14 @@
 
       if (!name) {
         showToast('Mohon masukkan nama dokter!', 'error');
+        return;
+      }
+      if (!email) {
+        showToast('Mohon masukkan email dokter!', 'error');
+        return;
+      }
+      if (!branchId) {
+        showToast('Mohon pilih Cabang POGI!', 'error');
         return;
       }
 
@@ -1246,8 +1286,11 @@
         str: str,
         phone: phone,
         province: prov,
+        branch_id: branchId,
         institution: inst,
         assigned_to: assignedTo,
+        email: email,
+        status: status,
         period_start: periodStart,
         period_end: periodEnd,
         plataran_sehat_username: lmsUser,

@@ -941,6 +941,22 @@
       $modal.find('#addUsrRole').off('change.roleSelect2').on('change.roleSelect2', function() {
         toggleBranchField('add', this.value);
       });
+
+      // Auto-sync Cabang POGI when Provinsi changes in Add Doctor Modal
+      $modal.find('#addDocProv').off('change.provBranchSync').on('change.provBranchSync', function() {
+        const provName = (this.value || '').toLowerCase();
+        if (!provName) return;
+        const branchSelect = document.getElementById('addDocBranch');
+        if (branchSelect) {
+          const matched = (window.LIVE_MANAGE_BRANCHES || []).find(b =>
+            (b.branch_name && b.branch_name.toLowerCase().includes(provName)) ||
+            (provName.includes('jakarta') && b.branch_name.toLowerCase().includes('jaya'))
+          );
+          if (matched && !branchSelect.value) {
+            $(branchSelect).val(matched.id).trigger('change');
+          }
+        }
+      });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -2996,7 +3012,7 @@
       const opts = (window.LIVE_MANAGE_BRANCHES || []).map(b =>
         `<option value="${b.id}" ${selectedId && String(selectedId) === String(b.id) ? 'selected' : ''}>${b.branch_name}</option>`
       ).join('');
-      return `<option value="">-- Otomatis dari Provinsi --</option>` + opts;
+      return `<option value="">Pilih Cabang POGI...</option>` + opts;
     }
     function buildInstitutionOptions(selectedId, selectedName) {
       const opts = (window.LIVE_MANAGE_INSTITUTIONS || []).map(inst => {
@@ -3068,7 +3084,7 @@
                 <div>${uiField('Masa Berlaku SIP', false, `<input type="date" id="editDocSipExp" value="${item.sip_expiry_date || ''}" class="${UI_INPUT}" />`)}</div>
               </div>
               <div>${uiField('Email', false, uiIconInput('mail', `<input type="email" id="editDocEmail" value="${item.email || ''}" class="${UI_INPUT} pl-9" />`))}</div>
-              <div>${uiField('Status Dokter (Master Data)', true, uiSegmentedPills('editDocStatus', isDocActive ? 'ACTIVE' : 'INACTIVE', [
+              <div>${uiField('Status Dokter', true, uiSegmentedPills('editDocStatus', isDocActive ? 'ACTIVE' : 'INACTIVE', [
                 { value: 'ACTIVE', label: 'Active', dotClass: 'bg-emerald-500', activeClass: 'bg-emerald-600 text-white border-emerald-600 shadow-xs' },
                 { value: 'INACTIVE', label: 'Non-Active', dotClass: 'bg-slate-400', activeClass: 'bg-slate-600 text-white border-slate-600 shadow-xs' }
               ]))}</div>
@@ -3525,7 +3541,7 @@
               </div>
             </div>
 
-            <!-- Province & Institution (2 Cols) -->
+            <!-- Province & Branch (2 Cols) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
                 <label class="block font-bold text-slate-700 mb-1.5">Provinsi / Wilayah Cabang <span class="text-rose-500 font-extrabold">*</span></label>
@@ -3535,20 +3551,46 @@
                 </select>
               </div>
               <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Cabang POGI <span class="text-rose-500 font-extrabold">*</span></label>
+                <select id="addDocBranch" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+                  ${buildBranchOptions('')}
+                </select>
+              </div>
+            </div>
+
+            <!-- RS & PIC Admin (2 Cols) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
                 <label class="block font-bold text-slate-700 mb-1.5">RS / Faskes Utama <span class="text-rose-500 font-extrabold">*</span></label>
                 <select id="addDocInstId" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
                   <option value="">Pilih institusi / RS...</option>
                   ${buildInstitutionOptions('', '')}
                 </select>
               </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
+                <select id="addDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+                  ${buildAdminPogiOptions()}
+                </select>
+              </div>
             </div>
 
-            <!-- Assigned PIC Admin -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
-              <select id="addDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                ${buildAdminPogiOptions()}
-              </select>
+            <!-- Email & Status Dokter (2 Cols) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Email <span class="text-rose-500 font-extrabold">*</span></label>
+                <div class="relative">
+                  <input id="addDocEmail" type="email" required placeholder="dokter@pogi.or.id" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">mail</span>
+                </div>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Status Dokter (Master Data) <span class="text-rose-500 font-extrabold">*</span></label>
+                <select id="addDocStatus" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+                  <option value="ACTIVE" selected>Active (Aktif)</option>
+                  <option value="INACTIVE">Non-Active (Non-Aktif)</option>
+                </select>
+              </div>
             </div>
 
             <!-- Period start & Period end (2 Cols) -->
@@ -3590,29 +3632,6 @@
               </div>
             </div>
           </div>
-
-          <details class="group border border-slate-200 rounded-2xl p-3 bg-slate-50/50 mt-1">
-            <summary class="text-xs font-bold text-slate-600 cursor-pointer flex items-center justify-between">
-              <span>Informasi Tambahan POGI & SIP (Opsional)</span>
-              <span class="material-symbols-outlined text-sm group-open:rotate-180 transition-transform">expand_more</span>
-            </summary>
-            <div class="pt-3 space-y-3">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>${uiField('Gelar Spesialis', false, `<input type="text" id="addDocSpec" value="Sp.OG" class="${UI_INPUT}" />`)}</div>
-                <div>${uiField('NPA POGI', false, `<input type="text" id="addDocNpa" placeholder="Auto jika dikosongkan" class="${UI_INPUT} font-mono" />`)}</div>
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>${uiField('NIK (16 Digit)', false, `<input type="text" id="addDocNik" placeholder="3171..." class="${UI_INPUT} font-mono" />`)}</div>
-                <div>${uiField('Cabang POGI', false, `<select id="addDocBranch" class="${UI_SELECT}">${buildBranchOptions('')}</select>`)}</div>
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>${uiField('Nomor SIP', false, `<input type="text" id="addDocSip" placeholder="446/.../SIP/..." class="${UI_INPUT} font-mono" />`)}</div>
-                <div>${uiField('Masa Berlaku SIP', false, `<input type="date" id="addDocSipExp" value="${fiveYearsLater}" class="${UI_INPUT}" />`)}</div>
-              </div>
-              <div>${uiField('Email', false, uiIconInput('mail', `<input type="email" id="addDocEmail" placeholder="dokter@pogi.or.id" class="${UI_INPUT} pl-9" />`))}</div>
-              <div>${uiField('Status Dokter (Master Data)', false, `<select id="addDocStatus" class="${UI_SELECT}"><option value="ACTIVE" selected>Active (Aktif)</option><option value="INACTIVE">Non-Active (Non-Aktif)</option></select>`)}</div>
-            </div>
-          </details>
         `;
       } else if (currentTab === 'institution') {
         setModalMeta('add', 'institution', 'Tambah Rumah Sakit / Faskes', 'Tambahkan fasilitas kesehatan jejaring POGI beserta klasifikasinya');
@@ -3754,25 +3773,50 @@
         } else if (phone && !phone.startsWith('+')) {
           phone = '+62' + phone;
         }
-        payload.name = document.getElementById('addDocName')?.value || '';
+
+        const name = (document.getElementById('addDocName')?.value || '').trim();
+        const email = (document.getElementById('addDocEmail')?.value || '').trim();
+        let branchId = document.getElementById('addDocBranch')?.value || '';
+        const status = document.getElementById('addDocStatus')?.value || 'ACTIVE';
+
+        if (!name) {
+          showModalFormError('add', 'Nama Lengkap Dokter wajib diisi!');
+          showToast('Nama Lengkap Dokter wajib diisi!', 'error');
+          return;
+        }
+        if (!email) {
+          showModalFormError('add', 'Alamat Email wajib diisi!');
+          showToast('Alamat Email wajib diisi!', 'error');
+          return;
+        }
+        if (!branchId) {
+          const provName = document.getElementById('addDocProv')?.value || '';
+          const matched = (window.LIVE_MANAGE_BRANCHES || []).find(b => b.branch_name.toLowerCase().includes(provName.toLowerCase()));
+          if (matched) {
+            branchId = matched.id;
+          }
+        }
+        if (!branchId) {
+          showModalFormError('add', 'Cabang POGI wajib dipilih!');
+          showToast('Cabang POGI wajib dipilih!', 'error');
+          return;
+        }
+
+        payload.name = name;
         payload.str_number = document.getElementById('addDocStr')?.value || '';
         payload.phone = phone;
         payload.province = document.getElementById('addDocProv')?.value || '';
+        payload.branch_id = branchId;
         payload.institution_id = document.getElementById('addDocInstId')?.value || null;
         payload.assigned_to = document.getElementById('addDocAssignedTo')?.value || null;
+        payload.email = email;
+        payload.status = status;
+        payload.is_active = (status === 'ACTIVE');
         payload.period_start = document.getElementById('addDocPeriodStart')?.value || '1 Jan 2026';
         payload.period_end = document.getElementById('addDocPeriodEnd')?.value || '31 Des 2030';
         payload.plataran_sehat_username = document.getElementById('addDocPlataranUser')?.value || null;
         payload.plataran_sehat_password = document.getElementById('addDocPlataranPass')?.value || null;
-        payload.specialization_title = document.getElementById('addDocSpec')?.value || 'Sp.OG';
-        payload.npa_pogi = document.getElementById('addDocNpa')?.value || '';
-        payload.nik = document.getElementById('addDocNik')?.value || '';
-        payload.sip_number = document.getElementById('addDocSip')?.value || '';
-        payload.sip_expiry_date = document.getElementById('addDocSipExp')?.value || '';
-        payload.email = document.getElementById('addDocEmail')?.value || '';
-        payload.branch_id = document.getElementById('addDocBranch')?.value || null;
-        payload.status = document.getElementById('addDocStatus')?.value || 'ACTIVE';
-        payload.is_active = (payload.status === 'ACTIVE');
+        payload.specialization_title = 'Sp.OG';
       } else if (currentTab === 'institution') {
         payload.name = document.getElementById('addInstName').value;
         payload.code = document.getElementById('addInstCode').value;
