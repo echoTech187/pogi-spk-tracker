@@ -775,6 +775,8 @@ class DoctorController extends Controller
             'category' => 'required|string|in:Pembelajaran,Pelayanan,Pengabdian,Administrasi',
             'skp_value' => 'nullable|numeric|min:0',
             'google_drive_url' => 'required|url',
+            'doc_req_code' => 'nullable|string|max:50',
+            'doc_req_name' => 'nullable|string|max:255',
         ], [
             'google_drive_url.required' => 'Tautan Google Drive wajib diisi sesuai kebijakan Anti-Storage Bloat (RULES.md Bab 8).',
             'google_drive_url.url' => 'Format tautan Google Drive tidak valid.',
@@ -783,6 +785,12 @@ class DoctorController extends Controller
         $now = Carbon::now();
         $domain = strtoupper($request->input('category', 'PEMBELAJARAN'));
         $skpValue = (float) ($request->input('skp_value') ?: 0);
+        $docReqCode = $request->input('doc_req_code');
+        $docReqName = $request->input('doc_req_name');
+        
+        $entryTitle = $docReqCode 
+            ? "[{$docReqCode}] " . ($docReqName ?: 'Pemenuhan Dokumen') . ": " . $request->input('filename')
+            : 'Pengajuan Bukti Fisik: ' . $request->input('filename');
         
         $period = DB::table('doctor_skp_periods')->where('doctor_id', $id)->where('is_active', true)->first();
         if (!$period) {
@@ -826,10 +834,10 @@ class DoctorController extends Controller
             'event_id' => null,
             'category_id' => $categoryId,
             'domain' => in_array($domain, ['PEMBELAJARAN', 'PELAYANAN', 'PENGABDIAN']) ? $domain : 'PEMBELAJARAN',
-            'title' => 'Pengajuan Bukti Fisik: ' . $request->input('filename'),
+            'title' => $entryTitle,
             'activity_date' => $now->toDateString(),
             'credit_amount' => $skpValue,
-            'status' => 'PENDING',
+            'status' => 'NOT_SUBMITTED',
             'verified_by_user_id' => null,
             'verified_at' => null,
             'rejection_reason' => null,
@@ -840,11 +848,12 @@ class DoctorController extends Controller
         // 2. Insert Doctor Document
         $docId = (string) Str::uuid();
         $driveUrl = (string) $request->input('google_drive_url');
+        $docType = $docReqCode ?: ('SERTIFIKAT_' . $domain);
         DB::table('doctor_documents')->insert([
             'id' => $docId,
             'doctor_id' => $id,
             'skp_entry_id' => $entryId,
-            'document_type' => 'SERTIFIKAT_' . $domain,
+            'document_type' => $docType,
             'file_name' => $request->input('filename'),
             'google_drive_url' => $driveUrl,
             'file_size_bytes' => 1887436,
@@ -869,6 +878,15 @@ class DoctorController extends Controller
             'success' => true,
             'status' => 'success',
             'message' => 'Berkas berhasil disimpan ke Object Storage dan dicatat ke basis data!',
+            'entry' => [
+                'id' => $entryId,
+                'title' => $entryTitle,
+                'category' => $request->input('category'),
+                'domain' => $request->input('category'),
+                'credit' => $skpValue,
+                'credits' => $skpValue,
+                'status' => 'PENDING',
+            ],
             'document' => [
                 'id' => $docId,
                 'filename' => $request->input('filename'),
@@ -881,6 +899,7 @@ class DoctorController extends Controller
                 'status' => 'NOT_SUBMITTED',
                 'uploadedInternal' => $now->format('d M Y, H.i') . ' WIB',
                 'uploadedKemenkes' => 'Menunggu Sinkronisasi',
+                'doc_req_code' => $docReqCode,
             ],
         ]);
     }

@@ -29,6 +29,10 @@
           <span class="material-symbols-outlined text-base">campaign</span>
           <span>Kirim WA Blast Massal</span>
         </button>
+        <button type="button" onclick="openAddDoctorModal()" id="btnAddDoctor" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational cursor-pointer active:scale-95">
+          <span class="material-symbols-outlined text-base">person_add</span>
+          <span>Daftarkan Dokter Baru</span>
+        </button>
       </div>
       @endif
     </div>

@@ -498,6 +498,20 @@
 
       <!-- Modal Body (Scrollable) -->
       <div class="p-6 py-4 flex-1 overflow-y-auto space-y-3.5 text-xs bg-white min-h-0">
+        <!-- Contextual Missing Document Banner -->
+        <div id="uploadContextBanner" class="hidden p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 flex items-center justify-between gap-2.5">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-[#16b3ac] flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-base">task_alt</span>
+            </div>
+            <div class="min-w-0">
+              <div class="font-extrabold text-xs text-slate-900 truncate">Melengkapi Dokumen: <span id="bannerDocName" class="text-[#16b3ac]"></span></div>
+              <div class="text-[10px] text-slate-500 font-medium">Standar Wajib: <span id="bannerDocCode" class="font-mono font-bold text-slate-700"></span> &bull; Ranah: <span id="bannerDocDomain" class="font-bold text-emerald-800"></span></div>
+            </div>
+          </div>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-[#16b3ac] border border-emerald-300 shrink-0">Wajib Dipenuhi</span>
+        </div>
+
         <div>
           <label class="block font-bold text-slate-700 mb-1">Nama Berkas Bukti (File PDF)</label>
           <input type="text" id="newDocFilename" placeholder="contoh: Sertifikat_Webinar_USG_2026.pdf"
@@ -1399,7 +1413,7 @@
                   </p>
                 </div>
               </div>
-              <button type="button" onclick="openUploadDoctorDocModal()" class="px-3 py-1.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shrink-0 transition flex items-center gap-1 shadow-xs rbac-write cursor-pointer">
+              <button type="button" onclick="${detector.items && detector.items[0] ? `openUploadDoctorDocModal('${detector.items[0].domain}', '${(detector.items[0].name || '').replace(/'/g, "\\'")}', '${detector.items[0].code}')` : `openUploadDoctorDocModal()`}" class="px-3 py-1.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shrink-0 transition flex items-center gap-1 shadow-xs rbac-write cursor-pointer">
                 <span class="material-symbols-outlined text-sm">add_circle</span>
                 <span>Unggah Berkas Susulan</span>
               </button>
@@ -1449,7 +1463,7 @@
               <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${m.statusBadgeClass}">${m.status}</span></td>
               <td class="py-3 px-3 text-slate-600 max-w-xs truncate">${m.reason}</td>
               <td class="py-3 px-3 text-center">
-                <button type="button" onclick="openUploadDoctorDocModal()" class="px-2.5 py-1 rounded bg-[#16b3ac] hover:bg-[#129993] text-white font-bold text-[11px] transition inline-flex items-center gap-1 shadow-2xs rbac-write">
+                <button type="button" onclick="openUploadDoctorDocModal('${m.domain}', '${(m.name || '').replace(/'/g, "\\'")}', '${m.code}')" class="px-2.5 py-1 rounded bg-[#16b3ac] hover:bg-[#129993] text-white font-bold text-[11px] transition inline-flex items-center gap-1 shadow-2xs rbac-write cursor-pointer" title="Unggah berkas untuk melengkapi persyaratan ${m.code}">
                   <span class="material-symbols-outlined text-xs">upload</span> Unggah Berkas
                 </button>
               </td>
@@ -1527,19 +1541,56 @@
       else if (cat === 'Administrasi') skpInput.value = '0';
     }
 
-    function openUploadDoctorDocModal() {
+    let currentFulfillingDocReq = null;
+
+    function openUploadDoctorDocModal(targetCategory, targetTitle, targetCode) {
       selectedUploadFile = null;
+      currentFulfillingDocReq = targetCode ? {
+        code: targetCode,
+        title: targetTitle || 'Dokumen Wajib',
+        category: targetCategory || 'Pembelajaran'
+      } : null;
+
       const fileInput = document.getElementById('realDocFileInput');
       if (fileInput) fileInput.value = '';
 
-      const filenameInput = document.getElementById('newDocFilename');
-      if (filenameInput) filenameInput.value = '';
+      const banner = document.getElementById('uploadContextBanner');
+      const bannerDocName = document.getElementById('bannerDocName');
+      const bannerDocCode = document.getElementById('bannerDocCode');
+      const bannerDocDomain = document.getElementById('bannerDocDomain');
+      if (banner) {
+        if (currentFulfillingDocReq) {
+          banner.classList.remove('hidden');
+          if (bannerDocName) bannerDocName.innerText = currentFulfillingDocReq.title;
+          if (bannerDocCode) bannerDocCode.innerText = currentFulfillingDocReq.code;
+          if (bannerDocDomain) bannerDocDomain.innerText = currentFulfillingDocReq.category;
+        } else {
+          banner.classList.add('hidden');
+        }
+      }
 
+      const defaultCat = targetCategory || 'Pembelajaran';
       const catSelect = document.getElementById('newDocCategory');
-      if (catSelect) catSelect.value = 'Pembelajaran';
+      if (catSelect) catSelect.value = defaultCat;
+
+      const filenameInput = document.getElementById('newDocFilename');
+      if (filenameInput) {
+        filenameInput.value = '';
+        if (targetTitle) {
+          const cleanTitle = targetTitle.replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_');
+          filenameInput.placeholder = `contoh: ${cleanTitle}_2026.pdf`;
+        } else {
+          filenameInput.placeholder = 'contoh: Sertifikat_Webinar_USG_2026.pdf';
+        }
+      }
 
       const skpInput = document.getElementById('newDocSkpValue');
-      if (skpInput) skpInput.value = '4.5';
+      if (skpInput) {
+        if (defaultCat === 'Pengabdian') skpInput.value = '2.0';
+        else if (defaultCat === 'Pelayanan') skpInput.value = '5.0';
+        else if (defaultCat === 'Pembelajaran') skpInput.value = '4.5';
+        else skpInput.value = '0';
+      }
 
       const driveInput = document.getElementById('newDocDriveUrl');
       if (driveInput) driveInput.value = '';
@@ -1575,12 +1626,14 @@
             $cat.select2({ width: '100%' }).off('change.autoSuggest').on('change.autoSuggest', function() {
               autoSuggestSkpByCategory(this.value);
             });
+            $cat.val(defaultCat).trigger('change');
           } catch (e) {}
         }
       }
     }
 
     function closeUploadDoctorDocModal() {
+      currentFulfillingDocReq = null;
       const modal = document.getElementById('uploadDoctorDocModal');
       if (modal) modal.classList.add('hidden');
     }
@@ -1621,7 +1674,9 @@
         filename: filename,
         category: category,
         skp_value: skpValue,
-        google_drive_url: driveUrl
+        google_drive_url: driveUrl,
+        doc_req_code: currentFulfillingDocReq ? currentFulfillingDocReq.code : null,
+        doc_req_name: currentFulfillingDocReq ? currentFulfillingDocReq.title : null
       };
 
       fetch(`/doctors/${activeDoctor.id}/documents`, {
@@ -1636,11 +1691,37 @@
       .then(res => res.json())
       .then(data => {
         if (data.success && data.document) {
+          // 1. Simpan dokumen ke Repositori Cloud
           LIVE_SERVER_DOCUMENTS.unshift(data.document);
+
+          // 2. Tandai/hilangkan persyaratan dari Missing Document Detector realtime
+          const fulfilledCode = currentFulfillingDocReq ? currentFulfillingDocReq.code : null;
+          const fulfilledTitle = currentFulfillingDocReq ? currentFulfillingDocReq.title : null;
+          if (typeof LIVE_SERVER_MISSING_DOCS !== 'undefined' && LIVE_SERVER_MISSING_DOCS && LIVE_SERVER_MISSING_DOCS.items) {
+            LIVE_SERVER_MISSING_DOCS.items = LIVE_SERVER_MISSING_DOCS.items.filter(item => {
+              if (fulfilledCode && item.code === fulfilledCode) return false;
+              if (item.domain.toLowerCase() === category.toLowerCase()) return false;
+              return true;
+            });
+            LIVE_SERVER_MISSING_DOCS.missingCount = LIVE_SERVER_MISSING_DOCS.items.length;
+            LIVE_SERVER_MISSING_DOCS.hasMissing = LIVE_SERVER_MISSING_DOCS.missingCount > 0;
+            LIVE_SERVER_MISSING_DOCS.summary = LIVE_SERVER_MISSING_DOCS.hasMissing
+              ? `Terdeteksi ${LIVE_SERVER_MISSING_DOCS.missingCount} berkas bukti wajib yang belum lengkap berdasarkan standar terbaru KMK 1561/2024 & KMK 1111/2026.`
+              : 'Semua dokumen wajib telah lengkap dan terverifikasi sesuai standar terbaru KMK 1561/2024 & KMK 1111/2026.';
+            
+            const badge = document.getElementById('tabBadgeMissingCount');
+            if (badge) badge.innerText = LIVE_SERVER_MISSING_DOCS.missingCount;
+          }
+
+          // 3. Catat ke Logbook Kegiatan SKP dengan judul kontekstual
           if (typeof LIVE_SERVER_ENTRIES !== 'undefined') {
+            const entryTitle = fulfilledCode 
+              ? `[${fulfilledCode}] ${fulfilledTitle}: ${filename}`
+              : ('Pengajuan Bukti Fisik: ' + filename);
+
             LIVE_SERVER_ENTRIES.unshift({
-              id: 'entry-' + Date.now(),
-              title: 'Pengajuan Bukti Fisik: ' + filename,
+              id: (data.entry && data.entry.id) || ('entry-' + Date.now()),
+              title: entryTitle,
               category: category,
               domain: category,
               date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
@@ -1652,15 +1733,22 @@
               statusClass: 'bg-amber-50 text-amber-700 border border-amber-200',
               eventId: null
             });
-            if (activeDoctor) {
-              activeDoctor.pendingCredits = (Number(activeDoctor.pendingCredits) || 0) + Number(skpValue);
-              renderDoctorDetails(activeDoctor);
-            }
-            renderDoctorActivities(activeDoctor.id);
           }
-          closeUploadDoctorDocModal();
+
+          // 4. Update Pending Credits & Tombol Verifikasi
+          if (activeDoctor) {
+            activeDoctor.pendingCredits = (Number(activeDoctor.pendingCredits) || 0) + Number(skpValue);
+            renderDoctorDetails(activeDoctor);
+          }
+
+          renderDoctorActivities(activeDoctor.id);
           renderDoctorRepositoryAndDetector(activeDoctor.id);
-          showToast(`Berkas "${filename}" (${skpValue > 0 ? '+' + skpValue + ' SKP' : 'Tersimpan'}${driveUrl ? ' & Tautan Drive' : ''}) berhasil disimpan ke Object Storage Cloud & basis data!`, 'success');
+          closeUploadDoctorDocModal();
+          
+          const successMsg = fulfilledCode 
+            ? `Dokumen [${fulfilledCode}] ${fulfilledTitle} berhasil dilengkapi dan dicatat ke logbook untuk verifikasi!`
+            : `Berkas "${filename}" (${skpValue > 0 ? '+' + skpValue + ' SKP' : 'Tersimpan'}) berhasil disimpan ke Object Storage Cloud!`;
+          showToast(successMsg, 'success');
         } else {
           showToast(data.message || 'Gagal mengunggah berkas ke server', 'error');
         }
