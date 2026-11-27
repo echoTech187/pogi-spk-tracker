@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="QI9urYwRbQsms1cf2ekwpdFt5CrKX8VIL7YO0Z5g">
+  <meta name="csrf-token" content="d4mnggQba5DyvKvMhKtCbZhiDNCYkkopwJgjEl7D">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -1262,7 +1262,7 @@
       if (!docId || !targetAdminId) return;
 
       try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'QI9urYwRbQsms1cf2ekwpdFt5CrKX8VIL7YO0Z5g';
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'd4mnggQba5DyvKvMhKtCbZhiDNCYkkopwJgjEl7D';
         const res = await fetch(`/doctors/${docId}/assign-pic`, {
           method: 'POST',
           headers: {
@@ -1416,7 +1416,7 @@
       if (btnText) btnText.innerText = 'Mengalihkan...';
 
       try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'QI9urYwRbQsms1cf2ekwpdFt5CrKX8VIL7YO0Z5g';
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'd4mnggQba5DyvKvMhKtCbZhiDNCYkkopwJgjEl7D';
         const res = await fetch('/doctors/batch-assign-pic', {
           method: 'POST',
           headers: {
@@ -1597,7 +1597,7 @@
       if (btnText) btnText.innerText = 'Menerapkan Penyeimbangan...';
 
       try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'QI9urYwRbQsms1cf2ekwpdFt5CrKX8VIL7YO0Z5g';
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'd4mnggQba5DyvKvMhKtCbZhiDNCYkkopwJgjEl7D';
         
         for (const plan of autoBalanceRecommendedPlans) {
           const docIds = plan.doctors.map(d => d.id);

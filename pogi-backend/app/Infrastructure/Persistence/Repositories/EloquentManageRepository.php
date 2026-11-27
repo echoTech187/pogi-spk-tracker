@@ -590,6 +590,14 @@ class EloquentManageRepository
                     $upd['status'] = $st;
                 }
             }
+            if (array_key_exists('assigned_pic_id', $v)) {
+                $upd['assigned_pic_id'] = $v['assigned_pic_id'];
+            } elseif (!empty($v['assigned_to'])) {
+                $picUser = User::where('full_name', 'like', '%' . trim($v['assigned_to']) . '%')
+                    ->orWhere('email', 'like', '%' . trim($v['assigned_to']) . '%')
+                    ->first();
+                $upd['assigned_pic_id'] = $picUser?->id;
+            }
             if ($prov) $upd['province_id'] = $prov->id;
             if ($branch) $upd['branch_id'] = $branch->id;
             if ($inst) $upd['primary_institution_id'] = $inst->id;
@@ -599,13 +607,18 @@ class EloquentManageRepository
             }
             Doctor::where('id', $id)->update($upd);
 
+            $cleanDate = function($val) {
+                if (!$val) return null;
+                return str_ireplace(['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'], ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], (string) $val);
+            };
+
             if (!empty($v['period_start']) || !empty($v['period_end'])) {
                 $pUpd = [];
                 if (!empty($v['period_start'])) {
-                    try { $pUpd['start_date'] = Carbon::parse($v['period_start'])->toDateString(); } catch (\Throwable $e) {}
+                    try { $pUpd['start_date'] = Carbon::parse($cleanDate($v['period_start']))->toDateString(); } catch (\Throwable $e) {}
                 }
                 if (!empty($v['period_end'])) {
-                    try { $pUpd['end_date'] = Carbon::parse($v['period_end'])->toDateString(); } catch (\Throwable $e) {}
+                    try { $pUpd['end_date'] = Carbon::parse($cleanDate($v['period_end']))->toDateString(); } catch (\Throwable $e) {}
                 }
                 if (!empty($pUpd)) {
                     DoctorSkpPeriod::where('doctor_id', $id)->where('is_active', true)->update($pUpd);
