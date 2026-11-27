@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="hfRltL38RRg2hJbAP7X96BrImYx3422tMgwma8R7">
+  <meta name="csrf-token" content="ES7qYpdirpXO9hu448S3wP6HfawZD8cQJWukG6fm">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -346,7 +346,7 @@
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
                 <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">3 jam yang lalu</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">23 jam yang lalu</div>
               </div>
             </div>
           </div>
@@ -1262,7 +1262,7 @@
       if (!docId || !targetAdminId) return;
 
       try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'hfRltL38RRg2hJbAP7X96BrImYx3422tMgwma8R7';
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'ES7qYpdirpXO9hu448S3wP6HfawZD8cQJWukG6fm';
         const res = await fetch(`/doctors/${docId}/assign-pic`, {
           method: 'POST',
           headers: {
@@ -1416,7 +1416,7 @@
       if (btnText) btnText.innerText = 'Mengalihkan...';
 
       try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'hfRltL38RRg2hJbAP7X96BrImYx3422tMgwma8R7';
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'ES7qYpdirpXO9hu448S3wP6HfawZD8cQJWukG6fm';
         const res = await fetch('/doctors/batch-assign-pic', {
           method: 'POST',
           headers: {
@@ -1597,7 +1597,7 @@
       if (btnText) btnText.innerText = 'Menerapkan Penyeimbangan...';
 
       try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'hfRltL38RRg2hJbAP7X96BrImYx3422tMgwma8R7';
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'ES7qYpdirpXO9hu448S3wP6HfawZD8cQJWukG6fm';
         
         for (const plan of autoBalanceRecommendedPlans) {
           const docIds = plan.doctors.map(d => d.id);

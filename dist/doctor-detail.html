@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="hfRltL38RRg2hJbAP7X96BrImYx3422tMgwma8R7">
+  <meta name="csrf-token" content="ES7qYpdirpXO9hu448S3wP6HfawZD8cQJWukG6fm">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -346,7 +346,7 @@
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
                 <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">3 jam yang lalu</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">23 jam yang lalu</div>
               </div>
             </div>
           </div>
@@ -1102,7 +1102,7 @@
   <script src="/js/navigation.js"></script>
   <script src="/js/pdf_exporter.js"></script>
   <script>
-    const LIVE_SERVER_DOCTOR = {"id":"04680f57-b8b3-4873-898e-754974a29bb1","user_id":null,"npa_pogi":"#POGI-2026-5774","full_name":"dr. Budi Santoso, Sp.PD","specialization_title":"Sp.OG","is_active":1,"nik_encrypted":"GCM1:fdjSlPScKQi2oHvA9ErMzj\/VpE54RUY5OB1ghj96MboYgP8vHK23RQ8Ygg==","nik_hash":"08cab81591ae7342b39cd73a914609da19b891483ba972c2e4df73c9b79ae45c","str_number":"32.73.100.2.21.0883","sip_number":"446\/926\/SIP\/2026","sip_expiry_date":"2031-11-25","email":"dr.budi.santoso.sp.pd@pogi-member.id","whatsapp_number":"+628123456789","branch_id":"b800841f-8173-44eb-a99e-3eea6b954ae1","province_id":"31","primary_institution_id":"59df83b0-fd7e-476c-bf44-e7cff7ce515a","assigned_pic_id":null,"plataran_sehat_username":"super@example.com","plataran_sehat_pass_encrypted":"secret123","status":"INCOMPLETE","dashboard_updated_at":"2026-11-26 14:19:08","kemenkes_updated_at":"2026-11-26 14:19:08","created_at":"2026-11-25 17:32:35","updated_at":"2026-11-26 14:19:08","deleted_at":null,"branch_name":"POGI Cabang DKI Jakarta","branch_code":"POGI-31","province_name":"DKI Jakarta","institution_name":"Klinik Pratama Sehat Sentosa","institution_city":"Jakarta Selatan","assigned_pic_name":null,"assigned_pic_email":null,"assigned_pic_phone":null};
+    const LIVE_SERVER_DOCTOR = {"id":"04680f57-b8b3-4873-898e-754974a29bb1","user_id":null,"npa_pogi":"#POGI-2026-5774","full_name":"dr. Budi Santoso, Sp.PD","specialization_title":"Sp.OG","is_active":1,"nik_encrypted":"GCM1:fdjSlPScKQi2oHvA9ErMzj\/VpE54RUY5OB1ghj96MboYgP8vHK23RQ8Ygg==","nik_hash":"08cab81591ae7342b39cd73a914609da19b891483ba972c2e4df73c9b79ae45c","str_number":"32.73.100.2.21.0883","sip_number":"446\/926\/SIP\/2026","sip_expiry_date":"2031-11-25","email":"dr.budi.santoso.sp.pd@pogi-member.id","whatsapp_number":"+628123456789","branch_id":"b800841f-8173-44eb-a99e-3eea6b954ae1","province_id":"31","primary_institution_id":"59df83b0-fd7e-476c-bf44-e7cff7ce515a","assigned_pic_id":null,"plataran_sehat_username":"super@example.com","plataran_sehat_pass_encrypted":"secret123","status":"INCOMPLETE","dashboard_updated_at":"2026-11-26 14:19:08","kemenkes_updated_at":"2026-11-26 14:19:08","created_at":"2026-11-25 17:32:35","updated_at":"2026-11-26 14:19:08","deleted_at":null,"branch_name":"POGI Cabang DKI Jakarta","branch_code":"POGI-31","province_name":"DKI Jakarta","institution_name":"Klinik Pratama Sehat Sentosa","institution_city":"Jakarta Selatan","assigned_pic_name":null,"assigned_pic_email":null,"assigned_pic_phone":null,"pending_credits":0};
     const LIVE_SERVER_DOCUMENTS = [];
     const LIVE_SERVER_PERIOD = {"id":"950fc41e-a764-4281-8c10-8a1352c62fcd","doctor_id":"04680f57-b8b3-4873-898e-754974a29bb1","cycle_number":1,"start_date":"2026-01-01","end_date":"2030-12-31","target_total_credits":"160.00","target_pembelajaran_credits":"72.00","target_pelayanan_credits":"56.00","target_pengabdian_credits":"8.00","target_flexibility_credits":"24.00","achieved_pembelajaran_credits":"0.00","achieved_pelayanan_credits":"0.00","achieved_pengabdian_credits":"0.00","achieved_total_credits":"0.00","is_active":1,"is_completed":0,"created_at":"2026-11-25 17:32:35","updated_at":"2026-11-26 14:19:08"};
     const LIVE_SERVER_ENTRIES = [];
@@ -1295,18 +1295,26 @@
       if (actionContainer) {
         const rawRole = (currentUser && currentUser.role) ? currentUser.role.toUpperCase() : 'SUPER_ADMIN';
 
-        // Hitung skor pending sebenarnya dari database & berkas yang diajukan
-        let docPending = Number(doc.pendingCredits || 0);
-        (LIVE_SERVER_DOCUMENTS || []).forEach(d => {
-          if (d.status === 'SUBMITTED') {
-            docPending += Number(d.skpValue !== undefined ? d.skpValue : (d.credit_amount || 0));
-          }
-        });
+        // Hitung skor pending sebenarnya dari entri kegiatan yang menunggu verifikasi
+        let docPending = 0;
         (LIVE_SERVER_ENTRIES || []).forEach(e => {
-          if (e.status === 'SUBMITTED' || e.status === 'PENDING') {
+          const stat = (e.status || '').toUpperCase();
+          if (stat === 'SUBMITTED' || stat === 'NOT_SUBMITTED' || stat === 'PENDING' || e.statusLabel === 'Menunggu Verifikasi') {
             docPending += Number(e.credits !== undefined ? e.credits : (e.credit || 0));
           }
         });
+        if (docPending <= 0) {
+          (LIVE_SERVER_DOCUMENTS || []).forEach(d => {
+            const stat = (d.status || '').toUpperCase();
+            if (stat === 'SUBMITTED' || stat === 'NOT_SUBMITTED' || stat === 'PENDING' || d.is_verified === false) {
+              docPending += Number(d.skpValue !== undefined ? d.skpValue : (d.credit_amount || 0));
+            }
+          });
+        }
+        if (docPending <= 0 && doc.pendingCredits) {
+          docPending = Number(doc.pendingCredits);
+        }
+        if (activeDoctor) activeDoctor.pendingCredits = docPending;
 
         if (rawRole === 'DOKTER' || rawRole === 'USER/DOKTER' || rawRole === 'USER') {
           // 5. User/Dokter: Mode Mandiri — Unggah Berkas Bukti Mandiri
@@ -1506,9 +1514,16 @@
             <td class="py-3 px-3 text-center font-bold ${valColor}">${act.credits !== undefined ? act.credits : (act.credit || 0)}</td>
             <td class="py-3 px-3 text-slate-600">${act.organizer || '-'}</td>
             <td class="py-3 px-3 text-center">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${act.statusClass || 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
-                ${act.statusLabel || '✓ Terverifikasi Kemenkes'}
-              </span>
+              ${(act.status === 'PENDING' || act.status === 'NOT_SUBMITTED' || act.statusLabel === 'Menunggu Verifikasi') ? `
+                <button type="button" onclick="approveDoctorCredits()" title="Klik untuk memverifikasi kredit kegiatan ini" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 hover:bg-emerald-50 text-amber-800 hover:text-emerald-800 border border-amber-300 hover:border-emerald-300 transition cursor-pointer inline-flex items-center gap-1 shadow-2xs rbac-operational">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                  <span>Menunggu Verifikasi</span>
+                </button>
+              ` : `
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${act.statusClass || 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
+                  ${act.statusLabel || '✓ Terverifikasi Kemenkes'}
+                </span>
+              `}
             </td>
           </tr>
         `;
@@ -1913,7 +1928,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'hfRltL38RRg2hJbAP7X96BrImYx3422tMgwma8R7',
+          'X-CSRF-TOKEN': 'ES7qYpdirpXO9hu448S3wP6HfawZD8cQJWukG6fm',
           'Accept': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -1932,11 +1947,15 @@
               credit: skpValue,
               credits: skpValue,
               organizer: activeDoctor.hospital || 'PP POGI / RS Jejaring',
-              status: 'NOT_SUBMITTED',
+              status: 'PENDING',
               statusLabel: 'Menunggu Verifikasi',
               statusClass: 'bg-amber-50 text-amber-700 border border-amber-200',
               eventId: null
             });
+            if (activeDoctor) {
+              activeDoctor.pendingCredits = (Number(activeDoctor.pendingCredits) || 0) + Number(skpValue);
+              renderDoctorDetails(activeDoctor);
+            }
             renderDoctorActivities(activeDoctor.id);
           }
           closeUploadDoctorDocModal();
@@ -2003,7 +2022,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'hfRltL38RRg2hJbAP7X96BrImYx3422tMgwma8R7',
+          'X-CSRF-TOKEN': 'ES7qYpdirpXO9hu448S3wP6HfawZD8cQJWukG6fm',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ assigned_pic_id: newAdminId })
@@ -2037,7 +2056,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'hfRltL38RRg2hJbAP7X96BrImYx3422tMgwma8R7',
+          'X-CSRF-TOKEN': 'ES7qYpdirpXO9hu448S3wP6HfawZD8cQJWukG6fm',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ status: newStatus })
@@ -2965,7 +2984,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'hfRltL38RRg2hJbAP7X96BrImYx3422tMgwma8R7',
+          'X-CSRF-TOKEN': 'ES7qYpdirpXO9hu448S3wP6HfawZD8cQJWukG6fm',
           'Accept': 'application/json'
         }
       })

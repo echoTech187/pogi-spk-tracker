@@ -367,6 +367,13 @@ class DoctorController extends Controller
         // Formatted SKP Entries
         $formattedEntries = [];
         if ($doctorRow) {
+            $pendingCreditsTotal = (float) DB::table('skp_entries')
+                ->where('doctor_id', $doctorRow->id)
+                ->whereIn('status', ['SUBMITTED', 'NOT_SUBMITTED', 'PENDING'])
+                ->sum('credit_amount');
+
+            $doctorRow->pending_credits = $pendingCreditsTotal;
+
             $rawEntries = DB::table('skp_entries')
                 ->where('doctor_id', $doctorRow->id)
                 ->orderBy('activity_date', 'desc')
@@ -822,7 +829,7 @@ class DoctorController extends Controller
             'title' => 'Pengajuan Bukti Fisik: ' . $request->input('filename'),
             'activity_date' => $now->toDateString(),
             'credit_amount' => $skpValue,
-            'status' => 'NOT_SUBMITTED',
+            'status' => 'PENDING',
             'verified_by_user_id' => null,
             'verified_at' => null,
             'rejection_reason' => null,

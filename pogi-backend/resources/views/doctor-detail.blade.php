@@ -95,10 +95,21 @@
         <div id="doctorActionButtonsContainer" class="flex items-center gap-2.5 flex-wrap shrink-0">
           @php
             $pendingCredits = floatval($doctor->pending_credits ?? 0);
-            if ($pendingCredits <= 0 && isset($documents)) {
-              foreach ($documents as $d) {
-                if (($d->status ?? '') === 'SUBMITTED') {
-                  $pendingCredits += floatval($d->credit_amount ?? 0);
+            if ($pendingCredits <= 0) {
+              if (isset($skpEntries) && is_iterable($skpEntries)) {
+                foreach ($skpEntries as $e) {
+                  $eStat = is_array($e) ? ($e['status'] ?? '') : ($e->status ?? '');
+                  if (in_array(strtoupper($eStat), ['SUBMITTED', 'NOT_SUBMITTED', 'PENDING'])) {
+                    $pendingCredits += floatval(is_array($e) ? ($e['credit'] ?? $e['credits'] ?? 0) : ($e->credit ?? $e->credits ?? 0));
+                  }
+                }
+              }
+              if ($pendingCredits <= 0 && isset($documents) && is_iterable($documents)) {
+                foreach ($documents as $d) {
+                  $dStat = is_array($d) ? ($d['status'] ?? '') : ($d->status ?? '');
+                  if (in_array(strtoupper($dStat), ['SUBMITTED', 'NOT_SUBMITTED', 'PENDING'])) {
+                    $pendingCredits += floatval(is_array($d) ? ($d['skpValue'] ?? $d['credit_amount'] ?? 0) : ($d->skpValue ?? $d->credit_amount ?? 0));
+                  }
                 }
               }
             }
@@ -984,18 +995,26 @@
       if (actionContainer) {
         const rawRole = (currentUser && currentUser.role) ? currentUser.role.toUpperCase() : 'SUPER_ADMIN';
 
-        // Hitung skor pending sebenarnya dari database & berkas yang diajukan
-        let docPending = Number(doc.pendingCredits || 0);
-        (LIVE_SERVER_DOCUMENTS || []).forEach(d => {
-          if (d.status === 'SUBMITTED') {
-            docPending += Number(d.skpValue !== undefined ? d.skpValue : (d.credit_amount || 0));
-          }
-        });
+        // Hitung skor pending sebenarnya dari entri kegiatan yang menunggu verifikasi
+        let docPending = 0;
         (LIVE_SERVER_ENTRIES || []).forEach(e => {
-          if (e.status === 'SUBMITTED' || e.status === 'PENDING') {
+          const stat = (e.status || '').toUpperCase();
+          if (stat === 'SUBMITTED' || stat === 'NOT_SUBMITTED' || stat === 'PENDING' || e.statusLabel === 'Menunggu Verifikasi') {
             docPending += Number(e.credits !== undefined ? e.credits : (e.credit || 0));
           }
         });
+        if (docPending <= 0) {
+          (LIVE_SERVER_DOCUMENTS || []).forEach(d => {
+            const stat = (d.status || '').toUpperCase();
+            if (stat === 'SUBMITTED' || stat === 'NOT_SUBMITTED' || stat === 'PENDING' || d.is_verified === false) {
+              docPending += Number(d.skpValue !== undefined ? d.skpValue : (d.credit_amount || 0));
+            }
+          });
+        }
+        if (docPending <= 0 && doc.pendingCredits) {
+          docPending = Number(doc.pendingCredits);
+        }
+        if (activeDoctor) activeDoctor.pendingCredits = docPending;
 
         if (rawRole === 'DOKTER' || rawRole === 'USER/DOKTER' || rawRole === 'USER') {
           // 5. User/Dokter: Mode Mandiri — Unggah Berkas Bukti Mandiri
@@ -1195,9 +1214,16 @@
             <td class="py-3 px-3 text-center font-bold ${valColor}">${act.credits !== undefined ? act.credits : (act.credit || 0)}</td>
             <td class="py-3 px-3 text-slate-600">${act.organizer || '-'}</td>
             <td class="py-3 px-3 text-center">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${act.statusClass || 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
-                ${act.statusLabel || '✓ Terverifikasi Kemenkes'}
-              </span>
+              ${(act.status === 'PENDING' || act.status === 'NOT_SUBMITTED' || act.statusLabel === 'Menunggu Verifikasi') ? `
+                <button type="button" onclick="approveDoctorCredits()" title="Klik untuk memverifikasi kredit kegiatan ini" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 hover:bg-emerald-50 text-amber-800 hover:text-emerald-800 border border-amber-300 hover:border-emerald-300 transition cursor-pointer inline-flex items-center gap-1 shadow-2xs rbac-operational">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                  <span>Menunggu Verifikasi</span>
+                </button>
+              ` : `
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${act.statusClass || 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
+                  ${act.statusLabel || '✓ Terverifikasi Kemenkes'}
+                </span>
+              `}
             </td>
           </tr>
         `;
@@ -1621,11 +1647,15 @@
               credit: skpValue,
               credits: skpValue,
               organizer: activeDoctor.hospital || 'PP POGI / RS Jejaring',
-              status: 'NOT_SUBMITTED',
+              status: 'PENDING',
               statusLabel: 'Menunggu Verifikasi',
               statusClass: 'bg-amber-50 text-amber-700 border border-amber-200',
               eventId: null
             });
+            if (activeDoctor) {
+              activeDoctor.pendingCredits = (Number(activeDoctor.pendingCredits) || 0) + Number(skpValue);
+              renderDoctorDetails(activeDoctor);
+            }
             renderDoctorActivities(activeDoctor.id);
           }
           closeUploadDoctorDocModal();
