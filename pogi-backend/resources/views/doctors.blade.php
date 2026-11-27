@@ -162,150 +162,124 @@
 @endsection
 
 @section('modals')
-  <!-- Modal Detail & Verifikasi Dokter -->
-  <div id="doctorDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
-      <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-2.5 min-w-0">
-          <div id="modalAvatar" class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] font-bold text-sm flex items-center justify-center shrink-0">
-            DR
-          </div>
-          <div class="min-w-0">
-            <h3 id="modalDoctorName" class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">Detail Dokter</h3>
-            <p id="modalDoctorMeta" class="text-xs text-slate-500 truncate">-</p>
-          </div>
-        </div>
-        <button type="button" onclick="closeDoctorModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
-          <span class="material-symbols-outlined text-lg">close</span>
-        </button>
+  <!-- Modal Detail & Verifikasi Dokter (Standardized Component) -->
+  <x-modal 
+    id="doctorDetailModal"
+    title="Detail Dokter"
+    subtitle="-"
+    titleId="modalDoctorName"
+    subtitleId="modalDoctorMeta"
+    avatarId="modalAvatar"
+    avatarText="DR"
+    closeAction="closeDoctorModal()"
+  >
+    <!-- 3 Subbidang Progress Cards in Modal (KMK 1561/2024 & KMK 1111/2026) -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+      <div class="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-100/90 shadow-2xs">
+        <div class="text-[10px] text-sky-800 font-bold uppercase tracking-wider">1. Pelayanan (35%)</div>
+        <div id="modalPelayananScore" class="text-lg font-black text-sky-950 mt-1">0 / 56 SKP</div>
+        <div class="text-[10px] text-sky-700/80 font-medium mt-1">Standar Min. 56 SKP</div>
       </div>
-
-      <!-- Modal Body (Scrollable) -->
-      <div class="p-6 flex-1 overflow-y-auto space-y-5 text-xs bg-white min-h-0">
-        <!-- 3 Subbidang Progress Cards in Modal (KMK 1561/2024 & KMK 1111/2026) -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-          <div class="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-100/90 shadow-2xs">
-            <div class="text-[10px] text-sky-800 font-bold uppercase tracking-wider">1. Pelayanan (35%)</div>
-            <div id="modalPelayananScore" class="text-lg font-black text-sky-950 mt-1">0 / 56 SKP</div>
-            <div class="text-[10px] text-sky-700/80 font-medium mt-1">Standar Min. 56 SKP</div>
-          </div>
-          <div class="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-100/90 shadow-2xs">
-            <div class="text-[10px] text-amber-800 font-bold uppercase tracking-wider">2. Pengabdian (5%)</div>
-            <div id="modalPengabdianScore" class="text-lg font-black text-amber-950 mt-1">0 / 8 SKP</div>
-            <div class="text-[10px] text-amber-700/80 font-medium mt-1">Standar Min. 8 SKP</div>
-          </div>
-          <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100/90 shadow-2xs">
-            <div class="text-[10px] text-emerald-800 font-bold uppercase tracking-wider">3. Pembelajaran (45%)</div>
-            <div id="modalPembelajaranScore" class="text-lg font-black text-emerald-950 mt-1">0 / 72 SKP</div>
-            <div class="text-[10px] text-emerald-700/80 font-medium mt-1">Standar Min. 72 SKP</div>
-          </div>
-        </div>
-
-        <!-- Logbook Entri Menunggu Persetujuan -->
-        <div class="space-y-2.5">
-          <div class="flex items-center justify-between">
-            <h4 class="font-extrabold text-xs text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span>
-              <span>Logbook Pengajuan Kredit Terbaru</span>
-            </h4>
-            <span class="text-[11px] text-amber-700 font-bold bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200/80 shadow-2xs">Menunggu Verifikasi</span>
-          </div>
-          <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs text-xs space-y-2">
-            <div class="flex items-center justify-between font-bold text-slate-900 gap-2">
-              <span class="truncate">Sertifikat Workshop Hands-on USG Fetomaternal (POGI Jaya)</span>
-              <span class="text-[#16b3ac] font-black shrink-0">+4.5 SKP</span>
-            </div>
-            <div class="text-[11px] text-slate-500 font-medium">Nomor Registrasi: CERT-POGI-2026-9921 &bull; Tanggal: 14 Nov 2026</div>
-            <div class="flex items-center gap-2 pt-1 border-t border-slate-100">
-              <button type="button" onclick="openCertificatePreviewModal()" class="text-[11px] text-[#16b3ac] font-bold hover:underline flex items-center gap-1 cursor-pointer">
-                <span class="material-symbols-outlined text-xs">visibility</span> Lihat Berkas PDF
-              </button>
-              <span class="text-slate-300">&bull;</span>
-              <button type="button" onclick="approvePendingCredits()" class="text-[11px] text-emerald-700 font-bold hover:underline flex items-center gap-1 rbac-operational cursor-pointer">
-                <span class="material-symbols-outlined text-xs">check_circle</span> Setujui &amp; Tambahkan ke Akumulasi
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tindak Lanjut Follow-Up -->
-        <div class="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 shadow-2xs text-xs space-y-2.5">
-          <div class="font-extrabold text-[#16b3ac] text-xs flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-sm">notifications_active</span>
-            <span>Kirim Pengingat Langsung ke Dokter / RS:</span>
-          </div>
-          <div class="flex flex-wrap items-center gap-2.5">
-            <button type="button" onclick="sendDoctorReminder('wa')" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95">
-              <span class="material-symbols-outlined text-sm">chat</span> Hubungi via WhatsApp
-            </button>
-            <button type="button" onclick="sendDoctorReminder('email')" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95">
-              <span class="material-symbols-outlined text-sm">mail</span> Kirim Email Resmi POGI
-            </button>
-          </div>
-        </div>
+      <div class="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-100/90 shadow-2xs">
+        <div class="text-[10px] text-amber-800 font-bold uppercase tracking-wider">2. Pengabdian (5%)</div>
+        <div id="modalPengabdianScore" class="text-lg font-black text-amber-950 mt-1">0 / 8 SKP</div>
+        <div class="text-[10px] text-amber-700/80 font-medium mt-1">Standar Min. 8 SKP</div>
       </div>
-
-      <!-- Modal Footer (Sticky) -->
-      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
-        <button type="button" onclick="openDoctorRepositoryPage()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
-          <span class="material-symbols-outlined text-sm">cloud_done</span>
-          <span>Repositori Dokumen Cloud</span>
-        </button>
-        <button type="button" onclick="closeDoctorModal()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition cursor-pointer">Tutup</button>
+      <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100/90 shadow-2xs">
+        <div class="text-[10px] text-emerald-800 font-bold uppercase tracking-wider">3. Pembelajaran (45%)</div>
+        <div id="modalPembelajaranScore" class="text-lg font-black text-emerald-950 mt-1">0 / 72 SKP</div>
+        <div class="text-[10px] text-emerald-700/80 font-medium mt-1">Standar Min. 72 SKP</div>
       </div>
     </div>
-  </div>
 
-  <!-- Modal Pratinjau Sertifikat PDF -->
-  <div id="certificateModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
-      <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold">
-            <span class="material-symbols-outlined text-xl">picture_as_pdf</span>
-          </div>
-          <div>
-            <h3 class="font-black text-slate-900 text-sm">Pratinjau Sertifikat Resmi</h3>
-            <p class="text-xs text-slate-500">Terakreditasi SKP Kemenkes RI</p>
-          </div>
+    <!-- Logbook Entri Menunggu Persetujuan -->
+    <div class="space-y-2.5">
+      <div class="flex items-center justify-between">
+        <h4 class="font-extrabold text-xs text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span>
+          <span>Logbook Pengajuan Kredit Terbaru</span>
+        </h4>
+        <span class="text-[11px] text-amber-700 font-bold bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200/80 shadow-2xs">Menunggu Verifikasi</span>
+      </div>
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs text-xs space-y-2">
+        <div class="flex items-center justify-between font-bold text-slate-900 gap-2">
+          <span class="truncate">Sertifikat Workshop Hands-on USG Fetomaternal (POGI Jaya)</span>
+          <span class="text-[#16b3ac] font-black shrink-0">+4.5 SKP</span>
         </div>
-        <button type="button" onclick="closeCertificatePreviewModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
-          <span class="material-symbols-outlined text-lg">close</span>
+        <div class="text-[11px] text-slate-500 font-medium">Nomor Registrasi: CERT-POGI-2026-9921 &bull; Tanggal: 14 Nov 2026</div>
+        <div class="flex items-center gap-2 pt-1 border-t border-slate-100">
+          <button type="button" onclick="openCertificatePreviewModal()" class="text-[11px] text-[#16b3ac] font-bold hover:underline flex items-center gap-1 cursor-pointer">
+            <span class="material-symbols-outlined text-xs">visibility</span> Lihat Berkas PDF
+          </button>
+          <span class="text-slate-300">&bull;</span>
+          <button type="button" onclick="approvePendingCredits()" class="text-[11px] text-emerald-700 font-bold hover:underline flex items-center gap-1 rbac-operational cursor-pointer">
+            <span class="material-symbols-outlined text-xs">check_circle</span> Setujui &amp; Tambahkan ke Akumulasi
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tindak Lanjut Follow-Up -->
+    <div class="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 shadow-2xs text-xs space-y-2.5">
+      <div class="font-extrabold text-[#16b3ac] text-xs flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">notifications_active</span>
+        <span>Kirim Pengingat Langsung ke Dokter / RS:</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-2.5">
+        <button type="button" onclick="sendDoctorReminder('wa')" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95">
+          <span class="material-symbols-outlined text-sm">chat</span> Hubungi via WhatsApp
         </button>
-      </div>
-
-      <!-- Modal Body (Scrollable) -->
-      <div class="p-6 flex-1 overflow-y-auto space-y-4 text-center bg-white min-h-0">
-        <div class="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-3.5">
-          <div class="w-12 h-12 mx-auto rounded-2xl bg-slate-50 border border-slate-200/80 p-1 flex items-center justify-center shadow-2xs">
-            <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
-          </div>
-          <div>
-            <div class="text-[10px] uppercase font-black tracking-widest text-[#16b3ac]">PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA</div>
-            <h4 class="font-black text-sm text-slate-900 mt-1">SERTIFIKAT AKREDITASI ILMIAH</h4>
-            <p class="text-xs text-slate-600 mt-1">Diberikan atas partisipasi aktif dalam:<br><strong class="text-slate-900">Workshop Hands-on USG Fetomaternal</strong></p>
-          </div>
-          <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-800 font-bold inline-block shadow-2xs">
-            Nilai Kredit: +4.5 SKP Subbidang Pembelajaran &bull; Terverifikasi Plataran Sehat
-          </div>
-          <div class="text-[10px] text-slate-400 font-mono">
-            Nomor Registrasi: CERT-POGI-2026-9921 &bull; Terbit: 14 Nov 2026
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal Footer (Sticky) -->
-      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
-        <button type="button" onclick="closeCertificatePreviewModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">Tutup</button>
-        <button type="button" onclick="showToast('Mengunduh salinan resmi berkas PDF...', 'success'); closeCertificatePreviewModal();" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs transition cursor-pointer">
-          <span class="material-symbols-outlined text-sm">download</span>
-          <span>Unduh Berkas PDF</span>
+        <button type="button" onclick="sendDoctorReminder('email')" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95">
+          <span class="material-symbols-outlined text-sm">mail</span> Kirim Email Resmi POGI
         </button>
       </div>
     </div>
-  </div>
+
+    <x-slot:footer>
+      <button type="button" onclick="openDoctorRepositoryPage()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+        <span class="material-symbols-outlined text-sm">cloud_done</span>
+        <span>Repositori Dokumen Cloud</span>
+      </button>
+      <button type="button" onclick="closeDoctorModal()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold transition cursor-pointer">Tutup</button>
+    </x-slot:footer>
+  </x-modal>
+
+  <!-- Modal Pratinjau Sertifikat PDF (Standardized Component) -->
+  <x-modal 
+    id="certificateModal"
+    title="Pratinjau Sertifikat Resmi"
+    subtitle="Terakreditasi SKP Kemenkes RI"
+    icon="picture_as_pdf"
+    maxWidth="max-w-lg"
+    closeAction="closeCertificatePreviewModal()"
+  >
+    <div class="space-y-4 text-center">
+      <div class="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-3.5">
+        <div class="w-12 h-12 mx-auto rounded-2xl bg-slate-50 border border-slate-200/80 p-1 flex items-center justify-center shadow-2xs">
+          <img src="logo.png" alt="Logo POGI" class="w-full h-full object-contain">
+        </div>
+        <div>
+          <div class="text-[10px] uppercase font-black tracking-widest text-[#16b3ac]">PERKUMPULAN OBSTETRI DAN GINEKOLOGI INDONESIA</div>
+          <h4 class="font-black text-sm text-slate-900 mt-1">SERTIFIKAT AKREDITASI ILMIAH</h4>
+          <p class="text-xs text-slate-600 mt-1">Diberikan atas partisipasi aktif dalam:<br><strong class="text-slate-900">Workshop Hands-on USG Fetomaternal</strong></p>
+        </div>
+        <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-800 font-bold inline-block shadow-2xs">
+          Nilai Kredit: +4.5 SKP Subbidang Pembelajaran &bull; Terverifikasi Plataran Sehat
+        </div>
+        <div class="text-[10px] text-slate-400 font-mono">
+          Nomor Registrasi: CERT-POGI-2026-9921 &bull; Terbit: 14 Nov 2026
+        </div>
+      </div>
+    </div>
+
+    <x-slot:footer>
+      <button type="button" onclick="closeCertificatePreviewModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">Tutup</button>
+      <button type="button" onclick="showToast('Mengunduh salinan resmi berkas PDF...', 'success'); closeCertificatePreviewModal();" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs transition cursor-pointer">
+        <span class="material-symbols-outlined text-sm">download</span>
+        <span>Unduh Berkas PDF</span>
+      </button>
+    </x-slot:footer>
+  </x-modal>
 
   <!-- Modal Tambah Dokter Baru (Standardized Component) -->
   <x-modal 
@@ -334,70 +308,56 @@
     </x-slot:footer>
   </x-modal>
 
-  <!-- Modal WA Blast Massal (Terhubung langsung ke wa_blast_campaigns & wa_message_queue) -->
-  <div id="waBlastModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
-      <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-2.5 min-w-0">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold">
-            <span class="material-symbols-outlined text-xl">campaign</span>
-          </div>
-          <div class="min-w-0">
-            <h3 class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">WhatsApp Blast Massal</h3>
-            <p class="text-xs text-slate-500 truncate">Otomasi pengingat pemenuhan standar 160 SKP kepada dokter</p>
-          </div>
+  <!-- Modal WA Blast Massal (Standardized Component) -->
+  <x-modal 
+    id="waBlastModal" 
+    title="WhatsApp Blast Massal" 
+    subtitle="Otomasi pengingat pemenuhan standar 160 SKP kepada dokter" 
+    icon="campaign" 
+    closeAction="closeWaBlastModal()"
+  >
+    <div class="space-y-4">
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-2xs space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <label class="font-extrabold text-slate-800 text-xs">1. Sasaran Penerima Blast</label>
+          <span id="waBlastRecipientBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-[#16b3ac] font-black text-[11px] shadow-2xs">
+            {{ $metrics['incomplete'] ?? 0 }} Dokter Incomplete
+          </span>
         </div>
-        <button type="button" onclick="closeWaBlastModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
-          <span class="material-symbols-outlined text-lg">close</span>
-        </button>
+        <select id="waBlastTargetSelect" onchange="updateWaBlastRecipientCount()" class="w-full px-3.5 py-2.5 bg-white border border-slate-200/90 rounded-xl text-xs font-bold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+          <option value="all_incomplete" selected>Semua Dokter Status Incomplete (Nasional)</option>
+          <option value="lowest_5">5 Cabang POGI dengan Kepatuhan Terendah</option>
+        </select>
       </div>
 
-      <!-- Modal Body (Scrollable) -->
-      <div class="p-6 flex-1 overflow-y-auto space-y-5 text-xs bg-white min-h-0">
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-2xs space-y-3">
-          <div class="flex items-center justify-between gap-2">
-            <label class="font-extrabold text-slate-800 text-xs">1. Sasaran Penerima Blast</label>
-            <span id="waBlastRecipientBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-[#16b3ac] font-black text-[11px] shadow-2xs">
-              {{ $metrics['incomplete'] ?? 0 }} Dokter Incomplete
-            </span>
-          </div>
-          <select id="waBlastTargetSelect" onchange="updateWaBlastRecipientCount()" class="w-full px-3.5 py-2.5 bg-white border border-slate-200/90 rounded-xl text-xs font-bold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-            <option value="all_incomplete" selected>Semua Dokter Status Incomplete (Nasional)</option>
-            <option value="lowest_5">5 Cabang POGI dengan Kepatuhan Terendah</option>
-          </select>
-        </div>
-
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-2xs space-y-2.5">
-          <label class="font-extrabold text-slate-800 text-xs block">2. Saluran Pengiriman</label>
-          <div class="flex flex-wrap gap-4">
-            <label class="inline-flex items-center gap-2 font-bold text-slate-700 cursor-pointer">
-              <input type="checkbox" id="waBlastChWhatsapp" checked class="w-4 h-4 rounded text-[#16b3ac] border-slate-300 focus:ring-[#16b3ac]" />
-              <span>WhatsApp Official</span>
-            </label>
-            <label class="inline-flex items-center gap-2 font-bold text-slate-700 cursor-pointer">
-              <input type="checkbox" id="waBlastChEmail" class="w-4 h-4 rounded text-[#16b3ac] border-slate-300 focus:ring-[#16b3ac]" />
-              <span>Email Resmi POGI</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="space-y-2">
-          <label class="font-extrabold text-slate-800 text-xs block">3. Template Pesan Pengingat</label>
-          <textarea id="waBlastMessageInput" rows="4" class="w-full p-3.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 leading-relaxed shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">Yth. [Nama Dokter] (Cabang [Cabang] - [Provinsi]), kami mengingatkan agar segera melengkapi bukti berkas SKP (tautan Google Drive) pada portal POGI SKP Tracker sebelum jadwal cutoff bulanan.</textarea>
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-2xs space-y-2.5">
+        <label class="font-extrabold text-slate-800 text-xs block">2. Saluran Pengiriman</label>
+        <div class="flex flex-wrap gap-4">
+          <label class="inline-flex items-center gap-2 font-bold text-slate-700 cursor-pointer">
+            <input type="checkbox" id="waBlastChWhatsapp" checked class="w-4 h-4 rounded text-[#16b3ac] border-slate-300 focus:ring-[#16b3ac]" />
+            <span>WhatsApp Official</span>
+          </label>
+          <label class="inline-flex items-center gap-2 font-bold text-slate-700 cursor-pointer">
+            <input type="checkbox" id="waBlastChEmail" class="w-4 h-4 rounded text-[#16b3ac] border-slate-300 focus:ring-[#16b3ac]" />
+            <span>Email Resmi POGI</span>
+          </label>
         </div>
       </div>
 
-      <!-- Modal Footer (Sticky) -->
-      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
-        <button type="button" onclick="closeWaBlastModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
-        <button type="button" id="btnSubmitWaBlast" onclick="submitWaBlast()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs transition shadow-xs flex items-center gap-1.5 cursor-pointer">
-          <span class="material-symbols-outlined text-sm">send</span>
-          <span>Kirim ke Antrean WA Blast</span>
-        </button>
+      <div class="space-y-2">
+        <label class="font-extrabold text-slate-800 text-xs block">3. Template Pesan Pengingat</label>
+        <textarea id="waBlastMessageInput" rows="4" class="w-full p-3.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 leading-relaxed shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">Yth. [Nama Dokter] (Cabang [Cabang] - [Provinsi]), kami mengingatkan agar segera melengkapi bukti berkas SKP (tautan Google Drive) pada portal POGI SKP Tracker sebelum jadwal cutoff bulanan.</textarea>
       </div>
     </div>
-  </div>
+
+    <x-slot:footer>
+      <button type="button" onclick="closeWaBlastModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+      <button type="button" id="btnSubmitWaBlast" onclick="submitWaBlast()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+        <span class="material-symbols-outlined text-sm">send</span>
+        <span>Kirim ke Antrean WA Blast</span>
+      </button>
+    </x-slot:footer>
+  </x-modal>
 @endsection
 
 @section('scripts')

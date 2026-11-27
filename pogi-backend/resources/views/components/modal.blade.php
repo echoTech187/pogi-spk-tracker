@@ -4,6 +4,10 @@
     'subtitle' => '',
     'icon' => 'info',
     'iconBg' => 'bg-emerald-100 text-[#16b3ac]',
+    'avatarText' => null,
+    'avatarId' => null,
+    'titleId' => null,
+    'subtitleId' => null,
     'maxWidth' => 'max-w-2xl',
     'closeAction' => '',
     'formId' => null,
@@ -15,14 +19,18 @@
     <!-- Modal Header (Sticky) -->
     <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
       <div class="flex items-center gap-2.5 min-w-0">
-        <div id="{{ $id }}IconWrap" class="w-10 h-10 rounded-xl {{ $iconBg }} flex items-center justify-center font-bold shrink-0">
-          <span id="{{ $id }}Icon" class="material-symbols-outlined text-xl">{{ $icon }}</span>
-        </div>
+        @if($avatarText !== null || $avatarId !== null)
+          <div id="{{ $avatarId ?? $id . 'Avatar' }}" class="w-10 h-10 rounded-xl {{ $iconBg }} font-bold text-sm flex items-center justify-center shrink-0">
+            {{ $avatarText ?? 'DR' }}
+          </div>
+        @else
+          <div id="{{ $id }}IconWrap" class="w-10 h-10 rounded-xl {{ $iconBg }} flex items-center justify-center font-bold shrink-0">
+            <span id="{{ $id }}Icon" class="material-symbols-outlined text-xl">{{ $icon }}</span>
+          </div>
+        @endif
         <div class="min-w-0">
-          <h3 id="{{ $id }}Title" class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">{{ $title }}</h3>
-          @if($subtitle)
-            <p id="{{ $id }}Subtitle" class="text-xs text-slate-500 truncate">{{ $subtitle }}</p>
-          @endif
+          <h3 id="{{ $titleId ?? $id . 'Title' }}" class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">{{ $title }}</h3>
+          <p id="{{ $subtitleId ?? $id . 'Subtitle' }}" class="text-xs text-slate-500 truncate" @if(empty($subtitle)) style="display:none;" @endif>{{ $subtitle }}</p>
         </div>
       </div>
       <button type="button" onclick="{{ $closeAction ?: "document.getElementById('{$id}').classList.add('hidden')" }}" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
