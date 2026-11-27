@@ -3126,7 +3126,6 @@
         docModal.classList.remove('hidden');
         initModalSelect2(docModal);
         return;
-      }
       } else if (type === 'institution') {
         const item = getDefaultListForTab('institution').find(i => String(i.id) === String(id));
         if (!item) return;
@@ -3628,7 +3627,6 @@
         docModal.classList.remove('hidden');
         initModalSelect2(docModal);
         return;
-      }
       } else if (currentTab === 'institution') {
         setModalMeta('add', 'institution', 'Tambah Rumah Sakit / Faskes', 'Tambahkan fasilitas kesehatan jejaring POGI beserta klasifikasinya');
         container.innerHTML =
