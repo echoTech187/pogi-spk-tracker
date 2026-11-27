@@ -118,6 +118,7 @@ class EloquentManageRepository
                     'email' => $doc->email,
                     'phone' => $doc->whatsapp_number,
                     'plataran_sehat_username' => $doc->plataran_sehat_username,
+                    'plataran_sehat_password' => $doc->plataran_sehat_pass_encrypted ?: 'PogiPlataran2026!',
                     'period_start' => $period?->start_date ? Carbon::parse($period->start_date)->format('Y-m-d') : '2026-01-01',
                     'period_end' => $period?->end_date ? Carbon::parse($period->end_date)->format('Y-m-d') : '2030-12-31',
                     'is_active' => (bool) ($doc->is_active ?? true),

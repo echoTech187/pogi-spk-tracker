@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="d4mnggQba5DyvKvMhKtCbZhiDNCYkkopwJgjEl7D">
+  <meta name="csrf-token" content="YRDlJqEnK5le20IrXC6B7Nhj6C4Fox4NEeQZoGa5">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -857,11 +857,16 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
                 <label class="block font-bold text-slate-700 mb-1.5">Username LMS</label>
-                <input id="newDocLmsUsername" type="text" placeholder="super@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+                <input id="newDocLmsUsername" type="text" value="" placeholder="super@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
               </div>
               <div>
                 <label class="block font-bold text-slate-700 mb-1.5">Password LMS</label>
-                <input id="newDocLmsPassword" type="password" placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+                <div class="relative">
+                  <input id="newDocLmsPassword" type="password" value="" placeholder="••••••••" class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+                  <button type="button" onclick="togglePasswordVisibility('newDocLmsPassword', this)" class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer" title="Tampilkan/Sembunyikan Password">
+                    <span class="material-symbols-outlined text-[18px]">visibility</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -1572,7 +1577,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'd4mnggQba5DyvKvMhKtCbZhiDNCYkkopwJgjEl7D',
+          'X-CSRF-TOKEN': 'YRDlJqEnK5le20IrXC6B7Nhj6C4Fox4NEeQZoGa5',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
@@ -1649,6 +1654,19 @@
       }
     }
 
+    function togglePasswordVisibility(inputId, btn) {
+      const inp = document.getElementById(inputId);
+      const ic = btn?.querySelector('.material-symbols-outlined');
+      if (!inp) return;
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        if (ic) ic.textContent = 'visibility_off';
+      } else {
+        inp.type = 'password';
+        if (ic) ic.textContent = 'visibility';
+      }
+    }
+
     function closeAddDoctorModal() {
       const modal = document.getElementById('addDoctorModal');
       if (modal) modal.classList.add('hidden');
@@ -1710,7 +1728,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'd4mnggQba5DyvKvMhKtCbZhiDNCYkkopwJgjEl7D',
+          'X-CSRF-TOKEN': 'YRDlJqEnK5le20IrXC6B7Nhj6C4Fox4NEeQZoGa5',
           'Accept': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -1828,7 +1846,7 @@
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'X-CSRF-TOKEN': 'd4mnggQba5DyvKvMhKtCbZhiDNCYkkopwJgjEl7D'
+            'X-CSRF-TOKEN': 'YRDlJqEnK5le20IrXC6B7Nhj6C4Fox4NEeQZoGa5'
           },
           body: JSON.stringify({ target, channels, message })
         });
