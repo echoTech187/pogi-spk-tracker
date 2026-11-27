@@ -3061,8 +3061,8 @@
           `) +
           uiSection('vpn_key', 'Akun Kredensial LMS Plataran Sehat', `
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>${uiField('Username LMS', false, `<input type="text" id="editDocPlataranUser" value="${item.plataran_sehat_username || ''}" placeholder="super@example.com" class="${UI_INPUT} bg-sky-50/60 border-sky-200/80" />`)}</div>
-              <div>${uiField('Password LMS', false, `<input type="password" id="editDocPlataranPass" placeholder="•••••••• (Kosongkan jika tidak diubah)" class="${UI_INPUT} bg-sky-50/60 border-sky-200/80" />`)}</div>
+              <div>${uiField('Username LMS', false, `<input type="text" autocomplete="false" id="editDocPlataranUser" value="${item.plataran_sehat_username || ''}" placeholder="super@example.com" class="${UI_INPUT} bg-sky-50/60 border-sky-200/80" />`)}</div>
+              <div>${uiField('Password LMS', false, `<input type="password" autocomplete="false" id="editDocPlataranPass" placeholder="•••••••• (Kosongkan jika tidak diubah)" class="${UI_INPUT} bg-sky-50/60 border-sky-200/80" />`)}</div>
             </div>
           `) +
           `<details class="group border border-slate-200 rounded-2xl p-3 bg-slate-50/50 mt-1" open>
@@ -3541,7 +3541,7 @@
               </div>
             </div>
 
-            <!-- Province & Branch (2 Cols) -->
+            <!-- Province & Institution (2 Cols) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
                 <label class="block font-bold text-slate-700 mb-1.5">Provinsi / Wilayah Cabang <span class="text-rose-500 font-extrabold">*</span></label>
@@ -3551,28 +3551,20 @@
                 </select>
               </div>
               <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Cabang POGI <span class="text-rose-500 font-extrabold">*</span></label>
-                <select id="addDocBranch" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                  ${buildBranchOptions('')}
-                </select>
-              </div>
-            </div>
-
-            <!-- RS & PIC Admin (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
                 <label class="block font-bold text-slate-700 mb-1.5">RS / Faskes Utama <span class="text-rose-500 font-extrabold">*</span></label>
                 <select id="addDocInstId" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
                   <option value="">Pilih institusi / RS...</option>
                   ${buildInstitutionOptions('', '')}
                 </select>
               </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
-                <select id="addDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                  ${buildAdminPogiOptions()}
-                </select>
-              </div>
+            </div>
+
+            <!-- Assigned PIC Admin -->
+            <div>
+              <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
+              <select id="addDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+                ${buildAdminPogiOptions()}
+              </select>
             </div>
 
             <!-- Email & Status Dokter (2 Cols) -->
@@ -3624,11 +3616,11 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
                 <label class="block font-bold text-slate-700 mb-1.5">Username LMS</label>
-                <input id="addDocPlataranUser" type="text" placeholder="super@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+                <input id="addDocPlataranUser" type="text" value="" placeholder="super@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
               </div>
               <div>
                 <label class="block font-bold text-slate-700 mb-1.5">Password LMS</label>
-                <input id="addDocPlataranPass" type="password" placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+                <input id="addDocPlataranPass" type="password" value="" placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
               </div>
             </div>
           </div>

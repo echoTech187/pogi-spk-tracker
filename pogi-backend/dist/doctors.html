@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="W7V7ANBJpqoXlMB3DzOmbBoevV2N94RV1LL9jNt6">
+  <meta name="csrf-token" content="QI9urYwRbQsms1cf2ekwpdFt5CrKX8VIL7YO0Z5g">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -780,7 +780,7 @@
               </div>
             </div>
 
-            <!-- Province & Branch (2 Cols) -->
+            <!-- Province & Institution (2 Cols) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
                 <label class="block font-bold text-slate-700 mb-1.5">Provinsi / Wilayah Cabang <span class="text-rose-500 font-extrabold">*</span></label>
@@ -789,69 +789,23 @@
                 </select>
               </div>
               <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Cabang POGI <span class="text-rose-500 font-extrabold">*</span></label>
-                <select id="newDocBranch" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                  <option value="">Pilih Cabang POGI...</option>
-                                      <option value="3185af45-9695-43bd-8125-25734c9e98a8">POGI Cabang Aceh</option>
-                                      <option value="9eb234ac-31c8-44c1-a45d-96162a05ae6d">POGI Cabang Bali</option>
-                                      <option value="69b38169-01b4-4bbc-831e-e5084389e405">POGI Cabang Banten</option>
-                                      <option value="6d1b7399-8978-4616-a120-38d48b154c76">POGI Cabang Bengkulu</option>
-                                      <option value="3dc69eda-cc0d-498b-9cee-32aa12283891">POGI Cabang DI Yogyakarta</option>
-                                      <option value="b800841f-8173-44eb-a99e-3eea6b954ae1">POGI Cabang DKI Jakarta</option>
-                                      <option value="792b3a9d-fc49-4c1d-986c-2985614595ed">POGI Cabang Gorontalo</option>
-                                      <option value="22919d7f-ed31-48c1-a8be-c237b262c426">POGI Cabang Jambi</option>
-                                      <option value="adcaebb5-2733-4f51-8a87-54ff5fec1f30">POGI Cabang Jawa Barat</option>
-                                      <option value="dfb0b922-47e2-4356-8bba-93fbb3697bf1">POGI Cabang Jawa Tengah</option>
-                                      <option value="3002f685-d938-427d-a8df-1ffeb1962b04">POGI Cabang Jawa Timur</option>
-                                      <option value="d1d7c1da-fe02-4d86-af2d-7688816b22fc">POGI Cabang Kalimantan Barat</option>
-                                      <option value="9d15f886-14fb-4794-be2c-ef426857f3da">POGI Cabang Kalimantan Selatan</option>
-                                      <option value="c53cc695-7b72-42cf-a06c-b04937c34af8">POGI Cabang Kalimantan Tengah</option>
-                                      <option value="7c6a767e-0b29-47f5-ac14-251145f44514">POGI Cabang Kalimantan Timur</option>
-                                      <option value="f893b502-10cc-41bc-939c-9a9deb2eeb00">POGI Cabang Kalimantan Utara</option>
-                                      <option value="b7ce2997-c743-47d0-a9da-87783a948e19">POGI Cabang Kepulauan Bangka Belitung</option>
-                                      <option value="e8c25f48-0134-493d-914a-eb29af710544">POGI Cabang Kepulauan Riau</option>
-                                      <option value="ff8ddb5c-ac4c-48d9-901f-1b21cd36b290">POGI Cabang Lampung</option>
-                                      <option value="3d0ef5d0-9cfb-469f-8602-790ad7e6547a">POGI Cabang Maluku</option>
-                                      <option value="263205a2-1242-487f-8bb5-e61b8891f3ce">POGI Cabang Maluku Utara</option>
-                                      <option value="c7e32d2f-05b8-4758-8011-15f69c24bbe4">POGI Cabang Nusa Tenggara Barat</option>
-                                      <option value="5ce3bfca-9bfe-40c0-bb75-5b242dd7bd8e">POGI Cabang Nusa Tenggara Timur</option>
-                                      <option value="392b0e4c-193d-476c-8514-81f967b3ca51">POGI Cabang Papua</option>
-                                      <option value="0abe6c30-13c3-4d85-8929-0a8e2b9fd640">POGI Cabang Papua Barat</option>
-                                      <option value="5a285f2e-b2de-42de-be6a-3af871ba747c">POGI Cabang Papua Barat Daya</option>
-                                      <option value="d8f76cf9-bd48-4d81-a041-de252a3effc3">POGI Cabang Papua Pegunungan</option>
-                                      <option value="b00242f8-a3f6-4552-80ea-369b6169a66d">POGI Cabang Papua Selatan</option>
-                                      <option value="f61bf33e-6f17-4172-809f-79004ba78272">POGI Cabang Papua Tengah</option>
-                                      <option value="212c5b1a-d35d-4d54-9b74-7dfbb82baf25">POGI Cabang Riau</option>
-                                      <option value="39cfa147-1cf9-4df7-8cd5-ee06920bddff">POGI Cabang Sulawesi Barat</option>
-                                      <option value="e2c84d25-a770-4009-b80f-009617a598df">POGI Cabang Sulawesi Selatan</option>
-                                      <option value="92eabfd9-5a76-4921-9b39-6a8b32f12d37">POGI Cabang Sulawesi Tengah</option>
-                                      <option value="c1104227-0956-4785-b3b2-f0ec6a1d7b73">POGI Cabang Sulawesi Tenggara</option>
-                                      <option value="1286c853-da80-453d-9b9d-aeb17e27c515">POGI Cabang Sulawesi Utara</option>
-                                      <option value="4a8db153-6dc2-4478-aad0-351b31d226e4">POGI Cabang Sumatera Barat</option>
-                                      <option value="d880e6c1-0966-453c-8f66-a5524ac97a53">POGI Cabang Sumatera Selatan</option>
-                                      <option value="5bf244e7-6ba9-476c-832e-cb58a5f66e71">POGI Cabang Sumatera Utara</option>
-                                  </select>
-              </div>
-            </div>
-
-            <!-- RS & PIC Admin (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
                 <label class="block font-bold text-slate-700 mb-1.5">RS / Faskes Utama <span class="text-rose-500 font-extrabold">*</span></label>
                 <select id="newDocInst" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
                   <option value="">Pilih institusi / RS...</option>
                 </select>
               </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
-                <select id="newDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                                      <option value="Anna (Admin POGI)">Anna (Admin POGI) (Admin POGI)</option>
-                                      <option value="Dewi Lestari">Dewi Lestari (Admin POGI)</option>
-                                      <option value="Fikri Ramadhan">Fikri Ramadhan (Admin POGI)</option>
-                                      <option value="Lily">Lily (Admin POGI)</option>
-                                      <option value="Vivi">Vivi (Admin POGI)</option>
-                                  </select>
-              </div>
+            </div>
+
+            <!-- Assigned PIC Admin -->
+            <div>
+              <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
+              <select id="newDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+                                  <option value="Anna (Admin POGI)">Anna (Admin POGI) (Admin POGI)</option>
+                                  <option value="Dewi Lestari">Dewi Lestari (Admin POGI)</option>
+                                  <option value="Fikri Ramadhan">Fikri Ramadhan (Admin POGI)</option>
+                                  <option value="Lily">Lily (Admin POGI)</option>
+                                  <option value="Vivi">Vivi (Admin POGI)</option>
+                              </select>
             </div>
 
             <!-- Email & Status Dokter (2 Cols) -->
@@ -1116,7 +1070,7 @@
           applyDoctorFilters();
         });
 
-        $('#newDocProv, #newDocInst, #newDocAssignedTo, #newDocBranch, #newDocStatus').select2({
+        $('#newDocProv, #newDocInst, #newDocAssignedTo, #newDocStatus').select2({
           dropdownParent: $('#addDoctorModal'),
           width: '100%'
         });
@@ -1618,7 +1572,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'W7V7ANBJpqoXlMB3DzOmbBoevV2N94RV1LL9jNt6',
+          'X-CSRF-TOKEN': 'QI9urYwRbQsms1cf2ekwpdFt5CrKX8VIL7YO0Z5g',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
@@ -1690,7 +1644,7 @@
       if (modal) {
         modal.classList.remove('hidden');
         if (window.jQuery && $.fn.select2) {
-          $('#newDocProv, #newDocInst, #newDocAssignedTo, #newDocBranch, #newDocStatus').trigger('change.select2');
+          $('#newDocProv, #newDocInst, #newDocAssignedTo, #newDocStatus').trigger('change.select2');
         }
       }
     }
@@ -1705,7 +1659,6 @@
       const str = (document.getElementById('newDocStr')?.value || '').trim();
       let phone = (document.getElementById('newDocPhone')?.value || '').trim();
       const prov = document.getElementById('newDocProv')?.value || 'DKI Jakarta';
-      const branchId = document.getElementById('newDocBranch')?.value || '';
       const inst = document.getElementById('newDocInst')?.value || '-';
       const email = (document.getElementById('newDocEmail')?.value || '').trim();
       const status = document.getElementById('newDocStatus')?.value || 'ACTIVE';
@@ -1721,10 +1674,6 @@
       }
       if (!email) {
         showToast('Mohon masukkan email dokter!', 'error');
-        return;
-      }
-      if (!branchId) {
-        showToast('Mohon pilih Cabang POGI!', 'error');
         return;
       }
 
@@ -1747,7 +1696,6 @@
         str: str,
         phone: phone,
         province: prov,
-        branch_id: branchId,
         institution: inst,
         assigned_to: assignedTo,
         email: email,
@@ -1762,7 +1710,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'W7V7ANBJpqoXlMB3DzOmbBoevV2N94RV1LL9jNt6',
+          'X-CSRF-TOKEN': 'QI9urYwRbQsms1cf2ekwpdFt5CrKX8VIL7YO0Z5g',
           'Accept': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -1880,7 +1828,7 @@
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'X-CSRF-TOKEN': 'W7V7ANBJpqoXlMB3DzOmbBoevV2N94RV1LL9jNt6'
+            'X-CSRF-TOKEN': 'QI9urYwRbQsms1cf2ekwpdFt5CrKX8VIL7YO0Z5g'
           },
           body: JSON.stringify({ target, channels, message })
         });
