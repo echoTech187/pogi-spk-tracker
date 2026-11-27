@@ -692,6 +692,69 @@
     </div>
   </div>
 
+  @php
+    $adminPogiList = collect($users ?? [])->filter(function($u) {
+      $role = is_object($u) ? ($u->role ?? '') : (is_array($u) ? ($u['role'] ?? '') : '');
+      return in_array($role, ['Admin POGI', 'Admin Pusat', 'Super Admin']);
+    })->values();
+  @endphp
+
+  <!-- Modal Add Doctor (Standardized Component) -->
+  <x-modal 
+    id="manageDoctorAddModal" 
+    title="Daftarkan Dokter Baru" 
+    subtitle="Lengkapi profil dokter spesialis & kredensial LMS Plataran" 
+    icon="person_add" 
+    closeAction="closeManageAddModal()"
+  >
+    <form id="manageDoctorAddForm" onsubmit="event.preventDefault(); submitManageAdd();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
+      <div id="manageDoctorAddFormFields" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+        @include('partials.doctor-form-fields', [
+          'prefix' => 'addDoc',
+          'isEdit' => false,
+          'provinces' => $provinces ?? [],
+          'institutions' => $institutions ?? [],
+          'adminPogiList' => $adminPogiList,
+        ])
+      </div>
+      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeManageAddModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+        <button id="manageDoctorAddSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+          <span class="material-symbols-outlined text-sm">person_add</span>
+          <span>Simpan Dokter</span>
+        </button>
+      </div>
+    </form>
+  </x-modal>
+
+  <!-- Modal Edit Doctor (Standardized Component) -->
+  <x-modal 
+    id="manageDoctorEditModal" 
+    title="Edit Data Dokter" 
+    subtitle="Perbarui profil dokter spesialis & kredensial LMS Plataran" 
+    icon="edit_square" 
+    closeAction="closeManageEditModal()"
+  >
+    <form id="manageDoctorEditForm" onsubmit="event.preventDefault(); submitManageEdit();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
+      <div id="manageDoctorEditFormFields" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+        @include('partials.doctor-form-fields', [
+          'prefix' => 'editDoc',
+          'isEdit' => true,
+          'provinces' => $provinces ?? [],
+          'institutions' => $institutions ?? [],
+          'adminPogiList' => $adminPogiList,
+        ])
+      </div>
+      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <button type="button" onclick="closeManageEditModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+        <button id="manageDoctorEditSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+          <span class="material-symbols-outlined text-sm">save</span>
+          <span>Simpan Perubahan</span>
+        </button>
+      </div>
+    </form>
+  </x-modal>
+
   <!-- ========================================================================= -->
   <!-- MODAL POPUP: IMPORT EXCEL MASTER DATA (DOCTOR, INSTITUTION, EVENT, CATEGORY) -->
   <!-- ========================================================================= -->
@@ -3023,128 +3086,47 @@
       if (type === 'doctor') {
         const item = getDefaultListForTab('doctor').find(d => String(d.id) === String(id));
         if (!item) return;
+        const docModal = document.getElementById('manageDoctorEditModal');
+        if (!docModal) return;
+
         const isDocActive = (item.is_active === true || item.status === 'Active' || item.status === 'ACTIVE' || item.status === 'Aktif' || item.raw_status === 'ACTIVE');
         const pStart = item.period_start || '1 Jan 2026';
         const pEnd = item.period_end || '31 Des 2030';
-        setModalMeta('edit', 'doctor', 'Edit Data Dokter: ' + (item.name || ''), 'Perbarui profil dokter spesialis & kredensial LMS Plataran');
-        container.innerHTML = `
-          <!-- Section 1: Doctor Profile Section -->
-          <div class="space-y-3.5">
-            <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
-              <span class="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-100/60 text-[#16b3ac] flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[14px]">stethoscope</span>
-              </span>
-              <h4 class="font-extrabold text-slate-800 text-xs tracking-tight">Informasi &amp; Kredensial Dokter</h4>
-            </div>
 
-            <!-- Name -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1.5">Nama Lengkap Dokter <span class="text-rose-500 font-extrabold">*</span></label>
-              <input id="editDocName" type="text" required value="${item.name || ''}" placeholder="dr. Budi Santoso, Sp.OG" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-            </div>
+        const tEl = document.getElementById('manageDoctorEditModalTitle');
+        if (tEl) tEl.innerText = 'Edit Data Dokter: ' + (item.name || '');
 
-            <!-- STR & Phone (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Nomor STR</label>
-                <input id="editDocStr" type="text" value="${item.str_number || item.str || ''}" placeholder="32.73.100.2.21.0883" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-mono font-semibold text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Nomor Telepon (WhatsApp) <span class="text-rose-500 font-extrabold">*</span></label>
-                <input id="editDocPhone" type="text" required value="${item.phone || item.whatsapp_number || ''}" placeholder="08123456789" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-mono font-semibold text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                <p class="text-[11px] text-slate-400 mt-1 font-medium">Awalan 0 otomatis tersimpan sebagai +62.</p>
-              </div>
-            </div>
+        const elName = document.getElementById('editDocName'); if (elName) elName.value = item.name || '';
+        const elStr = document.getElementById('editDocStr'); if (elStr) elStr.value = item.str_number || item.str || '';
+        const elPhone = document.getElementById('editDocPhone'); if (elPhone) elPhone.value = item.phone || item.whatsapp_number || '';
+        const elProv = document.getElementById('editDocProv');
+        if (elProv) {
+          elProv.value = item.province || '';
+          $('#editDocProv').val(item.province || '').trigger('change.select2');
+        }
+        const elInst = document.getElementById('editDocInstId');
+        if (elInst) {
+          const instId = item.primary_institution_id || item.institution_id || '';
+          elInst.value = instId;
+          $('#editDocInstId').val(instId).trigger('change.select2');
+        }
+        const elPic = document.getElementById('editDocAssignedTo');
+        if (elPic) {
+          const pic = item.assigned_to || item.assigned_pic_name || '';
+          elPic.value = pic;
+          $('#editDocAssignedTo').val(pic).trigger('change.select2');
+        }
+        const elEmail = document.getElementById('editDocEmail'); if (elEmail) elEmail.value = item.email || '';
+        const elStatus = document.getElementById('editDocStatus'); if (elStatus) elStatus.value = isDocActive ? 'ACTIVE' : 'INACTIVE';
+        const elPStart = document.getElementById('editDocPeriodStart'); if (elPStart) elPStart.value = pStart;
+        const elPEnd = document.getElementById('editDocPeriodEnd'); if (elPEnd) elPEnd.value = pEnd;
+        const elUser = document.getElementById('editDocPlataranUser'); if (elUser) elUser.value = item.plataran_sehat_username || '';
+        const elPass = document.getElementById('editDocPlataranPass'); if (elPass) elPass.value = item.plataran_sehat_password || item.plataran_sehat_pass_encrypted || 'PogiPlataran2026!';
 
-            <!-- Province & Institution (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Provinsi / Wilayah Cabang <span class="text-rose-500 font-extrabold">*</span></label>
-                <select id="editDocProv" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                  <option value="">Pilih provinsi...</option>
-                  ${buildProvinceOptions(item.province || 'DKI Jakarta')}
-                </select>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">RS / Faskes Utama <span class="text-rose-500 font-extrabold">*</span></label>
-                <select id="editDocInstId" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                  <option value="">Pilih institusi / RS...</option>
-                  ${buildInstitutionOptions(item.primary_institution_id || item.institution_id, item.institution || item.hospital)}
-                </select>
-              </div>
-            </div>
-
-            <!-- Assigned PIC Admin -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
-              <select id="editDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                ${buildAdminPogiOptions(item.assigned_to || item.assigned_pic_name)}
-              </select>
-            </div>
-
-            <!-- Email & Status Dokter (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Email <span class="text-rose-500 font-extrabold">*</span></label>
-                <div class="relative">
-                  <input id="editDocEmail" type="email" required value="${item.email || ''}" placeholder="dokter@pogi.or.id" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">mail</span>
-                </div>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Status Dokter (Master Data) <span class="text-rose-500 font-extrabold">*</span></label>
-                <select id="editDocStatus" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                  <option value="ACTIVE" ${isDocActive ? 'selected' : ''}>Active (Aktif)</option>
-                  <option value="INACTIVE" ${!isDocActive ? 'selected' : ''}>Non-Active (Non-Aktif)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Period start & Period end (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Periode Mulai SKP <span class="text-rose-500 font-extrabold">*</span></label>
-                <div class="relative">
-                  <input id="editDocPeriodStart" type="text" required value="${pStart}" placeholder="1 Jan 2026" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
-                </div>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Periode Berakhir SKP <span class="text-rose-500 font-extrabold">*</span></label>
-                <div class="relative">
-                  <input id="editDocPeriodEnd" type="text" required value="${pEnd}" placeholder="31 Des 2030" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 2: Credentials Section (LMS Plataran Account) -->
-          <div class="space-y-3.5 pt-2">
-            <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
-              <span class="w-6 h-6 rounded-lg bg-sky-50 border border-sky-100/60 text-[#0ea5e9] flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[14px]">vpn_key</span>
-              </span>
-              <h4 class="font-extrabold text-slate-800 text-xs tracking-tight">Akun Kredensial LMS Plataran Sehat</h4>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Username LMS</label>
-                <input id="editDocPlataranUser" type="text" value="${item.plataran_sehat_username || ''}" placeholder="super@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Password LMS</label>
-                <div class="relative">
-                  <input id="editDocPlataranPass" type="password" value="${item.plataran_sehat_password || item.plataran_sehat_pass_encrypted || 'PogiPlataran2026!'}" placeholder="••••••••" class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                  <button type="button" onclick="togglePasswordVisibility('editDocPlataranPass', this)" class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer" title="Tampilkan/Sembunyikan Password">
-                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
+        docModal.classList.remove('hidden');
+        initModalSelect2(docModal);
+        return;
+      }
       } else if (type === 'institution') {
         const item = getDefaultListForTab('institution').find(i => String(i.id) === String(id));
         if (!item) return;
@@ -3253,11 +3235,20 @@
     function closeManageEditModal() {
       const modal = document.getElementById('manageEditModal');
       if (modal) modal.classList.add('hidden');
+      const docModal = document.getElementById('manageDoctorEditModal');
+      if (docModal) docModal.classList.add('hidden');
     }
 
     function showModalFormError(mode, msg) {
-      const containerId = mode === 'add' ? 'manageAddFormFields' : 'manageEditFormFields';
-      const boxId = mode === 'add' ? 'manageAddErrorBanner' : 'manageEditErrorBanner';
+      let containerId = mode === 'add' ? 'manageAddFormFields' : 'manageEditFormFields';
+      let boxId = mode === 'add' ? 'manageAddErrorBanner' : 'manageEditErrorBanner';
+      if (mode === 'add' && currentTab === 'doctor') {
+        containerId = 'manageDoctorAddFormFields';
+        boxId = 'manageDoctorAddErrorBanner';
+      } else if (mode === 'edit' && activeActionContext?.type === 'doctor') {
+        containerId = 'manageDoctorEditFormFields';
+        boxId = 'manageDoctorEditErrorBanner';
+      }
       const container = document.getElementById(containerId);
       if (!container) return;
       let banner = document.getElementById(boxId);
@@ -3268,7 +3259,7 @@
       if (!banner) {
         banner = document.createElement('div');
         banner.id = boxId;
-        banner.className = 'p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-start gap-2';
+        banner.className = 'p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-start gap-2 mb-3';
         container.prepend(banner);
       }
       banner.innerHTML = `<span class="material-symbols-outlined text-[16px] text-rose-500 shrink-0 mt-0.5">error</span><span>${msg}</span>`;
@@ -3287,11 +3278,26 @@
 
     function setSubmitLoading(btnId, isLoading, defaultHtml) {
       const btn = document.getElementById(btnId);
-      if (!btn) return;
-      btn.disabled = isLoading;
-      btn.innerHTML = isLoading
-        ? '<span class="material-symbols-outlined text-[16px] animate-spin">progress_activity</span><span>Menyimpan...</span>'
-        : defaultHtml;
+      if (btn) {
+        btn.disabled = isLoading;
+        btn.innerHTML = isLoading
+          ? '<span class="material-symbols-outlined text-[16px] animate-spin">progress_activity</span><span>Menyimpan...</span>'
+          : defaultHtml;
+      }
+      const docAddBtn = document.getElementById('manageDoctorAddSubmitBtn');
+      if (btnId === 'manageAddSubmitBtn' && docAddBtn) {
+        docAddBtn.disabled = isLoading;
+        docAddBtn.innerHTML = isLoading
+          ? '<span class="material-symbols-outlined text-[16px] animate-spin">progress_activity</span><span>Menyimpan...</span>'
+          : '<span class="material-symbols-outlined text-sm">person_add</span><span>Simpan Dokter</span>';
+      }
+      const docEditBtn = document.getElementById('manageDoctorEditSubmitBtn');
+      if (btnId === 'manageEditSubmitBtn' && docEditBtn) {
+        docEditBtn.disabled = isLoading;
+        docEditBtn.innerHTML = isLoading
+          ? '<span class="material-symbols-outlined text-[16px] animate-spin">progress_activity</span><span>Menyimpan...</span>'
+          : '<span class="material-symbols-outlined text-sm">save</span><span>Simpan Perubahan</span>';
+      }
     }
 
     async function submitManageEdit() {
@@ -3592,129 +3598,37 @@
       const fiveYearsLater = new Date(new Date().setFullYear(new Date().getFullYear() + 5)).toISOString().split('T')[0];
 
       if (currentTab === 'doctor') {
-        setModalMeta('add', 'doctor', 'Daftarkan Dokter Baru', 'Lengkapi profil dokter spesialis & kredensial LMS Plataran');
-        const submitBtn = document.getElementById('manageAddSubmitBtn');
-        if (submitBtn) {
-          submitBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">person_add</span><span>Simpan Dokter</span>';
+        const docModal = document.getElementById('manageDoctorAddModal');
+        if (!docModal) return;
+        const elName = document.getElementById('addDocName'); if (elName) elName.value = '';
+        const elStr = document.getElementById('addDocStr'); if (elStr) elStr.value = '';
+        const elPhone = document.getElementById('addDocPhone'); if (elPhone) elPhone.value = '';
+        const elProv = document.getElementById('addDocProv');
+        if (elProv) {
+          elProv.value = 'DKI Jakarta';
+          $('#addDocProv').val('DKI Jakarta').trigger('change.select2');
         }
-        container.innerHTML = `
-          <!-- Section 1: Informasi & Kredensial Dokter -->
-          <div class="space-y-3.5">
-            <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
-              <span class="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-100/60 text-[#16b3ac] flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[14px]">stethoscope</span>
-              </span>
-              <h4 class="font-extrabold text-slate-800 text-xs tracking-tight">Informasi & Kredensial Dokter</h4>
-            </div>
+        const elInst = document.getElementById('addDocInstId');
+        if (elInst) {
+          elInst.value = '';
+          $('#addDocInstId').val('').trigger('change.select2');
+        }
+        const elPic = document.getElementById('addDocAssignedTo');
+        if (elPic) {
+          elPic.value = '';
+          $('#addDocAssignedTo').val('').trigger('change.select2');
+        }
+        const elEmail = document.getElementById('addDocEmail'); if (elEmail) elEmail.value = '';
+        const elStatus = document.getElementById('addDocStatus'); if (elStatus) elStatus.value = 'ACTIVE';
+        const elPStart = document.getElementById('addDocPeriodStart'); if (elPStart) elPStart.value = '1 Jan 2026';
+        const elPEnd = document.getElementById('addDocPeriodEnd'); if (elPEnd) elPEnd.value = '31 Des 2030';
+        const elUser = document.getElementById('addDocPlataranUser'); if (elUser) elUser.value = '';
+        const elPass = document.getElementById('addDocPlataranPass'); if (elPass) elPass.value = '';
 
-            <!-- Name -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1.5">Nama Lengkap Dokter <span class="text-rose-500 font-extrabold">*</span></label>
-              <input id="addDocName" type="text" required placeholder="dr. Budi Santoso, Sp.OG" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-            </div>
-
-            <!-- STR & Phone (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Nomor STR</label>
-                <input id="addDocStr" type="text" placeholder="32.73.100.2.21.0883" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-mono font-semibold text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Nomor Telepon (WhatsApp) <span class="text-rose-500 font-extrabold">*</span></label>
-                <input id="addDocPhone" type="text" required placeholder="08123456789" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-mono font-semibold text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                <p class="text-[11px] text-slate-400 mt-1 font-medium">Awalan 0 otomatis tersimpan sebagai +62.</p>
-              </div>
-            </div>
-
-            <!-- Province & Institution (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Provinsi / Wilayah Cabang <span class="text-rose-500 font-extrabold">*</span></label>
-                <select id="addDocProv" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                  <option value="">Pilih provinsi...</option>
-                  ${buildProvinceOptions('DKI Jakarta')}
-                </select>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">RS / Faskes Utama <span class="text-rose-500 font-extrabold">*</span></label>
-                <select id="addDocInstId" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                  <option value="">Pilih institusi / RS...</option>
-                  ${buildInstitutionOptions('', '')}
-                </select>
-              </div>
-            </div>
-
-            <!-- Assigned PIC Admin -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
-              <select id="addDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                ${buildAdminPogiOptions()}
-              </select>
-            </div>
-
-            <!-- Email & Status Dokter (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Email <span class="text-rose-500 font-extrabold">*</span></label>
-                <div class="relative">
-                  <input id="addDocEmail" type="email" required placeholder="dokter@pogi.or.id" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">mail</span>
-                </div>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Status Dokter (Master Data) <span class="text-rose-500 font-extrabold">*</span></label>
-                <select id="addDocStatus" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                  <option value="ACTIVE" selected>Active (Aktif)</option>
-                  <option value="INACTIVE">Non-Active (Non-Aktif)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Period start & Period end (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Periode Mulai SKP <span class="text-rose-500 font-extrabold">*</span></label>
-                <div class="relative">
-                  <input id="addDocPeriodStart" type="text" required value="1 Jan 2026" placeholder="1 Jan 2026" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
-                </div>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Periode Berakhir SKP <span class="text-rose-500 font-extrabold">*</span></label>
-                <div class="relative">
-                  <input id="addDocPeriodEnd" type="text" required value="31 Des 2030" placeholder="31 Des 2030" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 2: Credentials Section (LMS Plataran Account) -->
-          <div class="space-y-3.5 pt-2">
-            <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
-              <span class="w-6 h-6 rounded-lg bg-sky-50 border border-sky-100/60 text-[#0ea5e9] flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[14px]">vpn_key</span>
-              </span>
-              <h4 class="font-extrabold text-slate-800 text-xs tracking-tight">Akun Kredensial LMS Plataran Sehat</h4>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Username LMS</label>
-                <input id="addDocPlataranUser" type="text" value="" placeholder="super@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Password LMS</label>
-                <div class="relative">
-                  <input id="addDocPlataranPass" type="password" value="" placeholder="••••••••" class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                  <button type="button" onclick="togglePasswordVisibility('addDocPlataranPass', this)" class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer" title="Tampilkan/Sembunyikan Password">
-                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
+        docModal.classList.remove('hidden');
+        initModalSelect2(docModal);
+        return;
+      }
       } else if (currentTab === 'institution') {
         setModalMeta('add', 'institution', 'Tambah Rumah Sakit / Faskes', 'Tambahkan fasilitas kesehatan jejaring POGI beserta klasifikasinya');
         container.innerHTML =
@@ -3803,6 +3717,8 @@
     function closeManageAddModal() {
       const modal = document.getElementById('manageAddModal');
       if (modal) modal.classList.add('hidden');
+      const docModal = document.getElementById('manageDoctorAddModal');
+      if (docModal) docModal.classList.add('hidden');
     }
 
     // Tampilkan/sembunyikan field Cabang POGI sesuai role

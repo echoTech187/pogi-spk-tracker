@@ -307,159 +307,32 @@
     </div>
   </div>
 
-  <!-- Modal Tambah Dokter Baru -->
-  <div id="addDoctorModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
-      <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
-        <div class="flex items-center gap-2.5 min-w-0">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold">
-            <span class="material-symbols-outlined text-xl">person_add</span>
-          </div>
-          <div class="min-w-0">
-            <h3 class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">Daftarkan Dokter Baru</h3>
-            <p class="text-xs text-slate-500 truncate">Lengkapi profil dokter spesialis &amp; kredensial LMS Plataran</p>
-          </div>
-        </div>
-        <button type="button" onclick="closeAddDoctorModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
-          <span class="material-symbols-outlined text-lg">close</span>
-        </button>
-      </div>
+  <!-- Modal Tambah Dokter Baru (Standardized Component) -->
+  <x-modal 
+    id="addDoctorModal" 
+    title="Daftarkan Dokter Baru" 
+    subtitle="Lengkapi profil dokter spesialis &amp; kredensial LMS Plataran" 
+    icon="person_add" 
+    closeAction="closeAddDoctorModal()"
+  >
+    <form id="addDoctorForm" onsubmit="event.preventDefault(); submitNewDoctorForm();" class="space-y-4">
+      @include('partials.doctor-form-fields', [
+        'prefix' => 'newDoc',
+        'isEdit' => false,
+        'provinces' => $provinces ?? [],
+        'institutions' => $institutions ?? [],
+        'adminPogiList' => $adminPogiList ?? []
+      ])
+    </form>
 
-      <form id="addDoctorForm" onsubmit="event.preventDefault(); submitNewDoctorForm();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-        <!-- Modal Body (Scrollable) -->
-        <div class="p-6 flex-1 overflow-y-auto space-y-5 text-xs bg-white min-h-0">
-          <!-- Section 1: Informasi & Kredensial Dokter -->
-          <div class="space-y-3.5">
-            <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
-              <span class="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-100/60 text-[#16b3ac] flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[14px]">stethoscope</span>
-              </span>
-              <h4 class="font-extrabold text-slate-800 text-xs tracking-tight">Informasi & Kredensial Dokter</h4>
-            </div>
-
-            <!-- Name -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1.5">Nama Lengkap Dokter <span class="text-rose-500 font-extrabold">*</span></label>
-              <input id="newDocName" type="text" required placeholder="dr. Budi Santoso, Sp.OG" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-            </div>
-
-            <!-- STR & Phone (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Nomor STR</label>
-                <input id="newDocStr" type="text" placeholder="32.73.100.2.21.0883" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-mono font-semibold text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Nomor Telepon (WhatsApp) <span class="text-rose-500 font-extrabold">*</span></label>
-                <input id="newDocPhone" type="text" required placeholder="08123456789" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-mono font-semibold text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                <p class="text-[11px] text-slate-400 mt-1 font-medium">Awalan 0 otomatis tersimpan sebagai +62.</p>
-              </div>
-            </div>
-
-            <!-- Province & Institution (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Provinsi / Wilayah Cabang <span class="text-rose-500 font-extrabold">*</span></label>
-                <select id="newDocProv" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                  <option value="">Pilih provinsi...</option>
-                </select>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">RS / Faskes Utama <span class="text-rose-500 font-extrabold">*</span></label>
-                <select id="newDocInst" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                  <option value="">Pilih institusi / RS...</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Assigned PIC Admin -->
-            <div>
-              <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
-              <select id="newDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                @forelse($adminPogiList ?? [] as $adm)
-                  <option value="{{ $adm->full_name }}">{{ $adm->full_name }} (Admin POGI)</option>
-                @empty
-                  <option value="">Belum ada Admin POGI</option>
-                @endforelse
-              </select>
-            </div>
-
-            <!-- Email & Status Dokter (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Email <span class="text-rose-500 font-extrabold">*</span></label>
-                <div class="relative">
-                  <input id="newDocEmail" type="email" required placeholder="dokter@pogi.or.id" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">mail</span>
-                </div>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Status Dokter (Master Data) <span class="text-rose-500 font-extrabold">*</span></label>
-                <select id="newDocStatus" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
-                  <option value="ACTIVE" selected>Active (Aktif)</option>
-                  <option value="INACTIVE">Non-Active (Non-Aktif)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Period start & Period end (2 Cols) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Periode Mulai SKP <span class="text-rose-500 font-extrabold">*</span></label>
-                <div class="relative">
-                  <input id="newDocPeriodStart" type="text" required value="1 Jan 2026" placeholder="1 Jan 2026" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
-                </div>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Periode Berakhir SKP <span class="text-rose-500 font-extrabold">*</span></label>
-                <div class="relative">
-                  <input id="newDocPeriodEnd" type="text" required value="31 Des 2030" placeholder="31 Des 2030" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 2: Credentials Section (LMS Plataran Account) -->
-          <div class="space-y-3.5 pt-2">
-            <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
-              <span class="w-6 h-6 rounded-lg bg-sky-50 border border-sky-100/60 text-[#0ea5e9] flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[14px]">vpn_key</span>
-              </span>
-              <h4 class="font-extrabold text-slate-800 text-xs tracking-tight">Akun Kredensial LMS Plataran Sehat</h4>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Username LMS</label>
-                <input id="newDocLmsUsername" type="text" value="" placeholder="super@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Password LMS</label>
-                <div class="relative">
-                  <input id="newDocLmsPassword" type="password" value="" placeholder="••••••••" class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
-                  <button type="button" onclick="togglePasswordVisibility('newDocLmsPassword', this)" class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer" title="Tampilkan/Sembunyikan Password">
-                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Modal Footer Actions (Sticky) -->
-        <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
-          <button type="button" onclick="closeAddDoctorModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs transition shadow-xs flex items-center gap-1.5 cursor-pointer">
-            <span class="material-symbols-outlined text-sm">person_add</span>
-            <span>Simpan Dokter</span>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+    <x-slot:footer>
+      <button type="button" onclick="closeAddDoctorModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+      <button type="button" onclick="submitNewDoctorForm()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+        <span class="material-symbols-outlined text-sm">person_add</span>
+        <span>Simpan Dokter</span>
+      </button>
+    </x-slot:footer>
+  </x-modal>
 
   <!-- Modal WA Blast Massal (Terhubung langsung ke wa_blast_campaigns & wa_message_queue) -->
   <div id="waBlastModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
