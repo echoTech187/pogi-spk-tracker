@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="NghG7vy8PP5WLYT4ZrNz3WsR30u56zYI69qIl1vo">
+  <meta name="csrf-token" content="bjHqhssCv9y2IvguhO60kOkgx9mzPmpLRjxd1FHp">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -346,7 +346,7 @@
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
                 <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">23 jam yang lalu</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">1 hari yang lalu</div>
               </div>
             </div>
           </div>
@@ -3360,7 +3360,7 @@
 
     function setModalMeta(mode, type, titleText, subtitleText) {
       const iconMap = {
-        doctor: 'stethoscope',
+        doctor: mode === 'add' ? 'person_add' : 'stethoscope',
         institution: 'local_hospital',
         event: 'event_note',
         category: 'category',
@@ -3373,6 +3373,20 @@
       if (tEl) tEl.innerText = titleText;
       if (sEl) sEl.innerText = subtitleText;
       if (iEl) iEl.innerText = iconMap[type] || (mode === 'add' ? 'add_circle' : 'edit_square');
+    }
+
+    function buildAdminPogiOptions(selectedName) {
+      const pogiAdmins = (window.LIVE_MANAGE_USERS || []).filter(u => {
+        const r = (u.raw_role || u.role || '').toUpperCase();
+        return r === 'ADMIN_POGI' || (u.display_role && u.display_role.toLowerCase().includes('admin pogi'));
+      });
+      let html = '<option value="">Belum ada Admin POGI</option>';
+      pogiAdmins.forEach(adm => {
+        const adminName = adm.name || adm.full_name;
+        const isSel = selectedName && (adminName === selectedName || adm.id === selectedName);
+        html += `<option value="${adminName}" ${isSel ? 'selected' : ''}>${adminName} (Admin POGI)</option>`;
+      });
+      return html;
     }
 
     function buildProvinceOptions(selectedVal) {
@@ -3887,34 +3901,107 @@
       const fiveYearsLater = new Date(new Date().setFullYear(new Date().getFullYear() + 5)).toISOString().split('T')[0];
 
       if (currentTab === 'doctor') {
-        setModalMeta('add', 'doctor', 'Daftarkan Dokter Baru', 'Lengkapi profil dokter spesialis, akun kredensial LMS Plataran, dan periode SKP');
+        setModalMeta('add', 'doctor', 'Daftarkan Dokter Baru', 'Lengkapi profil dokter spesialis & kredensial LMS Plataran');
         const submitBtn = document.getElementById('manageAddSubmitBtn');
         if (submitBtn) {
           submitBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">person_add</span><span>Simpan Dokter</span>';
         }
-        container.innerHTML =
-          uiSection('stethoscope', 'Informasi & Kredensial Dokter', `
-            <div>${uiField('Nama Lengkap Dokter', true, `<input required type="text" id="addDocName" placeholder="dr. Budi Santoso, Sp.OG" class="${UI_INPUT}" />`)}</div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>${uiField('Nomor STR', false, `<input type="text" id="addDocStr" placeholder="32.73.100.2.21.0883" class="${UI_INPUT} font-mono" />`)}</div>
-              <div>${uiField('Nomor Telepon (WhatsApp)', true, `<input required type="text" id="addDocPhone" placeholder="08123456789" class="${UI_INPUT} font-mono" />`, 'Awalan 0 otomatis tersimpan sebagai +62.')}</div>
+        container.innerHTML = `
+          <!-- Section 1: Informasi & Kredensial Dokter -->
+          <div class="space-y-3.5">
+            <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
+              <span class="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-100/60 text-[#16b3ac] flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-[14px]">stethoscope</span>
+              </span>
+              <h4 class="font-extrabold text-slate-800 text-xs tracking-tight">Informasi & Kredensial Dokter</h4>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>${uiField('Provinsi / Wilayah Cabang', true, `<select id="addDocProv" class="${UI_SELECT}">${buildProvinceOptions('DKI Jakarta')}</select>`)}</div>
-              <div>${uiField('RS / Faskes Utama', true, `<select id="addDocInstId" class="${UI_SELECT}">${buildInstitutionOptions('', '')}</select>`)}</div>
+
+            <!-- Name -->
+            <div>
+              <label class="block font-bold text-slate-700 mb-1.5">Nama Lengkap Dokter <span class="text-rose-500 font-extrabold">*</span></label>
+              <input id="addDocName" type="text" required placeholder="dr. Budi Santoso, Sp.OG" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
             </div>
+
+            <!-- STR & Phone (2 Cols) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>${uiField('Periode Mulai SKP', true, `<input type="date" id="addDocPeriodStart" value="2026-01-01" class="${UI_INPUT}" />`)}</div>
-              <div>${uiField('Periode Berakhir SKP', true, `<input type="date" id="addDocPeriodEnd" value="2030-12-31" class="${UI_INPUT}" />`)}</div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Nomor STR</label>
+                <input id="addDocStr" type="text" placeholder="32.73.100.2.21.0883" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-mono font-semibold text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Nomor Telepon (WhatsApp) <span class="text-rose-500 font-extrabold">*</span></label>
+                <input id="addDocPhone" type="text" required placeholder="08123456789" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-mono font-semibold text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+                <p class="text-[11px] text-slate-400 mt-1 font-medium">Awalan 0 otomatis tersimpan sebagai +62.</p>
+              </div>
             </div>
-          `) +
-          uiSection('vpn_key', 'Akun Kredensial LMS Plataran Sehat', `
+
+            <!-- Province & Institution (2 Cols) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>${uiField('Username LMS', false, `<input type="text" id="addDocPlataranUser" placeholder="super@example.com" class="${UI_INPUT} bg-sky-50/60 border-sky-200/80" />`)}</div>
-              <div>${uiField('Password LMS', false, `<input type="password" id="addDocPlataranPass" placeholder="••••••••" class="${UI_INPUT} bg-sky-50/60 border-sky-200/80" />`)}</div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Provinsi / Wilayah Cabang <span class="text-rose-500 font-extrabold">*</span></label>
+                <select id="addDocProv" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+                  <option value="">Pilih provinsi...</option>
+                  ${buildProvinceOptions('DKI Jakarta')}
+                </select>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">RS / Faskes Utama <span class="text-rose-500 font-extrabold">*</span></label>
+                <select id="addDocInstId" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+                  <option value="">Pilih institusi / RS...</option>
+                  ${buildInstitutionOptions('', '')}
+                </select>
+              </div>
             </div>
-          `) +
-          `<details class="group border border-slate-200 rounded-2xl p-3 bg-slate-50/50 mt-1">
+
+            <!-- Assigned PIC Admin -->
+            <div>
+              <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
+              <select id="addDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
+                ${buildAdminPogiOptions()}
+              </select>
+            </div>
+
+            <!-- Period start & Period end (2 Cols) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Periode Mulai SKP <span class="text-rose-500 font-extrabold">*</span></label>
+                <div class="relative">
+                  <input id="addDocPeriodStart" type="text" required value="1 Jan 2026" placeholder="1 Jan 2026" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
+                </div>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Periode Berakhir SKP <span class="text-rose-500 font-extrabold">*</span></label>
+                <div class="relative">
+                  <input id="addDocPeriodEnd" type="text" required value="31 Des 2030" placeholder="31 Des 2030" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+                  <span class="material-symbols-outlined text-slate-400 text-[18px] absolute left-2.5 top-2.5 pointer-events-none">calendar_today</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Credentials Section (LMS Plataran Account) -->
+          <div class="space-y-3.5 pt-2">
+            <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
+              <span class="w-6 h-6 rounded-lg bg-sky-50 border border-sky-100/60 text-[#0ea5e9] flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-[14px]">vpn_key</span>
+              </span>
+              <h4 class="font-extrabold text-slate-800 text-xs tracking-tight">Akun Kredensial LMS Plataran Sehat</h4>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Username LMS</label>
+                <input id="addDocPlataranUser" type="text" placeholder="super@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Password LMS</label>
+                <input id="addDocPlataranPass" type="password" placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+              </div>
+            </div>
+          </div>
+
+          <details class="group border border-slate-200 rounded-2xl p-3 bg-slate-50/50 mt-1">
             <summary class="text-xs font-bold text-slate-600 cursor-pointer flex items-center justify-between">
               <span>Informasi Tambahan POGI & SIP (Opsional)</span>
               <span class="material-symbols-outlined text-sm group-open:rotate-180 transition-transform">expand_more</span>
@@ -3935,7 +4022,8 @@
               <div>${uiField('Email', false, uiIconInput('mail', `<input type="email" id="addDocEmail" placeholder="dokter@pogi.or.id" class="${UI_INPUT} pl-9" />`))}</div>
               <div>${uiField('Status Dokter (Master Data)', false, `<select id="addDocStatus" class="${UI_SELECT}"><option value="ACTIVE" selected>Active (Aktif)</option><option value="INACTIVE">Non-Active (Non-Aktif)</option></select>`)}</div>
             </div>
-          </details>`;
+          </details>
+        `;
       } else if (currentTab === 'institution') {
         setModalMeta('add', 'institution', 'Tambah Rumah Sakit / Faskes', 'Tambahkan fasilitas kesehatan jejaring POGI beserta klasifikasinya');
         container.innerHTML =
@@ -4081,8 +4169,9 @@
         payload.phone = phone;
         payload.province = document.getElementById('addDocProv')?.value || '';
         payload.institution_id = document.getElementById('addDocInstId')?.value || null;
-        payload.period_start = document.getElementById('addDocPeriodStart')?.value || '2026-01-01';
-        payload.period_end = document.getElementById('addDocPeriodEnd')?.value || '2030-12-31';
+        payload.assigned_to = document.getElementById('addDocAssignedTo')?.value || null;
+        payload.period_start = document.getElementById('addDocPeriodStart')?.value || '1 Jan 2026';
+        payload.period_end = document.getElementById('addDocPeriodEnd')?.value || '31 Des 2030';
         payload.plataran_sehat_username = document.getElementById('addDocPlataranUser')?.value || null;
         payload.plataran_sehat_password = document.getElementById('addDocPlataranPass')?.value || null;
         payload.specialization_title = document.getElementById('addDocSpec')?.value || 'Sp.OG';

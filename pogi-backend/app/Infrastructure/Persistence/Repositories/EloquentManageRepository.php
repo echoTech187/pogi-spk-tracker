@@ -281,6 +281,14 @@ class EloquentManageRepository
             $plataranUser = !empty($v['plataran_sehat_username']) ? trim($v['plataran_sehat_username']) : null;
             $plataranPass = !empty($v['plataran_sehat_password']) ? trim($v['plataran_sehat_password']) : null;
 
+            $assignedPicId = !empty($v['assigned_pic_id']) ? $v['assigned_pic_id'] : null;
+            if (!$assignedPicId && !empty($v['assigned_to'])) {
+                $picUser = User::where('full_name', 'like', '%' . trim($v['assigned_to']) . '%')
+                    ->orWhere('email', 'like', '%' . trim($v['assigned_to']) . '%')
+                    ->first();
+                $assignedPicId = $picUser?->id;
+            }
+
             $doc = Doctor::create([
                 'id' => (string) Str::uuid(),
                 'npa_pogi' => $npa,
@@ -297,18 +305,24 @@ class EloquentManageRepository
                 'province_id' => $provinceRow?->id,
                 'branch_id' => $branchRow?->id,
                 'primary_institution_id' => $instRow?->id,
+                'assigned_pic_id' => $assignedPicId,
                 'plataran_sehat_username' => $plataranUser,
                 'plataran_sehat_pass_encrypted' => $plataranPass,
                 'status' => 'INCOMPLETE',
             ]);
 
+            $cleanDate = function($val) {
+                if (!$val) return null;
+                return str_ireplace(['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'], ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], (string) $val);
+            };
+
             try {
-                $pStart = !empty($v['period_start']) ? Carbon::parse($v['period_start'])->toDateString() : $now->copy()->startOfYear()->toDateString();
+                $pStart = !empty($v['period_start']) ? Carbon::parse($cleanDate($v['period_start']))->toDateString() : $now->copy()->startOfYear()->toDateString();
             } catch (\Throwable $e) {
                 $pStart = $now->copy()->startOfYear()->toDateString();
             }
             try {
-                $pEnd = !empty($v['period_end']) ? Carbon::parse($v['period_end'])->toDateString() : $now->copy()->addYears(5)->endOfYear()->toDateString();
+                $pEnd = !empty($v['period_end']) ? Carbon::parse($cleanDate($v['period_end']))->toDateString() : $now->copy()->addYears(5)->endOfYear()->toDateString();
             } catch (\Throwable $e) {
                 $pEnd = $now->copy()->addYears(5)->endOfYear()->toDateString();
             }
