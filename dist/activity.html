@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="1RfWrUYh6WcVbxJeQeL3qI6klzMGatjlXZZ8XnsU">
+  <meta name="csrf-token" content="lq2BA3zIzenIbR2mtwVodlLX5UZP6cRGIBqk1koS">
   <title>POGI SKP Tracker - Log Aktivitas &amp; Jejak Audit</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -169,6 +169,41 @@
       position: sticky !important;
       bottom: 0 !important;
       z-index: 20 !important;
+    }
+
+    /* Utility: Hide scrollbar across all browsers */
+    .no-scrollbar::-webkit-scrollbar,
+    .scrollbar-none::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    .no-scrollbar,
+    .scrollbar-none {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+
+    /* Responsive Mobile Full-Screen Modal Rules (< sm / < 640px) */
+    @media (max-width: 639.98px) {
+      .fixed.inset-0.z-\[9999\],
+      .fixed.inset-0.z-50,
+      .pogi-modal-overlay {
+        padding: 0 !important;
+      }
+
+      .pogi-modal-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100% !important;
+        height: 100dvh !important;
+        max-height: 100% !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
     }
   </style>
   </head>
@@ -346,7 +381,7 @@
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
                 <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">1 hari yang lalu</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">1 jam yang lalu</div>
               </div>
             </div>
           </div>
@@ -410,13 +445,13 @@
   <main class="flex-1 overflow-y-auto bg-white  space-y-6 page-fade-in pb-8">
 
     <!-- Clean Page Header (Modern Enterprise Standard) -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 pb-1">
       <div class="space-y-1.5 min-w-0">
-        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+        <div class="whitespace-nowrap inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>Log Operasional &amp; Audit Trail</span>
-          <span class="text-slate-300">•</span>
-          <span class="text-slate-500 font-semibold normal-case">Real-Time Sync</span>
+          <span class="hidden sm:inline text-slate-300">•</span>
+          <span class="hidden sm:inline text-slate-500 font-semibold normal-case">Real-Time Sync</span>
         </div>
         <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
           <span>Log Aktivitas &amp; Jejak Audit Operasional</span>
@@ -427,20 +462,20 @@
       </div>
 
       <!-- Action Toolbar Header -->
-      <div class="flex items-center gap-2 shrink-0 flex-wrap">
-        <button type="button" onclick="triggerRefreshActivityLog()" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="Muat ulang jejak audit terbaru dari basis data">
+      <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 shrink-0 w-full sm:w-auto">
+        <button type="button" onclick="triggerRefreshActivityLog()" class="h-10 sm:h-9 px-3 sm:px-3.5 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 text-xs font-bold transition inline-flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer active:scale-95 whitespace-nowrap" title="Muat ulang jejak audit terbaru dari basis data">
           <span class="material-symbols-outlined text-base text-[#16b3ac]" id="refreshIcon">refresh</span>
           <span>Segarkan Log</span>
         </button>
-        <button type="button" onclick="triggerExportAuditPdf()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95" title="Cetak dan ekspor dokumen resmi PDF Audit Trail">
+        <button type="button" onclick="triggerExportAuditPdf()" class="h-10 sm:h-9 px-3 sm:px-3.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition inline-flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active:scale-95 whitespace-nowrap" title="Cetak dan ekspor dokumen resmi PDF Audit Trail">
           <span class="material-symbols-outlined text-base">picture_as_pdf</span>
-          <span>Ekspor Audit (PDF)</span>
+          <span>Ekspor <span class="hidden sm:inline">Audit </span>(PDF)</span>
         </button>
       </div>
     </div>
 
     <!-- 4 Modern Metric Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
       <!-- Active Users -->
       <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
         <div class="flex items-center justify-between gap-3">
@@ -469,7 +504,7 @@
           </div>
         </div>
         <div class="mt-3">
-          <div id="metric-total-logs" class="text-2.5xl sm:text-3xl font-black text-slate-900 tracking-tight">41</div>
+          <div id="metric-total-logs" class="text-2.5xl sm:text-3xl font-black text-slate-900 tracking-tight">53</div>
           <div class="mt-1.5">
             <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-[10px] font-bold">
               <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
@@ -488,7 +523,7 @@
           </div>
         </div>
         <div class="mt-3">
-          <div id="metric-today-actions" class="text-2.5xl sm:text-3xl font-black text-sky-700 tracking-tight">0</div>
+          <div id="metric-today-actions" class="text-2.5xl sm:text-3xl font-black text-sky-700 tracking-tight">12</div>
           <div class="mt-1.5">
             <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200/70 text-sky-700 text-[10px] font-bold">
               <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
@@ -521,7 +556,7 @@
     <!-- Unified Master Card: Toolbar & Log Table -->
     <div class="rounded-3xl bg-white border border-slate-200/80 shadow-2xs overflow-hidden">
       <!-- Toolbar Header -->
-      <div class="p-5 sm:p-6 border-b border-slate-100 space-y-4">
+      <div class="p-4 sm:p-6 border-b border-slate-100 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div class="flex items-center gap-2 flex-wrap">
@@ -530,7 +565,7 @@
             </div>
             <p class="text-xs text-slate-400 mt-1">Daftar rekaman kronologis aktivitas operasional, penugasan PIC, sinkronisasi SATUSEHAT, dan otomasi latar belakang.</p>
           </div>
-          <div class="shrink-0">
+          <div class="shrink-0 self-start sm:self-auto">
             <span id="activityLogCounter" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-slate-600 font-bold text-xs">
               <span class="w-2 h-2 rounded-full bg-[#16b3ac]"></span>
               <span>Memuat log...</span>
@@ -539,32 +574,34 @@
         </div>
 
         <!-- Filter Category Tabs & Integrated Search -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2 border-t border-slate-100">
-          <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100/90 rounded-2xl text-xs font-bold text-slate-600" id="activityCategoryFilterTabs">
-            <button type="button" onclick="filterActivityCategory('ALL')" id="tab-act-all" class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition font-black flex items-center gap-1.5 cursor-pointer">
-              <span>Semua Log</span>
-              <span id="badge-count-all" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600 font-bold">0</span>
-            </button>
-            <button type="button" onclick="filterActivityCategory('Sync')" id="tab-act-sync" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
-              <span class="w-2 h-2 rounded-full bg-sky-500"></span>
-              <span>Sync SATUSEHAT</span>
-              <span id="badge-count-sync" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
-            </button>
-            <button type="button" onclick="filterActivityCategory('Verification')" id="tab-act-verif" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Verifikasi Kredit</span>
-              <span id="badge-count-verif" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
-            </button>
-            <button type="button" onclick="filterActivityCategory('FollowUp')" id="tab-act-fu" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
-              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-              <span>Follow-Up Cabang</span>
-              <span id="badge-count-fu" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
-            </button>
-            <button type="button" onclick="filterActivityCategory('Automation')" id="tab-act-auto" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
-              <span class="w-2 h-2 rounded-full bg-purple-500"></span>
-              <span>Otomasi Cron</span>
-              <span id="badge-count-auto" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
-            </button>
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2 border-t border-slate-100 min-w-0">
+          <div class="w-full lg:w-auto overflow-x-auto no-scrollbar py-0.5">
+            <div class="inline-flex items-center gap-1.5 p-1.5 bg-slate-100/90 rounded-2xl text-xs font-bold text-slate-600 min-w-max" id="activityCategoryFilterTabs">
+              <button type="button" onclick="filterActivityCategory('ALL')" id="tab-act-all" class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition font-black flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap">
+                <span>Semua Log</span>
+                <span id="badge-count-all" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600 font-bold">0</span>
+              </button>
+              <button type="button" onclick="filterActivityCategory('Sync')" id="tab-act-sync" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
+                <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                <span>Sync SATUSEHAT</span>
+                <span id="badge-count-sync" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
+              </button>
+              <button type="button" onclick="filterActivityCategory('Verification')" id="tab-act-verif" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Verifikasi Kredit</span>
+                <span id="badge-count-verif" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
+              </button>
+              <button type="button" onclick="filterActivityCategory('FollowUp')" id="tab-act-fu" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span>Follow-Up Cabang</span>
+                <span id="badge-count-fu" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
+              </button>
+              <button type="button" onclick="filterActivityCategory('Automation')" id="tab-act-auto" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
+                <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                <span>Otomasi Cron</span>
+                <span id="badge-count-auto" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
+              </button>
+            </div>
           </div>
 
           <!-- Integrated Search Box with Clear Button -->
@@ -608,10 +645,10 @@
   </main>
 
   <!-- MODAL: DETAIL JEJAK AUDIT (AUDIT LOG INSPECTOR) -->
-  <div id="auditDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 transition-opacity">
-    <div class="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+  <div id="auditDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-0 sm:p-4 transition-opacity">
+    <div class="bg-white w-full sm:max-w-xl h-full sm:h-auto max-h-full sm:max-h-[90vh] rounded-none sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden relative z-10">
       <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5 min-w-0">
           <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span class="material-symbols-outlined text-xl">policy</span>
@@ -740,7 +777,7 @@
       if (!el) return;
 
       if (totalItems === 0) {
-        el.innerHTML = '<div class="text-slate-400 text-xs py-1">Tidak ada data untuk ditampilkan</div>';
+        el.innerHTML = '<div class="text-slate-400 text-xs py-1 text-center w-full">Tidak ada data untuk ditampilkan</div>';
         return;
       }
 
@@ -749,31 +786,33 @@
       // Prev Button
       const isFirst = currentPage <= 1;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer"'}>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed inline-flex items-center gap-1 shrink-0"' : 'class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1 transition shadow-2xs shrink-0 cursor-pointer"'}>
           <span class="material-symbols-outlined text-sm">chevron_left</span>
-          <span>Sebelumnya</span>
+          <span class="hidden sm:inline">Sebelumnya</span>
+          <span class="sm:hidden">Prev</span>
         </button>
       `;
 
-      // Page numbers with smart window
-      const maxButtons = 5;
-      let startP = Math.max(1, currentPage - 2);
+      // Page numbers with smart responsive window
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+      const maxButtons = isMobile ? 3 : 5;
+      let startP = Math.max(1, currentPage - Math.floor(maxButtons / 2));
       let endP = Math.min(totalPages, startP + maxButtons - 1);
       if (endP - startP < maxButtons - 1) {
         startP = Math.max(1, endP - maxButtons + 1);
       }
 
       if (startP > 1) {
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 cursor-pointer">1</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 cursor-pointer">1</button>`;
         if (startP > 2) {
-          btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
+          btnsHtml += `<span class="px-0.5 sm:px-1 text-slate-400 font-bold self-center text-xs shrink-0">...</span>`;
         }
       }
 
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs font-black' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center shrink-0 cursor-pointer ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs font-black' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
             ${p}
           </button>
         `;
@@ -781,16 +820,17 @@
 
       if (endP < totalPages) {
         if (endP < totalPages - 1) {
-          btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
+          btnsHtml += `<span class="px-0.5 sm:px-1 text-slate-400 font-bold self-center text-xs shrink-0">...</span>`;
         }
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 cursor-pointer">${totalPages}</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 cursor-pointer">${totalPages}</button>`;
       }
 
       // Next Button
       const isLast = currentPage >= totalPages;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer"'}>
-          <span>Selanjutnya</span>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed inline-flex items-center gap-1 shrink-0"' : 'class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1 transition shadow-2xs shrink-0 cursor-pointer"'}>
+          <span class="hidden sm:inline">Selanjutnya</span>
+          <span class="sm:hidden">Next</span>
           <span class="material-symbols-outlined text-sm">chevron_right</span>
         </button>
       `;
@@ -798,7 +838,7 @@
       let limitSelectorHtml = '';
       if (onLimitChangeFn && limits && limits.length > 0) {
         limitSelectorHtml = `
-          <div class="flex items-center gap-1.5 ml-0 sm:ml-2">
+          <div class="flex items-center gap-1 shrink-0">
             <span class="text-slate-400 text-[11px]">Tampilkan:</span>
             <select onchange="${onLimitChangeFn}(this.value)" class="py-1 px-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs font-bold focus:outline-none">
               ${limits.map(l => `<option value="${l}" ${l === currentLimit ? 'selected' : ''}>${l}</option>`).join('')}
@@ -808,19 +848,21 @@
       }
 
       el.innerHTML = `
-        <div class="flex flex-wrap items-center gap-2 text-slate-500 font-medium text-xs">
-          <div>
-            Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> ${itemLabel}
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 w-full">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between sm:justify-start gap-2 w-full sm:w-auto text-slate-500 font-medium text-xs">
+            <div class="text-[11px] sm:text-xs text-slate-600 text-center sm:text-left">
+              Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> <span class="hidden sm:inline">${itemLabel}</span><span class="sm:hidden">data</span>
+            </div>
+            ${limitSelectorHtml ? `<div class="self-center sm:self-auto">${limitSelectorHtml}</div>` : ''}
           </div>
-          ${limitSelectorHtml}
-        </div>
-        <div class="flex items-center gap-1.5 flex-wrap">
-          ${btnsHtml}
+          <div class="flex items-center justify-center gap-1 sm:gap-1.5 flex-nowrap w-full sm:w-auto overflow-x-auto no-scrollbar py-0.5">
+            ${btnsHtml}
+          </div>
         </div>
       `;
     }
 
-    let LIVE_SERVER_LOGS = [{"id":"da2848e2-d564-4575-aaff-93cc7328d698","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Budi Santoso, Sp.PD \u2014 Total: 0 SKP (INCOMPLETE)","category":"Verification","time_text":"26 Nov 2026, 14:19 WIB","created_at":"2026-11-26 14:19:08"},{"id":"72f74a89-e6eb-4a28-9206-d2687920518c","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Eksekusi trigger H-7: 1 dokter status Incomplete diproses \u0026 antrean pengingat dikirim.","category":"FollowUp","time_text":"26 Nov 2026, 10:48 WIB","created_at":"2026-11-26 10:48:02"},{"id":"20abb61f-c9ae-40e5-89df-acd20d2a4f7f","user_name":"System Auto","user_role":"ADMIN","action":"CREATE_CATEGORY","action_name":"CREATE_CATEGORY","details_text":"Menambahkan master category: Testing Import Kategori Automated","category":"General","time_text":"26 Nov 2026, 10:27 WIB","created_at":"2026-11-26 10:27:09"},{"id":"71af3033-4ffb-442d-83cf-0c8c1e2be411","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Eksekusi trigger H-7: 1 dokter status Incomplete diproses \u0026 antrean pengingat dikirim.","category":"FollowUp","time_text":"26 Nov 2026, 10:09 WIB","created_at":"2026-11-26 10:09:35"},{"id":"b87aa670-1424-486c-91a8-dadfd03a48fd","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"26 Nov 2026, 10:09 WIB","created_at":"2026-11-26 10:09:34"},{"id":"fce5e6a8-251a-44c3-89d5-3ae88cbb8502","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Budi Santoso, Sp.PD \u2014 Total: 5 SKP (INCOMPLETE)","category":"Verification","time_text":"26 Nov 2026, 10:09 WIB","created_at":"2026-11-26 10:09:33"},{"id":"7200b8d1-762d-415c-895c-4af987b232f4","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (1 dokter via whatsapp)","category":"FollowUp","time_text":"26 Nov 2026, 10:09 WIB","created_at":"2026-11-26 10:09:32"},{"id":"d174162d-9652-4bb2-a695-33a900d9d7fa","user_name":"System Auto","user_role":"ADMIN","action":"CREATE_DOCTOR","action_name":"CREATE_DOCTOR","details_text":"Menambahkan master doctor: dr. Budi Santoso, Sp.PD","category":"General","time_text":"25 Nov 2026, 17:32 WIB","created_at":"2026-11-25 17:32:35"},{"id":"3a108b63-1f9c-4561-88b9-401e2579be66","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"UPDATE_INSTITUTION","action_name":"UPDATE_INSTITUTION","details_text":"Memperbarui master institution: Klinik Pratama Sehat Sentosa","category":"General","time_text":"25 Nov 2026, 17:24 WIB","created_at":"2026-11-25 17:24:42"},{"id":"451ea37e-b87e-435e-8a3b-46bc5172a0f1","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"UPDATE_INSTITUTION","action_name":"UPDATE_INSTITUTION","details_text":"Memperbarui master institution: Klinik Pratama Sehat Sentosa","category":"General","time_text":"25 Nov 2026, 17:24 WIB","created_at":"2026-11-25 17:24:35"},{"id":"1bd81024-347f-429f-84ec-be3131030b99","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"UPDATE_INSTITUTION","action_name":"UPDATE_INSTITUTION","details_text":"Memperbarui master institution: Klinik Pratama Sehat Sentosa","category":"General","time_text":"25 Nov 2026, 17:11 WIB","created_at":"2026-11-25 17:11:04"},{"id":"de3e8b1e-cb7b-49a0-8d98-003d467e871d","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"CREATE_INSTITUTION","action_name":"CREATE_INSTITUTION","details_text":"Menambahkan master institution: Klinik Pratama Sehat Sentosa","category":"General","time_text":"25 Nov 2026, 16:45 WIB","created_at":"2026-11-25 16:45:06"},{"id":"8bd9eff0-9f16-4aca-adcb-28069dcf17fb","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"CREATE_EVENT","action_name":"CREATE_EVENT","details_text":"Menambahkan master event: Simposium Akhir Tahun Kardiologi Klinis \u0026 Maternal","category":"General","time_text":"25 Nov 2026, 16:24 WIB","created_at":"2026-11-25 16:24:57"},{"id":"ac579e77-48b6-4800-875f-25010f6e96e3","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_USER","action_name":"DELETE_USER","details_text":"Menghapus master user ID: edd6ef2a-ff99-44af-967a-625e0d454b06","category":"General","time_text":"25 Nov 2026, 16:14 WIB","created_at":"2026-11-25 16:14:32"},{"id":"bd21d0ea-415d-4ee6-94e0-82c9f6485059","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: User Test","category":"General","time_text":"25 Nov 2026, 16:14 WIB","created_at":"2026-11-25 16:14:21"},{"id":"4d97629b-798b-42ad-88de-e2eb220f8d3f","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"CREATE_USER","action_name":"CREATE_USER","details_text":"Menambahkan master user: tes","category":"General","time_text":"25 Nov 2026, 16:14 WIB","created_at":"2026-11-25 16:14:06"},{"id":"531a6ab3-31ce-42ca-950f-42ec4c602819","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian Imas Test","category":"General","time_text":"25 Nov 2026, 15:37 WIB","created_at":"2026-11-25 15:37:46"},{"id":"672d5729-7c7d-4247-9ddb-09c4ef5a351d","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian Imas","category":"General","time_text":"25 Nov 2026, 15:27 WIB","created_at":"2026-11-25 15:27:49"},{"id":"c4673dc0-df03-45af-92a0-e95485e25d52","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian Imas","category":"General","time_text":"25 Nov 2026, 15:19 WIB","created_at":"2026-11-25 15:19:37"},{"id":"96ca9ba9-55a6-4e44-89be-ca6f66808d30","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian","category":"General","time_text":"25 Nov 2026, 14:56 WIB","created_at":"2026-11-25 14:56:31"},{"id":"c291f701-6086-4749-8f34-81258cf49df1","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian","category":"General","time_text":"25 Nov 2026, 14:56 WIB","created_at":"2026-11-25 14:56:16"},{"id":"018a16cb-90e1-44b4-a39f-e7545693ab52","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian","category":"General","time_text":"25 Nov 2026, 14:49 WIB","created_at":"2026-11-25 14:49:29"},{"id":"3b561978-fdd4-4add-aafb-9c69d2b0583f","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_EVENT","action_name":"DELETE_EVENT","details_text":"Menghapus master event ID: 0b486a07-814f-4a05-8eec-e29d73c167fb","category":"General","time_text":"25 Nov 2026, 14:39 WIB","created_at":"2026-11-25 14:39:10"},{"id":"ea433862-8a55-477f-8fee-e768b700bbca","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"UPDATE_EVENT","action_name":"UPDATE_EVENT","details_text":"Memperbarui master event: test","category":"General","time_text":"25 Nov 2026, 14:39 WIB","created_at":"2026-11-25 14:39:05"},{"id":"653ea2ef-8f46-4520-8762-23710e54dad7","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"CREATE_EVENT","action_name":"CREATE_EVENT","details_text":"Menambahkan master event: test","category":"General","time_text":"25 Nov 2026, 14:38 WIB","created_at":"2026-11-25 14:38:53"},{"id":"a2ec99f9-d87d-4928-8702-2d8765e1c947","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_CATEGORY","action_name":"DELETE_CATEGORY","details_text":"Menghapus master category ID: 337e71fa-c1c7-42c6-9a37-ddd8af41260e","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:51"},{"id":"7f1786dc-1e16-49cd-a129-f090ceeb6990","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"CREATE_CATEGORY","action_name":"CREATE_CATEGORY","details_text":"Menambahkan master category: test","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:46"},{"id":"5f18bdff-d71e-433a-83b9-cfc21d7a3623","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_CATEGORY","action_name":"DELETE_CATEGORY","details_text":"Menghapus master category ID: af32a617-e5c6-46c9-9381-5041a2d17f31","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:33"},{"id":"b21ecdae-7e07-4fe7-b6bc-a0effd3e9a0d","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_USER","action_name":"DELETE_USER","details_text":"Menghapus master user ID: adc885bb-e133-4049-88fa-b8d87f8fb7fb","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:33"},{"id":"31389b70-60d2-463a-9883-4f3d41cc7455","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_DOCTOR","action_name":"DELETE_DOCTOR","details_text":"Menghapus master doctor ID: e6959e63-d9fa-4a62-8d60-aa898331ca56","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:33"},{"id":"26dd9362-fd33-4b64-a926-f9b6b1f28ee3","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_EVENT","action_name":"DELETE_EVENT","details_text":"Menghapus master event ID: 1e703bc3-cf72-477c-b9cf-67f85eaafb35","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:33"},{"id":"037d4348-aceb-488d-9a44-facde02f91b2","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_INSTITUTION","action_name":"DELETE_INSTITUTION","details_text":"Menghapus master institution ID: ea7b81ed-4695-4f82-9636-7d68911a9661","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:33"},{"id":"9b233af4-c48d-42a8-993c-0d596ac252eb","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_DOCTOR","action_name":"DELETE_DOCTOR","details_text":"Menghapus master doctor ID: f4e508b4-fc9a-4a2f-9fe8-e5ba1be2d9a8","category":"General","time_text":"25 Nov 2026, 14:28 WIB","created_at":"2026-11-25 14:28:37"},{"id":"a6beb900-23fa-47a9-8fe1-561a3c87d21b","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_INSTITUTION","action_name":"DELETE_INSTITUTION","details_text":"Menghapus master institution ID: 6839d410-80de-4fb4-aae5-ec017aa5f657","category":"General","time_text":"25 Nov 2026, 14:28 WIB","created_at":"2026-11-25 14:28:37"},{"id":"2f045d47-3cc7-41dd-adb3-2e067bd7d292","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_USER","action_name":"DELETE_USER","details_text":"Menghapus master user ID: 67aa40b6-9abb-47ed-8bb7-7bf703be55e7","category":"General","time_text":"25 Nov 2026, 14:28 WIB","created_at":"2026-11-25 14:28:37"},{"id":"0fc36c5d-1c26-4427-8184-45a38560040c","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_CATEGORY","action_name":"DELETE_CATEGORY","details_text":"Menghapus master category ID: 78dbe9ba-58f9-4a15-8367-e36f74314978","category":"General","time_text":"25 Nov 2026, 14:28 WIB","created_at":"2026-11-25 14:28:37"},{"id":"e0e6c3ab-2f14-4a81-92d4-831ba65ef1aa","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"DELETE_EVENT","action_name":"DELETE_EVENT","details_text":"Menghapus master event ID: 97bcef1c-d302-4395-b105-9f2889d998a2","category":"General","time_text":"25 Nov 2026, 14:28 WIB","created_at":"2026-11-25 14:28:37"},{"id":"fb1cc671-6121-49a2-845a-df89a317a96d","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"CRON_PRE_DEADLINE_SYNC","action_name":"Eksekusi Otomasi Cron","details_text":"Sinkronisasi pra-cutoff otomatis: pembaruan berkas dari SATUSEHAT untuk 157 dokter incomplete.","category":"Sync","time_text":"25 Nov 2026, 00:00 WIB","created_at":"2026-11-25 00:00:10"},{"id":"305fac91-7734-4bf3-8604-f9876d1a6f2a","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"CRON_RECAP_BRANCH_ESCALATION","action_name":"Eksekusi Otomasi Cron","details_text":"Rekapitulasi otomatis berkas pending verifikasi diteruskan ke 38 Admin Cabang POGI Daerah.","category":"Automation","time_text":"24 Nov 2026, 18:00 WIB","created_at":"2026-11-24 18:00:19"},{"id":"ed863b03-f2a6-4577-bdc4-2cdc5c488f6a","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"CRON_HEALTH_CHECK_WORKER","action_name":"Eksekusi Otomasi Cron","details_text":"Pemeriksaan integritas scheduler otomasi \u0026 koneksi gateway SATUSEHAT: Status Aktif (0 antrean macet).","category":"Automation","time_text":"24 Nov 2026, 06:00 WIB","created_at":"2026-11-24 06:00:19"},{"id":"a11abf53-56a5-48b0-b3f1-2c5471dd5a24","user_name":"Dian (Super Admin)","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Eksekusi otomatis pengingat rutin H-7: 157 dokter status Incomplete diproses \u0026 antrean pengingat WhatsApp dijadwalkan.","category":"FollowUp","time_text":"24 Nov 2026, 00:00 WIB","created_at":"2026-11-24 00:00:15"}];
+    let LIVE_SERVER_LOGS = [{"id":"cc0c5184-58ec-4b82-9203-3e60d0eb486e","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_DOCTOR","action_name":"UPDATE_DOCTOR","details_text":"Memperbarui master doctor: dr. Budi Santoso, Sp.PD","category":"General","time_text":"27 Nov 2026, 16:13 WIB","created_at":"2026-11-27 16:13:02"},{"id":"7a080fa6-1173-41e5-8530-2e83b760b7f8","user_name":"System Auto","user_role":"ADMIN","action":"UPDATE_DOCTOR","action_name":"UPDATE_DOCTOR","details_text":"Memperbarui master doctor: dr. Budi Santoso, Sp.PD","category":"General","time_text":"27 Nov 2026, 16:12 WIB","created_at":"2026-11-27 16:12:05"},{"id":"a1b5238a-c361-4a7e-a908-4309c158716c","user_name":"System Auto","user_role":"ADMIN","action":"UPDATE_DOCTOR","action_name":"UPDATE_DOCTOR","details_text":"Memperbarui master doctor: dr. Budi Santoso, Sp.PD","category":"General","time_text":"27 Nov 2026, 16:11 WIB","created_at":"2026-11-27 16:11:57"},{"id":"f1107917-ac4b-454b-b9ff-58911b20ffdf","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian Imas","category":"General","time_text":"27 Nov 2026, 16:06 WIB","created_at":"2026-11-27 16:06:46"},{"id":"5e3c70ca-d7ae-4498-b7d2-d7f462925a6e","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: dr. Ulul","category":"General","time_text":"27 Nov 2026, 16:06 WIB","created_at":"2026-11-27 16:06:34"},{"id":"d70ea457-7793-468d-8bec-67588a857209","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: dr. Firman, Sp.OG","category":"General","time_text":"27 Nov 2026, 16:06 WIB","created_at":"2026-11-27 16:06:17"},{"id":"ff694448-b04b-4648-bb62-6f05e7ac3fe4","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Anna","category":"General","time_text":"27 Nov 2026, 16:05 WIB","created_at":"2026-11-27 16:05:59"},{"id":"e0f606a3-e2c4-4962-95f1-dee56cc97583","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_DOCTOR","action_name":"UPDATE_DOCTOR","details_text":"Memperbarui master doctor: dr. Budi Santoso, Sp.PD","category":"General","time_text":"27 Nov 2026, 16:04 WIB","created_at":"2026-11-27 16:04:01"},{"id":"8a825d68-8d10-4d25-8102-72884c12acf7","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_DOCTOR","action_name":"UPDATE_DOCTOR","details_text":"Memperbarui master doctor: dr. Budi Santoso, Sp.PD","category":"General","time_text":"27 Nov 2026, 15:39 WIB","created_at":"2026-11-27 15:39:36"},{"id":"43cdae36-df59-4ff5-97f9-f3b4aed71732","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_DOCTOR","action_name":"UPDATE_DOCTOR","details_text":"Memperbarui master doctor: dr. Budi Santoso, Sp.PD","category":"General","time_text":"27 Nov 2026, 15:39 WIB","created_at":"2026-11-27 15:39:25"},{"id":"4cd3d82d-3691-43d4-9867-a8ac4e556ac4","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_DOCTOR","action_name":"UPDATE_DOCTOR","details_text":"Memperbarui master doctor: dr. Budi Santoso, Sp.PD","category":"General","time_text":"27 Nov 2026, 15:37 WIB","created_at":"2026-11-27 15:37:31"},{"id":"bbcc39be-95b5-4461-a30b-840bf144ac98","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_DOCTOR","action_name":"UPDATE_DOCTOR","details_text":"Memperbarui master doctor: dr. Budi Santoso, Sp.PD","category":"General","time_text":"27 Nov 2026, 15:37 WIB","created_at":"2026-11-27 15:37:16"},{"id":"da2848e2-d564-4575-aaff-93cc7328d698","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Budi Santoso, Sp.PD \u2014 Total: 0 SKP (INCOMPLETE)","category":"Verification","time_text":"26 Nov 2026, 14:19 WIB","created_at":"2026-11-26 14:19:08"},{"id":"72f74a89-e6eb-4a28-9206-d2687920518c","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Eksekusi trigger H-7: 1 dokter status Incomplete diproses \u0026 antrean pengingat dikirim.","category":"FollowUp","time_text":"26 Nov 2026, 10:48 WIB","created_at":"2026-11-26 10:48:02"},{"id":"20abb61f-c9ae-40e5-89df-acd20d2a4f7f","user_name":"System Auto","user_role":"ADMIN","action":"CREATE_CATEGORY","action_name":"CREATE_CATEGORY","details_text":"Menambahkan master category: Testing Import Kategori Automated","category":"General","time_text":"26 Nov 2026, 10:27 WIB","created_at":"2026-11-26 10:27:09"},{"id":"71af3033-4ffb-442d-83cf-0c8c1e2be411","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Eksekusi trigger H-7: 1 dokter status Incomplete diproses \u0026 antrean pengingat dikirim.","category":"FollowUp","time_text":"26 Nov 2026, 10:09 WIB","created_at":"2026-11-26 10:09:35"},{"id":"b87aa670-1424-486c-91a8-dadfd03a48fd","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"KEMENKES_PORTAL_ACCESS","action_name":"Akses Portal SATUSEHAT","details_text":"Akses Portal Kemenkes Plataran Sehat \u2014 Monitoring Umum Dashboard","category":"Sync","time_text":"26 Nov 2026, 10:09 WIB","created_at":"2026-11-26 10:09:34"},{"id":"fce5e6a8-251a-44c3-89d5-3ae88cbb8502","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"VERIFY_DOCTOR_CREDITS","action_name":"Verifikasi Kredit SKP","details_text":"dr. Budi Santoso, Sp.PD \u2014 Total: 5 SKP (INCOMPLETE)","category":"Verification","time_text":"26 Nov 2026, 10:09 WIB","created_at":"2026-11-26 10:09:33"},{"id":"7200b8d1-762d-415c-895c-4af987b232f4","user_name":"System Auto","user_role":"ADMIN","action":"SEND_FOLLOW_UP_NOTIFICATION","action_name":"Kirim Notifikasi Follow-Up","details_text":"Target: 5 Cabang Kepatuhan Terendah (1 dokter via whatsapp)","category":"FollowUp","time_text":"26 Nov 2026, 10:09 WIB","created_at":"2026-11-26 10:09:32"},{"id":"d174162d-9652-4bb2-a695-33a900d9d7fa","user_name":"System Auto","user_role":"ADMIN","action":"CREATE_DOCTOR","action_name":"CREATE_DOCTOR","details_text":"Menambahkan master doctor: dr. Budi Santoso, Sp.PD","category":"General","time_text":"25 Nov 2026, 17:32 WIB","created_at":"2026-11-25 17:32:35"},{"id":"3a108b63-1f9c-4561-88b9-401e2579be66","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_INSTITUTION","action_name":"UPDATE_INSTITUTION","details_text":"Memperbarui master institution: Klinik Pratama Sehat Sentosa","category":"General","time_text":"25 Nov 2026, 17:24 WIB","created_at":"2026-11-25 17:24:42"},{"id":"451ea37e-b87e-435e-8a3b-46bc5172a0f1","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_INSTITUTION","action_name":"UPDATE_INSTITUTION","details_text":"Memperbarui master institution: Klinik Pratama Sehat Sentosa","category":"General","time_text":"25 Nov 2026, 17:24 WIB","created_at":"2026-11-25 17:24:35"},{"id":"1bd81024-347f-429f-84ec-be3131030b99","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_INSTITUTION","action_name":"UPDATE_INSTITUTION","details_text":"Memperbarui master institution: Klinik Pratama Sehat Sentosa","category":"General","time_text":"25 Nov 2026, 17:11 WIB","created_at":"2026-11-25 17:11:04"},{"id":"de3e8b1e-cb7b-49a0-8d98-003d467e871d","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"CREATE_INSTITUTION","action_name":"CREATE_INSTITUTION","details_text":"Menambahkan master institution: Klinik Pratama Sehat Sentosa","category":"General","time_text":"25 Nov 2026, 16:45 WIB","created_at":"2026-11-25 16:45:06"},{"id":"8bd9eff0-9f16-4aca-adcb-28069dcf17fb","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"CREATE_EVENT","action_name":"CREATE_EVENT","details_text":"Menambahkan master event: Simposium Akhir Tahun Kardiologi Klinis \u0026 Maternal","category":"General","time_text":"25 Nov 2026, 16:24 WIB","created_at":"2026-11-25 16:24:57"},{"id":"ac579e77-48b6-4800-875f-25010f6e96e3","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_USER","action_name":"DELETE_USER","details_text":"Menghapus master user ID: edd6ef2a-ff99-44af-967a-625e0d454b06","category":"General","time_text":"25 Nov 2026, 16:14 WIB","created_at":"2026-11-25 16:14:32"},{"id":"bd21d0ea-415d-4ee6-94e0-82c9f6485059","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: User Test","category":"General","time_text":"25 Nov 2026, 16:14 WIB","created_at":"2026-11-25 16:14:21"},{"id":"4d97629b-798b-42ad-88de-e2eb220f8d3f","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"CREATE_USER","action_name":"CREATE_USER","details_text":"Menambahkan master user: tes","category":"General","time_text":"25 Nov 2026, 16:14 WIB","created_at":"2026-11-25 16:14:06"},{"id":"531a6ab3-31ce-42ca-950f-42ec4c602819","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian Imas Test","category":"General","time_text":"25 Nov 2026, 15:37 WIB","created_at":"2026-11-25 15:37:46"},{"id":"672d5729-7c7d-4247-9ddb-09c4ef5a351d","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian Imas","category":"General","time_text":"25 Nov 2026, 15:27 WIB","created_at":"2026-11-25 15:27:49"},{"id":"c4673dc0-df03-45af-92a0-e95485e25d52","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian Imas","category":"General","time_text":"25 Nov 2026, 15:19 WIB","created_at":"2026-11-25 15:19:37"},{"id":"96ca9ba9-55a6-4e44-89be-ca6f66808d30","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian","category":"General","time_text":"25 Nov 2026, 14:56 WIB","created_at":"2026-11-25 14:56:31"},{"id":"c291f701-6086-4749-8f34-81258cf49df1","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian","category":"General","time_text":"25 Nov 2026, 14:56 WIB","created_at":"2026-11-25 14:56:16"},{"id":"018a16cb-90e1-44b4-a39f-e7545693ab52","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_USER","action_name":"UPDATE_USER","details_text":"Memperbarui master user: Dian","category":"General","time_text":"25 Nov 2026, 14:49 WIB","created_at":"2026-11-25 14:49:29"},{"id":"3b561978-fdd4-4add-aafb-9c69d2b0583f","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_EVENT","action_name":"DELETE_EVENT","details_text":"Menghapus master event ID: 0b486a07-814f-4a05-8eec-e29d73c167fb","category":"General","time_text":"25 Nov 2026, 14:39 WIB","created_at":"2026-11-25 14:39:10"},{"id":"ea433862-8a55-477f-8fee-e768b700bbca","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"UPDATE_EVENT","action_name":"UPDATE_EVENT","details_text":"Memperbarui master event: test","category":"General","time_text":"25 Nov 2026, 14:39 WIB","created_at":"2026-11-25 14:39:05"},{"id":"653ea2ef-8f46-4520-8762-23710e54dad7","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"CREATE_EVENT","action_name":"CREATE_EVENT","details_text":"Menambahkan master event: test","category":"General","time_text":"25 Nov 2026, 14:38 WIB","created_at":"2026-11-25 14:38:53"},{"id":"a2ec99f9-d87d-4928-8702-2d8765e1c947","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_CATEGORY","action_name":"DELETE_CATEGORY","details_text":"Menghapus master category ID: 337e71fa-c1c7-42c6-9a37-ddd8af41260e","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:51"},{"id":"7f1786dc-1e16-49cd-a129-f090ceeb6990","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"CREATE_CATEGORY","action_name":"CREATE_CATEGORY","details_text":"Menambahkan master category: test","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:46"},{"id":"037d4348-aceb-488d-9a44-facde02f91b2","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_INSTITUTION","action_name":"DELETE_INSTITUTION","details_text":"Menghapus master institution ID: ea7b81ed-4695-4f82-9636-7d68911a9661","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:33"},{"id":"b21ecdae-7e07-4fe7-b6bc-a0effd3e9a0d","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_USER","action_name":"DELETE_USER","details_text":"Menghapus master user ID: adc885bb-e133-4049-88fa-b8d87f8fb7fb","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:33"},{"id":"5f18bdff-d71e-433a-83b9-cfc21d7a3623","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_CATEGORY","action_name":"DELETE_CATEGORY","details_text":"Menghapus master category ID: af32a617-e5c6-46c9-9381-5041a2d17f31","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:33"},{"id":"31389b70-60d2-463a-9883-4f3d41cc7455","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_DOCTOR","action_name":"DELETE_DOCTOR","details_text":"Menghapus master doctor ID: e6959e63-d9fa-4a62-8d60-aa898331ca56","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:33"},{"id":"26dd9362-fd33-4b64-a926-f9b6b1f28ee3","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_EVENT","action_name":"DELETE_EVENT","details_text":"Menghapus master event ID: 1e703bc3-cf72-477c-b9cf-67f85eaafb35","category":"General","time_text":"25 Nov 2026, 14:35 WIB","created_at":"2026-11-25 14:35:33"},{"id":"0fc36c5d-1c26-4427-8184-45a38560040c","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_CATEGORY","action_name":"DELETE_CATEGORY","details_text":"Menghapus master category ID: 78dbe9ba-58f9-4a15-8367-e36f74314978","category":"General","time_text":"25 Nov 2026, 14:28 WIB","created_at":"2026-11-25 14:28:37"},{"id":"9b233af4-c48d-42a8-993c-0d596ac252eb","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_DOCTOR","action_name":"DELETE_DOCTOR","details_text":"Menghapus master doctor ID: f4e508b4-fc9a-4a2f-9fe8-e5ba1be2d9a8","category":"General","time_text":"25 Nov 2026, 14:28 WIB","created_at":"2026-11-25 14:28:37"},{"id":"a6beb900-23fa-47a9-8fe1-561a3c87d21b","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_INSTITUTION","action_name":"DELETE_INSTITUTION","details_text":"Menghapus master institution ID: 6839d410-80de-4fb4-aae5-ec017aa5f657","category":"General","time_text":"25 Nov 2026, 14:28 WIB","created_at":"2026-11-25 14:28:37"},{"id":"2f045d47-3cc7-41dd-adb3-2e067bd7d292","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_USER","action_name":"DELETE_USER","details_text":"Menghapus master user ID: 67aa40b6-9abb-47ed-8bb7-7bf703be55e7","category":"General","time_text":"25 Nov 2026, 14:28 WIB","created_at":"2026-11-25 14:28:37"},{"id":"e0e6c3ab-2f14-4a81-92d4-831ba65ef1aa","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"DELETE_EVENT","action_name":"DELETE_EVENT","details_text":"Menghapus master event ID: 97bcef1c-d302-4395-b105-9f2889d998a2","category":"General","time_text":"25 Nov 2026, 14:28 WIB","created_at":"2026-11-25 14:28:37"},{"id":"fb1cc671-6121-49a2-845a-df89a317a96d","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"CRON_PRE_DEADLINE_SYNC","action_name":"Eksekusi Otomasi Cron","details_text":"Sinkronisasi pra-cutoff otomatis: pembaruan berkas dari SATUSEHAT untuk 157 dokter incomplete.","category":"Sync","time_text":"25 Nov 2026, 00:00 WIB","created_at":"2026-11-25 00:00:10"},{"id":"305fac91-7734-4bf3-8604-f9876d1a6f2a","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"CRON_RECAP_BRANCH_ESCALATION","action_name":"Eksekusi Otomasi Cron","details_text":"Rekapitulasi otomatis berkas pending verifikasi diteruskan ke 38 Admin Cabang POGI Daerah.","category":"Automation","time_text":"24 Nov 2026, 18:00 WIB","created_at":"2026-11-24 18:00:19"},{"id":"ed863b03-f2a6-4577-bdc4-2cdc5c488f6a","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"CRON_HEALTH_CHECK_WORKER","action_name":"Eksekusi Otomasi Cron","details_text":"Pemeriksaan integritas scheduler otomasi \u0026 koneksi gateway SATUSEHAT: Status Aktif (0 antrean macet).","category":"Automation","time_text":"24 Nov 2026, 06:00 WIB","created_at":"2026-11-24 06:00:19"},{"id":"a11abf53-56a5-48b0-b3f1-2c5471dd5a24","user_name":"Dian Imas","user_role":"SUPER_ADMIN","action":"CRON_TRIGGER_H7_REMINDER","action_name":"Trigger Rutin H-7 Pengingat","details_text":"Eksekusi otomatis pengingat rutin H-7: 157 dokter status Incomplete diproses \u0026 antrean pengingat WhatsApp dijadwalkan.","category":"FollowUp","time_text":"24 Nov 2026, 00:00 WIB","created_at":"2026-11-24 00:00:15"}];
     window.LIVE_SERVER_LOGS = LIVE_SERVER_LOGS;
 
     let activeCategory = 'ALL';
@@ -1000,7 +1042,7 @@
       if (counterEl) {
         counterEl.innerHTML = `
           <span class="w-2 h-2 rounded-full bg-[#16b3ac]"></span>
-          <span>Menampilkan <strong>${activityPagination.total}</strong> log aktivitas</span>
+          <span><strong>${activityPagination.total}</strong> Log Aktivitas</span>
         `;
       }
 
@@ -1131,17 +1173,17 @@
 
             return `
               <div class="bg-white rounded-2xl border border-slate-200/90 p-4 space-y-2.5 shadow-2xs hover:border-[#16b3ac]/50 transition cursor-pointer" onclick="openAuditDetailModal('${a.id}')">
-                <div class="flex items-center justify-between gap-2">
+                <div class="flex items-start justify-between gap-2">
                   <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-100 border border-emerald-200/80 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
                       ${initial}
                     </div>
                     <div class="min-w-0">
-                      <div class="font-bold text-slate-900 text-xs truncate">${a.actor}</div>
+                      <div class="font-bold text-slate-900 text-xs truncate max-w-[150px] sm:max-w-none">${a.actor}</div>
                       <div class="text-[10px] font-mono text-slate-400 leading-none mt-0.5">${a.role || 'USER'}</div>
                     </div>
                   </div>
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeStyle} border shrink-0">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeStyle} border shrink-0 self-start">
                     <span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>
                     <span>${catLabel}</span>
                   </span>
@@ -1187,9 +1229,9 @@
         const btn = document.getElementById(tabIds[k]);
         if (btn) {
           if (k.toUpperCase() === cat.toUpperCase()) {
-            btn.className = 'px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition font-black flex items-center gap-1.5 cursor-pointer';
+            btn.className = 'px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition font-black flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap';
           } else {
-            btn.className = 'px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer';
+            btn.className = 'px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap';
           }
         }
       }

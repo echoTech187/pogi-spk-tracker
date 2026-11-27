@@ -71,9 +71,11 @@
       <option value="">Belum ada Admin POGI</option>
       @foreach($adminPogiList ?? [] as $adm)
         @php
+          $admId = is_object($adm) ? ($adm->id ?? '') : (is_array($adm) ? ($adm['id'] ?? '') : '');
           $admName = is_object($adm) ? ($adm->full_name ?? $adm->name) : (is_array($adm) ? ($adm['full_name'] ?? $adm['name']) : $adm);
+          $optVal = $admId ?: $admName;
         @endphp
-        <option value="{{ $admName }}">{{ $admName }} (Admin POGI)</option>
+        <option value="{{ $optVal }}" data-id="{{ $admId }}" data-name="{{ $admName }}">{{ $admName }} (Admin POGI)</option>
       @endforeach
     </select>
   </div>

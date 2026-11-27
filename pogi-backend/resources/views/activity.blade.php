@@ -6,13 +6,13 @@
   <main class="flex-1 overflow-y-auto bg-white  space-y-6 page-fade-in pb-8">
 
     <!-- Clean Page Header (Modern Enterprise Standard) -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 pb-1">
       <div class="space-y-1.5 min-w-0">
-        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+        <div class="whitespace-nowrap inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>Log Operasional &amp; Audit Trail</span>
-          <span class="text-slate-300">•</span>
-          <span class="text-slate-500 font-semibold normal-case">Real-Time Sync</span>
+          <span class="hidden sm:inline text-slate-300">•</span>
+          <span class="hidden sm:inline text-slate-500 font-semibold normal-case">Real-Time Sync</span>
         </div>
         <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
           <span>Log Aktivitas &amp; Jejak Audit Operasional</span>
@@ -23,20 +23,20 @@
       </div>
 
       <!-- Action Toolbar Header -->
-      <div class="flex items-center gap-2 shrink-0 flex-wrap">
-        <button type="button" onclick="triggerRefreshActivityLog()" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="Muat ulang jejak audit terbaru dari basis data">
+      <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 shrink-0 w-full sm:w-auto">
+        <button type="button" onclick="triggerRefreshActivityLog()" class="h-10 sm:h-9 px-3 sm:px-3.5 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 text-xs font-bold transition inline-flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer active:scale-95 whitespace-nowrap" title="Muat ulang jejak audit terbaru dari basis data">
           <span class="material-symbols-outlined text-base text-[#16b3ac]" id="refreshIcon">refresh</span>
           <span>Segarkan Log</span>
         </button>
-        <button type="button" onclick="triggerExportAuditPdf()" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95" title="Cetak dan ekspor dokumen resmi PDF Audit Trail">
+        <button type="button" onclick="triggerExportAuditPdf()" class="h-10 sm:h-9 px-3 sm:px-3.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition inline-flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active:scale-95 whitespace-nowrap" title="Cetak dan ekspor dokumen resmi PDF Audit Trail">
           <span class="material-symbols-outlined text-base">picture_as_pdf</span>
-          <span>Ekspor Audit (PDF)</span>
+          <span>Ekspor <span class="hidden sm:inline">Audit </span>(PDF)</span>
         </button>
       </div>
     </div>
 
     <!-- 4 Modern Metric Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
       <!-- Active Users -->
       <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
         <div class="flex items-center justify-between gap-3">
@@ -117,7 +117,7 @@
     <!-- Unified Master Card: Toolbar & Log Table -->
     <div class="rounded-3xl bg-white border border-slate-200/80 shadow-2xs overflow-hidden">
       <!-- Toolbar Header -->
-      <div class="p-5 sm:p-6 border-b border-slate-100 space-y-4">
+      <div class="p-4 sm:p-6 border-b border-slate-100 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div class="flex items-center gap-2 flex-wrap">
@@ -126,7 +126,7 @@
             </div>
             <p class="text-xs text-slate-400 mt-1">Daftar rekaman kronologis aktivitas operasional, penugasan PIC, sinkronisasi SATUSEHAT, dan otomasi latar belakang.</p>
           </div>
-          <div class="shrink-0">
+          <div class="shrink-0 self-start sm:self-auto">
             <span id="activityLogCounter" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-slate-600 font-bold text-xs">
               <span class="w-2 h-2 rounded-full bg-[#16b3ac]"></span>
               <span>Memuat log...</span>
@@ -135,32 +135,34 @@
         </div>
 
         <!-- Filter Category Tabs & Integrated Search -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2 border-t border-slate-100">
-          <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100/90 rounded-2xl text-xs font-bold text-slate-600" id="activityCategoryFilterTabs">
-            <button type="button" onclick="filterActivityCategory('ALL')" id="tab-act-all" class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition font-black flex items-center gap-1.5 cursor-pointer">
-              <span>Semua Log</span>
-              <span id="badge-count-all" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600 font-bold">0</span>
-            </button>
-            <button type="button" onclick="filterActivityCategory('Sync')" id="tab-act-sync" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
-              <span class="w-2 h-2 rounded-full bg-sky-500"></span>
-              <span>Sync SATUSEHAT</span>
-              <span id="badge-count-sync" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
-            </button>
-            <button type="button" onclick="filterActivityCategory('Verification')" id="tab-act-verif" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Verifikasi Kredit</span>
-              <span id="badge-count-verif" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
-            </button>
-            <button type="button" onclick="filterActivityCategory('FollowUp')" id="tab-act-fu" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
-              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-              <span>Follow-Up Cabang</span>
-              <span id="badge-count-fu" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
-            </button>
-            <button type="button" onclick="filterActivityCategory('Automation')" id="tab-act-auto" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
-              <span class="w-2 h-2 rounded-full bg-purple-500"></span>
-              <span>Otomasi Cron</span>
-              <span id="badge-count-auto" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
-            </button>
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2 border-t border-slate-100 min-w-0">
+          <div class="w-full lg:w-auto overflow-x-auto no-scrollbar py-0.5">
+            <div class="inline-flex items-center gap-1.5 p-1.5 bg-slate-100/90 rounded-2xl text-xs font-bold text-slate-600 min-w-max" id="activityCategoryFilterTabs">
+              <button type="button" onclick="filterActivityCategory('ALL')" id="tab-act-all" class="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition font-black flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap">
+                <span>Semua Log</span>
+                <span id="badge-count-all" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600 font-bold">0</span>
+              </button>
+              <button type="button" onclick="filterActivityCategory('Sync')" id="tab-act-sync" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
+                <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                <span>Sync SATUSEHAT</span>
+                <span id="badge-count-sync" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
+              </button>
+              <button type="button" onclick="filterActivityCategory('Verification')" id="tab-act-verif" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Verifikasi Kredit</span>
+                <span id="badge-count-verif" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
+              </button>
+              <button type="button" onclick="filterActivityCategory('FollowUp')" id="tab-act-fu" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span>Follow-Up Cabang</span>
+                <span id="badge-count-fu" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
+              </button>
+              <button type="button" onclick="filterActivityCategory('Automation')" id="tab-act-auto" class="px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
+                <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                <span>Otomasi Cron</span>
+                <span id="badge-count-auto" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/70 text-slate-600 font-bold">0</span>
+              </button>
+            </div>
           </div>
 
           <!-- Integrated Search Box with Clear Button -->
@@ -204,10 +206,10 @@
   </main>
 
   <!-- MODAL: DETAIL JEJAK AUDIT (AUDIT LOG INSPECTOR) -->
-  <div id="auditDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 transition-opacity">
-    <div class="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10">
+  <div id="auditDetailModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-0 sm:p-4 transition-opacity">
+    <div class="bg-white w-full sm:max-w-xl h-full sm:h-auto max-h-full sm:max-h-[90vh] rounded-none sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden relative z-10">
       <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5 min-w-0">
           <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span class="material-symbols-outlined text-xl">policy</span>
@@ -336,7 +338,7 @@
       if (!el) return;
 
       if (totalItems === 0) {
-        el.innerHTML = '<div class="text-slate-400 text-xs py-1">Tidak ada data untuk ditampilkan</div>';
+        el.innerHTML = '<div class="text-slate-400 text-xs py-1 text-center w-full">Tidak ada data untuk ditampilkan</div>';
         return;
       }
 
@@ -345,31 +347,33 @@
       // Prev Button
       const isFirst = currentPage <= 1;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer"'}>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed inline-flex items-center gap-1 shrink-0"' : 'class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1 transition shadow-2xs shrink-0 cursor-pointer"'}>
           <span class="material-symbols-outlined text-sm">chevron_left</span>
-          <span>Sebelumnya</span>
+          <span class="hidden sm:inline">Sebelumnya</span>
+          <span class="sm:hidden">Prev</span>
         </button>
       `;
 
-      // Page numbers with smart window
-      const maxButtons = 5;
-      let startP = Math.max(1, currentPage - 2);
+      // Page numbers with smart responsive window
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+      const maxButtons = isMobile ? 3 : 5;
+      let startP = Math.max(1, currentPage - Math.floor(maxButtons / 2));
       let endP = Math.min(totalPages, startP + maxButtons - 1);
       if (endP - startP < maxButtons - 1) {
         startP = Math.max(1, endP - maxButtons + 1);
       }
 
       if (startP > 1) {
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 cursor-pointer">1</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 cursor-pointer">1</button>`;
         if (startP > 2) {
-          btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
+          btnsHtml += `<span class="px-0.5 sm:px-1 text-slate-400 font-bold self-center text-xs shrink-0">...</span>`;
         }
       }
 
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs font-black' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center shrink-0 cursor-pointer ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs font-black' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
             ${p}
           </button>
         `;
@@ -377,16 +381,17 @@
 
       if (endP < totalPages) {
         if (endP < totalPages - 1) {
-          btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
+          btnsHtml += `<span class="px-0.5 sm:px-1 text-slate-400 font-bold self-center text-xs shrink-0">...</span>`;
         }
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 cursor-pointer">${totalPages}</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 cursor-pointer">${totalPages}</button>`;
       }
 
       // Next Button
       const isLast = currentPage >= totalPages;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer"'}>
-          <span>Selanjutnya</span>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed inline-flex items-center gap-1 shrink-0"' : 'class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1 transition shadow-2xs shrink-0 cursor-pointer"'}>
+          <span class="hidden sm:inline">Selanjutnya</span>
+          <span class="sm:hidden">Next</span>
           <span class="material-symbols-outlined text-sm">chevron_right</span>
         </button>
       `;
@@ -394,7 +399,7 @@
       let limitSelectorHtml = '';
       if (onLimitChangeFn && limits && limits.length > 0) {
         limitSelectorHtml = `
-          <div class="flex items-center gap-1.5 ml-0 sm:ml-2">
+          <div class="flex items-center gap-1 shrink-0">
             <span class="text-slate-400 text-[11px]">Tampilkan:</span>
             <select onchange="${onLimitChangeFn}(this.value)" class="py-1 px-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs font-bold focus:outline-none">
               ${limits.map(l => `<option value="${l}" ${l === currentLimit ? 'selected' : ''}>${l}</option>`).join('')}
@@ -404,14 +409,16 @@
       }
 
       el.innerHTML = `
-        <div class="flex flex-wrap items-center gap-2 text-slate-500 font-medium text-xs">
-          <div>
-            Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> ${itemLabel}
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 w-full">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between sm:justify-start gap-2 w-full sm:w-auto text-slate-500 font-medium text-xs">
+            <div class="text-[11px] sm:text-xs text-slate-600 text-center sm:text-left">
+              Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> <span class="hidden sm:inline">${itemLabel}</span><span class="sm:hidden">data</span>
+            </div>
+            ${limitSelectorHtml ? `<div class="self-center sm:self-auto">${limitSelectorHtml}</div>` : ''}
           </div>
-          ${limitSelectorHtml}
-        </div>
-        <div class="flex items-center gap-1.5 flex-wrap">
-          ${btnsHtml}
+          <div class="flex items-center justify-center gap-1 sm:gap-1.5 flex-nowrap w-full sm:w-auto overflow-x-auto no-scrollbar py-0.5">
+            ${btnsHtml}
+          </div>
         </div>
       `;
     }
@@ -596,7 +603,7 @@
       if (counterEl) {
         counterEl.innerHTML = `
           <span class="w-2 h-2 rounded-full bg-[#16b3ac]"></span>
-          <span>Menampilkan <strong>${activityPagination.total}</strong> log aktivitas</span>
+          <span><strong>${activityPagination.total}</strong> Log Aktivitas</span>
         `;
       }
 
@@ -727,17 +734,17 @@
 
             return `
               <div class="bg-white rounded-2xl border border-slate-200/90 p-4 space-y-2.5 shadow-2xs hover:border-[#16b3ac]/50 transition cursor-pointer" onclick="openAuditDetailModal('${a.id}')">
-                <div class="flex items-center justify-between gap-2">
+                <div class="flex items-start justify-between gap-2">
                   <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-100 border border-emerald-200/80 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
                       ${initial}
                     </div>
                     <div class="min-w-0">
-                      <div class="font-bold text-slate-900 text-xs truncate">${a.actor}</div>
+                      <div class="font-bold text-slate-900 text-xs truncate max-w-[150px] sm:max-w-none">${a.actor}</div>
                       <div class="text-[10px] font-mono text-slate-400 leading-none mt-0.5">${a.role || 'USER'}</div>
                     </div>
                   </div>
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeStyle} border shrink-0">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeStyle} border shrink-0 self-start">
                     <span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>
                     <span>${catLabel}</span>
                   </span>
@@ -783,9 +790,9 @@
         const btn = document.getElementById(tabIds[k]);
         if (btn) {
           if (k.toUpperCase() === cat.toUpperCase()) {
-            btn.className = 'px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition font-black flex items-center gap-1.5 cursor-pointer';
+            btn.className = 'px-3.5 py-1.5 rounded-xl bg-white text-slate-900 shadow-2xs transition font-black flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap';
           } else {
-            btn.className = 'px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer';
+            btn.className = 'px-3.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap';
           }
         }
       }

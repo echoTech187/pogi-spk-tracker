@@ -79,4 +79,25 @@ class RulesComplianceTest extends TestCase
             $this->actingAs($anna)->get("/doctor-detail?id={$otherDoctor->id}")->assertStatus(403);
         }
     }
+
+    public function test_plataran_sehat_lms_password_is_two_way_encrypted_in_database(): void
+    {
+        $doctor = \App\Models\Doctor::first();
+        $plainPass = 'SandiRahasia2026!';
+
+        $doctor->plataran_sehat_pass_encrypted = $plainPass;
+        $doctor->save();
+
+        $rawDbValue = DB::table('doctors')->where('id', $doctor->id)->value('plataran_sehat_pass_encrypted');
+        $this->assertNotEquals($plainPass, $rawDbValue);
+        $this->assertStringStartsWith('eyJ', $rawDbValue);
+
+        $fresh = $doctor->fresh();
+        $this->assertEquals($plainPass, $fresh->plataran_sehat_pass_encrypted);
+
+        // Reset to null
+        $fresh->plataran_sehat_pass_encrypted = null;
+        $fresh->save();
+        $this->assertNull(DB::table('doctors')->where('id', $doctor->id)->value('plataran_sehat_pass_encrypted'));
+    }
 }

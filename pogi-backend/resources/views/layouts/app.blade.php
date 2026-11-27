@@ -170,6 +170,41 @@
       bottom: 0 !important;
       z-index: 20 !important;
     }
+
+    /* Utility: Hide scrollbar across all browsers */
+    .no-scrollbar::-webkit-scrollbar,
+    .scrollbar-none::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    .no-scrollbar,
+    .scrollbar-none {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+
+    /* Responsive Mobile Full-Screen Modal Rules (< sm / < 640px) */
+    @media (max-width: 639.98px) {
+      .fixed.inset-0.z-\[9999\],
+      .fixed.inset-0.z-50,
+      .pogi-modal-overlay {
+        padding: 0 !important;
+      }
+
+      .pogi-modal-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100% !important;
+        height: 100dvh !important;
+        max-height: 100% !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+    }
   </style>
   @yield('styles')
 </head>

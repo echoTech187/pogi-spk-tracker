@@ -7,13 +7,13 @@
   <div class="space-y-5">
 
     <!-- Clean Page Header (Modern Enterprise Standard matching Activity Log) -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 pb-1">
       <div class="space-y-1.5 min-w-0">
-        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+        <div class="whitespace-nowrap inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>Direktori Tenaga Medis</span>
-          <span class="text-slate-300">•</span>
-          <span class="text-slate-500 font-semibold normal-case">Integrasi SATUSEHAT</span>
+          <span class="hidden sm:inline text-slate-300">•</span>
+          <span class="hidden sm:inline text-slate-500 font-semibold normal-case">Integrasi SATUSEHAT</span>
         </div>
         <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
           <span>Daftar Dokter &amp; Tenaga Kesehatan</span>
@@ -24,14 +24,10 @@
         </p>
       </div>
       @if(in_array(Auth::user()?->role, ['SUPER_ADMIN', 'ADMIN_POGI']))
-      <div class="flex items-center gap-2 shrink-0 flex-wrap">
-        <button type="button" onclick="openWaBlastModal()" id="btnWaBlastMassal" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write rbac-operational cursor-pointer active:scale-95">
+      <div class="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap w-full sm:w-auto">
+        <button type="button" onclick="openWaBlastModal()" id="btnWaBlastMassal" class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs rbac-write rbac-operational cursor-pointer active:scale-95">
           <span class="material-symbols-outlined text-base">campaign</span>
           <span>Kirim WA Blast Massal</span>
-        </button>
-        <button type="button" onclick="openAddDoctorModal()" id="btnAddDoctor" class="px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs rbac-write rbac-operational cursor-pointer active:scale-95">
-          <span class="material-symbols-outlined text-base">person_add</span>
-          <span>Daftarkan Dokter Baru</span>
         </button>
       </div>
       @endif
@@ -121,8 +117,7 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-        <div>Menampilkan <span id="doctorFilteredCount" class="font-bold text-slate-900">10</span> dokter dari total <span id="doctorTotalFilteredCount" class="font-bold text-slate-900">200</span> anggota</div>
+      <div class="flex items-center justify-end text-xs pt-1 border-t border-slate-100 text-slate-500">
         <button type="button" onclick="resetDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
       </div>
     </div>
@@ -370,7 +365,7 @@
       if (!el) return;
 
       if (totalItems === 0) {
-        el.innerHTML = '<div class="text-slate-400 text-xs py-1">Tidak ada data untuk ditampilkan</div>';
+        el.innerHTML = '<div class="text-slate-400 text-xs py-1 text-center w-full">Tidak ada data untuk ditampilkan</div>';
         return;
       }
 
@@ -379,31 +374,33 @@
       // Prev Button
       const isFirst = currentPage <= 1;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed inline-flex items-center gap-1 shrink-0"' : 'class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1 transition shadow-2xs shrink-0 cursor-pointer"'}>
           <span class="material-symbols-outlined text-sm">chevron_left</span>
-          <span>Sebelumnya</span>
+          <span class="hidden sm:inline">Sebelumnya</span>
+          <span class="sm:hidden">Prev</span>
         </button>
       `;
 
-      // Page numbers with smart window
-      const maxButtons = 5;
-      let startP = Math.max(1, currentPage - 2);
+      // Page numbers with smart responsive window
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+      const maxButtons = isMobile ? 3 : 5;
+      let startP = Math.max(1, currentPage - Math.floor(maxButtons / 2));
       let endP = Math.min(totalPages, startP + maxButtons - 1);
       if (endP - startP < maxButtons - 1) {
         startP = Math.max(1, endP - maxButtons + 1);
       }
 
       if (startP > 1) {
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">1</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 cursor-pointer">1</button>`;
         if (startP > 2) {
-          btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
+          btnsHtml += `<span class="px-0.5 sm:px-1 text-slate-400 font-bold self-center text-xs shrink-0">...</span>`;
         }
       }
 
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center shrink-0 cursor-pointer ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs font-black' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
             ${p}
           </button>
         `;
@@ -411,16 +408,17 @@
 
       if (endP < totalPages) {
         if (endP < totalPages - 1) {
-          btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
+          btnsHtml += `<span class="px-0.5 sm:px-1 text-slate-400 font-bold self-center text-xs shrink-0">...</span>`;
         }
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">${totalPages}</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 cursor-pointer">${totalPages}</button>`;
       }
 
       // Next Button
       const isLast = currentPage >= totalPages;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
-          <span>Selanjutnya</span>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed inline-flex items-center gap-1 shrink-0"' : 'class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1 transition shadow-2xs shrink-0 cursor-pointer"'}>
+          <span class="hidden sm:inline">Selanjutnya</span>
+          <span class="sm:hidden">Next</span>
           <span class="material-symbols-outlined text-sm">chevron_right</span>
         </button>
       `;
@@ -428,7 +426,7 @@
       let limitSelectorHtml = '';
       if (onLimitChangeFn && limits && limits.length > 0) {
         limitSelectorHtml = `
-          <div class="flex items-center gap-1.5 ml-0 sm:ml-2">
+          <div class="flex items-center gap-1 shrink-0">
             <span class="text-slate-400 text-[11px]">Tampilkan:</span>
             <select onchange="${onLimitChangeFn}(this.value)" class="py-1 px-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs font-bold focus:outline-none">
               ${limits.map(l => `<option value="${l}" ${l === currentLimit ? 'selected' : ''}>${l}</option>`).join('')}
@@ -438,14 +436,16 @@
       }
 
       el.innerHTML = `
-        <div class="flex flex-wrap items-center gap-2 text-slate-500 font-medium text-xs">
-          <div>
-            Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> ${itemLabel}
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 w-full">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between sm:justify-start gap-2 w-full sm:w-auto text-slate-500 font-medium text-xs">
+            <div class="text-[11px] sm:text-xs text-slate-600 text-center sm:text-left">
+              Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> <span class="hidden sm:inline">${itemLabel}</span><span class="sm:hidden">data</span>
+            </div>
+            ${limitSelectorHtml ? `<div class="self-center sm:self-auto">${limitSelectorHtml}</div>` : ''}
           </div>
-          ${limitSelectorHtml}
-        </div>
-        <div class="flex items-center gap-1.5 flex-wrap">
-          ${btnsHtml}
+          <div class="flex items-center justify-center gap-1 sm:gap-1.5 flex-nowrap w-full sm:w-auto overflow-x-auto no-scrollbar py-0.5">
+            ${btnsHtml}
+          </div>
         </div>
       `;
     }

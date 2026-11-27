@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="1RfWrUYh6WcVbxJeQeL3qI6klzMGatjlXZZ8XnsU">
+  <meta name="csrf-token" content="lq2BA3zIzenIbR2mtwVodlLX5UZP6cRGIBqk1koS">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -169,6 +169,41 @@
       position: sticky !important;
       bottom: 0 !important;
       z-index: 20 !important;
+    }
+
+    /* Utility: Hide scrollbar across all browsers */
+    .no-scrollbar::-webkit-scrollbar,
+    .scrollbar-none::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    .no-scrollbar,
+    .scrollbar-none {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+
+    /* Responsive Mobile Full-Screen Modal Rules (< sm / < 640px) */
+    @media (max-width: 639.98px) {
+      .fixed.inset-0.z-\[9999\],
+      .fixed.inset-0.z-50,
+      .pogi-modal-overlay {
+        padding: 0 !important;
+      }
+
+      .pogi-modal-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100% !important;
+        height: 100dvh !important;
+        max-height: 100% !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
     }
   </style>
   </head>
@@ -346,7 +381,7 @@
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
                 <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">1 hari yang lalu</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">1 jam yang lalu</div>
               </div>
             </div>
           </div>
@@ -1177,7 +1212,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '1RfWrUYh6WcVbxJeQeL3qI6klzMGatjlXZZ8XnsU',
+            'X-CSRF-TOKEN': 'lq2BA3zIzenIbR2mtwVodlLX5UZP6cRGIBqk1koS',
             'Accept': 'application/json'
           },
           body: JSON.stringify({ target, channels, message })
@@ -1205,7 +1240,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': '1RfWrUYh6WcVbxJeQeL3qI6klzMGatjlXZZ8XnsU'
+          'X-CSRF-TOKEN': 'lq2BA3zIzenIbR2mtwVodlLX5UZP6cRGIBqk1koS'
         },
         body: JSON.stringify({
           doctor_id: doctorId || null,

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Crypt;
 
 class Doctor extends Model
 {
@@ -44,6 +46,37 @@ class Doctor extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * Enkripsi 2-arah (reversible AES-256 via Crypt) untuk Password LMS Plataran Sehat.
+     */
+    protected function plataranSehatPassEncrypted(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                if (empty($value)) {
+                    return null;
+                }
+                try {
+                    return Crypt::decryptString($value);
+                } catch (\Throwable) {
+                    return (string) $value; // Fallback untuk data legacy plain-text
+                }
+            },
+            set: function ($value) {
+                if (empty($value)) {
+                    return null;
+                }
+                $trimmed = trim((string) $value);
+                try {
+                    Crypt::decryptString($trimmed);
+                    return $trimmed; // Sudah dalam bentuk ciphertext valid
+                } catch (\Throwable) {
+                    return Crypt::encryptString($trimmed);
+                }
+            }
+        );
+    }
+
     public function province(): BelongsTo
     {
         return $this->belongsTo(Province::class, 'province_id');
@@ -67,5 +100,10 @@ class Doctor extends Model
     public function activeSkpPeriod(): HasOne
     {
         return $this->hasOne(DoctorSkpPeriod::class, 'doctor_id')->where('is_active', true);
+    }
+
+    public function assignedPic(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_pic_id');
     }
 }

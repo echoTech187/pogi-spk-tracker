@@ -92,7 +92,7 @@ class EloquentManageRepository
             ->get();
 
         $doctors = Doctor::query()
-            ->with(['province', 'branch', 'institution', 'activeSkpPeriod'])
+            ->with(['province', 'branch', 'institution', 'activeSkpPeriod', 'assignedPic'])
             ->orderBy('full_name')
             ->get()
             ->map(function (Doctor $doc) {
@@ -118,13 +118,16 @@ class EloquentManageRepository
                     'email' => $doc->email,
                     'phone' => $doc->whatsapp_number,
                     'plataran_sehat_username' => $doc->plataran_sehat_username,
-                    'plataran_sehat_password' => $doc->plataran_sehat_pass_encrypted ?: 'PogiPlataran2026!',
+                    'plataran_sehat_password' => $doc->plataran_sehat_pass_encrypted ?? '',
                     'period_start' => $period?->start_date ? Carbon::parse($period->start_date)->format('Y-m-d') : '2026-01-01',
                     'period_end' => $period?->end_date ? Carbon::parse($period->end_date)->format('Y-m-d') : '2030-12-31',
                     'is_active' => (bool) ($doc->is_active ?? true),
                     'status' => ($doc->is_active ?? true) ? 'Active' : 'Non-Active',
                     'raw_status' => ($doc->is_active ?? true) ? 'ACTIVE' : 'INACTIVE',
                     'compliance_status' => ($doc->status === 'COMPLETE' || $achievedTotal >= 8.0) ? 'Complete' : 'Incomplete',
+                    'assigned_pic_id' => $doc->assigned_pic_id,
+                    'assigned_to' => $doc->assignedPic?->full_name,
+                    'assigned_pic_name' => $doc->assignedPic?->full_name,
                     'province_id' => $doc->province_id,
                     'province' => $doc->province?->name ?? '-',
                     'branch_id' => $doc->branch_id,
@@ -241,7 +244,12 @@ class EloquentManageRepository
                 ];
             });
 
-        return compact('users', 'branches', 'doctors', 'provinces', 'institutions', 'categories', 'events', 'institutionTypes');
+        $adminPogiList = User::where('role', 'ADMIN_POGI')
+            ->where('is_active', true)
+            ->orderBy('full_name')
+            ->get();
+
+        return compact('users', 'branches', 'doctors', 'provinces', 'institutions', 'categories', 'events', 'institutionTypes', 'adminPogiList');
     }
 
     public function createEntity(string $entityType, array $v, ?string $actorId): array
@@ -282,10 +290,13 @@ class EloquentManageRepository
             $plataranUser = !empty($v['plataran_sehat_username']) ? trim($v['plataran_sehat_username']) : null;
             $plataranPass = !empty($v['plataran_sehat_password']) ? trim($v['plataran_sehat_password']) : null;
 
-            $assignedPicId = !empty($v['assigned_pic_id']) ? $v['assigned_pic_id'] : null;
-            if (!$assignedPicId && !empty($v['assigned_to'])) {
-                $picUser = User::where('full_name', 'like', '%' . trim($v['assigned_to']) . '%')
-                    ->orWhere('email', 'like', '%' . trim($v['assigned_to']) . '%')
+            $rawPic = !empty($v['assigned_pic_id']) ? $v['assigned_pic_id'] : (!empty($v['assigned_to']) ? $v['assigned_to'] : null);
+            $assignedPicId = null;
+            if ($rawPic) {
+                $cleanPic = trim(str_ireplace(['(Admin POGI)', 'Admin POGI'], '', (string) $rawPic));
+                $picUser = User::where('id', $rawPic)->first()
+                    ?? User::where('full_name', 'like', '%' . $cleanPic . '%')
+                    ->orWhere('email', 'like', '%' . $cleanPic . '%')
                     ->first();
                 $assignedPicId = $picUser?->id;
             }
@@ -576,8 +587,8 @@ class EloquentManageRepository
             if (array_key_exists('plataran_sehat_username', $v)) {
                 $upd['plataran_sehat_username'] = !empty($v['plataran_sehat_username']) ? trim($v['plataran_sehat_username']) : null;
             }
-            if (!empty($v['plataran_sehat_password'])) {
-                $upd['plataran_sehat_pass_encrypted'] = trim($v['plataran_sehat_password']);
+            if (array_key_exists('plataran_sehat_password', $v)) {
+                $upd['plataran_sehat_pass_encrypted'] = !empty($v['plataran_sehat_password']) ? trim($v['plataran_sehat_password']) : null;
             }
             if (array_key_exists('is_active', $v)) {
                 $upd['is_active'] = (bool) $v['is_active'];
@@ -591,13 +602,19 @@ class EloquentManageRepository
                     $upd['status'] = $st;
                 }
             }
-            if (array_key_exists('assigned_pic_id', $v)) {
-                $upd['assigned_pic_id'] = $v['assigned_pic_id'];
-            } elseif (!empty($v['assigned_to'])) {
-                $picUser = User::where('full_name', 'like', '%' . trim($v['assigned_to']) . '%')
-                    ->orWhere('email', 'like', '%' . trim($v['assigned_to']) . '%')
-                    ->first();
-                $upd['assigned_pic_id'] = $picUser?->id;
+            $hasPicKey = array_key_exists('assigned_pic_id', $v) || array_key_exists('assigned_to', $v);
+            if ($hasPicKey) {
+                $rawPic = !empty($v['assigned_pic_id']) ? $v['assigned_pic_id'] : (!empty($v['assigned_to']) ? $v['assigned_to'] : null);
+                if (!empty($rawPic)) {
+                    $cleanPic = trim(str_ireplace(['(Admin POGI)', 'Admin POGI'], '', (string) $rawPic));
+                    $picUser = User::where('id', $rawPic)->first()
+                        ?? User::where('full_name', 'like', '%' . $cleanPic . '%')
+                        ->orWhere('email', 'like', '%' . $cleanPic . '%')
+                        ->first();
+                    $upd['assigned_pic_id'] = $picUser?->id;
+                } else {
+                    $upd['assigned_pic_id'] = null;
+                }
             }
             if ($prov) $upd['province_id'] = $prov->id;
             if ($branch) $upd['branch_id'] = $branch->id;
@@ -606,7 +623,12 @@ class EloquentManageRepository
                 $upd['nik_encrypted'] = NikCipher::encrypt($v['nik']);
                 $upd['nik_hash'] = NikCipher::hash($v['nik']);
             }
-            Doctor::where('id', $id)->update($upd);
+            $docRecord = Doctor::find($id);
+            if ($docRecord) {
+                $docRecord->update($upd);
+            } else {
+                Doctor::where('id', $id)->update($upd);
+            }
 
             $cleanDate = function($val) {
                 if (!$val) return null;

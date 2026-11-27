@@ -7,13 +7,13 @@
   <div class="space-y-5">
 
     <!-- Clean Page Header (Modern Enterprise Standard matching Activity Log) -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-1">
       <div class="space-y-1.5 min-w-0">
-        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Pusat Pengelolaan Master Data</span>
-          <span class="text-slate-300">•</span>
-          <span class="text-slate-500 font-semibold normal-case">5 Entitas Terpadu</span>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-extrabold uppercase tracking-wider max-w-full">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+          <span class="truncate">Master Data POGI</span>
+          <span class="hidden sm:inline text-slate-300">•</span>
+          <span class="hidden sm:inline text-slate-500 font-semibold normal-case">5 Entitas Terpadu</span>
         </div>
         <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
           <span>Master Data Pangkalan POGI SKP</span>
@@ -32,26 +32,26 @@
     </div>
 
     <!-- Top Segmented Tabs (Doctor, Institution, SKP Event, Event Category, User) -->
-    <div class="p-1 bg-slate-100/90 rounded-2xl flex flex-wrap gap-1 text-xs font-bold text-slate-600 border border-slate-200/70">
-      <button type="button" onclick="switchManageTab('doctor')" id="tab-btn-doctor" class="py-2 px-3.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5 font-black cursor-pointer">
+    <div class="p-1 sm:p-1.5 bg-slate-100/90 rounded-2xl flex items-center gap-1 sm:gap-1.5 text-xs font-bold text-slate-600 border border-slate-200/70 overflow-x-auto no-scrollbar scrollbar-none">
+      <button type="button" onclick="switchManageTab('doctor')" id="tab-btn-doctor" class="py-2 px-3 sm:px-3.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5 font-black cursor-pointer shrink-0 whitespace-nowrap">
         <span class="material-symbols-outlined text-sm text-[#16b3ac]">person</span>
-        <span>1. Doctor</span>
+        <span><span class="sm:hidden">Dokter</span><span class="hidden sm:inline">1. Doctor</span></span>
       </button>
-      <button type="button" onclick="switchManageTab('institution')" id="tab-btn-institution" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
+      <button type="button" onclick="switchManageTab('institution')" id="tab-btn-institution" class="py-2 px-3 sm:px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
         <span class="material-symbols-outlined text-sm">domain</span>
-        <span>2. Institution (RS Jejaring)</span>
+        <span><span class="sm:hidden">RS Jejaring</span><span class="hidden sm:inline">2. Institution (RS Jejaring)</span></span>
       </button>
-      <button type="button" onclick="switchManageTab('event')" id="tab-btn-event" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
+      <button type="button" onclick="switchManageTab('event')" id="tab-btn-event" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
         <span class="material-symbols-outlined text-sm">calendar_month</span>
-        <span>3. SKP Event Master</span>
+        <span><span class="sm:hidden">Kegiatan SKP</span><span class="hidden sm:inline">3. SKP Event Master</span></span>
       </button>
-      <button type="button" onclick="switchManageTab('category')" id="tab-btn-category" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
+      <button type="button" onclick="switchManageTab('category')" id="tab-btn-category" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
         <span class="material-symbols-outlined text-sm">category</span>
-        <span>4. Event Category</span>
+        <span><span class="sm:hidden">Kategori</span><span class="hidden sm:inline">4. Event Category</span></span>
       </button>
-      <button type="button" onclick="switchManageTab('user')" id="tab-btn-user" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
+      <button type="button" onclick="switchManageTab('user')" id="tab-btn-user" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
         <span class="material-symbols-outlined text-sm">manage_accounts</span>
-        <span>5. User &amp; Hak Akses</span>
+        <span><span class="sm:hidden">User &amp; Akses</span><span class="hidden sm:inline">5. User &amp; Hak Akses</span></span>
       </button>
     </div>
 
@@ -63,10 +63,10 @@
       <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <div>
-            <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Nama Dokter / NIK / No Anggota</label>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Nama Dokter / Nomor STR</label>
             <div class="relative flex items-center">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none">search</span>
-              <input id="searchManageDoctorInput" onkeyup="filterManageDoctorTable()" type="text" placeholder="Ketik nama spesialis, NIK, STR..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
+              <input id="searchManageDoctorInput" onkeyup="filterManageDoctorTable()" type="text" placeholder="Ketik nama spesialis atau STR..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
             </div>
           </div>
 
@@ -125,19 +125,20 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-          <div>Menampilkan <span id="manageDoctorCounter" class="font-bold text-slate-900">0</span> dokter dari total pangkalan data</div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="resetManageDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline mr-1">Reset Filter</button>
-            <button type="button" onclick="openManageImportModal('doctor')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Dokter dari File Excel">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs text-slate-500">
+          <div class="flex items-center">
+            <button type="button" onclick="resetManageDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+          </div>
+          <div class="grid grid-cols-2 sm:flex sm:items-center gap-2">
+            <button type="button" onclick="openManageImportModal('doctor')" class="px-3 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Dokter dari File Excel">
               <span class="material-symbols-outlined text-emerald-600 text-base">upload_file</span>
-              <span>Import (Excel)</span>
+              <span>Import</span>
             </button>
-            <button type="button" onclick="exportManageTabExcel('doctor')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Dokter ke File Excel (.xlsx)">
+            <button type="button" onclick="exportManageTabExcel('doctor')" class="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Dokter ke File Excel (.xlsx)">
               <span class="material-symbols-outlined text-emerald-700 text-base">file_download</span>
-              <span>Export (Excel)</span>
+              <span>Export</span>
             </button>
-            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+            <button type="button" onclick="openActiveAddModal()" class="col-span-2 sm:col-span-1 px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center justify-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">person_add</span>
               <span>Tambah Dokter</span>
             </button>
@@ -148,31 +149,18 @@
       <!-- Table (Persis Format doctors.html) -->
       <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
         <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs whitespace-nowrap">
+          <table class="w-full text-left text-xs whitespace-nowrap min-w-[950px]">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
               <tr>
-                <th class="py-3 px-4">Dokter &amp; No Anggota</th>
-                <th class="py-3 px-4">Provinsi &amp; RS Jejaring</th>
-                <th class="py-3 px-4">SKP Progress (Q4)</th>
-                <th class="py-3 px-4 text-center">Pending Credits</th>
-                <th class="py-3 px-4">
-                  <div class="flex items-center gap-1 text-sky-800 font-bold">
-                    <span class="w-2 h-2 rounded-full bg-sky-600"></span> Pelayanan (Min 80)
-                  </div>
-                </th>
-                <th class="py-3 px-4">
-                  <div class="flex items-center gap-1 text-amber-800 font-bold">
-                    <span class="w-2 h-2 rounded-full bg-amber-600"></span> Pengabdian (Min 30)
-                  </div>
-                </th>
-                <th class="py-3 px-4">
-                  <div class="flex items-center gap-1 text-emerald-800 font-bold">
-                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span> Pembelajaran (Min 50)
-                  </div>
-                </th>
-                <th class="py-3 px-4 text-center">Status</th>
-                <th class="py-3 px-4">Aktivitas Terakhir</th>
-                <th class="py-3 px-4 text-center">Aksi</th>
+                <th class="py-3 px-4 min-w-[200px]">Nama Dokter</th>
+                <th class="py-3 px-4 min-w-[130px]">Nomor STR</th>
+                <th class="py-3 px-4 min-w-[150px]">Kontak</th>
+                <th class="py-3 px-4 min-w-[180px]">Wilayah &amp; RS Jejaring</th>
+                <th class="py-3 px-4 min-w-[140px]">PIC Admin Binaan</th>
+                <th class="py-3 px-4 min-w-[160px]">Periode SKP</th>
+                <th class="py-3 px-4 min-w-[150px]">Akun LMS Plataran</th>
+                <th class="py-3 px-4 text-center min-w-[90px]">Status</th>
+                <th class="py-3 px-4 text-center min-w-[140px]">Aksi</th>
               </tr>
             </thead>
             <tbody id="manageDoctorTableBody" class="divide-y divide-slate-100 font-medium">
@@ -265,19 +253,20 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-          <div>Menampilkan <span id="manageInstCounter" class="font-bold text-slate-900">0</span> faskes jejaring</div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="resetManageInstFilters()" class="text-[#16b3ac] font-bold hover:underline mr-1">Reset Filter</button>
-            <button type="button" onclick="openManageImportModal('institution')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data RS / Faskes dari File Excel">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs text-slate-500">
+          <div class="flex items-center">
+            <button type="button" onclick="resetManageInstFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+          </div>
+          <div class="grid grid-cols-2 sm:flex sm:items-center gap-2">
+            <button type="button" onclick="openManageImportModal('institution')" class="px-3 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data RS / Faskes dari File Excel">
               <span class="material-symbols-outlined text-emerald-600 text-base">upload_file</span>
-              <span>Import (Excel)</span>
+              <span>Import</span>
             </button>
-            <button type="button" onclick="exportManageTabExcel('institution')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data RS / Faskes ke File Excel (.xlsx)">
+            <button type="button" onclick="exportManageTabExcel('institution')" class="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data RS / Faskes ke File Excel (.xlsx)">
               <span class="material-symbols-outlined text-emerald-700 text-base">file_download</span>
-              <span>Export (Excel)</span>
+              <span>Export</span>
             </button>
-            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+            <button type="button" onclick="openActiveAddModal()" class="col-span-2 sm:col-span-1 px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center justify-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">domain_add</span>
               <span>Tambah Institusi</span>
             </button>
@@ -288,7 +277,7 @@
       <!-- Table -->
       <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
         <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs whitespace-nowrap">
+          <table class="w-full text-left text-xs whitespace-nowrap min-w-[850px]">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
               <tr>
                 <th class="py-3 px-4">Rumah Sakit &amp; Faskes</th>
@@ -351,19 +340,20 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-          <div>Menampilkan <span id="manageEventCounter" class="font-bold text-slate-900">0</span> event SKP terdaftar</div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="resetManageEventFilters()" class="text-[#16b3ac] font-bold hover:underline mr-1">Reset Filter</button>
-            <button type="button" onclick="openManageImportModal('event')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Event SKP dari File Excel">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs pt-1 border-t border-slate-100 text-slate-500">
+          <div class="flex items-center">
+            <button type="button" onclick="resetManageEventFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+          </div>
+          <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
+            <button type="button" onclick="openManageImportModal('event')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Event SKP dari File Excel">
               <span class="material-symbols-outlined text-emerald-600 text-base">upload_file</span>
-              <span>Import (Excel)</span>
+              <span>Import</span>
             </button>
-            <button type="button" onclick="exportManageTabExcel('event')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Event SKP ke File Excel (.xlsx)">
+            <button type="button" onclick="exportManageTabExcel('event')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Event SKP ke File Excel (.xlsx)">
               <span class="material-symbols-outlined text-emerald-700 text-base">file_download</span>
-              <span>Export (Excel)</span>
+              <span>Export</span>
             </button>
-            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+            <button type="button" onclick="openActiveAddModal()" class="col-span-2 sm:col-span-1 px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center justify-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">add_circle</span>
               <span>Tambah Event SKP</span>
             </button>
@@ -374,7 +364,7 @@
       <!-- Table -->
       <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
         <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs whitespace-nowrap">
+          <table class="w-full text-left text-xs whitespace-nowrap min-w-[850px]">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
               <tr>
                 <th class="py-3 px-4">Event &amp; Kegiatan Ilmiah</th>
@@ -437,19 +427,20 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-          <div>Menampilkan <span id="manageCatCounter" class="font-bold text-slate-900">0</span> kategori terverifikasi</div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="resetManageCatFilters()" class="text-[#16b3ac] font-bold hover:underline mr-1">Reset Filter</button>
-            <button type="button" onclick="openManageImportModal('category')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Kategori dari File Excel">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs pt-1 border-t border-slate-100 text-slate-500">
+          <div class="flex items-center">
+            <button type="button" onclick="resetManageCatFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+          </div>
+          <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
+            <button type="button" onclick="openManageImportModal('category')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Kategori dari File Excel">
               <span class="material-symbols-outlined text-emerald-600 text-base">upload_file</span>
-              <span>Import (Excel)</span>
+              <span>Import</span>
             </button>
-            <button type="button" onclick="exportManageTabExcel('category')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Kategori ke File Excel (.xlsx)">
+            <button type="button" onclick="exportManageTabExcel('category')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Kategori ke File Excel (.xlsx)">
               <span class="material-symbols-outlined text-emerald-700 text-base">file_download</span>
-              <span>Export (Excel)</span>
+              <span>Export</span>
             </button>
-            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+            <button type="button" onclick="openActiveAddModal()" class="col-span-2 sm:col-span-1 px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center justify-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">category</span>
               <span>Tambah Kategori</span>
             </button>
@@ -460,7 +451,7 @@
       <!-- Table -->
       <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
         <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs whitespace-nowrap">
+          <table class="w-full text-left text-xs whitespace-nowrap min-w-[750px]">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
               <tr>
                 <th class="py-3 px-4">Kategori Kegiatan SKP</th>
@@ -525,11 +516,12 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-          <div>Menampilkan <span id="manageUserCounter" class="font-bold text-slate-900">0</span> akun pengelola</div>
-          <div class="flex items-center gap-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs pt-1 border-t border-slate-100 text-slate-500">
+          <div class="flex items-center">
             <button type="button" onclick="resetManageUserFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
-            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button type="button" onclick="openActiveAddModal()" class="w-full sm:w-auto px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center justify-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">manage_accounts</span>
               <span>Tambah Pengguna</span>
             </button>
@@ -540,7 +532,7 @@
       <!-- Table -->
       <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
         <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs whitespace-nowrap">
+          <table class="w-full text-left text-xs whitespace-nowrap min-w-[800px]">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
               <tr>
                 <th class="py-3 px-4">Pengguna &amp; Email</th>
@@ -569,9 +561,6 @@
 
   <!-- Reusable Action Dropdown Menu -->
   <div id="rowActionMenu" class="hidden fixed z-50 bg-white border border-slate-200 rounded-2xl shadow-2xl py-1.5 text-xs w-40">
-    <button onclick="handleRowAction('detail')" class="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium">
-      <span class="material-symbols-outlined text-sm">visibility</span> Rincian Lengkap
-    </button>
     <button onclick="handleRowAction('edit')" class="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium">
       <span class="material-symbols-outlined text-sm">edit</span> Edit Data
     </button>
@@ -594,10 +583,10 @@
     }
   </style>
   <!-- Modal Add Generic Master Item -->
-  <div id="manageAddModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
+  <div id="manageAddModal" class="pogi-modal-overlay fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-0 sm:p-4">
+    <div class="pogi-modal-card bg-white rounded-none sm:rounded-3xl max-w-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
       <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5 min-w-0">
           <div id="manageAddModalIconWrap" class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span id="manageAddModalIcon" class="material-symbols-outlined text-xl">add_circle</span>
@@ -612,10 +601,10 @@
         </button>
       </div>
       <form id="manageAddForm" onsubmit="event.preventDefault(); submitManageAdd();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div id="manageAddFormFields" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+        <div id="manageAddFormFields" class="p-4 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
           <!-- Populated dynamically based on active tab -->
         </div>
-        <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <div class="p-3.5 sm:p-4 px-4 sm:px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
           <button type="button" onclick="closeManageAddModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
           <button id="manageAddSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
             <span class="material-symbols-outlined text-sm">check_circle</span>
@@ -627,10 +616,10 @@
   </div>
 
   <!-- Modal View Details -->
-  <div id="manageDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
+  <div id="manageDetailModal" class="pogi-modal-overlay fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-0 sm:p-4">
+    <div class="pogi-modal-card bg-white rounded-none sm:rounded-3xl max-w-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
       <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5 min-w-0">
           <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span id="manageDetailModalIcon" class="material-symbols-outlined text-xl">visibility</span>
@@ -645,11 +634,11 @@
         </button>
       </div>
       <!-- Modal Body (Scrollable) -->
-      <div id="manageDetailContent" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+      <div id="manageDetailContent" class="p-4 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
         <!-- Key value pairs -->
       </div>
       <!-- Modal Footer (Sticky) -->
-      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+      <div class="p-3.5 sm:p-4 px-4 sm:px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
         <button id="manageDetailEditBtn" type="button" class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200/80 font-bold text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs rbac-operational">
           <span class="material-symbols-outlined text-sm">edit_square</span>
           <span>Edit Data</span>
@@ -660,10 +649,10 @@
   </div>
 
   <!-- Modal Edit Item -->
-  <div id="manageEditModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
+  <div id="manageEditModal" class="pogi-modal-overlay fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-0 sm:p-4">
+    <div class="pogi-modal-card bg-white rounded-none sm:rounded-3xl max-w-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
       <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5 min-w-0">
           <div id="manageEditModalIconWrap" class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span id="manageEditModalIcon" class="material-symbols-outlined text-xl">edit_square</span>
@@ -678,10 +667,10 @@
         </button>
       </div>
       <form id="manageEditForm" onsubmit="event.preventDefault(); submitManageEdit();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div id="manageEditFormFields" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+        <div id="manageEditFormFields" class="p-4 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
           <!-- Populated dynamically -->
         </div>
-        <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <div class="p-3.5 sm:p-4 px-4 sm:px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
           <button type="button" onclick="closeManageEditModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
           <button id="manageEditSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
             <span class="material-symbols-outlined text-sm">save</span>
@@ -693,10 +682,12 @@
   </div>
 
   @php
-    $adminPogiList = collect($users ?? [])->filter(function($u) {
-      $role = is_object($u) ? ($u->role ?? '') : (is_array($u) ? ($u['role'] ?? '') : '');
-      return in_array($role, ['Admin POGI', 'Admin Pusat', 'Super Admin']);
-    })->values();
+    $adminPogiList = isset($adminPogiList) && count($adminPogiList) > 0 
+      ? $adminPogiList 
+      : collect($users ?? [])->filter(function($u) {
+          $role = is_object($u) ? ($u->raw_role ?? $u->role ?? '') : (is_array($u) ? ($u['raw_role'] ?? $u['role'] ?? '') : '');
+          return in_array($role, ['ADMIN_POGI', 'Admin POGI'], true);
+        })->values();
   @endphp
 
   <!-- Modal Add Doctor (Standardized Component) -->
@@ -756,10 +747,10 @@
   <!-- ========================================================================= -->
   <!-- MODAL POPUP: IMPORT EXCEL MASTER DATA (DOCTOR, INSTITUTION, EVENT, CATEGORY) -->
   <!-- ========================================================================= -->
-  <div id="manageImportModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
+  <div id="manageImportModal" class="pogi-modal-overlay fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-0 sm:p-4">
+    <div class="pogi-modal-card bg-white rounded-none sm:rounded-3xl max-w-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
       <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5 min-w-0">
           <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span class="material-symbols-outlined text-xl">upload_file</span>
@@ -855,7 +846,7 @@
       if (!el) return;
 
       if (totalItems === 0) {
-        el.innerHTML = '<div class="text-slate-400 text-xs py-1">Tidak ada data untuk ditampilkan</div>';
+        el.innerHTML = '<div class="text-slate-400 text-xs py-1 text-center w-full">Tidak ada data untuk ditampilkan</div>';
         return;
       }
 
@@ -864,31 +855,33 @@
       // Prev Button
       const isFirst = currentPage <= 1;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed inline-flex items-center gap-1 shrink-0"' : 'class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1 transition shadow-2xs shrink-0 cursor-pointer"'}>
           <span class="material-symbols-outlined text-sm">chevron_left</span>
-          <span>Sebelumnya</span>
+          <span class="hidden sm:inline">Sebelumnya</span>
+          <span class="sm:hidden">Prev</span>
         </button>
       `;
 
-      // Page numbers with smart window
-      const maxButtons = 5;
-      let startP = Math.max(1, currentPage - 2);
+      // Page numbers with smart responsive window
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+      const maxButtons = isMobile ? 3 : 5;
+      let startP = Math.max(1, currentPage - Math.floor(maxButtons / 2));
       let endP = Math.min(totalPages, startP + maxButtons - 1);
       if (endP - startP < maxButtons - 1) {
         startP = Math.max(1, endP - maxButtons + 1);
       }
 
       if (startP > 1) {
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">1</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 cursor-pointer">1</button>`;
         if (startP > 2) {
-          btnsHtml += '<span class="px-1 text-slate-400 font-bold self-center">...</span>';
+          btnsHtml += '<span class="px-0.5 sm:px-1 text-slate-400 font-bold self-center text-xs shrink-0">...</span>';
         }
       }
 
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center shrink-0 cursor-pointer ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs font-black' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
             ${p}
           </button>
         `;
@@ -896,16 +889,17 @@
 
       if (endP < totalPages) {
         if (endP < totalPages - 1) {
-          btnsHtml += '<span class="px-1 text-slate-400 font-bold self-center">...</span>';
+          btnsHtml += '<span class="px-0.5 sm:px-1 text-slate-400 font-bold self-center text-xs shrink-0">...</span>';
         }
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">${totalPages}</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 cursor-pointer">${totalPages}</button>`;
       }
 
       // Next Button
       const isLast = currentPage >= totalPages;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
-          <span>Selanjutnya</span>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed inline-flex items-center gap-1 shrink-0"' : 'class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1 transition shadow-2xs shrink-0 cursor-pointer"'}>
+          <span class="hidden sm:inline">Selanjutnya</span>
+          <span class="sm:hidden">Next</span>
           <span class="material-symbols-outlined text-sm">chevron_right</span>
         </button>
       `;
@@ -913,7 +907,7 @@
       let limitSelectorHtml = '';
       if (onLimitChangeFn && limits && limits.length > 0) {
         limitSelectorHtml = `
-          <div class="flex items-center gap-1.5 ml-0 sm:ml-2">
+          <div class="flex items-center gap-1 shrink-0">
             <span class="text-slate-400 text-[11px]">Tampilkan:</span>
             <select onchange="${onLimitChangeFn}(this.value)" class="py-1 px-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs font-bold focus:outline-none">
               ${limits.map(l => `<option value="${l}" ${l === currentLimit ? 'selected' : ''}>${l}</option>`).join('')}
@@ -923,14 +917,16 @@
       }
 
       el.innerHTML = `
-        <div class="flex flex-wrap items-center gap-2 text-slate-500 font-medium text-xs">
-          <div>
-            Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> ${itemLabel}
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3 w-full">
+          <div class="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto text-slate-500 font-medium text-xs">
+            <div class="text-[11px] sm:text-xs text-slate-600 truncate">
+              Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> <span class="hidden sm:inline">${itemLabel}</span><span class="sm:hidden">data</span>
+            </div>
+            ${limitSelectorHtml}
           </div>
-          ${limitSelectorHtml}
-        </div>
-        <div class="flex items-center gap-1.5 flex-wrap">
-          ${btnsHtml}
+          <div class="flex items-center justify-center gap-1 sm:gap-1.5 flex-nowrap w-full sm:w-auto overflow-x-auto no-scrollbar py-0.5">
+            ${btnsHtml}
+          </div>
         </div>
       `;
     }
@@ -1545,7 +1541,7 @@
         if (t === tab) {
           if (pane) pane.classList.remove('hidden');
           if (topBtn) {
-            topBtn.className = 'py-2 px-3.5 rounded-xl bg-white text-slate-900 shadow-xs transition flex items-center gap-1.5 font-bold';
+            topBtn.className = 'py-2 px-3 sm:px-3.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5 font-black shrink-0 whitespace-nowrap cursor-pointer';
           }
           if (sideBtn) {
             sideBtn.className = 'nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition bg-[#16b3ac] text-white shadow-xs';
@@ -1553,7 +1549,7 @@
         } else {
           if (pane) pane.classList.add('hidden');
           if (topBtn) {
-            topBtn.className = 'py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5';
+            topBtn.className = 'py-2 px-3 sm:px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold shrink-0 whitespace-nowrap cursor-pointer';
           }
           if (sideBtn) {
             sideBtn.className = 'nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100';
@@ -1642,7 +1638,7 @@
         if (tbody) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="10" class="py-14 px-4 text-center">
+              <td colspan="9" class="py-14 px-4 text-center">
                 <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
                   <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
                     <span class="material-symbols-outlined text-2xl">person_off</span>
@@ -1677,9 +1673,6 @@
         // Desktop & Tablet Rows
         if (tbody) {
           tbody.innerHTML = pageDoctors.map(d => {
-            const qAchieved = d.q4Credits !== undefined ? d.q4Credits : (d.qAchieved !== undefined ? d.qAchieved : 8.0);
-            const qTarget = 8.0;
-            const percent = Math.min(100, Math.round((qAchieved / qTarget) * 100));
             const isDocActive = (d.is_active === true || d.status === 'Active' || d.status === 'ACTIVE' || d.status === 'Aktif' || d.raw_status === 'ACTIVE');
             const statusBadge = isDocActive
               ? '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Active</span>'
@@ -1687,11 +1680,12 @@
 
             const initials = d.initials || d.avatar || 'DR';
             const hospital = d.hospital || d.institution || 'RS Jejaring POGI';
-            const pel = d.pelayananCredits !== undefined ? d.pelayananCredits : (d.pelayanan?.achieved || 0);
-            const peng = d.pengabdianCredits !== undefined ? d.pengabdianCredits : (d.pengabdian?.achieved || 0);
-            const pemb = d.pembelajaranCredits !== undefined ? d.pembelajaranCredits : (d.pembelajaran?.achieved || 0);
-            const total5Year = d.total5YearAchieved ?? d.totalCredits ?? (pel + peng + pemb);
-            const lastAct = d.lastActivity || '-';
+            const strNumber = d.str_number || d.str || '-';
+            const phone = d.phone || d.whatsapp_number || '-';
+            const email = d.email || '-';
+            const picAdmin = d.assigned_to || d.assigned_pic_name || '';
+            const periodStr = `${d.period_start || '2026-01-01'} s/d ${d.period_end || '2030-12-31'}`;
+            const plataranUser = d.plataran_sehat_username || '';
 
             return `
               <tr class="hover:bg-slate-50/80 transition">
@@ -1702,54 +1696,58 @@
                     </div>
                     <div class="min-w-0">
                       <div class="font-bold text-slate-900 text-xs leading-snug truncate max-w-[220px]">${d.name}</div>
-                      <div class="text-[10px] text-slate-400 font-mono mt-0.5">${d.pogiId || '-'}</div>
                     </div>
                   </div>
                 </td>
                 <td class="py-3 px-4">
-                  <div class="font-semibold text-slate-800 text-xs">${d.province}</div>
+                  <div class="font-mono font-semibold text-slate-800 text-xs">${strNumber}</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center gap-1.5 font-medium text-slate-700 text-xs">
+                    <span class="material-symbols-outlined text-[14px] text-emerald-600 shrink-0">call</span>
+                    <span>${phone}</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 text-[10px] text-slate-400 truncate max-w-[170px] mt-0.5">
+                    <span class="material-symbols-outlined text-[13px] text-slate-400 shrink-0">mail</span>
+                    <span class="truncate">${email}</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">
+                  <div class="font-semibold text-slate-800 text-xs">${d.province || '-'}</div>
                   <div class="text-[10px] text-slate-500 truncate max-w-[170px] mt-0.5">${hospital}</div>
                 </td>
                 <td class="py-3 px-4">
-                  <div class="flex items-center justify-between text-[11px] mb-1 font-bold">
-                    <span class="text-slate-800">${qAchieved.toFixed(1)} / ${qTarget.toFixed(1)} SKP</span>
-                    <span class="${percent >= 100 ? 'text-emerald-700' : 'text-amber-600'}">${percent}%</span>
-                  </div>
-                  <div class="w-28 bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                    <div class="${percent >= 100 ? 'bg-[#16b3ac]' : 'bg-amber-500'} h-1.5 rounded-full" style="width: ${percent}%"></div>
-                  </div>
-                  <div class="text-[9px] text-slate-400 mt-1">Total 5 Thn: ${total5Year}/160 SKP</div>
-                </td>
-                <td class="py-3 px-4 text-center">
-                  ${d.pendingCredits > 0 
-                    ? `<span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[11px]">+${d.pendingCredits} SKP</span>`
-                    : '<span class="text-slate-400 text-[11px]">-</span>'}
+                  ${picAdmin
+                    ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                        <span class="truncate max-w-[130px]">${picAdmin}</span>
+                       </span>`
+                    : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium text-slate-400 bg-slate-50 border border-slate-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0"></span>Belum Ditugaskan
+                       </span>`}
                 </td>
                 <td class="py-3 px-4">
-                  <div class="font-bold text-sky-900 text-xs">${pel} <span class="text-slate-400 font-normal">/ 80</span></div>
-                  <div class="w-20 bg-slate-100 rounded-full h-1 mt-1 overflow-hidden">
-                    <div class="progress-bar-pelayanan h-1 rounded-full" style="width: ${Math.min(100, (pel / 80) * 100)}%"></div>
+                  <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-medium text-slate-700">
+                    <span class="material-symbols-outlined text-[13px] text-slate-400">calendar_month</span>
+                    <span>${periodStr}</span>
                   </div>
                 </td>
                 <td class="py-3 px-4">
-                  <div class="font-bold text-amber-900 text-xs">${peng} <span class="text-slate-400 font-normal">/ 30</span></div>
-                  <div class="w-20 bg-slate-100 rounded-full h-1 mt-1 overflow-hidden">
-                    <div class="progress-bar-pengabdian h-1 rounded-full" style="width: ${Math.min(100, (peng / 30) * 100)}%"></div>
-                  </div>
-                </td>
-                <td class="py-3 px-4">
-                  <div class="font-bold text-emerald-900 text-xs">${pemb} <span class="text-slate-400 font-normal">/ 50</span></div>
-                  <div class="w-20 bg-slate-100 rounded-full h-1 mt-1 overflow-hidden">
-                    <div class="progress-bar-pembelajaran h-1 rounded-full" style="width: ${Math.min(100, (pemb / 50) * 100)}%"></div>
-                  </div>
+                  ${plataranUser
+                    ? `<div class="flex items-center gap-1.5 text-xs font-semibold text-sky-800">
+                        <span class="material-symbols-outlined text-[15px] text-sky-500">account_circle</span>
+                        <span class="truncate max-w-[140px]">${plataranUser}</span>
+                       </div>
+                       <div class="text-[10px] text-emerald-600 font-bold flex items-center gap-1 mt-0.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Terhubung LMS
+                       </div>`
+                    : `<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium text-slate-400 bg-slate-50 border border-slate-200">
+                        <span class="material-symbols-outlined text-[13px] text-slate-400">lock</span>Belum Disetel
+                       </div>`}
                 </td>
                 <td class="py-3 px-4 text-center">${statusBadge}</td>
-                <td class="py-3 px-4 text-[11px] text-slate-500">${lastAct}</td>
                 <td class="py-3 px-4 text-center">
                   <div class="flex items-center justify-center gap-1.5">
-                    <button type="button" onclick="openManageDetailModal('doctor', '${d.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition cursor-pointer">
-                      Rincian
-                    </button>
                     <button type="button" onclick="openManageEditModal('doctor', '${d.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer rbac-operational">
                       Edit
                     </button>
@@ -1766,38 +1764,81 @@
         // Mobile Touch Cards
         if (mobileContainer) {
           mobileContainer.innerHTML = pageDoctors.map(d => {
-            const qAchieved = d.q4Credits !== undefined ? d.q4Credits : 8.0;
             const isDocActive = (d.is_active === true || d.status === 'Active' || d.status === 'ACTIVE' || d.status === 'Aktif' || d.raw_status === 'ACTIVE');
             const initials = d.initials || d.avatar || 'DR';
             const hospital = d.hospital || d.institution || 'RS Jejaring POGI';
+            const strNumber = d.str_number || d.str || '-';
+            const phone = d.phone || d.whatsapp_number || '-';
+            const picAdmin = d.assigned_to || d.assigned_pic_name || '';
+            const periodStr = `${d.period_start || '2026-01-01'} - ${d.period_end || '2030-12-31'}`;
+            const plataranUser = d.plataran_sehat_username || '';
 
             return `
-              <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-                <div class="flex items-start justify-between gap-2">
-                  <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0">
+              <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="flex items-start justify-between gap-2.5">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-sm flex items-center justify-center shrink-0 shadow-2xs">
                       ${initials}
                     </div>
                     <div class="min-w-0">
-                      <div class="font-bold text-slate-900 text-xs leading-snug truncate">${d.name}</div>
-                      <div class="text-[10px] text-slate-400 font-mono">${d.pogiId || '-'}</div>
+                      <div class="font-bold text-slate-900 text-sm leading-snug truncate">${d.name}</div>
+                      <div class="text-[11px] text-slate-500 font-medium truncate mt-0.5">${hospital}</div>
                     </div>
                   </div>
-                  <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold ${isDocActive ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'} border shrink-0">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold ${isDocActive ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'} border shrink-0">
                     <span class="w-1.5 h-1.5 rounded-full ${isDocActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
                     ${isDocActive ? 'Active' : 'Non-Active'}
                   </span>
                 </div>
-                <div class="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 space-y-0.5">
-                  <div class="flex justify-between"><span class="text-slate-400 text-[10px]">Wilayah:</span> <span class="font-bold text-slate-800 text-[11px]">${d.province}</span></div>
-                  <div class="flex justify-between"><span class="text-slate-400 text-[10px]">RS:</span> <span class="font-medium text-slate-700 text-[11px] truncate max-w-[200px]">${hospital}</span></div>
+                <div class="text-xs text-slate-600 bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Nomor STR</span>
+                    <span class="font-mono font-bold text-slate-800">${strNumber}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Kontak (WA)</span>
+                    <span class="font-semibold text-slate-800 flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[13px] text-emerald-600">call</span>
+                      <span>${phone}</span>
+                    </span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Wilayah</span>
+                    <span class="font-bold text-slate-800">${d.province}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">PIC Admin</span>
+                    ${picAdmin 
+                      ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold text-[10px] border border-emerald-200">
+                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>${picAdmin}
+                         </span>`
+                      : `<span class="text-slate-400 text-[10px]">Belum Ditugaskan</span>`
+                    }
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Periode SKP</span>
+                    <span class="font-medium text-slate-700">${periodStr}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">LMS Plataran</span>
+                    ${plataranUser
+                      ? `<span class="inline-flex items-center gap-1 text-sky-700 font-bold text-[11px]">
+                          <span class="material-symbols-outlined text-[13px] text-sky-500">account_circle</span>
+                          <span class="truncate max-w-[140px]">${plataranUser}</span>
+                         </span>`
+                      : `<span class="text-slate-400 text-[10px] flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">lock</span>Belum Disetel</span>`
+                    }
+                  </div>
                 </div>
-                <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                  <button type="button" onclick="openManageDetailModal('doctor', '${d.id}')" class="flex-1 py-1 px-2.5 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
-                    <span>Rincian</span>
+                <div class="pt-1.5 border-t border-slate-100 grid grid-cols-2 gap-2">
+                  <button type="button" onclick="openManageEditModal('doctor', '${d.id}')" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">edit</span>
+                    <span>Edit</span>
                   </button>
-                  <button type="button" onclick="openManageEditModal('doctor', '${d.id}')" class="py-1 px-2.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
-                  <button type="button" onclick="deleteManageItem('doctor', '${d.id}')" class="py-1 px-2 rounded-lg text-red-600 hover:bg-red-50 text-xs font-bold transition rbac-operational">Hapus</button>
+                  <button type="button" onclick="deleteManageItem('doctor', '${d.id}')" class="py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">delete</span>
+                    <span>Hapus</span>
+                  </button>
                 </div>
               </div>
             `;
@@ -1951,7 +1992,6 @@
               <td class="py-3 px-4 text-[11px] text-slate-500 whitespace-nowrap">${inst.lastActivity || '-'}</td>
               <td class="py-3 px-4 text-center">
                 <div class="flex items-center justify-center gap-1.5">
-                  <button type="button" onclick="openManageDetailModal('institution', '${inst.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition cursor-pointer">Rincian</button>
                   <button type="button" onclick="openManageEditModal('institution', '${inst.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer rbac-operational">Edit</button>
                   <button type="button" onclick="deleteManageItem('institution', '${inst.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition cursor-pointer rbac-operational">Hapus</button>
                 </div>
@@ -1962,29 +2002,52 @@
 
         // Mobile Touch Cards
         if (mobileContainer) {
-          mobileContainer.innerHTML = pageInst.map(inst => `
-            <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-              <div class="flex items-start justify-between gap-2">
-                <div class="flex items-center gap-2 min-w-0">
-                  <div class="w-8 h-8 rounded-lg bg-emerald-50 text-[#16b3ac] flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-sm">local_hospital</span>
+          mobileContainer.innerHTML = pageInst.map(inst => {
+            const isAct = (inst.is_active === true || inst.status === 'Aktif' || inst.status === 'ACTIVE' || inst.status === 'Aktif Bekerjasama');
+            return `
+              <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="flex items-start justify-between gap-2.5">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-sm flex items-center justify-center shrink-0 shadow-2xs">
+                      <span class="material-symbols-outlined text-lg">local_hospital</span>
+                    </div>
+                    <div class="min-w-0">
+                      <div class="font-bold text-slate-900 text-sm leading-snug truncate">${inst.name}</div>
+                      <div class="text-[11px] text-slate-500 font-medium truncate mt-0.5">${inst.type || 'RS Jejaring'} ${inst.hospital_class ? '&bull; Kelas ' + inst.hospital_class : ''}</div>
+                    </div>
                   </div>
-                  <div class="min-w-0">
-                    <div class="font-bold text-slate-900 text-xs leading-snug truncate">${inst.name}</div>
-                    <div class="text-[10px] text-slate-400 font-mono">${inst.province} &bull; ${inst.type || 'RS'}</div>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold ${isAct ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'} border shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full ${isAct ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
+                    ${isAct ? 'Aktif' : 'Nonaktif'}
+                  </span>
+                </div>
+                <div class="text-xs text-slate-600 bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Wilayah</span>
+                    <span class="font-bold text-slate-800">${inst.province}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Alamat / Kota</span>
+                    <span class="font-medium text-slate-700 truncate max-w-[180px]">${inst.city || inst.address || '-'}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Total Dokter Terdaftar</span>
+                    <span class="font-bold text-[#16b3ac]">${inst.doctorsCount || 0} Dokter</span>
                   </div>
                 </div>
-                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-[#16b3ac] font-bold text-[10px] border border-emerald-200 shrink-0">${inst.doctorsCount || 0} Dokter</span>
+                <div class="pt-1.5 border-t border-slate-100 grid grid-cols-2 gap-2">
+                  <button type="button" onclick="openManageEditModal('institution', '${inst.id}')" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">edit</span>
+                    <span>Edit</span>
+                  </button>
+                  <button type="button" onclick="deleteManageItem('institution', '${inst.id}')" class="py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">delete</span>
+                    <span>Hapus</span>
+                  </button>
+                </div>
               </div>
-              <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                <button type="button" onclick="openManageDetailModal('institution', '${inst.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
-                  <span>Rincian</span>
-                  <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                </button>
-                <button type="button" onclick="openManageEditModal('institution', '${inst.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
-              </div>
-            </div>
-          `).join('');
+            `;
+          }).join('');
         }
       }
 
@@ -2128,7 +2191,6 @@
                 </td>
                 <td class="py-3 px-4 text-center">
                   <div class="flex items-center justify-center gap-1.5">
-                    <button type="button" onclick="openManageDetailModal('event', '${e.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition cursor-pointer">Rincian</button>
                     <button type="button" onclick="openManageEditModal('event', '${e.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer rbac-operational">Edit</button>
                     <button type="button" onclick="deleteManageItem('event', '${e.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition cursor-pointer rbac-operational">Hapus</button>
                   </div>
@@ -2144,26 +2206,43 @@
             const eventTitle = e.title || e.name || 'Kegiatan SKP POGI';
             const creditsVal = e.creditsDisplay || (e.credits ? e.credits.toString().replace('.', ',') : '1');
             const docCount = e.doctors ? e.doctors.replace('done', 'selesai') : ((e.doctorsCompleted || 0) + ' / 100 selesai');
+            const isEventOpen = (e.status === 'Dibuka' || e.status === 'Berjalan');
 
             return `
-              <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-                <div class="flex items-start justify-between gap-2">
+              <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="flex items-start justify-between gap-2.5">
                   <div class="min-w-0">
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#16b3ac] border border-emerald-200">${e.type}</span>
-                    <div class="font-bold text-slate-900 text-xs mt-1.5 leading-snug line-clamp-2">${eventTitle}</div>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${e.type === 'Pelayanan' ? 'bg-sky-100 text-sky-800 border-sky-200' : e.type === 'Pengabdian' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-emerald-100 text-emerald-800 border-emerald-200'} border">${e.type || 'Pembelajaran'}</span>
+                    <div class="font-bold text-slate-900 text-sm mt-1.5 leading-snug line-clamp-2">${eventTitle}</div>
                   </div>
-                  <span class="px-2 py-1 rounded-lg bg-[#16b3ac] text-white font-black text-xs shrink-0">${creditsVal} SKP</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-[#16b3ac] text-white font-black text-xs shrink-0 shadow-2xs">${creditsVal} SKP</span>
                 </div>
-                <div class="text-[11px] text-slate-500 flex justify-between pt-1 border-t border-slate-100">
-                  <span>${e.date || 'Q4 2026'}</span>
-                  <span class="font-bold text-slate-800">${docCount}</span>
+                <div class="text-xs text-slate-600 bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Jadwal</span>
+                    <span class="font-bold text-slate-800">${e.date || 'Q4 2026'}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Peserta Tuntas</span>
+                    <span class="font-semibold text-slate-800">${docCount}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Status</span>
+                    <span class="inline-flex items-center gap-1 font-bold ${isEventOpen ? 'text-emerald-700' : 'text-slate-600'}">
+                      <span class="w-1.5 h-1.5 rounded-full ${isEventOpen ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
+                      ${e.status || 'Dibuka'}
+                    </span>
+                  </div>
                 </div>
-                <div class="pt-1.5 flex items-center justify-between gap-2">
-                  <button type="button" onclick="openManageDetailModal('event', '${e.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
-                    <span>Rincian</span>
-                    <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                <div class="pt-1.5 border-t border-slate-100 grid grid-cols-2 gap-2">
+                  <button type="button" onclick="openManageEditModal('event', '${e.id}')" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">edit</span>
+                    <span>Edit</span>
                   </button>
-                  <button type="button" onclick="openManageEditModal('event', '${e.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
+                  <button type="button" onclick="deleteManageItem('event', '${e.id}')" class="py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">delete</span>
+                    <span>Hapus</span>
+                  </button>
                 </div>
               </div>
             `;
@@ -2294,7 +2373,6 @@
                 </td>
                 <td class="py-3 px-4 text-center">
                   <div class="flex items-center justify-center gap-1.5">
-                    <button type="button" onclick="openManageDetailModal('category', '${cat.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition cursor-pointer">Rincian</button>
                     <button type="button" onclick="openManageEditModal('category', '${cat.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer rbac-operational">Edit</button>
                     <button type="button" onclick="deleteManageItem('category', '${cat.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition cursor-pointer rbac-operational">Hapus</button>
                   </div>
@@ -2306,25 +2384,37 @@
 
         // Mobile Touch Cards
         if (mobileContainer) {
-          mobileContainer.innerHTML = pageCats.map(cat => `
-            <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
-              <div class="flex items-start justify-between gap-2">
-                <div>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">${cat.type}</span>
-                  <div class="font-bold text-slate-900 text-xs mt-1">${cat.name}</div>
+          mobileContainer.innerHTML = pageCats.map(cat => {
+            const isCatActive = !(cat.status === 'INACTIVE' || cat.is_active === false);
+            return `
+              <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="flex items-start justify-between gap-2.5">
+                  <div class="min-w-0">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${cat.type === 'Pelayanan' ? 'bg-sky-100 text-sky-800 border-sky-200' : cat.type === 'Pengabdian' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-emerald-100 text-emerald-800 border-emerald-200'} border">${cat.type}</span>
+                    <div class="font-bold text-slate-900 text-sm mt-1.5 leading-snug">${cat.name}</div>
+                  </div>
+                  <span class="font-black text-xs text-[#16b3ac] px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 shrink-0">${cat.standardSkp || '1 - 2 SKP'}</span>
                 </div>
-                <span class="font-black text-xs text-[#16b3ac]">${cat.standardSkp || '1 - 2 SKP'}</span>
+                <div class="text-xs text-slate-600 bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                  <div class="text-[11px] text-slate-600 leading-relaxed">${cat.description || '-'}</div>
+                  <div class="flex justify-between items-center text-[11px] pt-1 border-t border-slate-200/50">
+                    <span class="text-slate-400 font-medium">Status</span>
+                    <span class="font-bold ${isCatActive ? 'text-emerald-700' : 'text-slate-500'}">${isCatActive ? 'ACTIVE' : 'INACTIVE'}</span>
+                  </div>
+                </div>
+                <div class="pt-1.5 border-t border-slate-100 grid grid-cols-2 gap-2">
+                  <button type="button" onclick="openManageEditModal('category', '${cat.id}')" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">edit</span>
+                    <span>Edit</span>
+                  </button>
+                  <button type="button" onclick="deleteManageItem('category', '${cat.id}')" class="py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">delete</span>
+                    <span>Hapus</span>
+                  </button>
+                </div>
               </div>
-              <div class="text-[11px] text-slate-500">${cat.description || '-'}</div>
-              <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                <button type="button" onclick="openManageDetailModal('category', '${cat.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
-                  <span>Rincian</span>
-                  <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                </button>
-                <button type="button" onclick="openManageEditModal('category', '${cat.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
-              </div>
-            </div>
-          `).join('');
+            `;
+          }).join('');
         }
       }
 
@@ -2431,11 +2521,11 @@
         }
       } else {
         const getRoleBadge = (role) => {
-          if (role === 'Super Admin') return '<span class="px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-extrabold text-[10px]">Super Admin</span>';
-          if (role === 'Admin Pusat') return '<span class="px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 font-extrabold text-[10px]">Admin Pusat</span>';
-          if (role === 'Admin POGI' || role === 'Verifikator') return '<span class="px-2.5 py-1 rounded-md bg-emerald-50 text-[#16b3ac] border border-emerald-200 font-extrabold text-[10px]">Admin POGI</span>';
-          if (role === 'Admin Cabang') return '<span class="px-2.5 py-1 rounded-md bg-sky-50 text-sky-700 border border-sky-200 font-extrabold text-[10px]">Admin Cabang</span>';
-          return '<span class="px-2.5 py-1 rounded-md bg-teal-50 text-teal-700 border border-teal-200 font-extrabold text-[10px]">User/Dokter</span>';
+          if (role === 'Super Admin') return '<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-extrabold text-[10px] whitespace-nowrap">Super Admin</span>';
+          if (role === 'Admin Pusat') return '<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 font-extrabold text-[10px] whitespace-nowrap">Admin Pusat</span>';
+          if (role === 'Admin POGI' || role === 'Verifikator') return '<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-50 text-[#16b3ac] border border-emerald-200 font-extrabold text-[10px] whitespace-nowrap">Admin POGI</span>';
+          if (role === 'Admin Cabang') return '<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-sky-50 text-sky-700 border border-sky-200 font-extrabold text-[10px] whitespace-nowrap">Admin Cabang</span>';
+          return '<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-teal-50 text-teal-700 border border-teal-200 font-extrabold text-[10px] whitespace-nowrap">User/Dokter</span>';
         };
 
         // Desktop / Tablet Rows
@@ -2470,7 +2560,6 @@
               </td>
               <td class="py-3 px-4 text-center">
                 <div class="flex items-center justify-center gap-1.5">
-                  <button type="button" onclick="openManageDetailModal('user', '${usr.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition cursor-pointer">Rincian</button>
                   <button type="button" onclick="openManageEditModal('user', '${usr.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer rbac-operational">Edit</button>
                   <button type="button" onclick="deleteManageItem('user', '${usr.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition cursor-pointer rbac-operational">Hapus</button>
                 </div>
@@ -2481,29 +2570,45 @@
 
         // Mobile Touch Cards
         if (mobileContainer) {
-          mobileContainer.innerHTML = pageUsers.map(usr => `
-            <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
-              <div class="flex items-start justify-between gap-2">
-                <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-full bg-emerald-50 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0">
+          mobileContainer.innerHTML = pageUsers.map(usr => {
+            const st = (usr.account_status || (usr.is_active === false ? 'INACTIVE' : 'ACTIVE')).toUpperCase();
+            return `
+              <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-sm flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
                     ${(usr.name || 'US').substring(0, 2).toUpperCase()}
                   </div>
-                  <div>
-                    <div class="font-bold text-slate-900 text-xs">${usr.name}</div>
-                    <div class="text-[10px] text-slate-400 font-mono">${usr.email}</div>
+                  <div class="min-w-0 flex-1">
+                    <div class="font-bold text-slate-900 text-sm leading-snug truncate">${usr.name}</div>
+                    <div class="text-[11px] text-slate-400 font-mono truncate mt-0.5">${usr.email}</div>
+                    <div class="mt-2 flex items-center">
+                      ${getRoleBadge(usr.role)}
+                    </div>
                   </div>
                 </div>
-                ${getRoleBadge(usr.role)}
+                <div class="text-xs text-slate-600 bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Wilayah Penugasan</span>
+                    <span class="font-bold text-slate-800">${usr.branch_name || usr.branch || 'Pusat / Nasional'}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Status Akun</span>
+                    <span class="font-bold ${st === 'ACTIVE' ? 'text-emerald-700' : 'text-slate-500'}">${st}</span>
+                  </div>
+                </div>
+                <div class="pt-1.5 border-t border-slate-100 grid grid-cols-2 gap-2">
+                  <button type="button" onclick="openManageEditModal('user', '${usr.id}')" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">edit</span>
+                    <span>Edit</span>
+                  </button>
+                  <button type="button" onclick="deleteManageItem('user', '${usr.id}')" class="py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">delete</span>
+                    <span>Hapus</span>
+                  </button>
+                </div>
               </div>
-              <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                <button type="button" onclick="openManageDetailModal('user', '${usr.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
-                  <span>Rincian</span>
-                  <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                </button>
-                <button type="button" onclick="openManageEditModal('user', '${usr.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
-              </div>
-            </div>
-          `).join('');
+            `;
+          }).join('');
         }
       }
 
@@ -3110,16 +3215,31 @@
         }
         const elPic = document.getElementById('editDocAssignedTo');
         if (elPic) {
-          const pic = item.assigned_to || item.assigned_pic_name || '';
-          elPic.value = pic;
-          $('#editDocAssignedTo').val(pic).trigger('change.select2');
+          const picId = item.assigned_pic_id || '';
+          const picName = item.assigned_to || item.assigned_pic_name || '';
+          let matchedVal = '';
+          if (picId || picName) {
+            for (let i = 0; i < elPic.options.length; i++) {
+              const opt = elPic.options[i];
+              if (picId && (opt.value === picId || opt.getAttribute('data-id') === picId)) {
+                matchedVal = opt.value;
+                break;
+              }
+              if (picName && (opt.value === picName || opt.text.includes(picName) || opt.getAttribute('data-name') === picName)) {
+                matchedVal = opt.value;
+                break;
+              }
+            }
+          }
+          elPic.value = matchedVal;
+          $('#editDocAssignedTo').val(matchedVal).trigger('change.select2');
         }
         const elEmail = document.getElementById('editDocEmail'); if (elEmail) elEmail.value = item.email || '';
         const elStatus = document.getElementById('editDocStatus'); if (elStatus) elStatus.value = isDocActive ? 'ACTIVE' : 'INACTIVE';
         const elPStart = document.getElementById('editDocPeriodStart'); if (elPStart) elPStart.value = pStart;
         const elPEnd = document.getElementById('editDocPeriodEnd'); if (elPEnd) elPEnd.value = pEnd;
         const elUser = document.getElementById('editDocPlataranUser'); if (elUser) elUser.value = item.plataran_sehat_username || '';
-        const elPass = document.getElementById('editDocPlataranPass'); if (elPass) elPass.value = item.plataran_sehat_password || item.plataran_sehat_pass_encrypted || 'PogiPlataran2026!';
+        const elPass = document.getElementById('editDocPlataranPass'); if (elPass) elPass.value = item.plataran_sehat_password || item.plataran_sehat_pass_encrypted || '';
 
         docModal.classList.remove('hidden');
         const bodyEl = document.getElementById('manageDoctorEditModalBody');
@@ -3345,6 +3465,12 @@
             branchId = docs[docIdx].branch_id;
           }
 
+          const picEl = document.getElementById('editDocAssignedTo');
+          const selPicOpt = picEl?.selectedOptions?.[0];
+          const picVal = picEl?.value || null;
+          const picText = selPicOpt && selPicOpt.value ? (selPicOpt.getAttribute('data-name') || selPicOpt.text.replace(/\(Admin POGI\)/g, '').trim()) : null;
+          const picId = selPicOpt && selPicOpt.value ? (selPicOpt.getAttribute('data-id') || (picVal && picVal.length > 30 ? picVal : null)) : null;
+
           const payload = {
             name: name,
             specialization_title: 'Sp.OG',
@@ -3354,7 +3480,8 @@
             province: provName,
             branch_id: branchId,
             institution_id: instSel?.value || null,
-            assigned_to: document.getElementById('editDocAssignedTo')?.value || null,
+            assigned_pic_id: picId,
+            assigned_to: picText,
             period_start: document.getElementById('editDocPeriodStart')?.value || '',
             period_end: document.getElementById('editDocPeriodEnd')?.value || '',
             plataran_sehat_username: document.getElementById('editDocPlataranUser')?.value || null,
@@ -3375,6 +3502,9 @@
             return;
           }
           Object.assign(docs[docIdx], payload);
+          docs[docIdx].assigned_pic_id = payload.assigned_pic_id;
+          docs[docIdx].assigned_to = payload.assigned_to;
+          docs[docIdx].assigned_pic_name = payload.assigned_to;
           const isAct = (payload.status === 'ACTIVE' || payload.is_active === true);
           docs[docIdx].is_active = isAct;
           docs[docIdx].status = isAct ? 'Active' : 'Non-Active';
@@ -3796,13 +3926,20 @@
           branchId = window.LIVE_MANAGE_BRANCHES[0].id;
         }
 
+        const addPicEl = document.getElementById('addDocAssignedTo');
+        const selAddPicOpt = addPicEl?.selectedOptions?.[0];
+        const addPicVal = addPicEl?.value || null;
+        const addPicText = selAddPicOpt && selAddPicOpt.value ? (selAddPicOpt.getAttribute('data-name') || selAddPicOpt.text.replace(/\(Admin POGI\)/g, '').trim()) : null;
+        const addPicId = selAddPicOpt && selAddPicOpt.value ? (selAddPicOpt.getAttribute('data-id') || (addPicVal && addPicVal.length > 30 ? addPicVal : null)) : null;
+
         payload.name = name;
         payload.str_number = document.getElementById('addDocStr')?.value || '';
         payload.phone = phone;
         payload.province = provName;
         payload.branch_id = branchId;
         payload.institution_id = document.getElementById('addDocInstId')?.value || null;
-        payload.assigned_to = document.getElementById('addDocAssignedTo')?.value || null;
+        payload.assigned_pic_id = addPicId;
+        payload.assigned_to = addPicText;
         payload.email = email;
         payload.status = status;
         payload.is_active = (status === 'ACTIVE');

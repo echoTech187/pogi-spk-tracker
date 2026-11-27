@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -559,7 +560,7 @@ class DoctorController extends Controller
             'primary_institution_id' => $institution?->id,
             'assigned_pic_id' => $pic?->id,
             'plataran_sehat_username' => $lmsUser ? trim($lmsUser) : null,
-            'plataran_sehat_pass_encrypted' => $lmsPass ? trim($lmsPass) : null,
+            'plataran_sehat_pass_encrypted' => $lmsPass ? Crypt::encryptString(trim($lmsPass)) : null,
             'status' => in_array($request->input('status'), ['ACTIVE', 'INACTIVE', 'COMPLETE', 'INCOMPLETE', 'PENDING_REVIEW']) ? $request->input('status') : 'INCOMPLETE',
             'dashboard_updated_at' => $now,
             'kemenkes_updated_at' => $now,

@@ -5,11 +5,11 @@
 
     <!-- Clean Page Header (Modern Enterprise Standard matching Activity Log) -->
     <div class="space-y-1.5 min-w-0 pb-1">
-      <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
+      <div class="whitespace-nowrap inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
         <span>Monitoring Wilayah Nasional</span>
-        <span class="text-slate-300">•</span>
-        <span class="text-slate-500 font-semibold normal-case">38 Cabang POGI</span>
+        <span class="hidden sm:inline text-slate-300">•</span>
+        <span class="hidden sm:inline text-slate-500 font-semibold normal-case">38 Cabang POGI</span>
       </div>
       <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
         <span>Distribusi &amp; Kepatuhan Cabang POGI</span>
@@ -76,7 +76,7 @@
       if (!el) return;
 
       if (totalItems === 0) {
-        el.innerHTML = '<div class="text-slate-400 text-xs py-1">Tidak ada data untuk ditampilkan</div>';
+        el.innerHTML = '<div class="text-slate-400 text-xs py-1 text-center w-full">Tidak ada data untuk ditampilkan</div>';
         return;
       }
 
@@ -85,31 +85,33 @@
       // Prev Button
       const isFirst = currentPage <= 1;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed inline-flex items-center gap-1 shrink-0"' : 'class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1 transition shadow-2xs shrink-0 cursor-pointer"'}>
           <span class="material-symbols-outlined text-sm">chevron_left</span>
-          <span>Sebelumnya</span>
+          <span class="hidden sm:inline">Sebelumnya</span>
+          <span class="sm:hidden">Prev</span>
         </button>
       `;
 
-      // Page numbers with smart window
-      const maxButtons = 5;
-      let startP = Math.max(1, currentPage - 2);
+      // Page numbers with smart responsive window
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+      const maxButtons = isMobile ? 3 : 5;
+      let startP = Math.max(1, currentPage - Math.floor(maxButtons / 2));
       let endP = Math.min(totalPages, startP + maxButtons - 1);
       if (endP - startP < maxButtons - 1) {
         startP = Math.max(1, endP - maxButtons + 1);
       }
 
       if (startP > 1) {
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">1</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 cursor-pointer">1</button>`;
         if (startP > 2) {
-          btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
+          btnsHtml += `<span class="px-0.5 sm:px-1 text-slate-400 font-bold self-center text-xs shrink-0">...</span>`;
         }
       }
 
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center shrink-0 cursor-pointer ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs font-black' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
             ${p}
           </button>
         `;
@@ -117,16 +119,17 @@
 
       if (endP < totalPages) {
         if (endP < totalPages - 1) {
-          btnsHtml += `<span class="px-1 text-slate-400 font-bold self-center">...</span>`;
+          btnsHtml += `<span class="px-0.5 sm:px-1 text-slate-400 font-bold self-center text-xs shrink-0">...</span>`;
         }
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">${totalPages}</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 cursor-pointer">${totalPages}</button>`;
       }
 
       // Next Button
       const isLast = currentPage >= totalPages;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
-          <span>Selanjutnya</span>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed inline-flex items-center gap-1 shrink-0"' : 'class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1 transition shadow-2xs shrink-0 cursor-pointer"'}>
+          <span class="hidden sm:inline">Selanjutnya</span>
+          <span class="sm:hidden">Next</span>
           <span class="material-symbols-outlined text-sm">chevron_right</span>
         </button>
       `;
@@ -134,7 +137,7 @@
       let limitSelectorHtml = '';
       if (onLimitChangeFn && limits && limits.length > 0) {
         limitSelectorHtml = `
-          <div class="flex items-center gap-1.5 ml-0 sm:ml-2">
+          <div class="flex items-center gap-1 shrink-0">
             <span class="text-slate-400 text-[11px]">Tampilkan:</span>
             <select onchange="${onLimitChangeFn}(this.value)" class="py-1 px-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs font-bold focus:outline-none">
               ${limits.map(l => `<option value="${l}" ${l === currentLimit ? 'selected' : ''}>${l}</option>`).join('')}
@@ -144,14 +147,16 @@
       }
 
       el.innerHTML = `
-        <div class="flex flex-wrap items-center gap-2 text-slate-500 font-medium text-xs">
-          <div>
-            Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> ${itemLabel}
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 w-full">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between sm:justify-start gap-2 w-full sm:w-auto text-slate-500 font-medium text-xs">
+            <div class="text-[11px] sm:text-xs text-slate-600 text-center sm:text-left">
+              Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> <span class="hidden sm:inline">${itemLabel}</span><span class="sm:hidden">data</span>
+            </div>
+            ${limitSelectorHtml ? `<div class="self-center sm:self-auto">${limitSelectorHtml}</div>` : ''}
           </div>
-          ${limitSelectorHtml}
-        </div>
-        <div class="flex items-center gap-1.5 flex-wrap">
-          ${btnsHtml}
+          <div class="flex items-center justify-center gap-1 sm:gap-1.5 flex-nowrap w-full sm:w-auto overflow-x-auto no-scrollbar py-0.5">
+            ${btnsHtml}
+          </div>
         </div>
       `;
     }
@@ -303,26 +308,26 @@
             let barColor = 'bg-[#16b3ac]';
 
             if (p.completionRate >= 85) {
-              statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 shrink-0">Terpenuhi (Aman)</span>';
+              statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 shrink-0 whitespace-nowrap self-start">Terpenuhi (Aman)</span>';
               barColor = 'bg-[#eab308]';
             } else if (p.completionRate >= 50) {
-              statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-[#16b3ac] border border-emerald-200 shrink-0">Hampir Memenuhi</span>';
+              statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-[#16b3ac] border border-emerald-200 shrink-0 whitespace-nowrap self-start">Hampir Memenuhi</span>';
               barColor = 'bg-[#16a34a]';
             } else {
-              statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 border border-red-200 shrink-0">Sangat Kurang (&lt;50%)</span>';
+              statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 border border-red-200 shrink-0 whitespace-nowrap self-start">Sangat Kurang (&lt;50%)</span>';
               barColor = 'bg-[#dc2626]';
             }
 
             return `
-              <div class="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3 transition hover:border-[#16b3ac]">
+              <div class="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3 transition hover:border-[#16b3ac]">
                 <div class="flex items-start justify-between gap-2">
                   <div class="flex items-center gap-2 min-w-0">
                     <span class="w-6 h-6 rounded-lg bg-slate-100 text-slate-500 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
                       ${start + idx + 1}
                     </span>
                     <div class="min-w-0">
-                      <div class="font-extrabold text-slate-900 text-xs leading-snug truncate">${p.name}</div>
-                      <div class="text-[10px] text-slate-400 truncate">Pengurus Cabang POGI Daerah</div>
+                      <div class="font-extrabold text-slate-900 text-xs sm:text-sm leading-snug">${p.name}</div>
+                      <div class="text-[10px] text-slate-400">Pengurus Cabang POGI Daerah</div>
                     </div>
                   </div>
                   ${statusBadge}
@@ -330,17 +335,17 @@
 
                 <!-- Stats Grid -->
                 <div class="grid grid-cols-3 gap-2 text-center text-xs">
-                  <div class="p-2 rounded-xl bg-slate-50 border border-slate-100">
-                    <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Total Dokter</div>
-                    <div class="font-extrabold text-slate-900 text-xs mt-0.5">${p.doctors}</div>
+                  <div class="p-2 rounded-xl bg-slate-50 border border-slate-100/80">
+                    <div class="text-[9px] text-slate-400 font-bold uppercase tracking-tight truncate">Total Dokter</div>
+                    <div class="font-black text-slate-900 text-sm mt-0.5">${p.doctors}</div>
                   </div>
                   <div class="p-2 rounded-xl bg-emerald-50/70 border border-emerald-100/90">
-                    <div class="text-[9px] text-emerald-800 font-bold uppercase tracking-wider">Complete</div>
-                    <div class="font-black text-emerald-700 text-xs mt-0.5">${p.complete}</div>
+                    <div class="text-[9px] text-emerald-800 font-bold uppercase tracking-tight truncate">Complete</div>
+                    <div class="font-black text-emerald-700 text-sm mt-0.5">${p.complete}</div>
                   </div>
-                  <div class="p-2 rounded-xl bg-slate-50 border border-slate-100">
-                    <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Incomplete</div>
-                    <div class="font-extrabold ${p.incomplete > 0 ? 'text-amber-600' : 'text-slate-400'} text-xs mt-0.5">${p.incomplete}</div>
+                  <div class="p-2 rounded-xl bg-slate-50 border border-slate-100/80">
+                    <div class="text-[9px] text-slate-400 font-bold uppercase tracking-tight truncate">Incomplete</div>
+                    <div class="font-black ${p.incomplete > 0 ? 'text-amber-600' : 'text-slate-400'} text-sm mt-0.5">${p.incomplete}</div>
                   </div>
                 </div>
 
@@ -356,7 +361,7 @@
                 </div>
 
                 <!-- Action Link -->
-                <a href="/doctors?search=${encodeURIComponent(p.name)}" class="w-full py-2 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition inline-flex items-center justify-center gap-1.5 shadow-2xs border border-emerald-200/80">
+                <a href="/doctors?search=${encodeURIComponent(p.name)}" class="w-full py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition inline-flex items-center justify-center gap-1.5 shadow-2xs border border-emerald-200/80 cursor-pointer">
                   <span class="material-symbols-outlined text-sm">group</span>
                   <span>Lihat Dokter (${p.doctors})</span>
                 </a>

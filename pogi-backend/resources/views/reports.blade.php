@@ -11,11 +11,11 @@
     <!-- Clean Executive Page Header (Modern Enterprise Standard matching Activity Log) -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
       <div class="space-y-1.5 min-w-0">
-        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <div class="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black tracking-wider whitespace-nowrap">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
           <span>Laporan Eksekutif &amp; Analisis SKP</span>
-          <span class="text-slate-300">•</span>
-          <span class="text-slate-500 font-semibold normal-case">Standar Kemenkes</span>
+          <span class="text-slate-300 hidden sm:inline">•</span>
+          <span class="text-slate-500 font-semibold normal-case hidden sm:inline">Standar Kemenkes</span>
         </div>
         <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
           <span>Laporan Bulanan &amp; Kepatuhan SKP</span>
@@ -26,7 +26,7 @@
       </div>
 
       <!-- Action Toolbar Header -->
-      <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+      <div class="flex items-center gap-2 sm:gap-2.5 shrink-0 flex-wrap">
         <!-- Month Navigator (< November 2026 >) -->
         <div class="flex items-center bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden text-xs">
           <button type="button" onclick="changeMonthStep(-1)" title="Bulan Sebelumnya" class="p-2 hover:bg-slate-50 text-slate-600 border-r border-slate-100 transition flex items-center justify-center cursor-pointer">
@@ -59,7 +59,7 @@
     <div id="pane-dashboard" class="space-y-6">
 
       <!-- 4 Summary KPI Cards (Modern Enterprise Style matching Activity Log) -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
 
         <!-- Card 1: Target -->
         <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-slate-300 transition flex flex-col justify-between group">
@@ -143,15 +143,12 @@
 
             <!-- Chart 1 (Top-Left): Target vs realization -->
             <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
-              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-                <div>
-                  <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Target vs realization
-                  </h2>
-                  <p class="text-xs text-slate-400 font-normal mt-0.5">Total credits per month, January to November
-                    2026.</p>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                <div class="min-w-0">
+                  <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Target vs realization</h2>
+                  <p class="text-xs text-slate-400 font-normal mt-0.5">Total credits per month, January to November 2026.</p>
                 </div>
-                <span
-                  class="text-[10px] text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full font-bold border border-emerald-200">
+                <span class="self-start sm:self-auto text-[10px] text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full font-bold border border-emerald-200 whitespace-nowrap shrink-0">
                   Jan - Nov 2026
                 </span>
               </div>
@@ -162,23 +159,19 @@
 
             <!-- Chart 2 (Top-Right): Target vs realization by SKP type -->
             <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
-              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-                <div>
-                  <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Target vs realization by
-                    SKP type</h2>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-100 pb-2">
+                <div class="min-w-0">
+                  <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Target vs realization by SKP type</h2>
                   <p id="chartTypeSubtitle" class="text-xs text-slate-400 font-normal mt-0.5">Pengabdian 0% &middot; Pelayanan 0% &middot; Pembelajaran 0%</p>
                 </div>
-                <div class="flex items-center gap-1.5 flex-wrap">
-                  <span
-                    class="flex items-center gap-1 text-sky-800 font-bold text-[10px] bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+                <div class="flex items-center gap-1.5 flex-wrap self-start sm:self-auto shrink-0">
+                  <span class="flex items-center gap-1 text-sky-800 font-bold text-[10px] bg-sky-50 px-2 py-0.5 rounded border border-sky-200 whitespace-nowrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-sky-600"></span> Pelayanan
                   </span>
-                  <span
-                    class="flex items-center gap-1 text-amber-800 font-bold text-[10px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                  <span class="flex items-center gap-1 text-amber-800 font-bold text-[10px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200 whitespace-nowrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span> Pengabdian
                   </span>
-                  <span
-                    class="flex items-center gap-1 text-emerald-800 font-bold text-[10px] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  <span class="flex items-center gap-1 text-emerald-800 font-bold text-[10px] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 whitespace-nowrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Pembelajaran
                   </span>
                 </div>
@@ -190,13 +183,12 @@
 
             <!-- Chart 3 (Bottom-Left): Realization by SKP type (Donut with Center Value) -->
             <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
-              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-                <div>
-                  <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Realization by SKP type
-                  </h2>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                <div class="min-w-0">
+                  <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Realization by SKP type</h2>
                   <p class="text-xs text-slate-400 font-normal mt-0.5">Share of Done credits this month.</p>
                 </div>
-                <span class="text-[10px] text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full font-bold">
+                <span class="self-start sm:self-auto text-[10px] text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full font-bold whitespace-nowrap shrink-0">
                   Bulan Terpilih
                 </span>
               </div>
@@ -211,15 +203,13 @@
 
             <!-- Chart 4 (Bottom-Right): SKP type by status -->
             <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
-              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-                <div>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                <div class="min-w-0">
                   <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">SKP type by status</h2>
-                  <p class="text-xs text-slate-400 font-normal mt-0.5">Credits of every entry on events this month, by
-                    entry status.</p>
+                  <p class="text-xs text-slate-400 font-normal mt-0.5">Credits of every entry on events this month, by entry status.</p>
                 </div>
-                <span
-                  class="text-[10px] text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full font-bold border border-emerald-200">
-                  <span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac] inline-block mr-1"></span>Status Realtime
+                <span class="self-start sm:self-auto text-[10px] text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full font-bold border border-emerald-200 whitespace-nowrap shrink-0 inline-flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16b3ac]"></span>Status Realtime
                 </span>
               </div>
               <div class="h-72 relative">
@@ -237,10 +227,10 @@
   <!-- MODAL POPUP 1: PILIHAN BULAN (PERSIS BPJS DI CHAT WHATSAPP)               -->
   <!-- ========================================================================= -->
   <div id="monthPickerModal"
-    class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden transition-opacity">
+    class="pogi-modal-overlay fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-0 sm:p-4 hidden transition-opacity">
     <div
-      class="bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden animate-scale-in relative z-10">
-      <div class="p-6 pb-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
+      class="pogi-modal-card bg-white rounded-none sm:rounded-3xl shadow-2xl w-full max-w-md h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col overflow-hidden animate-scale-in relative z-10">
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span class="material-symbols-outlined text-xl">calendar_month</span>
@@ -256,7 +246,7 @@
         </button>
       </div>
 
-      <div class="p-6 space-y-4 flex-1 overflow-y-auto bg-white text-xs min-h-0">
+      <div class="p-4 sm:p-6 space-y-4 flex-1 overflow-y-auto bg-white text-xs min-h-0">
         <div class="flex items-center justify-between px-1">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tahun Laporan</span>
           <span class="text-xs font-black text-slate-900 bg-white border border-slate-200/80 px-3 py-1 rounded-xl shadow-2xs">Tahun 2026</span>
@@ -309,10 +299,10 @@
   <!-- MODAL POPUP 2: ARSIP FLASHBACK DOKUMEN (DIRAPIKAN TOTAL - MAX-W-5XL)      -->
   <!-- ========================================================================= -->
   <div id="archiveModal"
-    class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden transition-opacity">
+    class="pogi-modal-overlay fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-0 sm:p-4 hidden transition-opacity">
     <div
-      class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-in relative z-10">
-      <div class="p-6 pb-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
+      class="pogi-modal-card bg-white rounded-none sm:rounded-3xl shadow-2xl w-full max-w-5xl h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col overflow-hidden animate-scale-in relative z-10">
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5 min-w-0">
           <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span class="material-symbols-outlined text-xl">folder_zip</span>
@@ -328,7 +318,7 @@
         </button>
       </div>
 
-      <div class="p-6 flex-1 overflow-y-auto bg-white min-h-0">
+      <div class="p-4 sm:p-6 flex-1 overflow-y-auto bg-white min-h-0">
         <div class="overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-2xs">
           <table class="w-full text-left text-xs whitespace-nowrap">
             <thead class="bg-slate-50/80 border-b border-slate-200/80 text-slate-500 font-extrabold uppercase text-[10px]">

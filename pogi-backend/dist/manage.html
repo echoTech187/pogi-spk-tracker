@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="1RfWrUYh6WcVbxJeQeL3qI6klzMGatjlXZZ8XnsU">
+  <meta name="csrf-token" content="lq2BA3zIzenIbR2mtwVodlLX5UZP6cRGIBqk1koS">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -169,6 +169,41 @@
       position: sticky !important;
       bottom: 0 !important;
       z-index: 20 !important;
+    }
+
+    /* Utility: Hide scrollbar across all browsers */
+    .no-scrollbar::-webkit-scrollbar,
+    .scrollbar-none::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    .no-scrollbar,
+    .scrollbar-none {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+
+    /* Responsive Mobile Full-Screen Modal Rules (< sm / < 640px) */
+    @media (max-width: 639.98px) {
+      .fixed.inset-0.z-\[9999\],
+      .fixed.inset-0.z-50,
+      .pogi-modal-overlay {
+        padding: 0 !important;
+      }
+
+      .pogi-modal-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100% !important;
+        height: 100dvh !important;
+        max-height: 100% !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
     }
   </style>
   </head>
@@ -346,7 +381,7 @@
               <div class="min-w-0 flex-1">
                 <div class="font-bold text-slate-900 text-xs">Verifikasi Pending Kredit SKP</div>
                 <div class="text-[11px] text-slate-500 mt-0.5">1 Dokter Obgyn butuh verifikasi dan follow-up pemenuhan kredit SKP.</div>
-                <div class="text-[9px] text-slate-400 mt-1 font-mono">1 hari yang lalu</div>
+                <div class="text-[9px] text-slate-400 mt-1 font-mono">1 jam yang lalu</div>
               </div>
             </div>
           </div>
@@ -411,13 +446,13 @@
   <div class="space-y-5">
 
     <!-- Clean Page Header (Modern Enterprise Standard matching Activity Log) -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-1">
       <div class="space-y-1.5 min-w-0">
-        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Pusat Pengelolaan Master Data</span>
-          <span class="text-slate-300">•</span>
-          <span class="text-slate-500 font-semibold normal-case">5 Entitas Terpadu</span>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10px] font-extrabold uppercase tracking-wider max-w-full">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+          <span class="truncate">Master Data POGI</span>
+          <span class="hidden sm:inline text-slate-300">•</span>
+          <span class="hidden sm:inline text-slate-500 font-semibold normal-case">5 Entitas Terpadu</span>
         </div>
         <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 flex-wrap">
           <span>Master Data Pangkalan POGI SKP</span>
@@ -436,26 +471,26 @@
     </div>
 
     <!-- Top Segmented Tabs (Doctor, Institution, SKP Event, Event Category, User) -->
-    <div class="p-1 bg-slate-100/90 rounded-2xl flex flex-wrap gap-1 text-xs font-bold text-slate-600 border border-slate-200/70">
-      <button type="button" onclick="switchManageTab('doctor')" id="tab-btn-doctor" class="py-2 px-3.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5 font-black cursor-pointer">
+    <div class="p-1 sm:p-1.5 bg-slate-100/90 rounded-2xl flex items-center gap-1 sm:gap-1.5 text-xs font-bold text-slate-600 border border-slate-200/70 overflow-x-auto no-scrollbar scrollbar-none">
+      <button type="button" onclick="switchManageTab('doctor')" id="tab-btn-doctor" class="py-2 px-3 sm:px-3.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5 font-black cursor-pointer shrink-0 whitespace-nowrap">
         <span class="material-symbols-outlined text-sm text-[#16b3ac]">person</span>
-        <span>1. Doctor</span>
+        <span><span class="sm:hidden">Dokter</span><span class="hidden sm:inline">1. Doctor</span></span>
       </button>
-      <button type="button" onclick="switchManageTab('institution')" id="tab-btn-institution" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
+      <button type="button" onclick="switchManageTab('institution')" id="tab-btn-institution" class="py-2 px-3 sm:px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
         <span class="material-symbols-outlined text-sm">domain</span>
-        <span>2. Institution (RS Jejaring)</span>
+        <span><span class="sm:hidden">RS Jejaring</span><span class="hidden sm:inline">2. Institution (RS Jejaring)</span></span>
       </button>
-      <button type="button" onclick="switchManageTab('event')" id="tab-btn-event" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
+      <button type="button" onclick="switchManageTab('event')" id="tab-btn-event" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
         <span class="material-symbols-outlined text-sm">calendar_month</span>
-        <span>3. SKP Event Master</span>
+        <span><span class="sm:hidden">Kegiatan SKP</span><span class="hidden sm:inline">3. SKP Event Master</span></span>
       </button>
-      <button type="button" onclick="switchManageTab('category')" id="tab-btn-category" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
+      <button type="button" onclick="switchManageTab('category')" id="tab-btn-category" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
         <span class="material-symbols-outlined text-sm">category</span>
-        <span>4. Event Category</span>
+        <span><span class="sm:hidden">Kategori</span><span class="hidden sm:inline">4. Event Category</span></span>
       </button>
-      <button type="button" onclick="switchManageTab('user')" id="tab-btn-user" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer">
+      <button type="button" onclick="switchManageTab('user')" id="tab-btn-user" class="py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold cursor-pointer shrink-0 whitespace-nowrap">
         <span class="material-symbols-outlined text-sm">manage_accounts</span>
-        <span>5. User &amp; Hak Akses</span>
+        <span><span class="sm:hidden">User &amp; Akses</span><span class="hidden sm:inline">5. User &amp; Hak Akses</span></span>
       </button>
     </div>
 
@@ -467,10 +502,10 @@
       <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <div>
-            <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Nama Dokter / NIK / No Anggota</label>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Cari Nama Dokter / Nomor STR</label>
             <div class="relative flex items-center">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none">search</span>
-              <input id="searchManageDoctorInput" onkeyup="filterManageDoctorTable()" type="text" placeholder="Ketik nama spesialis, NIK, STR..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
+              <input id="searchManageDoctorInput" onkeyup="filterManageDoctorTable()" type="text" placeholder="Ketik nama spesialis atau STR..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-700" />
             </div>
           </div>
 
@@ -529,19 +564,20 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-          <div>Menampilkan <span id="manageDoctorCounter" class="font-bold text-slate-900">0</span> dokter dari total pangkalan data</div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="resetManageDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline mr-1">Reset Filter</button>
-            <button type="button" onclick="openManageImportModal('doctor')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Dokter dari File Excel">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs text-slate-500">
+          <div class="flex items-center">
+            <button type="button" onclick="resetManageDoctorFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+          </div>
+          <div class="grid grid-cols-2 sm:flex sm:items-center gap-2">
+            <button type="button" onclick="openManageImportModal('doctor')" class="px-3 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Dokter dari File Excel">
               <span class="material-symbols-outlined text-emerald-600 text-base">upload_file</span>
-              <span>Import (Excel)</span>
+              <span>Import</span>
             </button>
-            <button type="button" onclick="exportManageTabExcel('doctor')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Dokter ke File Excel (.xlsx)">
+            <button type="button" onclick="exportManageTabExcel('doctor')" class="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Dokter ke File Excel (.xlsx)">
               <span class="material-symbols-outlined text-emerald-700 text-base">file_download</span>
-              <span>Export (Excel)</span>
+              <span>Export</span>
             </button>
-            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+            <button type="button" onclick="openActiveAddModal()" class="col-span-2 sm:col-span-1 px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center justify-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">person_add</span>
               <span>Tambah Dokter</span>
             </button>
@@ -552,31 +588,18 @@
       <!-- Table (Persis Format doctors.html) -->
       <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
         <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs whitespace-nowrap">
+          <table class="w-full text-left text-xs whitespace-nowrap min-w-[950px]">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
               <tr>
-                <th class="py-3 px-4">Dokter &amp; No Anggota</th>
-                <th class="py-3 px-4">Provinsi &amp; RS Jejaring</th>
-                <th class="py-3 px-4">SKP Progress (Q4)</th>
-                <th class="py-3 px-4 text-center">Pending Credits</th>
-                <th class="py-3 px-4">
-                  <div class="flex items-center gap-1 text-sky-800 font-bold">
-                    <span class="w-2 h-2 rounded-full bg-sky-600"></span> Pelayanan (Min 80)
-                  </div>
-                </th>
-                <th class="py-3 px-4">
-                  <div class="flex items-center gap-1 text-amber-800 font-bold">
-                    <span class="w-2 h-2 rounded-full bg-amber-600"></span> Pengabdian (Min 30)
-                  </div>
-                </th>
-                <th class="py-3 px-4">
-                  <div class="flex items-center gap-1 text-emerald-800 font-bold">
-                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span> Pembelajaran (Min 50)
-                  </div>
-                </th>
-                <th class="py-3 px-4 text-center">Status</th>
-                <th class="py-3 px-4">Aktivitas Terakhir</th>
-                <th class="py-3 px-4 text-center">Aksi</th>
+                <th class="py-3 px-4 min-w-[200px]">Nama Dokter</th>
+                <th class="py-3 px-4 min-w-[130px]">Nomor STR</th>
+                <th class="py-3 px-4 min-w-[150px]">Kontak</th>
+                <th class="py-3 px-4 min-w-[180px]">Wilayah &amp; RS Jejaring</th>
+                <th class="py-3 px-4 min-w-[140px]">PIC Admin Binaan</th>
+                <th class="py-3 px-4 min-w-[160px]">Periode SKP</th>
+                <th class="py-3 px-4 min-w-[150px]">Akun LMS Plataran</th>
+                <th class="py-3 px-4 text-center min-w-[90px]">Status</th>
+                <th class="py-3 px-4 text-center min-w-[140px]">Aksi</th>
               </tr>
             </thead>
             <tbody id="manageDoctorTableBody" class="divide-y divide-slate-100 font-medium">
@@ -670,19 +693,20 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-          <div>Menampilkan <span id="manageInstCounter" class="font-bold text-slate-900">0</span> faskes jejaring</div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="resetManageInstFilters()" class="text-[#16b3ac] font-bold hover:underline mr-1">Reset Filter</button>
-            <button type="button" onclick="openManageImportModal('institution')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data RS / Faskes dari File Excel">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs text-slate-500">
+          <div class="flex items-center">
+            <button type="button" onclick="resetManageInstFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+          </div>
+          <div class="grid grid-cols-2 sm:flex sm:items-center gap-2">
+            <button type="button" onclick="openManageImportModal('institution')" class="px-3 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data RS / Faskes dari File Excel">
               <span class="material-symbols-outlined text-emerald-600 text-base">upload_file</span>
-              <span>Import (Excel)</span>
+              <span>Import</span>
             </button>
-            <button type="button" onclick="exportManageTabExcel('institution')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data RS / Faskes ke File Excel (.xlsx)">
+            <button type="button" onclick="exportManageTabExcel('institution')" class="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data RS / Faskes ke File Excel (.xlsx)">
               <span class="material-symbols-outlined text-emerald-700 text-base">file_download</span>
-              <span>Export (Excel)</span>
+              <span>Export</span>
             </button>
-            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+            <button type="button" onclick="openActiveAddModal()" class="col-span-2 sm:col-span-1 px-3.5 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center justify-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">domain_add</span>
               <span>Tambah Institusi</span>
             </button>
@@ -693,7 +717,7 @@
       <!-- Table -->
       <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
         <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs whitespace-nowrap">
+          <table class="w-full text-left text-xs whitespace-nowrap min-w-[850px]">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
               <tr>
                 <th class="py-3 px-4">Rumah Sakit &amp; Faskes</th>
@@ -756,19 +780,20 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-          <div>Menampilkan <span id="manageEventCounter" class="font-bold text-slate-900">0</span> event SKP terdaftar</div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="resetManageEventFilters()" class="text-[#16b3ac] font-bold hover:underline mr-1">Reset Filter</button>
-            <button type="button" onclick="openManageImportModal('event')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Event SKP dari File Excel">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs pt-1 border-t border-slate-100 text-slate-500">
+          <div class="flex items-center">
+            <button type="button" onclick="resetManageEventFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+          </div>
+          <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
+            <button type="button" onclick="openManageImportModal('event')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Event SKP dari File Excel">
               <span class="material-symbols-outlined text-emerald-600 text-base">upload_file</span>
-              <span>Import (Excel)</span>
+              <span>Import</span>
             </button>
-            <button type="button" onclick="exportManageTabExcel('event')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Event SKP ke File Excel (.xlsx)">
+            <button type="button" onclick="exportManageTabExcel('event')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Event SKP ke File Excel (.xlsx)">
               <span class="material-symbols-outlined text-emerald-700 text-base">file_download</span>
-              <span>Export (Excel)</span>
+              <span>Export</span>
             </button>
-            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+            <button type="button" onclick="openActiveAddModal()" class="col-span-2 sm:col-span-1 px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center justify-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">add_circle</span>
               <span>Tambah Event SKP</span>
             </button>
@@ -779,7 +804,7 @@
       <!-- Table -->
       <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
         <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs whitespace-nowrap">
+          <table class="w-full text-left text-xs whitespace-nowrap min-w-[850px]">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
               <tr>
                 <th class="py-3 px-4">Event &amp; Kegiatan Ilmiah</th>
@@ -842,19 +867,20 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-          <div>Menampilkan <span id="manageCatCounter" class="font-bold text-slate-900">0</span> kategori terverifikasi</div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="resetManageCatFilters()" class="text-[#16b3ac] font-bold hover:underline mr-1">Reset Filter</button>
-            <button type="button" onclick="openManageImportModal('category')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Kategori dari File Excel">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs pt-1 border-t border-slate-100 text-slate-500">
+          <div class="flex items-center">
+            <button type="button" onclick="resetManageCatFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
+          </div>
+          <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
+            <button type="button" onclick="openManageImportModal('category')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer rbac-operational" title="Import Data Kategori dari File Excel">
               <span class="material-symbols-outlined text-emerald-600 text-base">upload_file</span>
-              <span>Import (Excel)</span>
+              <span>Import</span>
             </button>
-            <button type="button" onclick="exportManageTabExcel('category')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Kategori ke File Excel (.xlsx)">
+            <button type="button" onclick="exportManageTabExcel('category')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer" title="Export Data Kategori ke File Excel (.xlsx)">
               <span class="material-symbols-outlined text-emerald-700 text-base">file_download</span>
-              <span>Export (Excel)</span>
+              <span>Export</span>
             </button>
-            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+            <button type="button" onclick="openActiveAddModal()" class="col-span-2 sm:col-span-1 px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center justify-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">category</span>
               <span>Tambah Kategori</span>
             </button>
@@ -865,7 +891,7 @@
       <!-- Table -->
       <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
         <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs whitespace-nowrap">
+          <table class="w-full text-left text-xs whitespace-nowrap min-w-[750px]">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
               <tr>
                 <th class="py-3 px-4">Kategori Kegiatan SKP</th>
@@ -930,11 +956,12 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100 text-slate-500">
-          <div>Menampilkan <span id="manageUserCounter" class="font-bold text-slate-900">0</span> akun pengelola</div>
-          <div class="flex items-center gap-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs pt-1 border-t border-slate-100 text-slate-500">
+          <div class="flex items-center">
             <button type="button" onclick="resetManageUserFilters()" class="text-[#16b3ac] font-bold hover:underline">Reset Filter</button>
-            <button type="button" onclick="openActiveAddModal()" class="px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 rbac-operational">
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button type="button" onclick="openActiveAddModal()" class="w-full sm:w-auto px-3.5 py-1.5 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white text-xs font-extrabold shadow-xs transition flex items-center justify-center gap-1.5 rbac-operational">
               <span class="material-symbols-outlined text-sm">manage_accounts</span>
               <span>Tambah Pengguna</span>
             </button>
@@ -945,7 +972,7 @@
       <!-- Table -->
       <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-hidden">
         <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs whitespace-nowrap">
+          <table class="w-full text-left text-xs whitespace-nowrap min-w-[800px]">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase text-[10px]">
               <tr>
                 <th class="py-3 px-4">Pengguna &amp; Email</th>
@@ -974,9 +1001,6 @@
 
   <!-- Reusable Action Dropdown Menu -->
   <div id="rowActionMenu" class="hidden fixed z-50 bg-white border border-slate-200 rounded-2xl shadow-2xl py-1.5 text-xs w-40">
-    <button onclick="handleRowAction('detail')" class="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium">
-      <span class="material-symbols-outlined text-sm">visibility</span> Rincian Lengkap
-    </button>
     <button onclick="handleRowAction('edit')" class="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium">
       <span class="material-symbols-outlined text-sm">edit</span> Edit Data
     </button>
@@ -1001,10 +1025,10 @@
     }
   </style>
   <!-- Modal Add Generic Master Item -->
-  <div id="manageAddModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
+  <div id="manageAddModal" class="pogi-modal-overlay fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-0 sm:p-4">
+    <div class="pogi-modal-card bg-white rounded-none sm:rounded-3xl max-w-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
       <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5 min-w-0">
           <div id="manageAddModalIconWrap" class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span id="manageAddModalIcon" class="material-symbols-outlined text-xl">add_circle</span>
@@ -1019,10 +1043,10 @@
         </button>
       </div>
       <form id="manageAddForm" onsubmit="event.preventDefault(); submitManageAdd();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div id="manageAddFormFields" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+        <div id="manageAddFormFields" class="p-4 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
           <!-- Populated dynamically based on active tab -->
         </div>
-        <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <div class="p-3.5 sm:p-4 px-4 sm:px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
           <button type="button" onclick="closeManageAddModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
           <button id="manageAddSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
             <span class="material-symbols-outlined text-sm">check_circle</span>
@@ -1034,10 +1058,10 @@
   </div>
 
   <!-- Modal View Details -->
-  <div id="manageDetailModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
+  <div id="manageDetailModal" class="pogi-modal-overlay fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-0 sm:p-4">
+    <div class="pogi-modal-card bg-white rounded-none sm:rounded-3xl max-w-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
       <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5 min-w-0">
           <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span id="manageDetailModalIcon" class="material-symbols-outlined text-xl">visibility</span>
@@ -1052,11 +1076,11 @@
         </button>
       </div>
       <!-- Modal Body (Scrollable) -->
-      <div id="manageDetailContent" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+      <div id="manageDetailContent" class="p-4 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
         <!-- Key value pairs -->
       </div>
       <!-- Modal Footer (Sticky) -->
-      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+      <div class="p-3.5 sm:p-4 px-4 sm:px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
         <button id="manageDetailEditBtn" type="button" class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200/80 font-bold text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs rbac-operational">
           <span class="material-symbols-outlined text-sm">edit_square</span>
           <span>Edit Data</span>
@@ -1067,10 +1091,10 @@
   </div>
 
   <!-- Modal Edit Item -->
-  <div id="manageEditModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
+  <div id="manageEditModal" class="pogi-modal-overlay fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-0 sm:p-4">
+    <div class="pogi-modal-card bg-white rounded-none sm:rounded-3xl max-w-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
       <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5 min-w-0">
           <div id="manageEditModalIconWrap" class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span id="manageEditModalIcon" class="material-symbols-outlined text-xl">edit_square</span>
@@ -1085,10 +1109,10 @@
         </button>
       </div>
       <form id="manageEditForm" onsubmit="event.preventDefault(); submitManageEdit();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div id="manageEditFormFields" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+        <div id="manageEditFormFields" class="p-4 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
           <!-- Populated dynamically -->
         </div>
-        <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+        <div class="p-3.5 sm:p-4 px-4 sm:px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
           <button type="button" onclick="closeManageEditModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
           <button id="manageEditSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
             <span class="material-symbols-outlined text-sm">save</span>
@@ -1101,10 +1125,10 @@
 
   
   <!-- Modal Add Doctor (Standardized Component) -->
-  <div id="manageDoctorAddModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
-  <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
+  <div id="manageDoctorAddModal" class="pogi-modal-overlay fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-0 sm:p-4">
+  <div class="pogi-modal-card bg-white rounded-none sm:rounded-3xl max-w-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
     <!-- Modal Header (Sticky) -->
-    <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+    <div class="p-4 sm:p-6 pb-3 sm:pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
       <div class="flex items-center gap-2.5 min-w-0">
                   <div id="manageDoctorAddModalIconWrap" class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span id="manageDoctorAddModalIcon" class="material-symbols-outlined text-xl">person_add</span>
@@ -1121,7 +1145,7 @@
 
           <form id="manageDoctorAddForm"  onsubmit="event.preventDefault(); submitManageAdd();"  autocomplete="off" class="flex flex-col flex-1 min-h-0 overflow-hidden">
         <!-- Modal Body (Single Scrollable Container) -->
-        <div id="manageDoctorAddModalBody" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+        <div id="manageDoctorAddModalBody" class="p-4 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
           <!-- Section 1: Doctor Profile Section -->
 <div class="space-y-3.5">
   <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
@@ -1210,17 +1234,11 @@
     <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
     <select id="addDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
       <option value="">Belum ada Admin POGI</option>
-                      <option value="Anna (Admin POGI)">Anna (Admin POGI) (Admin POGI)</option>
-                      <option value="Bp. Ade">Bp. Ade (Admin POGI)</option>
-                      <option value="Bp. Ircham">Bp. Ircham (Admin POGI)</option>
-                      <option value="Bu Ratna">Bu Ratna (Admin POGI)</option>
-                      <option value="Dewi Lestari">Dewi Lestari (Admin POGI)</option>
-                      <option value="Dian (Super Admin)">Dian (Super Admin) (Admin POGI)</option>
-                      <option value="dr. Ulul (POGI Pusat)">dr. Ulul (POGI Pusat) (Admin POGI)</option>
-                      <option value="Fikri Ramadhan">Fikri Ramadhan (Admin POGI)</option>
-                      <option value="Lily">Lily (Admin POGI)</option>
-                      <option value="Test User">Test User (Admin POGI)</option>
-                      <option value="Vivi">Vivi (Admin POGI)</option>
+                      <option value="03bbce59-7dc4-4dc2-bce7-11e893ef4068" data-id="03bbce59-7dc4-4dc2-bce7-11e893ef4068" data-name="Anna">Anna (Admin POGI)</option>
+                      <option value="622b9c53-db7f-44b1-939d-2b1721bee869" data-id="622b9c53-db7f-44b1-939d-2b1721bee869" data-name="Dewi Lestari">Dewi Lestari (Admin POGI)</option>
+                      <option value="66340565-af3f-43d4-bdcf-79a84de7c99b" data-id="66340565-af3f-43d4-bdcf-79a84de7c99b" data-name="Fikri Ramadhan">Fikri Ramadhan (Admin POGI)</option>
+                      <option value="32b2b767-5289-4957-8fb1-3647ab88d42d" data-id="32b2b767-5289-4957-8fb1-3647ab88d42d" data-name="Lily">Lily (Admin POGI)</option>
+                      <option value="eb0904a3-cbdb-4ba5-98dc-1d8bb5fc126f" data-id="eb0904a3-cbdb-4ba5-98dc-1d8bb5fc126f" data-name="Vivi">Vivi (Admin POGI)</option>
           </select>
   </div>
 
@@ -1289,7 +1307,7 @@
         </div>
 
         <!-- Modal Footer (Sticky) -->
-                  <div id="manageDoctorAddModalFooter" class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+                  <div id="manageDoctorAddModalFooter" class="p-3.5 sm:p-4 px-4 sm:px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
             <button type="button" onclick="closeManageAddModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
       <button id="manageDoctorAddSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
         <span class="material-symbols-outlined text-sm">person_add</span>
@@ -1301,10 +1319,10 @@
 </div>
 
   <!-- Modal Edit Doctor (Standardized Component) -->
-  <div id="manageDoctorEditModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
-  <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
+  <div id="manageDoctorEditModal" class="pogi-modal-overlay fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-0 sm:p-4">
+  <div class="pogi-modal-card bg-white rounded-none sm:rounded-3xl max-w-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
     <!-- Modal Header (Sticky) -->
-    <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+    <div class="p-4 sm:p-6 pb-3 sm:pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
       <div class="flex items-center gap-2.5 min-w-0">
                   <div id="manageDoctorEditModalIconWrap" class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span id="manageDoctorEditModalIcon" class="material-symbols-outlined text-xl">edit_square</span>
@@ -1321,7 +1339,7 @@
 
           <form id="manageDoctorEditForm"  onsubmit="event.preventDefault(); submitManageEdit();"  autocomplete="off" class="flex flex-col flex-1 min-h-0 overflow-hidden">
         <!-- Modal Body (Single Scrollable Container) -->
-        <div id="manageDoctorEditModalBody" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+        <div id="manageDoctorEditModalBody" class="p-4 sm:p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
           <!-- Section 1: Doctor Profile Section -->
 <div class="space-y-3.5">
   <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
@@ -1410,17 +1428,11 @@
     <label class="block font-bold text-slate-700 mb-1.5">PIC Admin / Dokter Binaan</label>
     <select id="editDocAssignedTo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-800 shadow-2xs transition hover:border-slate-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15">
       <option value="">Belum ada Admin POGI</option>
-                      <option value="Anna (Admin POGI)">Anna (Admin POGI) (Admin POGI)</option>
-                      <option value="Bp. Ade">Bp. Ade (Admin POGI)</option>
-                      <option value="Bp. Ircham">Bp. Ircham (Admin POGI)</option>
-                      <option value="Bu Ratna">Bu Ratna (Admin POGI)</option>
-                      <option value="Dewi Lestari">Dewi Lestari (Admin POGI)</option>
-                      <option value="Dian (Super Admin)">Dian (Super Admin) (Admin POGI)</option>
-                      <option value="dr. Ulul (POGI Pusat)">dr. Ulul (POGI Pusat) (Admin POGI)</option>
-                      <option value="Fikri Ramadhan">Fikri Ramadhan (Admin POGI)</option>
-                      <option value="Lily">Lily (Admin POGI)</option>
-                      <option value="Test User">Test User (Admin POGI)</option>
-                      <option value="Vivi">Vivi (Admin POGI)</option>
+                      <option value="03bbce59-7dc4-4dc2-bce7-11e893ef4068" data-id="03bbce59-7dc4-4dc2-bce7-11e893ef4068" data-name="Anna">Anna (Admin POGI)</option>
+                      <option value="622b9c53-db7f-44b1-939d-2b1721bee869" data-id="622b9c53-db7f-44b1-939d-2b1721bee869" data-name="Dewi Lestari">Dewi Lestari (Admin POGI)</option>
+                      <option value="66340565-af3f-43d4-bdcf-79a84de7c99b" data-id="66340565-af3f-43d4-bdcf-79a84de7c99b" data-name="Fikri Ramadhan">Fikri Ramadhan (Admin POGI)</option>
+                      <option value="32b2b767-5289-4957-8fb1-3647ab88d42d" data-id="32b2b767-5289-4957-8fb1-3647ab88d42d" data-name="Lily">Lily (Admin POGI)</option>
+                      <option value="eb0904a3-cbdb-4ba5-98dc-1d8bb5fc126f" data-id="eb0904a3-cbdb-4ba5-98dc-1d8bb5fc126f" data-name="Vivi">Vivi (Admin POGI)</option>
           </select>
   </div>
 
@@ -1489,7 +1501,7 @@
         </div>
 
         <!-- Modal Footer (Sticky) -->
-                  <div id="manageDoctorEditModalFooter" class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+                  <div id="manageDoctorEditModalFooter" class="p-3.5 sm:p-4 px-4 sm:px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
             <button type="button" onclick="closeManageEditModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
       <button id="manageDoctorEditSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
         <span class="material-symbols-outlined text-sm">save</span>
@@ -1503,10 +1515,10 @@
   <!-- ========================================================================= -->
   <!-- MODAL POPUP: IMPORT EXCEL MASTER DATA (DOCTOR, INSTITUTION, EVENT, CATEGORY) -->
   <!-- ========================================================================= -->
-  <div id="manageImportModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
+  <div id="manageImportModal" class="pogi-modal-overlay fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-0 sm:p-4">
+    <div class="pogi-modal-card bg-white rounded-none sm:rounded-3xl max-w-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
       <!-- Modal Header (Sticky) -->
-      <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
         <div class="flex items-center gap-2.5 min-w-0">
           <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
             <span class="material-symbols-outlined text-xl">upload_file</span>
@@ -1590,11 +1602,11 @@
   <script src="/js/navigation.js"></script>
     <script src="/js/pdf_exporter.js"></script>
   <script>
-    window.LIVE_MANAGE_DOCTORS = [{"id":"04680f57-b8b3-4873-898e-754974a29bb1","npa_pogi":"#POGI-2026-5774","pogiId":"#POGI-2026-5774","name":"dr. Budi Santoso, Sp.PD","specialization_title":"Sp.OG","nik":"317108cab8150001","str_number":"32.73.100.2.21.0883","sip_number":"446\/926\/SIP\/2026","sip_expiry_date":"2031-11-25","email":"dr.budi.santoso.sp.pd@pogi-member.id","phone":"+628123456789","plataran_sehat_username":"super@example.com","plataran_sehat_password":"secret123","period_start":"2026-01-01","period_end":"2030-12-31","is_active":true,"status":"Active","raw_status":"ACTIVE","compliance_status":"Incomplete","province_id":"31","province":"DKI Jakarta","branch_id":"b800841f-8173-44eb-a99e-3eea6b954ae1","branch":"POGI Cabang DKI Jakarta","primary_institution_id":"59df83b0-fd7e-476c-bf44-e7cff7ce515a","institution":"Klinik Pratama Sehat Sentosa","hospital":"Klinik Pratama Sehat Sentosa","target_credits":160,"total5YearAchieved":0,"qAchieved":0,"qTarget":8,"skpDisplay":"0 \/ 160","pelayanan":{"achieved":0,"target":56},"pengabdian":{"achieved":0,"target":8},"pembelajaran":{"achieved":0,"target":72},"fleksibilitas":{"achieved":0,"target":24},"pelayananCredits":0,"pengabdianCredits":0,"pembelajaranCredits":0,"pendingCredits":0,"avatar":"DB","initials":"DB","lastActivity":"26 Nov 2026, 14.19 WIB"}];
+    window.LIVE_MANAGE_DOCTORS = [{"id":"04680f57-b8b3-4873-898e-754974a29bb1","npa_pogi":"#POGI-2026-5774","pogiId":"#POGI-2026-5774","name":"dr. Budi Santoso, Sp.PD","specialization_title":"Sp.OG","nik":"317108cab8150001","str_number":"32.73.100.2.21.0883","sip_number":"446\/926\/SIP\/2026","sip_expiry_date":"2031-11-25","email":"dr.budi.santoso.sp.pd@pogi-member.id","phone":"+628123456789","plataran_sehat_username":null,"plataran_sehat_password":"","period_start":"2026-01-01","period_end":"2030-12-31","is_active":true,"status":"Active","raw_status":"ACTIVE","compliance_status":"Incomplete","assigned_pic_id":"eb0904a3-cbdb-4ba5-98dc-1d8bb5fc126f","assigned_to":"Vivi","assigned_pic_name":"Vivi","province_id":"31","province":"DKI Jakarta","branch_id":"b800841f-8173-44eb-a99e-3eea6b954ae1","branch":"POGI Cabang DKI Jakarta","primary_institution_id":"59df83b0-fd7e-476c-bf44-e7cff7ce515a","institution":"Klinik Pratama Sehat Sentosa","hospital":"Klinik Pratama Sehat Sentosa","target_credits":160,"total5YearAchieved":0,"qAchieved":0,"qTarget":8,"skpDisplay":"0 \/ 160","pelayanan":{"achieved":0,"target":56},"pengabdian":{"achieved":0,"target":8},"pembelajaran":{"achieved":0,"target":72},"fleksibilitas":{"achieved":0,"target":24},"pelayananCredits":0,"pengabdianCredits":0,"pembelajaranCredits":0,"pendingCredits":0,"avatar":"DB","initials":"DB","lastActivity":"27 Nov 2026, 16.13 WIB"}];
     window.LIVE_MANAGE_INSTITUTIONS = [{"id":"59df83b0-fd7e-476c-bf44-e7cff7ce515a","province_id":"31","code":"INST-b9f0a6","name":"Klinik Pratama Sehat Sentosa","institution_type":"Klinik Pratama","hospital_class":"C","address":"Jl. Delima Raya, RT.14\/RW.3, Lb. Bulus, Kec. Cilandak","city":"Jakarta Selatan","province_name":"DKI Jakarta","province":"DKI Jakarta","doctorsCount":1,"type":"Klinik Pratama","is_active":true,"status":"Aktif","updated_at":"2026-11-25T10:24:42.000000Z","lastActivity":"25 Nov 2026, 17.24 WIB"}];
     window.LIVE_MANAGE_EVENTS = [{"id":"d4f0a6c3-d40e-4875-8114-3a938ed7b7ed","category_id":"04464f7a-a254-4aa6-b8cd-e071133da896","name":"Simposium Akhir Tahun Kardiologi Klinis \u0026 Maternal","title":"Simposium Akhir Tahun Kardiologi Klinis \u0026 Maternal","date":"2026-11-25","credits":"2.00","creditsDisplay":"2.00","organizer":"PP POGI","kemenkes_accreditation_number":"KMK\/AKRED\/2026101","plataran_sehat_course_id":"PS3001293","category_name":"Simposium Ilmiah","category":"Simposium Ilmiah","type":"PEMBELAJARAN","doctors":"0 selesai","doctorsCompleted":0,"status":"Dibuka"}];
     window.LIVE_MANAGE_CATEGORIES = [{"id":"f16a4796-4444-443e-b009-32a038ed4423","name":"Bakti Sosial","domain":"PENGABDIAN","default_credit_value":"1.50","description":"Bakti Sosial terstandar akreditasi POGI \u0026 Kemenkes","type":"PENGABDIAN","standardSkp":"1.50 SKP","status":"ACTIVE"},{"id":"36e77c88-2463-4b3b-b6d1-d9887de53161","name":"Jaga IGD \/ Piket","domain":"PELAYANAN","default_credit_value":"1.50","description":"Jaga IGD \/ Piket terstandar akreditasi POGI \u0026 Kemenkes","type":"PELAYANAN","standardSkp":"1.50 SKP","status":"ACTIVE"},{"id":"9f3f4a18-efd0-41e4-99c1-3e97bdb6ef23","name":"Narasumber \/ Pembicara","domain":"PEMBELAJARAN","default_credit_value":"1.50","description":"Narasumber \/ Pembicara terstandar akreditasi POGI \u0026 Kemenkes","type":"PEMBELAJARAN","standardSkp":"1.50 SKP","status":"ACTIVE"},{"id":"d3fab96a-429c-4237-bdf2-a35d57b01746","name":"Pelayanan Rujukan","domain":"PELAYANAN","default_credit_value":"1.50","description":"Pelayanan Rujukan terstandar akreditasi POGI \u0026 Kemenkes","type":"PELAYANAN","standardSkp":"1.50 SKP","status":"ACTIVE"},{"id":"1ea534c3-0061-4014-b562-d6cad4e6fd0e","name":"Penyuluhan Kesehatan Masyarakat","domain":"PENGABDIAN","default_credit_value":"1.50","description":"Penyuluhan Kesehatan Masyarakat terstandar akreditasi POGI \u0026 Kemenkes","type":"PENGABDIAN","standardSkp":"1.50 SKP","status":"ACTIVE"},{"id":"379a2b19-76e0-4c3f-b84c-0b4b548edaf2","name":"Praktik Klinis","domain":"PELAYANAN","default_credit_value":"1.50","description":"Praktik Klinis terstandar akreditasi POGI \u0026 Kemenkes","type":"PELAYANAN","standardSkp":"1.50 SKP","status":"ACTIVE"},{"id":"f24142b5-a55f-4278-bc6a-f7d159449647","name":"Publikasi Jurnal Ilmiah","domain":"PEMBELAJARAN","default_credit_value":"1.50","description":"Publikasi Jurnal Ilmiah terstandar akreditasi POGI \u0026 Kemenkes","type":"PEMBELAJARAN","standardSkp":"1.50 SKP","status":"ACTIVE"},{"id":"9a5c1997-b76f-4b4a-8da1-925ed31e31b2","name":"Seminar \/ Webinar","domain":"PEMBELAJARAN","default_credit_value":"1.50","description":"Seminar \/ Webinar terstandar akreditasi POGI \u0026 Kemenkes","type":"PEMBELAJARAN","standardSkp":"1.50 SKP","status":"ACTIVE"},{"id":"04464f7a-a254-4aa6-b8cd-e071133da896","name":"Simposium Ilmiah","domain":"PEMBELAJARAN","default_credit_value":"1.50","description":"Simposium Ilmiah terstandar akreditasi POGI \u0026 Kemenkes","type":"PEMBELAJARAN","standardSkp":"1.50 SKP","status":"ACTIVE"},{"id":"829f564f-88e7-48cd-b264-09e13d77b572","name":"Tindakan Medis","domain":"PELAYANAN","default_credit_value":"1.50","description":"Tindakan Medis terstandar akreditasi POGI \u0026 Kemenkes","type":"PELAYANAN","standardSkp":"1.50 SKP","status":"ACTIVE"},{"id":"0345fad7-c196-4a12-8800-4af89400ef9f","name":"Workshop \/ Pelatihan","domain":"PEMBELAJARAN","default_credit_value":"1.50","description":"Workshop \/ Pelatihan terstandar akreditasi POGI \u0026 Kemenkes","type":"PEMBELAJARAN","standardSkp":"1.50 SKP","status":"ACTIVE"}];
-    window.LIVE_MANAGE_USERS = [{"id":"03bbce59-7dc4-4dc2-bce7-11e893ef4068","full_name":"Anna (Admin POGI)","name":"Anna (Admin POGI)","email":"sekretariat.pusat@pogi.or.id","phone_number":null,"role":"Admin POGI","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_POGI","display_role":"Admin POGI","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"99d8e901-4757-4ee5-bbad-25ddc913f018","full_name":"Ayu Lestari","name":"Ayu Lestari","email":"user6@example.com","phone_number":null,"role":"Admin Cabang","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_CABANG","display_role":"Admin Cabang","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"776040f8-1026-451c-a3e5-f55f149b6c30","full_name":"Bp. Ade","name":"Bp. Ade","email":"ade@pogi.or.id","phone_number":null,"role":"Super Admin","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:20.000000Z","branch_name":null,"raw_role":"SUPER_ADMIN","display_role":"Super Admin","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"fef3ade8-b9fe-44de-ac1a-3bb9f299ee55","full_name":"Bp. Ircham","name":"Bp. Ircham","email":"ircham@pogi.or.id","phone_number":null,"role":"Super Admin","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:20.000000Z","branch_name":null,"raw_role":"SUPER_ADMIN","display_role":"Super Admin","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"4719de4b-b591-4424-b20a-3f87f02b1c2b","full_name":"Bu Ratna","name":"Bu Ratna","email":"bu.ratna@pogi.or.id","phone_number":null,"role":"Admin Pusat","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_PUSAT","display_role":"Admin Pusat","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"622b9c53-db7f-44b1-939d-2b1721bee869","full_name":"Dewi Lestari","name":"Dewi Lestari","email":"dewi.lestari@pogi.or.id","phone_number":null,"role":"Admin POGI","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_POGI","display_role":"Admin POGI","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"14eac2f0-bb8c-4771-8c8d-8de6355003af","full_name":"Dian (Super Admin)","name":"Dian (Super Admin)","email":"super@example.com","phone_number":"081200000001","role":"Super Admin","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":"2026-11-24T13:24:44.000000Z","last_login_at":"2026-11-27T06:25:10.000000Z","created_at":"2026-11-27T06:52:20.000000Z","branch_name":null,"raw_role":"SUPER_ADMIN","display_role":"Super Admin","email_verified":true,"last_login":"27 Nov 2026, 13.25 WIB","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":38},{"id":"3dbd78c0-27e9-42b7-939e-72233dbeff76","full_name":"dr. Cut Simatupang, Sp.OG","name":"dr. Cut Simatupang, Sp.OG","email":"cut.simatupang@pogi.or.id","phone_number":null,"role":"User\/Dokter","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"DOKTER","display_role":"User\/Dokter","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"ac78eea9-60f2-4097-b2a9-141517d013e4","full_name":"dr. Firman, Sp.OG (Admin Cabang)","name":"dr. Firman, Sp.OG (Admin Cabang)","email":"sekretariat.jabar@pogi.or.id","phone_number":null,"role":"Admin Cabang","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_CABANG","display_role":"Admin Cabang","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"03cee728-c25a-4dc1-a564-217647b130d2","full_name":"dr. Ulul (POGI Pusat)","name":"dr. Ulul (POGI Pusat)","email":"admin.pusat@pogi.or.id","phone_number":null,"role":"Admin Pusat","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_PUSAT","display_role":"Admin Pusat","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"66340565-af3f-43d4-bdcf-79a84de7c99b","full_name":"Fikri Ramadhan","name":"Fikri Ramadhan","email":"user5@example.com","phone_number":null,"role":"Admin POGI","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_POGI","display_role":"Admin POGI","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"32b2b767-5289-4957-8fb1-3647ab88d42d","full_name":"Lily","name":"Lily","email":"lily@pogi.or.id","phone_number":null,"role":"Admin POGI","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_POGI","display_role":"Admin POGI","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"83714492-6d74-4575-9fbb-5226f4503be3","full_name":"Melati Sihombing","name":"Melati Sihombing","email":"user4@example.com","phone_number":null,"role":"Admin Cabang","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_CABANG","display_role":"Admin Cabang","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"01a21bed-4343-7a8f-9a7b-33a128b124c5","full_name":"Test User","name":"Test User","email":"test@example.com","phone_number":null,"role":"Super Admin","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":"2026-11-27T07:34:23.000000Z","last_login_at":null,"created_at":"2026-11-27T07:34:23.000000Z","branch_name":null,"raw_role":"SUPER_ADMIN","display_role":"Super Admin","email_verified":true,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"eb0904a3-cbdb-4ba5-98dc-1d8bb5fc126f","full_name":"Vivi","name":"Vivi","email":"vivi@pogi.or.id","phone_number":null,"role":"Admin POGI","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_POGI","display_role":"Admin POGI","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0}];
+    window.LIVE_MANAGE_USERS = [{"id":"03bbce59-7dc4-4dc2-bce7-11e893ef4068","full_name":"Anna","name":"Anna","email":"sekretariat.pusat@pogi.or.id","phone_number":null,"role":"Admin POGI","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_POGI","display_role":"Admin POGI","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"99d8e901-4757-4ee5-bbad-25ddc913f018","full_name":"Ayu Lestari","name":"Ayu Lestari","email":"user6@example.com","phone_number":null,"role":"Admin Cabang","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_CABANG","display_role":"Admin Cabang","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"776040f8-1026-451c-a3e5-f55f149b6c30","full_name":"Bp. Ade","name":"Bp. Ade","email":"ade@pogi.or.id","phone_number":null,"role":"Super Admin","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:20.000000Z","branch_name":null,"raw_role":"SUPER_ADMIN","display_role":"Super Admin","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"fef3ade8-b9fe-44de-ac1a-3bb9f299ee55","full_name":"Bp. Ircham","name":"Bp. Ircham","email":"ircham@pogi.or.id","phone_number":null,"role":"Super Admin","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:20.000000Z","branch_name":null,"raw_role":"SUPER_ADMIN","display_role":"Super Admin","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"4719de4b-b591-4424-b20a-3f87f02b1c2b","full_name":"Bu Ratna","name":"Bu Ratna","email":"bu.ratna@pogi.or.id","phone_number":null,"role":"Admin Pusat","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_PUSAT","display_role":"Admin Pusat","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"622b9c53-db7f-44b1-939d-2b1721bee869","full_name":"Dewi Lestari","name":"Dewi Lestari","email":"dewi.lestari@pogi.or.id","phone_number":null,"role":"Admin POGI","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_POGI","display_role":"Admin POGI","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"14eac2f0-bb8c-4771-8c8d-8de6355003af","full_name":"Dian Imas","name":"Dian Imas","email":"super@example.com","phone_number":"081200000001","role":"Super Admin","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":"2026-11-24T13:24:44.000000Z","last_login_at":"2026-11-27T06:25:10.000000Z","created_at":"2026-11-27T06:52:20.000000Z","branch_name":null,"raw_role":"SUPER_ADMIN","display_role":"Super Admin","email_verified":true,"last_login":"27 Nov 2026, 13.25 WIB","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":48},{"id":"3dbd78c0-27e9-42b7-939e-72233dbeff76","full_name":"dr. Cut Simatupang, Sp.OG","name":"dr. Cut Simatupang, Sp.OG","email":"cut.simatupang@pogi.or.id","phone_number":null,"role":"User\/Dokter","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"DOKTER","display_role":"User\/Dokter","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"ac78eea9-60f2-4097-b2a9-141517d013e4","full_name":"dr. Firman, Sp.OG","name":"dr. Firman, Sp.OG","email":"sekretariat.jabar@pogi.or.id","phone_number":null,"role":"Admin Cabang","branch_id":"b800841f-8173-44eb-a99e-3eea6b954ae1","is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":"POGI Cabang DKI Jakarta","raw_role":"ADMIN_CABANG","display_role":"Admin Cabang","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"03cee728-c25a-4dc1-a564-217647b130d2","full_name":"dr. Ulul","name":"dr. Ulul","email":"admin.pusat@pogi.or.id","phone_number":null,"role":"Admin Pusat","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_PUSAT","display_role":"Admin Pusat","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"66340565-af3f-43d4-bdcf-79a84de7c99b","full_name":"Fikri Ramadhan","name":"Fikri Ramadhan","email":"user5@example.com","phone_number":null,"role":"Admin POGI","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_POGI","display_role":"Admin POGI","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"32b2b767-5289-4957-8fb1-3647ab88d42d","full_name":"Lily","name":"Lily","email":"lily@pogi.or.id","phone_number":null,"role":"Admin POGI","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_POGI","display_role":"Admin POGI","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"83714492-6d74-4575-9fbb-5226f4503be3","full_name":"Melati Sihombing","name":"Melati Sihombing","email":"user4@example.com","phone_number":null,"role":"Admin Cabang","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_CABANG","display_role":"Admin Cabang","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"01a21bed-4343-7a8f-9a7b-33a128b124c5","full_name":"Test User","name":"Test User","email":"test@example.com","phone_number":null,"role":"Super Admin","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":"2026-11-27T07:34:23.000000Z","last_login_at":null,"created_at":"2026-11-27T07:34:23.000000Z","branch_name":null,"raw_role":"SUPER_ADMIN","display_role":"Super Admin","email_verified":true,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":0,"audit_actions_count":0},{"id":"eb0904a3-cbdb-4ba5-98dc-1d8bb5fc126f","full_name":"Vivi","name":"Vivi","email":"vivi@pogi.or.id","phone_number":null,"role":"Admin POGI","branch_id":null,"is_active":true,"account_status":"ACTIVE","email_verified_at":null,"last_login_at":null,"created_at":"2026-11-27T06:52:21.000000Z","branch_name":null,"raw_role":"ADMIN_POGI","display_role":"Admin POGI","email_verified":false,"last_login":"Belum tercatat","created":"27 Nov 2026","assigned_doctors_count":1,"audit_actions_count":0}];
     window.LIVE_MANAGE_BRANCHES = [{"id":"3185af45-9695-43bd-8125-25734c9e98a8","province_id":"11","branch_code":"POGI-11","branch_name":"POGI Cabang Aceh","secretariat_address":"Sekretariat POGI Cabang Aceh, Ibukota Provinsi","contact_email":"sekretariat.11@pogi.or.id","contact_phone":"081200000011","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"9eb234ac-31c8-44c1-a45d-96162a05ae6d","province_id":"51","branch_code":"POGI-51","branch_name":"POGI Cabang Bali","secretariat_address":"Sekretariat POGI Cabang Bali, Ibukota Provinsi","contact_email":"sekretariat.51@pogi.or.id","contact_phone":"081200000051","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"69b38169-01b4-4bbc-831e-e5084389e405","province_id":"36","branch_code":"POGI-36","branch_name":"POGI Cabang Banten","secretariat_address":"Sekretariat POGI Cabang Banten, Ibukota Provinsi","contact_email":"sekretariat.36@pogi.or.id","contact_phone":"081200000036","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"6d1b7399-8978-4616-a120-38d48b154c76","province_id":"17","branch_code":"POGI-17","branch_name":"POGI Cabang Bengkulu","secretariat_address":"Sekretariat POGI Cabang Bengkulu, Ibukota Provinsi","contact_email":"sekretariat.17@pogi.or.id","contact_phone":"081200000017","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"3dc69eda-cc0d-498b-9cee-32aa12283891","province_id":"34","branch_code":"POGI-34","branch_name":"POGI Cabang DI Yogyakarta","secretariat_address":"Sekretariat POGI Cabang DI Yogyakarta, Ibukota Provinsi","contact_email":"sekretariat.34@pogi.or.id","contact_phone":"081200000034","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"b800841f-8173-44eb-a99e-3eea6b954ae1","province_id":"31","branch_code":"POGI-31","branch_name":"POGI Cabang DKI Jakarta","secretariat_address":"Sekretariat POGI Cabang DKI Jakarta, Ibukota Provinsi","contact_email":"sekretariat.31@pogi.or.id","contact_phone":"081200000031","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":1},{"id":"792b3a9d-fc49-4c1d-986c-2985614595ed","province_id":"75","branch_code":"POGI-75","branch_name":"POGI Cabang Gorontalo","secretariat_address":"Sekretariat POGI Cabang Gorontalo, Ibukota Provinsi","contact_email":"sekretariat.75@pogi.or.id","contact_phone":"081200000075","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"22919d7f-ed31-48c1-a8be-c237b262c426","province_id":"15","branch_code":"POGI-15","branch_name":"POGI Cabang Jambi","secretariat_address":"Sekretariat POGI Cabang Jambi, Ibukota Provinsi","contact_email":"sekretariat.15@pogi.or.id","contact_phone":"081200000015","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"adcaebb5-2733-4f51-8a87-54ff5fec1f30","province_id":"32","branch_code":"POGI-32","branch_name":"POGI Cabang Jawa Barat","secretariat_address":"Sekretariat POGI Cabang Jawa Barat, Ibukota Provinsi","contact_email":"sekretariat.32@pogi.or.id","contact_phone":"081200000032","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"dfb0b922-47e2-4356-8bba-93fbb3697bf1","province_id":"33","branch_code":"POGI-33","branch_name":"POGI Cabang Jawa Tengah","secretariat_address":"Sekretariat POGI Cabang Jawa Tengah, Ibukota Provinsi","contact_email":"sekretariat.33@pogi.or.id","contact_phone":"081200000033","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"3002f685-d938-427d-a8df-1ffeb1962b04","province_id":"35","branch_code":"POGI-35","branch_name":"POGI Cabang Jawa Timur","secretariat_address":"Sekretariat POGI Cabang Jawa Timur, Ibukota Provinsi","contact_email":"sekretariat.35@pogi.or.id","contact_phone":"081200000035","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"d1d7c1da-fe02-4d86-af2d-7688816b22fc","province_id":"61","branch_code":"POGI-61","branch_name":"POGI Cabang Kalimantan Barat","secretariat_address":"Sekretariat POGI Cabang Kalimantan Barat, Ibukota Provinsi","contact_email":"sekretariat.61@pogi.or.id","contact_phone":"081200000061","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"9d15f886-14fb-4794-be2c-ef426857f3da","province_id":"63","branch_code":"POGI-63","branch_name":"POGI Cabang Kalimantan Selatan","secretariat_address":"Sekretariat POGI Cabang Kalimantan Selatan, Ibukota Provinsi","contact_email":"sekretariat.63@pogi.or.id","contact_phone":"081200000063","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"c53cc695-7b72-42cf-a06c-b04937c34af8","province_id":"62","branch_code":"POGI-62","branch_name":"POGI Cabang Kalimantan Tengah","secretariat_address":"Sekretariat POGI Cabang Kalimantan Tengah, Ibukota Provinsi","contact_email":"sekretariat.62@pogi.or.id","contact_phone":"081200000062","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"7c6a767e-0b29-47f5-ac14-251145f44514","province_id":"64","branch_code":"POGI-64","branch_name":"POGI Cabang Kalimantan Timur","secretariat_address":"Sekretariat POGI Cabang Kalimantan Timur, Ibukota Provinsi","contact_email":"sekretariat.64@pogi.or.id","contact_phone":"081200000064","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"f893b502-10cc-41bc-939c-9a9deb2eeb00","province_id":"65","branch_code":"POGI-65","branch_name":"POGI Cabang Kalimantan Utara","secretariat_address":"Sekretariat POGI Cabang Kalimantan Utara, Ibukota Provinsi","contact_email":"sekretariat.65@pogi.or.id","contact_phone":"081200000065","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"b7ce2997-c743-47d0-a9da-87783a948e19","province_id":"19","branch_code":"POGI-19","branch_name":"POGI Cabang Kepulauan Bangka Belitung","secretariat_address":"Sekretariat POGI Cabang Kepulauan Bangka Belitung, Ibukota Provinsi","contact_email":"sekretariat.19@pogi.or.id","contact_phone":"081200000019","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"e8c25f48-0134-493d-914a-eb29af710544","province_id":"21","branch_code":"POGI-21","branch_name":"POGI Cabang Kepulauan Riau","secretariat_address":"Sekretariat POGI Cabang Kepulauan Riau, Ibukota Provinsi","contact_email":"sekretariat.21@pogi.or.id","contact_phone":"081200000021","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"ff8ddb5c-ac4c-48d9-901f-1b21cd36b290","province_id":"18","branch_code":"POGI-18","branch_name":"POGI Cabang Lampung","secretariat_address":"Sekretariat POGI Cabang Lampung, Ibukota Provinsi","contact_email":"sekretariat.18@pogi.or.id","contact_phone":"081200000018","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"3d0ef5d0-9cfb-469f-8602-790ad7e6547a","province_id":"81","branch_code":"POGI-81","branch_name":"POGI Cabang Maluku","secretariat_address":"Sekretariat POGI Cabang Maluku, Ibukota Provinsi","contact_email":"sekretariat.81@pogi.or.id","contact_phone":"081200000081","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"263205a2-1242-487f-8bb5-e61b8891f3ce","province_id":"82","branch_code":"POGI-82","branch_name":"POGI Cabang Maluku Utara","secretariat_address":"Sekretariat POGI Cabang Maluku Utara, Ibukota Provinsi","contact_email":"sekretariat.82@pogi.or.id","contact_phone":"081200000082","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"c7e32d2f-05b8-4758-8011-15f69c24bbe4","province_id":"52","branch_code":"POGI-52","branch_name":"POGI Cabang Nusa Tenggara Barat","secretariat_address":"Sekretariat POGI Cabang Nusa Tenggara Barat, Ibukota Provinsi","contact_email":"sekretariat.52@pogi.or.id","contact_phone":"081200000052","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"5ce3bfca-9bfe-40c0-bb75-5b242dd7bd8e","province_id":"53","branch_code":"POGI-53","branch_name":"POGI Cabang Nusa Tenggara Timur","secretariat_address":"Sekretariat POGI Cabang Nusa Tenggara Timur, Ibukota Provinsi","contact_email":"sekretariat.53@pogi.or.id","contact_phone":"081200000053","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"392b0e4c-193d-476c-8514-81f967b3ca51","province_id":"92","branch_code":"POGI-92","branch_name":"POGI Cabang Papua","secretariat_address":"Sekretariat POGI Cabang Papua, Ibukota Provinsi","contact_email":"sekretariat.92@pogi.or.id","contact_phone":"081200000092","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"0abe6c30-13c3-4d85-8929-0a8e2b9fd640","province_id":"91","branch_code":"POGI-91","branch_name":"POGI Cabang Papua Barat","secretariat_address":"Sekretariat POGI Cabang Papua Barat, Ibukota Provinsi","contact_email":"sekretariat.91@pogi.or.id","contact_phone":"081200000091","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"5a285f2e-b2de-42de-be6a-3af871ba747c","province_id":"96","branch_code":"POGI-96","branch_name":"POGI Cabang Papua Barat Daya","secretariat_address":"Sekretariat POGI Cabang Papua Barat Daya, Ibukota Provinsi","contact_email":"sekretariat.96@pogi.or.id","contact_phone":"081200000096","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"d8f76cf9-bd48-4d81-a041-de252a3effc3","province_id":"95","branch_code":"POGI-95","branch_name":"POGI Cabang Papua Pegunungan","secretariat_address":"Sekretariat POGI Cabang Papua Pegunungan, Ibukota Provinsi","contact_email":"sekretariat.95@pogi.or.id","contact_phone":"081200000095","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"b00242f8-a3f6-4552-80ea-369b6169a66d","province_id":"93","branch_code":"POGI-93","branch_name":"POGI Cabang Papua Selatan","secretariat_address":"Sekretariat POGI Cabang Papua Selatan, Ibukota Provinsi","contact_email":"sekretariat.93@pogi.or.id","contact_phone":"081200000093","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"f61bf33e-6f17-4172-809f-79004ba78272","province_id":"94","branch_code":"POGI-94","branch_name":"POGI Cabang Papua Tengah","secretariat_address":"Sekretariat POGI Cabang Papua Tengah, Ibukota Provinsi","contact_email":"sekretariat.94@pogi.or.id","contact_phone":"081200000094","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"212c5b1a-d35d-4d54-9b74-7dfbb82baf25","province_id":"14","branch_code":"POGI-14","branch_name":"POGI Cabang Riau","secretariat_address":"Sekretariat POGI Cabang Riau, Ibukota Provinsi","contact_email":"sekretariat.14@pogi.or.id","contact_phone":"081200000014","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"39cfa147-1cf9-4df7-8cd5-ee06920bddff","province_id":"76","branch_code":"POGI-76","branch_name":"POGI Cabang Sulawesi Barat","secretariat_address":"Sekretariat POGI Cabang Sulawesi Barat, Ibukota Provinsi","contact_email":"sekretariat.76@pogi.or.id","contact_phone":"081200000076","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"e2c84d25-a770-4009-b80f-009617a598df","province_id":"73","branch_code":"POGI-73","branch_name":"POGI Cabang Sulawesi Selatan","secretariat_address":"Sekretariat POGI Cabang Sulawesi Selatan, Ibukota Provinsi","contact_email":"sekretariat.73@pogi.or.id","contact_phone":"081200000073","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"92eabfd9-5a76-4921-9b39-6a8b32f12d37","province_id":"72","branch_code":"POGI-72","branch_name":"POGI Cabang Sulawesi Tengah","secretariat_address":"Sekretariat POGI Cabang Sulawesi Tengah, Ibukota Provinsi","contact_email":"sekretariat.72@pogi.or.id","contact_phone":"081200000072","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"c1104227-0956-4785-b3b2-f0ec6a1d7b73","province_id":"74","branch_code":"POGI-74","branch_name":"POGI Cabang Sulawesi Tenggara","secretariat_address":"Sekretariat POGI Cabang Sulawesi Tenggara, Ibukota Provinsi","contact_email":"sekretariat.74@pogi.or.id","contact_phone":"081200000074","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"1286c853-da80-453d-9b9d-aeb17e27c515","province_id":"71","branch_code":"POGI-71","branch_name":"POGI Cabang Sulawesi Utara","secretariat_address":"Sekretariat POGI Cabang Sulawesi Utara, Ibukota Provinsi","contact_email":"sekretariat.71@pogi.or.id","contact_phone":"081200000071","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"4a8db153-6dc2-4478-aad0-351b31d226e4","province_id":"13","branch_code":"POGI-13","branch_name":"POGI Cabang Sumatera Barat","secretariat_address":"Sekretariat POGI Cabang Sumatera Barat, Ibukota Provinsi","contact_email":"sekretariat.13@pogi.or.id","contact_phone":"081200000013","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"d880e6c1-0966-453c-8f66-a5524ac97a53","province_id":"16","branch_code":"POGI-16","branch_name":"POGI Cabang Sumatera Selatan","secretariat_address":"Sekretariat POGI Cabang Sumatera Selatan, Ibukota Provinsi","contact_email":"sekretariat.16@pogi.or.id","contact_phone":"081200000016","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0},{"id":"5bf244e7-6ba9-476c-832e-cb58a5f66e71","province_id":"12","branch_code":"POGI-12","branch_name":"POGI Cabang Sumatera Utara","secretariat_address":"Sekretariat POGI Cabang Sumatera Utara, Ibukota Provinsi","contact_email":"sekretariat.12@pogi.or.id","contact_phone":"081200000012","created_at":"2026-11-24T13:24:44.000000Z","updated_at":"2026-11-24T13:24:44.000000Z","doctor_count":0}];
     window.LIVE_MANAGE_PROVINCES = [{"id":"11","name":"Aceh","region_island":"Sumatera","latitude":"4.695135","longitude":"96.749399","created_at":"2026-11-24 20:24:44"},{"id":"51","name":"Bali","region_island":"Bali \u0026 Nusa Tenggara","latitude":"-8.409518","longitude":"115.188916","created_at":"2026-11-24 20:24:44"},{"id":"36","name":"Banten","region_island":"Jawa","latitude":"-6.405817","longitude":"106.064018","created_at":"2026-11-24 20:24:44"},{"id":"17","name":"Bengkulu","region_island":"Sumatera","latitude":"-3.577847","longitude":"102.346388","created_at":"2026-11-24 20:24:44"},{"id":"34","name":"DI Yogyakarta","region_island":"Jawa","latitude":"-7.795580","longitude":"110.369490","created_at":"2026-11-24 20:24:44"},{"id":"31","name":"DKI Jakarta","region_island":"Jawa","latitude":"-6.208763","longitude":"106.845599","created_at":"2026-11-24 20:24:44"},{"id":"75","name":"Gorontalo","region_island":"Sulawesi","latitude":"0.699937","longitude":"122.446724","created_at":"2026-11-24 20:24:44"},{"id":"15","name":"Jambi","region_island":"Sumatera","latitude":"-1.485183","longitude":"102.438058","created_at":"2026-11-24 20:24:44"},{"id":"32","name":"Jawa Barat","region_island":"Jawa","latitude":"-6.914744","longitude":"107.609810","created_at":"2026-11-24 20:24:44"},{"id":"33","name":"Jawa Tengah","region_island":"Jawa","latitude":"-7.150975","longitude":"110.140259","created_at":"2026-11-24 20:24:44"},{"id":"35","name":"Jawa Timur","region_island":"Jawa","latitude":"-7.536064","longitude":"112.238402","created_at":"2026-11-24 20:24:44"},{"id":"61","name":"Kalimantan Barat","region_island":"Kalimantan","latitude":"-0.278781","longitude":"111.475285","created_at":"2026-11-24 20:24:44"},{"id":"63","name":"Kalimantan Selatan","region_island":"Kalimantan","latitude":"-3.092642","longitude":"115.283759","created_at":"2026-11-24 20:24:44"},{"id":"62","name":"Kalimantan Tengah","region_island":"Kalimantan","latitude":"-1.681488","longitude":"113.382355","created_at":"2026-11-24 20:24:44"},{"id":"64","name":"Kalimantan Timur","region_island":"Kalimantan","latitude":"0.538659","longitude":"116.419389","created_at":"2026-11-24 20:24:44"},{"id":"65","name":"Kalimantan Utara","region_island":"Kalimantan","latitude":"3.073093","longitude":"116.041389","created_at":"2026-11-24 20:24:44"},{"id":"19","name":"Kepulauan Bangka Belitung","region_island":"Sumatera","latitude":"-2.741051","longitude":"106.440587","created_at":"2026-11-24 20:24:44"},{"id":"21","name":"Kepulauan Riau","region_island":"Sumatera","latitude":"3.945651","longitude":"108.142867","created_at":"2026-11-24 20:24:44"},{"id":"18","name":"Lampung","region_island":"Sumatera","latitude":"-4.558585","longitude":"105.406808","created_at":"2026-11-24 20:24:44"},{"id":"81","name":"Maluku","region_island":"Maluku \u0026 Papua","latitude":"-3.238462","longitude":"130.145273","created_at":"2026-11-24 20:24:44"},{"id":"82","name":"Maluku Utara","region_island":"Maluku \u0026 Papua","latitude":"1.570999","longitude":"127.808769","created_at":"2026-11-24 20:24:44"},{"id":"52","name":"Nusa Tenggara Barat","region_island":"Bali \u0026 Nusa Tenggara","latitude":"-8.652933","longitude":"117.361648","created_at":"2026-11-24 20:24:44"},{"id":"53","name":"Nusa Tenggara Timur","region_island":"Bali \u0026 Nusa Tenggara","latitude":"-8.657382","longitude":"121.079370","created_at":"2026-11-24 20:24:44"},{"id":"92","name":"Papua","region_island":"Maluku \u0026 Papua","latitude":"-4.269928","longitude":"138.080353","created_at":"2026-11-24 20:24:44"},{"id":"91","name":"Papua Barat","region_island":"Maluku \u0026 Papua","latitude":"-1.336115","longitude":"133.174716","created_at":"2026-11-24 20:24:44"},{"id":"96","name":"Papua Barat Daya","region_island":"Maluku \u0026 Papua","latitude":"-0.900000","longitude":"131.250000","created_at":"2026-11-24 20:24:44"},{"id":"95","name":"Papua Pegunungan","region_island":"Maluku \u0026 Papua","latitude":"-4.100000","longitude":"139.000000","created_at":"2026-11-24 20:24:44"},{"id":"93","name":"Papua Selatan","region_island":"Maluku \u0026 Papua","latitude":"-7.500000","longitude":"139.500000","created_at":"2026-11-24 20:24:44"},{"id":"94","name":"Papua Tengah","region_island":"Maluku \u0026 Papua","latitude":"-3.500000","longitude":"136.000000","created_at":"2026-11-24 20:24:44"},{"id":"14","name":"Riau","region_island":"Sumatera","latitude":"0.293347","longitude":"101.706825","created_at":"2026-11-24 20:24:44"},{"id":"76","name":"Sulawesi Barat","region_island":"Sulawesi","latitude":"-2.844137","longitude":"119.232078","created_at":"2026-11-24 20:24:44"},{"id":"73","name":"Sulawesi Selatan","region_island":"Sulawesi","latitude":"-3.668799","longitude":"119.974053","created_at":"2026-11-24 20:24:44"},{"id":"72","name":"Sulawesi Tengah","region_island":"Sulawesi","latitude":"-1.430025","longitude":"121.445618","created_at":"2026-11-24 20:24:44"},{"id":"74","name":"Sulawesi Tenggara","region_island":"Sulawesi","latitude":"-4.144910","longitude":"122.174605","created_at":"2026-11-24 20:24:44"},{"id":"71","name":"Sulawesi Utara","region_island":"Sulawesi","latitude":"0.624693","longitude":"123.975002","created_at":"2026-11-24 20:24:44"},{"id":"13","name":"Sumatera Barat","region_island":"Sumatera","latitude":"-0.739940","longitude":"100.800005","created_at":"2026-11-24 20:24:44"},{"id":"16","name":"Sumatera Selatan","region_island":"Sumatera","latitude":"-3.319437","longitude":"104.914710","created_at":"2026-11-24 20:24:44"},{"id":"12","name":"Sumatera Utara","region_island":"Sumatera","latitude":"2.115355","longitude":"99.545097","created_at":"2026-11-24 20:24:44"}];
     window.LIVE_MANAGE_INSTITUTION_TYPES = ["Klinik Pratama","Klinik Utama","Puskesmas","RS Jejaring","RS Swasta","RSUD","RSUP"];
@@ -1605,7 +1617,7 @@
       if (!el) return;
 
       if (totalItems === 0) {
-        el.innerHTML = '<div class="text-slate-400 text-xs py-1">Tidak ada data untuk ditampilkan</div>';
+        el.innerHTML = '<div class="text-slate-400 text-xs py-1 text-center w-full">Tidak ada data untuk ditampilkan</div>';
         return;
       }
 
@@ -1614,31 +1626,33 @@
       // Prev Button
       const isFirst = currentPage <= 1;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage - 1})" ${isFirst ? 'disabled class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed inline-flex items-center gap-1 shrink-0"' : 'class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1 transition shadow-2xs shrink-0 cursor-pointer"'}>
           <span class="material-symbols-outlined text-sm">chevron_left</span>
-          <span>Sebelumnya</span>
+          <span class="hidden sm:inline">Sebelumnya</span>
+          <span class="sm:hidden">Prev</span>
         </button>
       `;
 
-      // Page numbers with smart window
-      const maxButtons = 5;
-      let startP = Math.max(1, currentPage - 2);
+      // Page numbers with smart responsive window
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+      const maxButtons = isMobile ? 3 : 5;
+      let startP = Math.max(1, currentPage - Math.floor(maxButtons / 2));
       let endP = Math.min(totalPages, startP + maxButtons - 1);
       if (endP - startP < maxButtons - 1) {
         startP = Math.max(1, endP - maxButtons + 1);
       }
 
       if (startP > 1) {
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">1</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(1)" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 cursor-pointer">1</button>`;
         if (startP > 2) {
-          btnsHtml += '<span class="px-1 text-slate-400 font-bold self-center">...</span>';
+          btnsHtml += '<span class="px-0.5 sm:px-1 text-slate-400 font-bold self-center text-xs shrink-0">...</span>';
         }
       }
 
       for (let p = startP; p <= endP; p++) {
         const isActive = (p === currentPage);
         btnsHtml += `
-          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <button type="button" onclick="${onPageChangeFn}(${p})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center shrink-0 cursor-pointer ${isActive ? 'bg-[#16b3ac] text-white shadow-2xs font-black' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
             ${p}
           </button>
         `;
@@ -1646,16 +1660,17 @@
 
       if (endP < totalPages) {
         if (endP < totalPages - 1) {
-          btnsHtml += '<span class="px-1 text-slate-400 font-bold self-center">...</span>';
+          btnsHtml += '<span class="px-0.5 sm:px-1 text-slate-400 font-bold self-center text-xs shrink-0">...</span>';
         }
-        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">${totalPages}</button>`;
+        btnsHtml += `<button type="button" onclick="${onPageChangeFn}(${totalPages})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition inline-flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 cursor-pointer">${totalPages}</button>`;
       }
 
       // Next Button
       const isLast = currentPage >= totalPages;
       btnsHtml += `
-        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed flex items-center gap-1"' : 'class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 transition shadow-2xs"'}>
-          <span>Selanjutnya</span>
+        <button type="button" onclick="${onPageChangeFn}(${currentPage + 1})" ${isLast ? 'disabled class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 text-slate-300 text-xs font-bold cursor-not-allowed inline-flex items-center gap-1 shrink-0"' : 'class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1 transition shadow-2xs shrink-0 cursor-pointer"'}>
+          <span class="hidden sm:inline">Selanjutnya</span>
+          <span class="sm:hidden">Next</span>
           <span class="material-symbols-outlined text-sm">chevron_right</span>
         </button>
       `;
@@ -1663,7 +1678,7 @@
       let limitSelectorHtml = '';
       if (onLimitChangeFn && limits && limits.length > 0) {
         limitSelectorHtml = `
-          <div class="flex items-center gap-1.5 ml-0 sm:ml-2">
+          <div class="flex items-center gap-1 shrink-0">
             <span class="text-slate-400 text-[11px]">Tampilkan:</span>
             <select onchange="${onLimitChangeFn}(this.value)" class="py-1 px-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs font-bold focus:outline-none">
               ${limits.map(l => `<option value="${l}" ${l === currentLimit ? 'selected' : ''}>${l}</option>`).join('')}
@@ -1673,14 +1688,16 @@
       }
 
       el.innerHTML = `
-        <div class="flex flex-wrap items-center gap-2 text-slate-500 font-medium text-xs">
-          <div>
-            Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> ${itemLabel}
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3 w-full">
+          <div class="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto text-slate-500 font-medium text-xs">
+            <div class="text-[11px] sm:text-xs text-slate-600 truncate">
+              Menampilkan <strong class="text-slate-900">${startIdx} — ${endIdx}</strong> dari <strong class="text-slate-900">${totalItems}</strong> <span class="hidden sm:inline">${itemLabel}</span><span class="sm:hidden">data</span>
+            </div>
+            ${limitSelectorHtml}
           </div>
-          ${limitSelectorHtml}
-        </div>
-        <div class="flex items-center gap-1.5 flex-wrap">
-          ${btnsHtml}
+          <div class="flex items-center justify-center gap-1 sm:gap-1.5 flex-nowrap w-full sm:w-auto overflow-x-auto no-scrollbar py-0.5">
+            ${btnsHtml}
+          </div>
         </div>
       `;
     }
@@ -2295,7 +2312,7 @@
         if (t === tab) {
           if (pane) pane.classList.remove('hidden');
           if (topBtn) {
-            topBtn.className = 'py-2 px-3.5 rounded-xl bg-white text-slate-900 shadow-xs transition flex items-center gap-1.5 font-bold';
+            topBtn.className = 'py-2 px-3 sm:px-3.5 rounded-xl bg-white text-slate-900 shadow-2xs transition flex items-center gap-1.5 font-black shrink-0 whitespace-nowrap cursor-pointer';
           }
           if (sideBtn) {
             sideBtn.className = 'nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition bg-[#16b3ac] text-white shadow-xs';
@@ -2303,7 +2320,7 @@
         } else {
           if (pane) pane.classList.add('hidden');
           if (topBtn) {
-            topBtn.className = 'py-2 px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5';
+            topBtn.className = 'py-2 px-3 sm:px-3.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 font-bold shrink-0 whitespace-nowrap cursor-pointer';
           }
           if (sideBtn) {
             sideBtn.className = 'nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-slate-100';
@@ -2392,7 +2409,7 @@
         if (tbody) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="10" class="py-14 px-4 text-center">
+              <td colspan="9" class="py-14 px-4 text-center">
                 <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
                   <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-400 flex items-center justify-center shadow-2xs">
                     <span class="material-symbols-outlined text-2xl">person_off</span>
@@ -2427,9 +2444,6 @@
         // Desktop & Tablet Rows
         if (tbody) {
           tbody.innerHTML = pageDoctors.map(d => {
-            const qAchieved = d.q4Credits !== undefined ? d.q4Credits : (d.qAchieved !== undefined ? d.qAchieved : 8.0);
-            const qTarget = 8.0;
-            const percent = Math.min(100, Math.round((qAchieved / qTarget) * 100));
             const isDocActive = (d.is_active === true || d.status === 'Active' || d.status === 'ACTIVE' || d.status === 'Aktif' || d.raw_status === 'ACTIVE');
             const statusBadge = isDocActive
               ? '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Active</span>'
@@ -2437,11 +2451,12 @@
 
             const initials = d.initials || d.avatar || 'DR';
             const hospital = d.hospital || d.institution || 'RS Jejaring POGI';
-            const pel = d.pelayananCredits !== undefined ? d.pelayananCredits : (d.pelayanan?.achieved || 0);
-            const peng = d.pengabdianCredits !== undefined ? d.pengabdianCredits : (d.pengabdian?.achieved || 0);
-            const pemb = d.pembelajaranCredits !== undefined ? d.pembelajaranCredits : (d.pembelajaran?.achieved || 0);
-            const total5Year = d.total5YearAchieved ?? d.totalCredits ?? (pel + peng + pemb);
-            const lastAct = d.lastActivity || '-';
+            const strNumber = d.str_number || d.str || '-';
+            const phone = d.phone || d.whatsapp_number || '-';
+            const email = d.email || '-';
+            const picAdmin = d.assigned_to || d.assigned_pic_name || '';
+            const periodStr = `${d.period_start || '2026-01-01'} s/d ${d.period_end || '2030-12-31'}`;
+            const plataranUser = d.plataran_sehat_username || '';
 
             return `
               <tr class="hover:bg-slate-50/80 transition">
@@ -2452,54 +2467,58 @@
                     </div>
                     <div class="min-w-0">
                       <div class="font-bold text-slate-900 text-xs leading-snug truncate max-w-[220px]">${d.name}</div>
-                      <div class="text-[10px] text-slate-400 font-mono mt-0.5">${d.pogiId || '-'}</div>
                     </div>
                   </div>
                 </td>
                 <td class="py-3 px-4">
-                  <div class="font-semibold text-slate-800 text-xs">${d.province}</div>
+                  <div class="font-mono font-semibold text-slate-800 text-xs">${strNumber}</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center gap-1.5 font-medium text-slate-700 text-xs">
+                    <span class="material-symbols-outlined text-[14px] text-emerald-600 shrink-0">call</span>
+                    <span>${phone}</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 text-[10px] text-slate-400 truncate max-w-[170px] mt-0.5">
+                    <span class="material-symbols-outlined text-[13px] text-slate-400 shrink-0">mail</span>
+                    <span class="truncate">${email}</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">
+                  <div class="font-semibold text-slate-800 text-xs">${d.province || '-'}</div>
                   <div class="text-[10px] text-slate-500 truncate max-w-[170px] mt-0.5">${hospital}</div>
                 </td>
                 <td class="py-3 px-4">
-                  <div class="flex items-center justify-between text-[11px] mb-1 font-bold">
-                    <span class="text-slate-800">${qAchieved.toFixed(1)} / ${qTarget.toFixed(1)} SKP</span>
-                    <span class="${percent >= 100 ? 'text-emerald-700' : 'text-amber-600'}">${percent}%</span>
-                  </div>
-                  <div class="w-28 bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                    <div class="${percent >= 100 ? 'bg-[#16b3ac]' : 'bg-amber-500'} h-1.5 rounded-full" style="width: ${percent}%"></div>
-                  </div>
-                  <div class="text-[9px] text-slate-400 mt-1">Total 5 Thn: ${total5Year}/160 SKP</div>
-                </td>
-                <td class="py-3 px-4 text-center">
-                  ${d.pendingCredits > 0 
-                    ? `<span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[11px]">+${d.pendingCredits} SKP</span>`
-                    : '<span class="text-slate-400 text-[11px]">-</span>'}
+                  ${picAdmin
+                    ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                        <span class="truncate max-w-[130px]">${picAdmin}</span>
+                       </span>`
+                    : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium text-slate-400 bg-slate-50 border border-slate-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0"></span>Belum Ditugaskan
+                       </span>`}
                 </td>
                 <td class="py-3 px-4">
-                  <div class="font-bold text-sky-900 text-xs">${pel} <span class="text-slate-400 font-normal">/ 80</span></div>
-                  <div class="w-20 bg-slate-100 rounded-full h-1 mt-1 overflow-hidden">
-                    <div class="progress-bar-pelayanan h-1 rounded-full" style="width: ${Math.min(100, (pel / 80) * 100)}%"></div>
+                  <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-medium text-slate-700">
+                    <span class="material-symbols-outlined text-[13px] text-slate-400">calendar_month</span>
+                    <span>${periodStr}</span>
                   </div>
                 </td>
                 <td class="py-3 px-4">
-                  <div class="font-bold text-amber-900 text-xs">${peng} <span class="text-slate-400 font-normal">/ 30</span></div>
-                  <div class="w-20 bg-slate-100 rounded-full h-1 mt-1 overflow-hidden">
-                    <div class="progress-bar-pengabdian h-1 rounded-full" style="width: ${Math.min(100, (peng / 30) * 100)}%"></div>
-                  </div>
-                </td>
-                <td class="py-3 px-4">
-                  <div class="font-bold text-emerald-900 text-xs">${pemb} <span class="text-slate-400 font-normal">/ 50</span></div>
-                  <div class="w-20 bg-slate-100 rounded-full h-1 mt-1 overflow-hidden">
-                    <div class="progress-bar-pembelajaran h-1 rounded-full" style="width: ${Math.min(100, (pemb / 50) * 100)}%"></div>
-                  </div>
+                  ${plataranUser
+                    ? `<div class="flex items-center gap-1.5 text-xs font-semibold text-sky-800">
+                        <span class="material-symbols-outlined text-[15px] text-sky-500">account_circle</span>
+                        <span class="truncate max-w-[140px]">${plataranUser}</span>
+                       </div>
+                       <div class="text-[10px] text-emerald-600 font-bold flex items-center gap-1 mt-0.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Terhubung LMS
+                       </div>`
+                    : `<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium text-slate-400 bg-slate-50 border border-slate-200">
+                        <span class="material-symbols-outlined text-[13px] text-slate-400">lock</span>Belum Disetel
+                       </div>`}
                 </td>
                 <td class="py-3 px-4 text-center">${statusBadge}</td>
-                <td class="py-3 px-4 text-[11px] text-slate-500">${lastAct}</td>
                 <td class="py-3 px-4 text-center">
                   <div class="flex items-center justify-center gap-1.5">
-                    <button type="button" onclick="openManageDetailModal('doctor', '${d.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition cursor-pointer">
-                      Rincian
-                    </button>
                     <button type="button" onclick="openManageEditModal('doctor', '${d.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer rbac-operational">
                       Edit
                     </button>
@@ -2516,38 +2535,81 @@
         // Mobile Touch Cards
         if (mobileContainer) {
           mobileContainer.innerHTML = pageDoctors.map(d => {
-            const qAchieved = d.q4Credits !== undefined ? d.q4Credits : 8.0;
             const isDocActive = (d.is_active === true || d.status === 'Active' || d.status === 'ACTIVE' || d.status === 'Aktif' || d.raw_status === 'ACTIVE');
             const initials = d.initials || d.avatar || 'DR';
             const hospital = d.hospital || d.institution || 'RS Jejaring POGI';
+            const strNumber = d.str_number || d.str || '-';
+            const phone = d.phone || d.whatsapp_number || '-';
+            const picAdmin = d.assigned_to || d.assigned_pic_name || '';
+            const periodStr = `${d.period_start || '2026-01-01'} - ${d.period_end || '2030-12-31'}`;
+            const plataranUser = d.plataran_sehat_username || '';
 
             return `
-              <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-                <div class="flex items-start justify-between gap-2">
-                  <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0">
+              <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="flex items-start justify-between gap-2.5">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-sm flex items-center justify-center shrink-0 shadow-2xs">
                       ${initials}
                     </div>
                     <div class="min-w-0">
-                      <div class="font-bold text-slate-900 text-xs leading-snug truncate">${d.name}</div>
-                      <div class="text-[10px] text-slate-400 font-mono">${d.pogiId || '-'}</div>
+                      <div class="font-bold text-slate-900 text-sm leading-snug truncate">${d.name}</div>
+                      <div class="text-[11px] text-slate-500 font-medium truncate mt-0.5">${hospital}</div>
                     </div>
                   </div>
-                  <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold ${isDocActive ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'} border shrink-0">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold ${isDocActive ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'} border shrink-0">
                     <span class="w-1.5 h-1.5 rounded-full ${isDocActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
                     ${isDocActive ? 'Active' : 'Non-Active'}
                   </span>
                 </div>
-                <div class="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 space-y-0.5">
-                  <div class="flex justify-between"><span class="text-slate-400 text-[10px]">Wilayah:</span> <span class="font-bold text-slate-800 text-[11px]">${d.province}</span></div>
-                  <div class="flex justify-between"><span class="text-slate-400 text-[10px]">RS:</span> <span class="font-medium text-slate-700 text-[11px] truncate max-w-[200px]">${hospital}</span></div>
+                <div class="text-xs text-slate-600 bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Nomor STR</span>
+                    <span class="font-mono font-bold text-slate-800">${strNumber}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Kontak (WA)</span>
+                    <span class="font-semibold text-slate-800 flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[13px] text-emerald-600">call</span>
+                      <span>${phone}</span>
+                    </span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Wilayah</span>
+                    <span class="font-bold text-slate-800">${d.province}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">PIC Admin</span>
+                    ${picAdmin 
+                      ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold text-[10px] border border-emerald-200">
+                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>${picAdmin}
+                         </span>`
+                      : `<span class="text-slate-400 text-[10px]">Belum Ditugaskan</span>`
+                    }
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Periode SKP</span>
+                    <span class="font-medium text-slate-700">${periodStr}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">LMS Plataran</span>
+                    ${plataranUser
+                      ? `<span class="inline-flex items-center gap-1 text-sky-700 font-bold text-[11px]">
+                          <span class="material-symbols-outlined text-[13px] text-sky-500">account_circle</span>
+                          <span class="truncate max-w-[140px]">${plataranUser}</span>
+                         </span>`
+                      : `<span class="text-slate-400 text-[10px] flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">lock</span>Belum Disetel</span>`
+                    }
+                  </div>
                 </div>
-                <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                  <button type="button" onclick="openManageDetailModal('doctor', '${d.id}')" class="flex-1 py-1 px-2.5 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
-                    <span>Rincian</span>
+                <div class="pt-1.5 border-t border-slate-100 grid grid-cols-2 gap-2">
+                  <button type="button" onclick="openManageEditModal('doctor', '${d.id}')" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">edit</span>
+                    <span>Edit</span>
                   </button>
-                  <button type="button" onclick="openManageEditModal('doctor', '${d.id}')" class="py-1 px-2.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
-                  <button type="button" onclick="deleteManageItem('doctor', '${d.id}')" class="py-1 px-2 rounded-lg text-red-600 hover:bg-red-50 text-xs font-bold transition rbac-operational">Hapus</button>
+                  <button type="button" onclick="deleteManageItem('doctor', '${d.id}')" class="py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">delete</span>
+                    <span>Hapus</span>
+                  </button>
                 </div>
               </div>
             `;
@@ -2701,7 +2763,6 @@
               <td class="py-3 px-4 text-[11px] text-slate-500 whitespace-nowrap">${inst.lastActivity || '-'}</td>
               <td class="py-3 px-4 text-center">
                 <div class="flex items-center justify-center gap-1.5">
-                  <button type="button" onclick="openManageDetailModal('institution', '${inst.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition cursor-pointer">Rincian</button>
                   <button type="button" onclick="openManageEditModal('institution', '${inst.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer rbac-operational">Edit</button>
                   <button type="button" onclick="deleteManageItem('institution', '${inst.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition cursor-pointer rbac-operational">Hapus</button>
                 </div>
@@ -2712,29 +2773,52 @@
 
         // Mobile Touch Cards
         if (mobileContainer) {
-          mobileContainer.innerHTML = pageInst.map(inst => `
-            <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-              <div class="flex items-start justify-between gap-2">
-                <div class="flex items-center gap-2 min-w-0">
-                  <div class="w-8 h-8 rounded-lg bg-emerald-50 text-[#16b3ac] flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-sm">local_hospital</span>
+          mobileContainer.innerHTML = pageInst.map(inst => {
+            const isAct = (inst.is_active === true || inst.status === 'Aktif' || inst.status === 'ACTIVE' || inst.status === 'Aktif Bekerjasama');
+            return `
+              <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="flex items-start justify-between gap-2.5">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-sm flex items-center justify-center shrink-0 shadow-2xs">
+                      <span class="material-symbols-outlined text-lg">local_hospital</span>
+                    </div>
+                    <div class="min-w-0">
+                      <div class="font-bold text-slate-900 text-sm leading-snug truncate">${inst.name}</div>
+                      <div class="text-[11px] text-slate-500 font-medium truncate mt-0.5">${inst.type || 'RS Jejaring'} ${inst.hospital_class ? '&bull; Kelas ' + inst.hospital_class : ''}</div>
+                    </div>
                   </div>
-                  <div class="min-w-0">
-                    <div class="font-bold text-slate-900 text-xs leading-snug truncate">${inst.name}</div>
-                    <div class="text-[10px] text-slate-400 font-mono">${inst.province} &bull; ${inst.type || 'RS'}</div>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold ${isAct ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'} border shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full ${isAct ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
+                    ${isAct ? 'Aktif' : 'Nonaktif'}
+                  </span>
+                </div>
+                <div class="text-xs text-slate-600 bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Wilayah</span>
+                    <span class="font-bold text-slate-800">${inst.province}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Alamat / Kota</span>
+                    <span class="font-medium text-slate-700 truncate max-w-[180px]">${inst.city || inst.address || '-'}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Total Dokter Terdaftar</span>
+                    <span class="font-bold text-[#16b3ac]">${inst.doctorsCount || 0} Dokter</span>
                   </div>
                 </div>
-                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-[#16b3ac] font-bold text-[10px] border border-emerald-200 shrink-0">${inst.doctorsCount || 0} Dokter</span>
+                <div class="pt-1.5 border-t border-slate-100 grid grid-cols-2 gap-2">
+                  <button type="button" onclick="openManageEditModal('institution', '${inst.id}')" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">edit</span>
+                    <span>Edit</span>
+                  </button>
+                  <button type="button" onclick="deleteManageItem('institution', '${inst.id}')" class="py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">delete</span>
+                    <span>Hapus</span>
+                  </button>
+                </div>
               </div>
-              <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                <button type="button" onclick="openManageDetailModal('institution', '${inst.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
-                  <span>Rincian</span>
-                  <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                </button>
-                <button type="button" onclick="openManageEditModal('institution', '${inst.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
-              </div>
-            </div>
-          `).join('');
+            `;
+          }).join('');
         }
       }
 
@@ -2878,7 +2962,6 @@
                 </td>
                 <td class="py-3 px-4 text-center">
                   <div class="flex items-center justify-center gap-1.5">
-                    <button type="button" onclick="openManageDetailModal('event', '${e.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition cursor-pointer">Rincian</button>
                     <button type="button" onclick="openManageEditModal('event', '${e.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer rbac-operational">Edit</button>
                     <button type="button" onclick="deleteManageItem('event', '${e.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition cursor-pointer rbac-operational">Hapus</button>
                   </div>
@@ -2894,26 +2977,43 @@
             const eventTitle = e.title || e.name || 'Kegiatan SKP POGI';
             const creditsVal = e.creditsDisplay || (e.credits ? e.credits.toString().replace('.', ',') : '1');
             const docCount = e.doctors ? e.doctors.replace('done', 'selesai') : ((e.doctorsCompleted || 0) + ' / 100 selesai');
+            const isEventOpen = (e.status === 'Dibuka' || e.status === 'Berjalan');
 
             return `
-              <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
-                <div class="flex items-start justify-between gap-2">
+              <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="flex items-start justify-between gap-2.5">
                   <div class="min-w-0">
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#16b3ac] border border-emerald-200">${e.type}</span>
-                    <div class="font-bold text-slate-900 text-xs mt-1.5 leading-snug line-clamp-2">${eventTitle}</div>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${e.type === 'Pelayanan' ? 'bg-sky-100 text-sky-800 border-sky-200' : e.type === 'Pengabdian' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-emerald-100 text-emerald-800 border-emerald-200'} border">${e.type || 'Pembelajaran'}</span>
+                    <div class="font-bold text-slate-900 text-sm mt-1.5 leading-snug line-clamp-2">${eventTitle}</div>
                   </div>
-                  <span class="px-2 py-1 rounded-lg bg-[#16b3ac] text-white font-black text-xs shrink-0">${creditsVal} SKP</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-[#16b3ac] text-white font-black text-xs shrink-0 shadow-2xs">${creditsVal} SKP</span>
                 </div>
-                <div class="text-[11px] text-slate-500 flex justify-between pt-1 border-t border-slate-100">
-                  <span>${e.date || 'Q4 2026'}</span>
-                  <span class="font-bold text-slate-800">${docCount}</span>
+                <div class="text-xs text-slate-600 bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Jadwal</span>
+                    <span class="font-bold text-slate-800">${e.date || 'Q4 2026'}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Peserta Tuntas</span>
+                    <span class="font-semibold text-slate-800">${docCount}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Status</span>
+                    <span class="inline-flex items-center gap-1 font-bold ${isEventOpen ? 'text-emerald-700' : 'text-slate-600'}">
+                      <span class="w-1.5 h-1.5 rounded-full ${isEventOpen ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
+                      ${e.status || 'Dibuka'}
+                    </span>
+                  </div>
                 </div>
-                <div class="pt-1.5 flex items-center justify-between gap-2">
-                  <button type="button" onclick="openManageDetailModal('event', '${e.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
-                    <span>Rincian</span>
-                    <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                <div class="pt-1.5 border-t border-slate-100 grid grid-cols-2 gap-2">
+                  <button type="button" onclick="openManageEditModal('event', '${e.id}')" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">edit</span>
+                    <span>Edit</span>
                   </button>
-                  <button type="button" onclick="openManageEditModal('event', '${e.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
+                  <button type="button" onclick="deleteManageItem('event', '${e.id}')" class="py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">delete</span>
+                    <span>Hapus</span>
+                  </button>
                 </div>
               </div>
             `;
@@ -3044,7 +3144,6 @@
                 </td>
                 <td class="py-3 px-4 text-center">
                   <div class="flex items-center justify-center gap-1.5">
-                    <button type="button" onclick="openManageDetailModal('category', '${cat.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition cursor-pointer">Rincian</button>
                     <button type="button" onclick="openManageEditModal('category', '${cat.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer rbac-operational">Edit</button>
                     <button type="button" onclick="deleteManageItem('category', '${cat.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition cursor-pointer rbac-operational">Hapus</button>
                   </div>
@@ -3056,25 +3155,37 @@
 
         // Mobile Touch Cards
         if (mobileContainer) {
-          mobileContainer.innerHTML = pageCats.map(cat => `
-            <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
-              <div class="flex items-start justify-between gap-2">
-                <div>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">${cat.type}</span>
-                  <div class="font-bold text-slate-900 text-xs mt-1">${cat.name}</div>
+          mobileContainer.innerHTML = pageCats.map(cat => {
+            const isCatActive = !(cat.status === 'INACTIVE' || cat.is_active === false);
+            return `
+              <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="flex items-start justify-between gap-2.5">
+                  <div class="min-w-0">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${cat.type === 'Pelayanan' ? 'bg-sky-100 text-sky-800 border-sky-200' : cat.type === 'Pengabdian' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-emerald-100 text-emerald-800 border-emerald-200'} border">${cat.type}</span>
+                    <div class="font-bold text-slate-900 text-sm mt-1.5 leading-snug">${cat.name}</div>
+                  </div>
+                  <span class="font-black text-xs text-[#16b3ac] px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 shrink-0">${cat.standardSkp || '1 - 2 SKP'}</span>
                 </div>
-                <span class="font-black text-xs text-[#16b3ac]">${cat.standardSkp || '1 - 2 SKP'}</span>
+                <div class="text-xs text-slate-600 bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                  <div class="text-[11px] text-slate-600 leading-relaxed">${cat.description || '-'}</div>
+                  <div class="flex justify-between items-center text-[11px] pt-1 border-t border-slate-200/50">
+                    <span class="text-slate-400 font-medium">Status</span>
+                    <span class="font-bold ${isCatActive ? 'text-emerald-700' : 'text-slate-500'}">${isCatActive ? 'ACTIVE' : 'INACTIVE'}</span>
+                  </div>
+                </div>
+                <div class="pt-1.5 border-t border-slate-100 grid grid-cols-2 gap-2">
+                  <button type="button" onclick="openManageEditModal('category', '${cat.id}')" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">edit</span>
+                    <span>Edit</span>
+                  </button>
+                  <button type="button" onclick="deleteManageItem('category', '${cat.id}')" class="py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">delete</span>
+                    <span>Hapus</span>
+                  </button>
+                </div>
               </div>
-              <div class="text-[11px] text-slate-500">${cat.description || '-'}</div>
-              <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                <button type="button" onclick="openManageDetailModal('category', '${cat.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
-                  <span>Rincian</span>
-                  <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                </button>
-                <button type="button" onclick="openManageEditModal('category', '${cat.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
-              </div>
-            </div>
-          `).join('');
+            `;
+          }).join('');
         }
       }
 
@@ -3181,11 +3292,11 @@
         }
       } else {
         const getRoleBadge = (role) => {
-          if (role === 'Super Admin') return '<span class="px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-extrabold text-[10px]">Super Admin</span>';
-          if (role === 'Admin Pusat') return '<span class="px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 font-extrabold text-[10px]">Admin Pusat</span>';
-          if (role === 'Admin POGI' || role === 'Verifikator') return '<span class="px-2.5 py-1 rounded-md bg-emerald-50 text-[#16b3ac] border border-emerald-200 font-extrabold text-[10px]">Admin POGI</span>';
-          if (role === 'Admin Cabang') return '<span class="px-2.5 py-1 rounded-md bg-sky-50 text-sky-700 border border-sky-200 font-extrabold text-[10px]">Admin Cabang</span>';
-          return '<span class="px-2.5 py-1 rounded-md bg-teal-50 text-teal-700 border border-teal-200 font-extrabold text-[10px]">User/Dokter</span>';
+          if (role === 'Super Admin') return '<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-extrabold text-[10px] whitespace-nowrap">Super Admin</span>';
+          if (role === 'Admin Pusat') return '<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 font-extrabold text-[10px] whitespace-nowrap">Admin Pusat</span>';
+          if (role === 'Admin POGI' || role === 'Verifikator') return '<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-50 text-[#16b3ac] border border-emerald-200 font-extrabold text-[10px] whitespace-nowrap">Admin POGI</span>';
+          if (role === 'Admin Cabang') return '<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-sky-50 text-sky-700 border border-sky-200 font-extrabold text-[10px] whitespace-nowrap">Admin Cabang</span>';
+          return '<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-teal-50 text-teal-700 border border-teal-200 font-extrabold text-[10px] whitespace-nowrap">User/Dokter</span>';
         };
 
         // Desktop / Tablet Rows
@@ -3220,7 +3331,6 @@
               </td>
               <td class="py-3 px-4 text-center">
                 <div class="flex items-center justify-center gap-1.5">
-                  <button type="button" onclick="openManageDetailModal('user', '${usr.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#16b3ac] font-bold text-xs transition cursor-pointer">Rincian</button>
                   <button type="button" onclick="openManageEditModal('user', '${usr.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer rbac-operational">Edit</button>
                   <button type="button" onclick="deleteManageItem('user', '${usr.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition cursor-pointer rbac-operational">Hapus</button>
                 </div>
@@ -3231,29 +3341,45 @@
 
         // Mobile Touch Cards
         if (mobileContainer) {
-          mobileContainer.innerHTML = pageUsers.map(usr => `
-            <div class="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
-              <div class="flex items-start justify-between gap-2">
-                <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-full bg-emerald-50 text-[#16b3ac] font-black text-xs flex items-center justify-center shrink-0">
+          mobileContainer.innerHTML = pageUsers.map(usr => {
+            const st = (usr.account_status || (usr.is_active === false ? 'INACTIVE' : 'ACTIVE')).toUpperCase();
+            return `
+              <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 text-[#16b3ac] font-black text-sm flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
                     ${(usr.name || 'US').substring(0, 2).toUpperCase()}
                   </div>
-                  <div>
-                    <div class="font-bold text-slate-900 text-xs">${usr.name}</div>
-                    <div class="text-[10px] text-slate-400 font-mono">${usr.email}</div>
+                  <div class="min-w-0 flex-1">
+                    <div class="font-bold text-slate-900 text-sm leading-snug truncate">${usr.name}</div>
+                    <div class="text-[11px] text-slate-400 font-mono truncate mt-0.5">${usr.email}</div>
+                    <div class="mt-2 flex items-center">
+                      ${getRoleBadge(usr.role)}
+                    </div>
                   </div>
                 </div>
-                ${getRoleBadge(usr.role)}
+                <div class="text-xs text-slate-600 bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Wilayah Penugasan</span>
+                    <span class="font-bold text-slate-800">${usr.branch_name || usr.branch || 'Pusat / Nasional'}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400 font-medium">Status Akun</span>
+                    <span class="font-bold ${st === 'ACTIVE' ? 'text-emerald-700' : 'text-slate-500'}">${st}</span>
+                  </div>
+                </div>
+                <div class="pt-1.5 border-t border-slate-100 grid grid-cols-2 gap-2">
+                  <button type="button" onclick="openManageEditModal('user', '${usr.id}')" class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">edit</span>
+                    <span>Edit</span>
+                  </button>
+                  <button type="button" onclick="deleteManageItem('user', '${usr.id}')" class="py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer rbac-operational">
+                    <span class="material-symbols-outlined text-[15px]">delete</span>
+                    <span>Hapus</span>
+                  </button>
+                </div>
               </div>
-              <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                <button type="button" onclick="openManageDetailModal('user', '${usr.id}')" class="flex-1 py-1.5 px-3 rounded-lg bg-emerald-50 text-[#16b3ac] text-xs font-bold transition flex items-center justify-center gap-1">
-                  <span>Rincian</span>
-                  <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                </button>
-                <button type="button" onclick="openManageEditModal('user', '${usr.id}')" class="py-1.5 px-3 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold transition rbac-operational">Edit</button>
-              </div>
-            </div>
-          `).join('');
+            `;
+          }).join('');
         }
       }
 
@@ -3860,16 +3986,31 @@
         }
         const elPic = document.getElementById('editDocAssignedTo');
         if (elPic) {
-          const pic = item.assigned_to || item.assigned_pic_name || '';
-          elPic.value = pic;
-          $('#editDocAssignedTo').val(pic).trigger('change.select2');
+          const picId = item.assigned_pic_id || '';
+          const picName = item.assigned_to || item.assigned_pic_name || '';
+          let matchedVal = '';
+          if (picId || picName) {
+            for (let i = 0; i < elPic.options.length; i++) {
+              const opt = elPic.options[i];
+              if (picId && (opt.value === picId || opt.getAttribute('data-id') === picId)) {
+                matchedVal = opt.value;
+                break;
+              }
+              if (picName && (opt.value === picName || opt.text.includes(picName) || opt.getAttribute('data-name') === picName)) {
+                matchedVal = opt.value;
+                break;
+              }
+            }
+          }
+          elPic.value = matchedVal;
+          $('#editDocAssignedTo').val(matchedVal).trigger('change.select2');
         }
         const elEmail = document.getElementById('editDocEmail'); if (elEmail) elEmail.value = item.email || '';
         const elStatus = document.getElementById('editDocStatus'); if (elStatus) elStatus.value = isDocActive ? 'ACTIVE' : 'INACTIVE';
         const elPStart = document.getElementById('editDocPeriodStart'); if (elPStart) elPStart.value = pStart;
         const elPEnd = document.getElementById('editDocPeriodEnd'); if (elPEnd) elPEnd.value = pEnd;
         const elUser = document.getElementById('editDocPlataranUser'); if (elUser) elUser.value = item.plataran_sehat_username || '';
-        const elPass = document.getElementById('editDocPlataranPass'); if (elPass) elPass.value = item.plataran_sehat_password || item.plataran_sehat_pass_encrypted || 'PogiPlataran2026!';
+        const elPass = document.getElementById('editDocPlataranPass'); if (elPass) elPass.value = item.plataran_sehat_password || item.plataran_sehat_pass_encrypted || '';
 
         docModal.classList.remove('hidden');
         const bodyEl = document.getElementById('manageDoctorEditModalBody');
@@ -4095,6 +4236,12 @@
             branchId = docs[docIdx].branch_id;
           }
 
+          const picEl = document.getElementById('editDocAssignedTo');
+          const selPicOpt = picEl?.selectedOptions?.[0];
+          const picVal = picEl?.value || null;
+          const picText = selPicOpt && selPicOpt.value ? (selPicOpt.getAttribute('data-name') || selPicOpt.text.replace(/\(Admin POGI\)/g, '').trim()) : null;
+          const picId = selPicOpt && selPicOpt.value ? (selPicOpt.getAttribute('data-id') || (picVal && picVal.length > 30 ? picVal : null)) : null;
+
           const payload = {
             name: name,
             specialization_title: 'Sp.OG',
@@ -4104,7 +4251,8 @@
             province: provName,
             branch_id: branchId,
             institution_id: instSel?.value || null,
-            assigned_to: document.getElementById('editDocAssignedTo')?.value || null,
+            assigned_pic_id: picId,
+            assigned_to: picText,
             period_start: document.getElementById('editDocPeriodStart')?.value || '',
             period_end: document.getElementById('editDocPeriodEnd')?.value || '',
             plataran_sehat_username: document.getElementById('editDocPlataranUser')?.value || null,
@@ -4125,6 +4273,9 @@
             return;
           }
           Object.assign(docs[docIdx], payload);
+          docs[docIdx].assigned_pic_id = payload.assigned_pic_id;
+          docs[docIdx].assigned_to = payload.assigned_to;
+          docs[docIdx].assigned_pic_name = payload.assigned_to;
           const isAct = (payload.status === 'ACTIVE' || payload.is_active === true);
           docs[docIdx].is_active = isAct;
           docs[docIdx].status = isAct ? 'Active' : 'Non-Active';
@@ -4546,13 +4697,20 @@
           branchId = window.LIVE_MANAGE_BRANCHES[0].id;
         }
 
+        const addPicEl = document.getElementById('addDocAssignedTo');
+        const selAddPicOpt = addPicEl?.selectedOptions?.[0];
+        const addPicVal = addPicEl?.value || null;
+        const addPicText = selAddPicOpt && selAddPicOpt.value ? (selAddPicOpt.getAttribute('data-name') || selAddPicOpt.text.replace(/\(Admin POGI\)/g, '').trim()) : null;
+        const addPicId = selAddPicOpt && selAddPicOpt.value ? (selAddPicOpt.getAttribute('data-id') || (addPicVal && addPicVal.length > 30 ? addPicVal : null)) : null;
+
         payload.name = name;
         payload.str_number = document.getElementById('addDocStr')?.value || '';
         payload.phone = phone;
         payload.province = provName;
         payload.branch_id = branchId;
         payload.institution_id = document.getElementById('addDocInstId')?.value || null;
-        payload.assigned_to = document.getElementById('addDocAssignedTo')?.value || null;
+        payload.assigned_pic_id = addPicId;
+        payload.assigned_to = addPicText;
         payload.email = email;
         payload.status = status;
         payload.is_active = (status === 'ACTIVE');
