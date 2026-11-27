@@ -706,25 +706,24 @@
     subtitle="Lengkapi profil dokter spesialis & kredensial LMS Plataran" 
     icon="person_add" 
     closeAction="closeManageAddModal()"
+    formId="manageDoctorAddForm"
+    formOnsubmit="event.preventDefault(); submitManageAdd();"
   >
-    <form id="manageDoctorAddForm" onsubmit="event.preventDefault(); submitManageAdd();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-      <div id="manageDoctorAddFormFields" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
-        @include('partials.doctor-form-fields', [
-          'prefix' => 'addDoc',
-          'isEdit' => false,
-          'provinces' => $provinces ?? [],
-          'institutions' => $institutions ?? [],
-          'adminPogiList' => $adminPogiList,
-        ])
-      </div>
-      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
-        <button type="button" onclick="closeManageAddModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
-        <button id="manageDoctorAddSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
-          <span class="material-symbols-outlined text-sm">person_add</span>
-          <span>Simpan Dokter</span>
-        </button>
-      </div>
-    </form>
+    @include('partials.doctor-form-fields', [
+      'prefix' => 'addDoc',
+      'isEdit' => false,
+      'provinces' => $provinces ?? [],
+      'institutions' => $institutions ?? [],
+      'adminPogiList' => $adminPogiList,
+    ])
+
+    <x-slot:footer>
+      <button type="button" onclick="closeManageAddModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+      <button id="manageDoctorAddSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+        <span class="material-symbols-outlined text-sm">person_add</span>
+        <span>Simpan Dokter</span>
+      </button>
+    </x-slot:footer>
   </x-modal>
 
   <!-- Modal Edit Doctor (Standardized Component) -->
@@ -734,25 +733,24 @@
     subtitle="Perbarui profil dokter spesialis & kredensial LMS Plataran" 
     icon="edit_square" 
     closeAction="closeManageEditModal()"
+    formId="manageDoctorEditForm"
+    formOnsubmit="event.preventDefault(); submitManageEdit();"
   >
-    <form id="manageDoctorEditForm" onsubmit="event.preventDefault(); submitManageEdit();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-      <div id="manageDoctorEditFormFields" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
-        @include('partials.doctor-form-fields', [
-          'prefix' => 'editDoc',
-          'isEdit' => true,
-          'provinces' => $provinces ?? [],
-          'institutions' => $institutions ?? [],
-          'adminPogiList' => $adminPogiList,
-        ])
-      </div>
-      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
-        <button type="button" onclick="closeManageEditModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
-        <button id="manageDoctorEditSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
-          <span class="material-symbols-outlined text-sm">save</span>
-          <span>Simpan Perubahan</span>
-        </button>
-      </div>
-    </form>
+    @include('partials.doctor-form-fields', [
+      'prefix' => 'editDoc',
+      'isEdit' => true,
+      'provinces' => $provinces ?? [],
+      'institutions' => $institutions ?? [],
+      'adminPogiList' => $adminPogiList,
+    ])
+
+    <x-slot:footer>
+      <button type="button" onclick="closeManageEditModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+      <button id="manageDoctorEditSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+        <span class="material-symbols-outlined text-sm">save</span>
+        <span>Simpan Perubahan</span>
+      </button>
+    </x-slot:footer>
   </x-modal>
 
   <!-- ========================================================================= -->
@@ -3124,6 +3122,8 @@
         const elPass = document.getElementById('editDocPlataranPass'); if (elPass) elPass.value = item.plataran_sehat_password || item.plataran_sehat_pass_encrypted || 'PogiPlataran2026!';
 
         docModal.classList.remove('hidden');
+        const bodyEl = document.getElementById('manageDoctorEditModalBody');
+        if (bodyEl) bodyEl.scrollTop = 0;
         initModalSelect2(docModal);
         return;
       } else if (type === 'institution') {
@@ -3242,10 +3242,10 @@
       let containerId = mode === 'add' ? 'manageAddFormFields' : 'manageEditFormFields';
       let boxId = mode === 'add' ? 'manageAddErrorBanner' : 'manageEditErrorBanner';
       if (mode === 'add' && currentTab === 'doctor') {
-        containerId = 'manageDoctorAddFormFields';
+        containerId = 'manageDoctorAddModalBody';
         boxId = 'manageDoctorAddErrorBanner';
       } else if (mode === 'edit' && activeActionContext?.type === 'doctor') {
-        containerId = 'manageDoctorEditFormFields';
+        containerId = 'manageDoctorEditModalBody';
         boxId = 'manageDoctorEditErrorBanner';
       }
       const container = document.getElementById(containerId);
@@ -3625,6 +3625,8 @@
         const elPass = document.getElementById('addDocPlataranPass'); if (elPass) elPass.value = '';
 
         docModal.classList.remove('hidden');
+        const bodyEl = document.getElementById('manageDoctorAddModalBody');
+        if (bodyEl) bodyEl.scrollTop = 0;
         initModalSelect2(docModal);
         return;
       } else if (currentTab === 'institution') {

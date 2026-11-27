@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="twr01L7ugRfHLuxqPvmyEJjlYCq92lSpcrYWDEi6">
+  <meta name="csrf-token" content="v99MB6i2KdrBBUE7iGHfjgqpjUx28srSkdFw1mbg">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -1102,28 +1102,27 @@
   
   <!-- Modal Add Doctor (Standardized Component) -->
   <div id="manageDoctorAddModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
-  <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden relative z-10 border border-slate-100">
+  <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
     <!-- Modal Header (Sticky) -->
-    <div class="p-5 sm:p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
-      <div class="flex items-center gap-3 min-w-0">
-        <div id="manageDoctorAddModalIconWrap" class="w-10 h-10 rounded-2xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+    <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div id="manageDoctorAddModalIconWrap" class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
           <span id="manageDoctorAddModalIcon" class="material-symbols-outlined text-xl">person_add</span>
         </div>
         <div class="min-w-0">
-          <h3 id="manageDoctorAddModalTitle" class="font-black text-slate-900 text-sm sm:text-base leading-snug tracking-tight truncate">Daftarkan Dokter Baru</h3>
+          <h3 id="manageDoctorAddModalTitle" class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">Daftarkan Dokter Baru</h3>
                       <p id="manageDoctorAddModalSubtitle" class="text-xs text-slate-500 truncate">Lengkapi profil dokter spesialis &amp; kredensial LMS Plataran</p>
                   </div>
       </div>
-      <button type="button" onclick="closeManageAddModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-slate-100 transition cursor-pointer shrink-0">
+      <button type="button" onclick="closeManageAddModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
         <span class="material-symbols-outlined text-lg">close</span>
       </button>
     </div>
 
-    <!-- Modal Body (Scrollable) -->
-    <div id="manageDoctorAddModalBody" class="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs">
-      <form id="manageDoctorAddForm" onsubmit="event.preventDefault(); submitManageAdd();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-      <div id="manageDoctorAddFormFields" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
-        <!-- Section 1: Doctor Profile Section -->
+          <form id="manageDoctorAddForm"  onsubmit="event.preventDefault(); submitManageAdd();"  autocomplete="off" class="flex flex-col flex-1 min-h-0 overflow-hidden">
+        <!-- Modal Body (Single Scrollable Container) -->
+        <div id="manageDoctorAddModalBody" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+          <!-- Section 1: Doctor Profile Section -->
 <div class="space-y-3.5">
   <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
     <span class="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-100/60 text-[#16b3ac] flex items-center justify-center shrink-0">
@@ -1274,12 +1273,12 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
     <div>
       <label class="block font-bold text-slate-700 mb-1.5">Username LMS</label>
-      <input id="addDocPlataranUser" type="text" value="" placeholder="super@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+      <input id="addDocPlataranUser" type="text" autocomplete="off" value="" placeholder="Masukkan username LMS..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
     </div>
     <div>
       <label class="block font-bold text-slate-700 mb-1.5">Password LMS</label>
       <div class="relative">
-        <input id="addDocPlataranPass" type="password" value="" placeholder="••••••••" class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+        <input id="addDocPlataranPass" type="password" autocomplete="new-password" value="" placeholder="Masukkan password LMS..." class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
         <button type="button" onclick="togglePasswordVisibility('addDocPlataranPass', this)" class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer" title="Tampilkan/Sembunyikan Password">
           <span class="material-symbols-outlined text-[18px]">visibility</span>
         </button>
@@ -1287,45 +1286,43 @@
     </div>
   </div>
 </div>
-      </div>
-      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
-        <button type="button" onclick="closeManageAddModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
-        <button id="manageDoctorAddSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
-          <span class="material-symbols-outlined text-sm">person_add</span>
-          <span>Simpan Dokter</span>
-        </button>
-      </div>
-    </form>
-    </div>
+        </div>
 
-    <!-- Modal Footer (Sticky) -->
+        <!-- Modal Footer (Sticky) -->
+                  <div id="manageDoctorAddModalFooter" class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+            <button type="button" onclick="closeManageAddModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+      <button id="manageDoctorAddSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+        <span class="material-symbols-outlined text-sm">person_add</span>
+        <span>Simpan Dokter</span>
+      </button>
+          </div>
+              </form>
       </div>
 </div>
 
   <!-- Modal Edit Doctor (Standardized Component) -->
   <div id="manageDoctorEditModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
-  <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden relative z-10 border border-slate-100">
+  <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
     <!-- Modal Header (Sticky) -->
-    <div class="p-5 sm:p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
-      <div class="flex items-center gap-3 min-w-0">
-        <div id="manageDoctorEditModalIconWrap" class="w-10 h-10 rounded-2xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+    <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div id="manageDoctorEditModalIconWrap" class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
           <span id="manageDoctorEditModalIcon" class="material-symbols-outlined text-xl">edit_square</span>
         </div>
         <div class="min-w-0">
-          <h3 id="manageDoctorEditModalTitle" class="font-black text-slate-900 text-sm sm:text-base leading-snug tracking-tight truncate">Edit Data Dokter</h3>
+          <h3 id="manageDoctorEditModalTitle" class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">Edit Data Dokter</h3>
                       <p id="manageDoctorEditModalSubtitle" class="text-xs text-slate-500 truncate">Perbarui profil dokter spesialis &amp; kredensial LMS Plataran</p>
                   </div>
       </div>
-      <button type="button" onclick="closeManageEditModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-slate-100 transition cursor-pointer shrink-0">
+      <button type="button" onclick="closeManageEditModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
         <span class="material-symbols-outlined text-lg">close</span>
       </button>
     </div>
 
-    <!-- Modal Body (Scrollable) -->
-    <div id="manageDoctorEditModalBody" class="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs">
-      <form id="manageDoctorEditForm" onsubmit="event.preventDefault(); submitManageEdit();" class="flex flex-col flex-1 min-h-0 overflow-hidden">
-      <div id="manageDoctorEditFormFields" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
-        <!-- Section 1: Doctor Profile Section -->
+          <form id="manageDoctorEditForm"  onsubmit="event.preventDefault(); submitManageEdit();"  autocomplete="off" class="flex flex-col flex-1 min-h-0 overflow-hidden">
+        <!-- Modal Body (Single Scrollable Container) -->
+        <div id="manageDoctorEditModalBody" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+          <!-- Section 1: Doctor Profile Section -->
 <div class="space-y-3.5">
   <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
     <span class="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-100/60 text-[#16b3ac] flex items-center justify-center shrink-0">
@@ -1476,12 +1473,12 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
     <div>
       <label class="block font-bold text-slate-700 mb-1.5">Username LMS</label>
-      <input id="editDocPlataranUser" type="text" value="" placeholder="super@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+      <input id="editDocPlataranUser" type="text" autocomplete="off" value="" placeholder="Masukkan username LMS..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
     </div>
     <div>
       <label class="block font-bold text-slate-700 mb-1.5">Password LMS</label>
       <div class="relative">
-        <input id="editDocPlataranPass" type="password" value="" placeholder="••••••••" class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+        <input id="editDocPlataranPass" type="password" autocomplete="new-password" value="" placeholder="Masukkan password LMS..." class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
         <button type="button" onclick="togglePasswordVisibility('editDocPlataranPass', this)" class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer" title="Tampilkan/Sembunyikan Password">
           <span class="material-symbols-outlined text-[18px]">visibility</span>
         </button>
@@ -1489,18 +1486,17 @@
     </div>
   </div>
 </div>
-      </div>
-      <div class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
-        <button type="button" onclick="closeManageEditModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
-        <button id="manageDoctorEditSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
-          <span class="material-symbols-outlined text-sm">save</span>
-          <span>Simpan Perubahan</span>
-        </button>
-      </div>
-    </form>
-    </div>
+        </div>
 
-    <!-- Modal Footer (Sticky) -->
+        <!-- Modal Footer (Sticky) -->
+                  <div id="manageDoctorEditModalFooter" class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+            <button type="button" onclick="closeManageEditModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+      <button id="manageDoctorEditSubmitBtn" type="submit" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+        <span class="material-symbols-outlined text-sm">save</span>
+        <span>Simpan Perubahan</span>
+      </button>
+          </div>
+              </form>
       </div>
 </div>
 
@@ -3876,6 +3872,8 @@
         const elPass = document.getElementById('editDocPlataranPass'); if (elPass) elPass.value = item.plataran_sehat_password || item.plataran_sehat_pass_encrypted || 'PogiPlataran2026!';
 
         docModal.classList.remove('hidden');
+        const bodyEl = document.getElementById('manageDoctorEditModalBody');
+        if (bodyEl) bodyEl.scrollTop = 0;
         initModalSelect2(docModal);
         return;
       } else if (type === 'institution') {
@@ -3994,10 +3992,10 @@
       let containerId = mode === 'add' ? 'manageAddFormFields' : 'manageEditFormFields';
       let boxId = mode === 'add' ? 'manageAddErrorBanner' : 'manageEditErrorBanner';
       if (mode === 'add' && currentTab === 'doctor') {
-        containerId = 'manageDoctorAddFormFields';
+        containerId = 'manageDoctorAddModalBody';
         boxId = 'manageDoctorAddErrorBanner';
       } else if (mode === 'edit' && activeActionContext?.type === 'doctor') {
-        containerId = 'manageDoctorEditFormFields';
+        containerId = 'manageDoctorEditModalBody';
         boxId = 'manageDoctorEditErrorBanner';
       }
       const container = document.getElementById(containerId);
@@ -4377,6 +4375,8 @@
         const elPass = document.getElementById('addDocPlataranPass'); if (elPass) elPass.value = '';
 
         docModal.classList.remove('hidden');
+        const bodyEl = document.getElementById('manageDoctorAddModalBody');
+        if (bodyEl) bodyEl.scrollTop = 0;
         initModalSelect2(docModal);
         return;
       } else if (currentTab === 'institution') {

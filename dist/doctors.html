@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="twr01L7ugRfHLuxqPvmyEJjlYCq92lSpcrYWDEi6">
+  <meta name="csrf-token" content="v99MB6i2KdrBBUE7iGHfjgqpjUx28srSkdFw1mbg">
   <title>POGI SKP Tracker - Dashboard Pemantauan SKP Nasional</title>
   
   <!-- Tailwind CSS & CDN -->
@@ -732,27 +732,27 @@
 
   <!-- Modal Tambah Dokter Baru (Standardized Component) -->
   <div id="addDoctorModal" class="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
-  <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden relative z-10 border border-slate-100">
+  <div class="pogi-modal-card bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative z-10 animate-scale-in">
     <!-- Modal Header (Sticky) -->
-    <div class="p-5 sm:p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
-      <div class="flex items-center gap-3 min-w-0">
-        <div id="addDoctorModalIconWrap" class="w-10 h-10 rounded-2xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
+    <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0 sticky top-0 z-20">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div id="addDoctorModalIconWrap" class="w-10 h-10 rounded-xl bg-emerald-100 text-[#16b3ac] flex items-center justify-center font-bold shrink-0">
           <span id="addDoctorModalIcon" class="material-symbols-outlined text-xl">person_add</span>
         </div>
         <div class="min-w-0">
-          <h3 id="addDoctorModalTitle" class="font-black text-slate-900 text-sm sm:text-base leading-snug tracking-tight truncate">Daftarkan Dokter Baru</h3>
+          <h3 id="addDoctorModalTitle" class="font-black text-slate-900 text-sm leading-snug tracking-tight truncate">Daftarkan Dokter Baru</h3>
                       <p id="addDoctorModalSubtitle" class="text-xs text-slate-500 truncate">Lengkapi profil dokter spesialis &amp;amp; kredensial LMS Plataran</p>
                   </div>
       </div>
-      <button type="button" onclick="closeAddDoctorModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-slate-100 transition cursor-pointer shrink-0">
+      <button type="button" onclick="closeAddDoctorModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer shrink-0">
         <span class="material-symbols-outlined text-lg">close</span>
       </button>
     </div>
 
-    <!-- Modal Body (Scrollable) -->
-    <div id="addDoctorModalBody" class="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs">
-      <form id="addDoctorForm" onsubmit="event.preventDefault(); submitNewDoctorForm();" class="space-y-4">
-      <!-- Section 1: Doctor Profile Section -->
+          <form id="addDoctorForm"  onsubmit="event.preventDefault(); submitNewDoctorForm();"  autocomplete="off" class="flex flex-col flex-1 min-h-0 overflow-hidden">
+        <!-- Modal Body (Single Scrollable Container) -->
+        <div id="addDoctorModalBody" class="p-6 space-y-4 text-xs flex-1 overflow-y-auto bg-white min-h-0">
+          <!-- Section 1: Doctor Profile Section -->
 <div class="space-y-3.5">
   <div class="flex items-center gap-2 pb-1.5 border-b border-slate-200/60">
     <span class="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-100/60 text-[#16b3ac] flex items-center justify-center shrink-0">
@@ -897,12 +897,12 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
     <div>
       <label class="block font-bold text-slate-700 mb-1.5">Username LMS</label>
-      <input id="newDocPlataranUser" type="text" value="" placeholder="super@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+      <input id="newDocPlataranUser" type="text" autocomplete="off" value="" placeholder="Masukkan username LMS..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
     </div>
     <div>
       <label class="block font-bold text-slate-700 mb-1.5">Password LMS</label>
       <div class="relative">
-        <input id="newDocPlataranPass" type="password" value="" placeholder="••••••••" class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+        <input id="newDocPlataranPass" type="password" autocomplete="new-password" value="" placeholder="Masukkan password LMS..." class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
         <button type="button" onclick="togglePasswordVisibility('newDocPlataranPass', this)" class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer" title="Tampilkan/Sembunyikan Password">
           <span class="material-symbols-outlined text-[18px]">visibility</span>
         </button>
@@ -910,17 +910,17 @@
     </div>
   </div>
 </div>
-    </form>
-    </div>
+        </div>
 
-    <!-- Modal Footer (Sticky) -->
-          <div id="addDoctorModalFooter" class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
-        <button type="button" onclick="closeAddDoctorModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
+        <!-- Modal Footer (Sticky) -->
+                  <div id="addDoctorModalFooter" class="p-4 px-6 flex items-center justify-between border-t border-slate-100 bg-slate-50/80 shrink-0 sticky bottom-0 z-20">
+            <button type="button" onclick="closeAddDoctorModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
       <button type="button" onclick="submitNewDoctorForm()" class="px-4 py-2 rounded-xl bg-[#16b3ac] hover:bg-[#129993] text-white font-extrabold text-xs transition shadow-xs flex items-center gap-1.5 cursor-pointer">
         <span class="material-symbols-outlined text-sm">person_add</span>
         <span>Simpan Dokter</span>
       </button>
-      </div>
+          </div>
+              </form>
       </div>
 </div>
 
@@ -1617,7 +1617,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'twr01L7ugRfHLuxqPvmyEJjlYCq92lSpcrYWDEi6',
+          'X-CSRF-TOKEN': 'v99MB6i2KdrBBUE7iGHfjgqpjUx28srSkdFw1mbg',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
@@ -1661,35 +1661,13 @@
     const exportDoctorData = exportDoctorsPdf;
 
     function openAddDoctorModal() {
-      // 1. Populasi Dropdown Provinsi (38 Provinsi Nasional)
-      const provSelect = document.getElementById('newDocProv');
-      if (provSelect && provSelect.options.length <= 1) {
-        const provs = (typeof LIVE_SERVER_PROVINCES !== 'undefined' && LIVE_SERVER_PROVINCES.length > 0) ? LIVE_SERVER_PROVINCES : [];
-        provs.forEach(p => {
-          const opt = document.createElement('option');
-          opt.value = p.name || p;
-          opt.textContent = p.name || p;
-          provSelect.appendChild(opt);
-        });
-      }
-
-      // 2. Populasi Dropdown Institusi / RS Jejaring
-      const instSelect = document.getElementById('newDocInst');
-      if (instSelect && instSelect.options.length <= 1) {
-        const insts = (typeof LIVE_SERVER_INSTITUTIONS !== 'undefined' && LIVE_SERVER_INSTITUTIONS.length > 0) ? LIVE_SERVER_INSTITUTIONS : [];
-        insts.forEach(inst => {
-          const opt = document.createElement('option');
-          opt.value = inst.name || inst;
-          opt.textContent = (inst.name || inst) + (inst.province ? ` (${inst.province})` : '');
-          instSelect.appendChild(opt);
-        });
-      }
-
       const modal = document.getElementById('addDoctorModal');
       if (modal) {
         modal.classList.remove('hidden');
+        const bodyEl = document.getElementById('addDoctorModalBody');
+        if (bodyEl) bodyEl.scrollTop = 0;
         if (window.jQuery && $.fn.select2) {
-          $('#newDocProv, #newDocInst, #newDocAssignedTo, #newDocStatus').trigger('change.select2');
+          $('#newDocProv, #newDocInstId, #newDocAssignedTo, #newDocStatus').trigger('change.select2');
         }
       }
     }
@@ -1717,13 +1695,14 @@
       const str = (document.getElementById('newDocStr')?.value || '').trim();
       let phone = (document.getElementById('newDocPhone')?.value || '').trim();
       const prov = document.getElementById('newDocProv')?.value || 'DKI Jakarta';
-      const inst = document.getElementById('newDocInst')?.value || '-';
+      const instSel = document.getElementById('newDocInstId') || document.getElementById('newDocInst');
+      const inst = instSel ? (instSel.options?.[instSel.selectedIndex]?.text || instSel.value || '-') : '-';
       const email = (document.getElementById('newDocEmail')?.value || '').trim();
       const status = document.getElementById('newDocStatus')?.value || 'ACTIVE';
       const periodStart = (document.getElementById('newDocPeriodStart')?.value || '1 Jan 2026').trim();
       const periodEnd = (document.getElementById('newDocPeriodEnd')?.value || '31 Des 2030').trim();
-      const lmsUser = (document.getElementById('newDocLmsUsername')?.value || '').trim();
-      const lmsPass = (document.getElementById('newDocLmsPassword')?.value || '').trim();
+      const lmsUser = (document.getElementById('newDocPlataranUser')?.value || document.getElementById('newDocLmsUsername')?.value || '').trim();
+      const lmsPass = (document.getElementById('newDocPlataranPass')?.value || document.getElementById('newDocLmsPassword')?.value || '').trim();
       const assignedTo = (document.getElementById('newDocAssignedTo') ? document.getElementById('newDocAssignedTo').value : 'Anna');
 
       if (!name) {
@@ -1768,7 +1747,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': 'twr01L7ugRfHLuxqPvmyEJjlYCq92lSpcrYWDEi6',
+          'X-CSRF-TOKEN': 'v99MB6i2KdrBBUE7iGHfjgqpjUx28srSkdFw1mbg',
           'Accept': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -1886,7 +1865,7 @@
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'X-CSRF-TOKEN': 'twr01L7ugRfHLuxqPvmyEJjlYCq92lSpcrYWDEi6'
+            'X-CSRF-TOKEN': 'v99MB6i2KdrBBUE7iGHfjgqpjUx28srSkdFw1mbg'
           },
           body: JSON.stringify({ target, channels, message })
         });

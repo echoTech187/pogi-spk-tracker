@@ -314,16 +314,16 @@
     subtitle="Lengkapi profil dokter spesialis &amp; kredensial LMS Plataran" 
     icon="person_add" 
     closeAction="closeAddDoctorModal()"
+    formId="addDoctorForm"
+    formOnsubmit="event.preventDefault(); submitNewDoctorForm();"
   >
-    <form id="addDoctorForm" onsubmit="event.preventDefault(); submitNewDoctorForm();" class="space-y-4">
-      @include('partials.doctor-form-fields', [
-        'prefix' => 'newDoc',
-        'isEdit' => false,
-        'provinces' => $provinces ?? [],
-        'institutions' => $institutions ?? [],
-        'adminPogiList' => $adminPogiList ?? []
-      ])
-    </form>
+    @include('partials.doctor-form-fields', [
+      'prefix' => 'newDoc',
+      'isEdit' => false,
+      'provinces' => $provinces ?? [],
+      'institutions' => $institutions ?? [],
+      'adminPogiList' => $adminPogiList ?? []
+    ])
 
     <x-slot:footer>
       <button type="button" onclick="closeAddDoctorModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">Batal</button>
@@ -1068,35 +1068,13 @@
     const exportDoctorData = exportDoctorsPdf;
 
     function openAddDoctorModal() {
-      // 1. Populasi Dropdown Provinsi (38 Provinsi Nasional)
-      const provSelect = document.getElementById('newDocProv');
-      if (provSelect && provSelect.options.length <= 1) {
-        const provs = (typeof LIVE_SERVER_PROVINCES !== 'undefined' && LIVE_SERVER_PROVINCES.length > 0) ? LIVE_SERVER_PROVINCES : [];
-        provs.forEach(p => {
-          const opt = document.createElement('option');
-          opt.value = p.name || p;
-          opt.textContent = p.name || p;
-          provSelect.appendChild(opt);
-        });
-      }
-
-      // 2. Populasi Dropdown Institusi / RS Jejaring
-      const instSelect = document.getElementById('newDocInst');
-      if (instSelect && instSelect.options.length <= 1) {
-        const insts = (typeof LIVE_SERVER_INSTITUTIONS !== 'undefined' && LIVE_SERVER_INSTITUTIONS.length > 0) ? LIVE_SERVER_INSTITUTIONS : [];
-        insts.forEach(inst => {
-          const opt = document.createElement('option');
-          opt.value = inst.name || inst;
-          opt.textContent = (inst.name || inst) + (inst.province ? ` (${inst.province})` : '');
-          instSelect.appendChild(opt);
-        });
-      }
-
       const modal = document.getElementById('addDoctorModal');
       if (modal) {
         modal.classList.remove('hidden');
+        const bodyEl = document.getElementById('addDoctorModalBody');
+        if (bodyEl) bodyEl.scrollTop = 0;
         if (window.jQuery && $.fn.select2) {
-          $('#newDocProv, #newDocInst, #newDocAssignedTo, #newDocStatus').trigger('change.select2');
+          $('#newDocProv, #newDocInstId, #newDocAssignedTo, #newDocStatus').trigger('change.select2');
         }
       }
     }
@@ -1124,13 +1102,14 @@
       const str = (document.getElementById('newDocStr')?.value || '').trim();
       let phone = (document.getElementById('newDocPhone')?.value || '').trim();
       const prov = document.getElementById('newDocProv')?.value || 'DKI Jakarta';
-      const inst = document.getElementById('newDocInst')?.value || '-';
+      const instSel = document.getElementById('newDocInstId') || document.getElementById('newDocInst');
+      const inst = instSel ? (instSel.options?.[instSel.selectedIndex]?.text || instSel.value || '-') : '-';
       const email = (document.getElementById('newDocEmail')?.value || '').trim();
       const status = document.getElementById('newDocStatus')?.value || 'ACTIVE';
       const periodStart = (document.getElementById('newDocPeriodStart')?.value || '1 Jan 2026').trim();
       const periodEnd = (document.getElementById('newDocPeriodEnd')?.value || '31 Des 2030').trim();
-      const lmsUser = (document.getElementById('newDocLmsUsername')?.value || '').trim();
-      const lmsPass = (document.getElementById('newDocLmsPassword')?.value || '').trim();
+      const lmsUser = (document.getElementById('newDocPlataranUser')?.value || document.getElementById('newDocLmsUsername')?.value || '').trim();
+      const lmsPass = (document.getElementById('newDocPlataranPass')?.value || document.getElementById('newDocLmsPassword')?.value || '').trim();
       const assignedTo = (document.getElementById('newDocAssignedTo') ? document.getElementById('newDocAssignedTo').value : 'Anna');
 
       if (!name) {

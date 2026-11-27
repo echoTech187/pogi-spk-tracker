@@ -127,12 +127,12 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
     <div>
       <label class="block font-bold text-slate-700 mb-1.5">Username LMS</label>
-      <input id="{{ $prefix }}PlataranUser" type="text" value="" placeholder="super@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+      <input id="{{ $prefix }}PlataranUser" type="text" autocomplete="off" value="" placeholder="Masukkan username LMS..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
     </div>
     <div>
       <label class="block font-bold text-slate-700 mb-1.5">Password LMS</label>
       <div class="relative">
-        <input id="{{ $prefix }}PlataranPass" type="password" value="" placeholder="••••••••" class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
+        <input id="{{ $prefix }}PlataranPass" type="password" autocomplete="new-password" value="" placeholder="Masukkan password LMS..." class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 shadow-2xs transition hover:border-sky-300 focus:bg-white focus:outline-none focus:border-[#16b3ac] focus:ring-3 focus:ring-[#16b3ac]/15" />
         <button type="button" onclick="togglePasswordVisibility('{{ $prefix }}PlataranPass', this)" class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer" title="Tampilkan/Sembunyikan Password">
           <span class="material-symbols-outlined text-[18px]">visibility</span>
         </button>
